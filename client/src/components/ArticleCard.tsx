@@ -98,6 +98,7 @@ export default function ArticleCard({ article, variant = "medium", showLikes = t
               src={article.image}
               alt={article.title}
               className="w-full h-full object-cover"
+              loading="lazy"
             />
           </div>
           {/* Gradient overlay */}
@@ -153,6 +154,7 @@ export default function ArticleCard({ article, variant = "medium", showLikes = t
               src={article.image}
               alt={article.title}
               className="w-full h-full object-cover"
+              loading="lazy"
             />
           </div>
           <div className="flex-1 min-w-0">
@@ -204,6 +206,7 @@ export default function ArticleCard({ article, variant = "medium", showLikes = t
             src={article.image}
             alt={article.title}
             className="w-full h-full object-cover"
+            loading="lazy"
           />
           {showLikes && (
             <div className="absolute top-2 right-2 z-20" onClick={handleLikeClick}>

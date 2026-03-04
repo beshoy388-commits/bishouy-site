@@ -98,6 +98,48 @@ export default function ArticleDetail() {
     window.scrollTo(0, 0);
   }, []);
 
+  // SEO: Dynamic title and Open Graph meta tags per article
+  useEffect(() => {
+    if (!article) return;
+
+    const siteTitle = "Bishouy.com";
+    const pageTitle = `${article.title} | ${siteTitle}`;
+    const description = article.excerpt || `Read the latest news on ${siteTitle}`;
+    const image = article.image || "";
+    const url = window.location.href;
+
+    // Page title
+    document.title = pageTitle;
+
+    // Helper to upsert meta tags
+    const setMeta = (attr: string, value: string, content: string) => {
+      let el = document.querySelector(`meta[${attr}="${value}"]`);
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute(attr, value);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", content);
+    };
+
+    setMeta("name", "description", description);
+    setMeta("property", "og:type", "article");
+    setMeta("property", "og:title", pageTitle);
+    setMeta("property", "og:description", description);
+    setMeta("property", "og:image", image);
+    setMeta("property", "og:url", url);
+    setMeta("name", "twitter:card", "summary_large_image");
+    setMeta("name", "twitter:title", pageTitle);
+    setMeta("name", "twitter:description", description);
+    setMeta("name", "twitter:image", image);
+
+    // Cleanup: restore on unmount
+    return () => {
+      document.title = siteTitle;
+    };
+  }, [article]);
+
+
   // Effect per aggiornare il conteggio dei like
   useEffect(() => {
     if (likeCountQuery.data !== undefined) {

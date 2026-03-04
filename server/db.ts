@@ -623,3 +623,33 @@ export async function getDashboardStats() {
     totalAds: adsCount[0]?.count || 0,
   };
 }
+
+// ─── Cleanup Jobs ────────────────────────────────────────────────────────────
+
+/**
+ * Delete expired verification codes from the DB.
+ * Called at server startup and every hour.
+ */
+export async function cleanupExpiredVerificationCodes(): Promise<void> {
+  try {
+    const db = await getDb();
+    const now = Math.floor(Date.now() / 1000);
+    await db!.delete(verificationCodes).where(sql`${verificationCodes.expiresAt} < ${now}`);
+  } catch (error) {
+    console.error("[Cleanup] Failed to delete expired verification codes:", error);
+  }
+}
+
+/**
+ * Delete expired and used password reset tokens from the DB.
+ * Called at server startup and every hour.
+ */
+export async function cleanupExpiredResetTokens(): Promise<void> {
+  try {
+    const db = await getDb();
+    const now = Math.floor(Date.now() / 1000);
+    await db!.delete(passwordResetTokens).where(sql`${passwordResetTokens.expiresAt} < ${now}`);
+  } catch (error) {
+    console.error("[Cleanup] Failed to delete expired reset tokens:", error);
+  }
+}

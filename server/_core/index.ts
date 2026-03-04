@@ -4,6 +4,7 @@ import { createServer } from "http";
 import net from "net";
 import sharp from "sharp";
 import helmet from "helmet";
+import compression from "compression";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
@@ -11,6 +12,7 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import multer from "multer";
 import { storagePut } from "../storage";
+import { cleanupExpiredVerificationCodes, cleanupExpiredResetTokens } from "../db";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -40,6 +42,9 @@ async function startServer() {
     contentSecurityPolicy: false, // disabled to allow Vite HMR and inline scripts
     crossOriginEmbedderPolicy: false, // allows embeds (images, iframes)
   }));
+
+  // Gzip compression — reduces bandwidth by ~60-80%
+  app.use(compression());
 
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
@@ -107,3 +112,11 @@ async function startServer() {
 }
 
 startServer().catch(console.error);
+
+// Run cleanup immediately and then every hour
+cleanupExpiredVerificationCodes();
+cleanupExpiredResetTokens();
+setInterval(() => {
+  cleanupExpiredVerificationCodes();
+  cleanupExpiredResetTokens();
+}, 60 * 60 * 1000); // every 1 hour
