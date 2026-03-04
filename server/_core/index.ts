@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
 import net from "net";
+import sharp from "sharp";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
@@ -54,8 +55,14 @@ async function startServer() {
         return res.status(400).json({ error: "File size must be less than 5MB" });
       }
 
-      const b64 = req.file.buffer.toString("base64");
-      const url = `data:${req.file.mimetype};base64,${b64}`;
+      // Comprimi e ottimizza l'immagine prima di salvarla
+      const compressedBuffer = await sharp(req.file.buffer)
+        .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+        .webp({ quality: 75 })
+        .toBuffer();
+
+      const b64 = compressedBuffer.toString("base64");
+      const url = `data:image/webp;base64,${b64}`;
 
       res.json({ url });
     } catch (error) {
