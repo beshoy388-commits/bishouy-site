@@ -9,6 +9,8 @@ import Footer from "@/components/Footer";
 export default function VerifyEmail() {
     const [location, setLocation] = useLocation();
     const [code, setCode] = useState("");
+    const [cooldown, setCooldown] = useState(60);
+    const [isResending, setIsResending] = useState(false);
 
     // Get email from query params
     const searchParams = new URLSearchParams(window.location.search);
@@ -35,6 +37,31 @@ export default function VerifyEmail() {
         if (code.length === 6) {
             verifyMutation.mutate({ email, code });
         }
+    };
+
+    const resendMutation = trpc.auth.resendVerification.useMutation({
+        onSuccess: (data) => {
+            toast.success("Code Sent!", { description: data.message });
+            setCooldown(60);
+            setIsResending(false);
+        },
+        onError: (error) => {
+            toast.error(error.message);
+            setIsResending(false);
+        }
+    });
+
+    useEffect(() => {
+        if (cooldown > 0) {
+            const timer = setTimeout(() => setCooldown(c => c - 1), 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [cooldown]);
+
+    const handleResend = () => {
+        if (cooldown > 0 || isResending) return;
+        setIsResending(true);
+        resendMutation.mutate({ email });
     };
 
     return (
@@ -78,12 +105,23 @@ export default function VerifyEmail() {
                         </button>
                     </form>
 
-                    <button
-                        onClick={() => setLocation("/login")}
-                        className="mt-8 w-full text-center font-ui text-xs text-[#555550] hover:text-[#8A8880] transition-colors"
-                    >
-                        Back to Login
-                    </button>
+                    <div className="mt-6 text-center space-y-4">
+                        <button
+                            onClick={handleResend}
+                            disabled={cooldown > 0 || isResending}
+                            className="w-full font-ui text-[10px] text-[#8A8880] hover:text-[#E8A020] transition-colors disabled:opacity-50 disabled:hover:text-[#8A8880] uppercase tracking-widest flex justify-center items-center gap-2 border border-[#2A2A28] py-3 rounded-sm"
+                        >
+                            {isResending ? <Loader2 className="animate-spin" size={14} /> : null}
+                            {cooldown > 0 ? `Resend Code in ${cooldown}s` : "Resend Verification Code"}
+                        </button>
+
+                        <button
+                            onClick={() => setLocation("/login")}
+                            className="w-full text-center font-ui text-xs text-[#555550] hover:text-[#8A8880] transition-colors"
+                        >
+                            Back to Login
+                        </button>
+                    </div>
                 </div>
             </main>
 

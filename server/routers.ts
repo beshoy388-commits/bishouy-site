@@ -80,7 +80,7 @@ export const appRouter = router({
         await createVerificationCode({
           email: input.email,
           code,
-          expiresAt: new Date(Date.now() + 15 * 60 * 1000) // 15 mins
+          expiresAt: new Date(Date.now() + 30 * 60 * 1000) // 30 mins
         });
 
         console.log(`[AUTH] Verification code for ${input.email}: ${code}`);
@@ -117,6 +117,27 @@ export const appRouter = router({
         ctx.res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: 1000 * 60 * 60 * 24 * 365 });
 
         return { success: true };
+      }),
+
+    resendVerification: publicProcedure
+      .input(z.object({
+        email: z.string().email()
+      }))
+      .mutation(async ({ input }) => {
+        const user = await getUserByEmail(input.email);
+        if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+        if (user.isVerified) throw new TRPCError({ code: "BAD_REQUEST", message: "User already verified" });
+
+        // Generate new code
+        const code = generateVerificationCode();
+        await createVerificationCode({
+          email: input.email,
+          code,
+          expiresAt: new Date(Date.now() + 30 * 60 * 1000) // 30 mins
+        });
+
+        console.log(`[AUTH] Resent verification code for ${input.email}: ${code}`);
+        return { success: true, message: "Verification code resent." };
       }),
 
     login: publicProcedure

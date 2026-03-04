@@ -128,7 +128,11 @@ The other three semifinalists are Real Madrid, who convincingly beat Manchester 
 async function seedDatabase() {
   try {
     const dbUrl = process.env.DATABASE_URL || "file:sqlite.db";
-    const client = createClient({ url: dbUrl });
+    const authToken = process.env.DATABASE_AUTH_TOKEN;
+    const client = createClient({
+      url: dbUrl,
+      authToken: authToken || undefined
+    });
     const db = drizzle(client);
 
     console.log("Seeding articles...");
