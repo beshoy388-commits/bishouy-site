@@ -537,26 +537,38 @@ export async function searchArticles(query: string, limit: number = 20): Promise
 }
 
 // Newsletter queries
-export async function createSubscriber(email: string): Promise<{ token: string }> {
+export async function createSubscriber(email: string): Promise<{ token: string; alreadyActive: boolean }> {
   const db = await getDb();
-  if (!db) return { token: "" };
+  if (!db) return { token: "", alreadyActive: false };
 
-  const { randomBytes } = await import("node:crypto");
-  const token = randomBytes(32).toString("hex");
-
-  await db.insert(subscribers).values({ email, unsubscribeToken: token }).onConflictDoUpdate({
-    target: subscribers.email,
-    set: { active: 1 }
-  });
-
-  // If subscriber already existed, retrieve existing token
+  // Check if they already exist
   const existing = await db.select()
     .from(subscribers)
     .where(eq(subscribers.email, email))
     .limit(1);
-  const finalToken = existing[0]?.unsubscribeToken || token;
 
-  return { token: finalToken };
+  const subscriber = existing[0];
+
+  if (subscriber) {
+    if (subscriber.active === 1) {
+      // Already active, don't do anything, don't send email
+      return { token: subscriber.unsubscribeToken || "", alreadyActive: true };
+    } else {
+      // Exist but inactive (unsubscribed), reactivate
+      await db.update(subscribers)
+        .set({ active: 1 })
+        .where(eq(subscribers.id, subscriber.id));
+      return { token: subscriber.unsubscribeToken || "", alreadyActive: false };
+    }
+  }
+
+  // Brand new
+  const { randomBytes } = await import("node:crypto");
+  const token = randomBytes(32).toString("hex");
+
+  await db.insert(subscribers).values({ email, unsubscribeToken: token });
+
+  return { token, alreadyActive: false };
 }
 
 export async function getSubscriberByToken(token: string) {
@@ -574,7 +586,10 @@ export async function unsubscribeByToken(token: string): Promise<boolean> {
   if (!db) return false;
   const subscriber = await getSubscriberByToken(token);
   if (!subscriber) return false;
-  await db.delete(subscribers).where(eq(subscribers.id, subscriber.id));
+  // Use soft-delete (setting active to 0) instead of hard deletion
+  await db.update(subscribers)
+    .set({ active: 0 })
+    .where(eq(subscribers.id, subscriber.id));
   return true;
 }
 

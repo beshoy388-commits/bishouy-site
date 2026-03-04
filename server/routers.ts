@@ -687,9 +687,10 @@ export const appRouter = router({
       .input(z.object({ email: z.string().email() }))
       .mutation(async ({ input }) => {
         const cleanEmail = stripHtml(input.email).toLowerCase();
-        const { token } = await createSubscriber(cleanEmail);
-        // Send welcome email async (do not block the response)
-        if (token) {
+        const { token, alreadyActive } = await createSubscriber(cleanEmail);
+
+        // Only send welcome email if they weren't already active
+        if (token && !alreadyActive) {
           sendWelcomeNewsletterEmail(cleanEmail, token).catch(console.error);
         }
         return { success: true };
