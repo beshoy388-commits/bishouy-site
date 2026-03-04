@@ -11,8 +11,12 @@ let _db: ReturnType<typeof drizzle> | null = null;
 export async function getDb() {
   if (!_db) {
     try {
-      const dbUrl = process.env.DATABASE_URL || "file:sqlite.db";
-      const client = createClient({ url: dbUrl });
+      const dbUrl = ENV.databaseUrl || "file:sqlite.db";
+      const authToken = ENV.databaseAuthToken;
+      const client = createClient({
+        url: dbUrl,
+        authToken: authToken || undefined
+      });
       _db = drizzle(client);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
