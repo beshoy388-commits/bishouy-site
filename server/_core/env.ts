@@ -12,4 +12,5 @@ export const ENV = {
   brevoApiKey: process.env.BREVO_API_KEY ?? "",
   // Owner admin email (used as fallback if OWNER_OPEN_ID not set)
   ownerEmail: process.env.OWNER_EMAIL ?? "",
+  appUrl: process.env.APP_URL ?? (process.env.NODE_ENV === "production" ? "https://bishouy.com" : "http://localhost:3000"),
 };

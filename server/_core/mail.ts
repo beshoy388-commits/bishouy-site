@@ -73,7 +73,7 @@ export async function sendPasswordResetEmail(email: string, resetLink: string) {
 }
 
 export async function sendNewsletterBroadcast(subject: string, htmlContent: string, recipients: { email: string; token: string }[]) {
-  const baseUrl = "https://bishouy.com";
+  const baseUrl = ENV.appUrl;
   for (const { email, token } of recipients) {
     const unsubscribeUrl = `${baseUrl}/unsubscribe?token=${token}`;
     await sendBrevoEmail({
@@ -94,7 +94,7 @@ export async function sendNewsletterBroadcast(subject: string, htmlContent: stri
 }
 
 export async function sendWelcomeNewsletterEmail(email: string, unsubscribeToken: string) {
-  const baseUrl = "https://bishouy.com";
+  const baseUrl = ENV.appUrl;
   const unsubscribeUrl = `${baseUrl}/unsubscribe?token=${unsubscribeToken}`;
 
   await sendBrevoEmail({
