@@ -1,0 +1,577 @@
+import "dotenv/config";
+import { COOKIE_NAME } from "@shared/const";
+import { getSessionCookieOptions } from "./_core/cookies";
+import { systemRouter } from "./_core/systemRouter";
+import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
+import { z } from "zod";
+import {
+  getAllArticles, getArticleById, createArticle, updateArticle, deleteArticle, getArticlesByCategory, searchArticles,
+  getCommentsByArticle, createComment, approveComment, rejectComment, deleteComment, getPendingComments,
+  getActiveAdvertisements, getAllAdvertisements, createAdvertisement, updateAdvertisement, deleteAdvertisement,
+  getAllUsers, getUserById, updateUser, deleteUser,
+  toggleArticleLike, getArticleLikeCount, hasUserLikedArticle, getArticleWithLikeInfo, getDb,
+  createSubscriber, getAllSubscribers, getUserByEmail, createVerificationCode, getLatestVerificationCode, deleteVerificationCodeByEmail, upsertUser
+} from "./db";
+import { comments, InsertArticle, articles, users } from "../drizzle/schema";
+import { eq, and } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
+import { logArticleAction } from "./audit";
+import {
+  checkRateLimit,
+  validateAndCleanArticleData,
+  getClientIp,
+  getUserAgent,
+  hashPassword,
+  verifyPassword,
+  generateVerificationCode
+} from "./security";
+import { sdk } from "./_core/sdk";
+
+// Admin-only procedure with security checks
+const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (ctx.user.role !== 'admin') {
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Only admins can perform this action' });
+  }
+
+  // Rate limiting for admin operations
+  const userId = ctx.user.id.toString();
+  if (!checkRateLimit(`admin-${userId}`, 100, 60000)) {
+    throw new TRPCError({ code: 'TOO_MANY_REQUESTS', message: 'Too many admin requests. Please try again later.' });
+  }
+
+  return next({ ctx });
+});
+
+export const appRouter = router({
+  system: systemRouter,
+  auth: router({
+    me: publicProcedure.query(opts => opts.ctx.user),
+    logout: publicProcedure.mutation(({ ctx }) => {
+      const cookieOptions = getSessionCookieOptions(ctx.req);
+      ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
+      return {
+        success: true,
+      } as const;
+    }),
+
+    register: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        password: z.string().min(8),
+        name: z.string().min(2)
+      }))
+      .mutation(async ({ input }) => {
+        const existing = await getUserByEmail(input.email);
+        if (existing) throw new TRPCError({ code: "BAD_REQUEST", message: "Email already registered" });
+
+        const hashedPassword = await hashPassword(input.password);
+        const openId = `local-${Buffer.from(input.email).toString("hex")}`;
+
+        await upsertUser({
+          openId,
+          email: input.email,
+          password: hashedPassword,
+          name: input.name,
+          role: "user",
+          isVerified: 0
+        });
+
+        const code = generateVerificationCode();
+        await createVerificationCode({
+          email: input.email,
+          code,
+          expiresAt: new Date(Date.now() + 15 * 60 * 1000) // 15 mins
+        });
+
+        console.log(`[AUTH] Verification code for ${input.email}: ${code}`);
+        return { success: true, message: "Verification code sent to email (check server console in dev)" };
+      }),
+
+    verifyEmail: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        code: z.string().length(6)
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const user = await getUserByEmail(input.email);
+        if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+
+        const latestCode = await getLatestVerificationCode(input.email);
+        if (!latestCode || latestCode.code !== input.code || latestCode.expiresAt < new Date()) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid or expired code" });
+        }
+
+        await upsertUser({
+          openId: user.openId,
+          isVerified: 1
+        });
+
+        await deleteVerificationCodeByEmail(input.email);
+
+        const sessionToken = await sdk.createSessionToken(user.openId, {
+          name: user.name || "",
+          expiresInMs: 1000 * 60 * 60 * 24 * 365,
+        });
+
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: 1000 * 60 * 60 * 24 * 365 });
+
+        return { success: true };
+      }),
+
+    login: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        password: z.string()
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const user = await getUserByEmail(input.email);
+        if (!user || !user.password) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid credentials" });
+        }
+
+        const isMatch = await verifyPassword(input.password, user.password);
+        if (!isMatch) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid credentials" });
+        }
+
+        if (!user.isVerified) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "Please verify your email first" });
+        }
+
+        const sessionToken = await sdk.createSessionToken(user.openId, {
+          name: user.name || "",
+          expiresInMs: 1000 * 60 * 60 * 24 * 365,
+        });
+
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: 1000 * 60 * 60 * 24 * 365 });
+
+        return { success: true };
+      }),
+  }),
+
+  articles: router({
+    // Public: Get all articles
+    getAll: publicProcedure.query(async () => {
+      return getAllArticles();
+    }),
+
+    // Public: List articles (alias for getAll)
+    list: publicProcedure.query(async ({ ctx }) => {
+      // If admin, show everything (drafts included)
+      const isAdmin = ctx.user?.role === "admin";
+      return getAllArticles(isAdmin);
+    }),
+
+    // Public: Get article by ID
+    getById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return getArticleById(input.id);
+      }),
+
+    // Public: Get article by slug
+    getBySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input, ctx }) => {
+        const db = await getDb();
+        if (!db) return null;
+
+        const isAdmin = ctx.user?.role === "admin";
+
+        if (!isAdmin) {
+          const result = await db.select().from(articles).where(
+            and(
+              eq(articles.slug, input.slug),
+              eq(articles.status, "published")
+            )
+          ).limit(1);
+          return result[0] || null;
+        }
+
+        const result = await db.select().from(articles).where(eq(articles.slug, input.slug)).limit(1);
+        return result[0] || null;
+      }),
+
+    // Public: Get articles by category
+    getByCategory: publicProcedure
+      .input(z.object({ category: z.string() }))
+      .query(async ({ input, ctx }) => {
+        const isAdmin = ctx.user?.role === "admin";
+        return getArticlesByCategory(input.category, isAdmin);
+      }),
+
+    // Public: Search articles
+    search: publicProcedure
+      .input(z.object({ query: z.string() }))
+      .query(async ({ input }) => {
+        return searchArticles(input.query);
+      }),
+
+    // Protected: Create article (admin only)
+    create: adminProcedure
+      .input(z.object({
+        title: z.string().min(1).max(255),
+        slug: z.string().min(1).max(255),
+        excerpt: z.string().min(1).max(500),
+        content: z.string().min(1).max(50000),
+        category: z.string(),
+        categoryColor: z.string(),
+        author: z.string(),
+        authorRole: z.string(),
+        image: z.string(),
+        featured: z.boolean().default(false),
+        breaking: z.boolean().default(false),
+        status: z.enum(["draft", "published"]).default("published"),
+        readTime: z.number().default(5),
+        tags: z.array(z.string()).default([]),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const validatedData = validateAndCleanArticleData(input);
+        // Convert boolean to int and array to string for database
+        const dbData: any = {
+          ...validatedData,
+          featured: validatedData.featured ? 1 : 0,
+          breaking: validatedData.breaking ? 1 : 0,
+          tags: Array.isArray(validatedData.tags) ? JSON.stringify(validatedData.tags) : validatedData.tags,
+        };
+        const article = await createArticle(dbData);
+
+        // Log the action
+        await logArticleAction(ctx.user.id, 'create', null, { title: input.title }, getClientIp(ctx.req), getUserAgent(ctx.req));
+
+        return article;
+      }),
+
+    // Protected: Update article (admin only)
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().min(1).max(255).optional(),
+        slug: z.string().min(1).max(255).optional(),
+        excerpt: z.string().min(1).max(500).optional(),
+        content: z.string().min(1).max(50000).optional(),
+        category: z.string().optional(),
+        categoryColor: z.string().optional(),
+        author: z.string().optional(),
+        authorRole: z.string().optional(),
+        image: z.string().optional(),
+        featured: z.boolean().optional(),
+        breaking: z.boolean().optional(),
+        status: z.enum(["draft", "published"]).optional(),
+        readTime: z.number().optional(),
+        tags: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const { id, ...updateData } = input;
+        // Convert boolean to int and array to string for database
+        const dbData: Partial<InsertArticle> = {};
+        Object.entries(updateData).forEach(([key, value]) => {
+          if (value === undefined) return;
+          if (key === 'featured' || key === 'breaking') {
+            (dbData as any)[key] = value ? 1 : 0;
+          } else if (key === 'tags') {
+            (dbData as any)[key] = Array.isArray(value) ? JSON.stringify(value) : value;
+          } else {
+            (dbData as any)[key] = value;
+          }
+        });
+        const article = await updateArticle(id, dbData);
+
+        // Log the action
+        await logArticleAction(ctx.user.id, 'update', null, { title: input.title }, getClientIp(ctx.req), getUserAgent(ctx.req));
+
+        return article;
+      }),
+
+    // Protected: Delete article (admin only)
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const article = await getArticleById(input.id);
+        if (!article) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Article not found' });
+        }
+
+        await deleteArticle(input.id);
+
+        // Log the action
+        await logArticleAction(ctx.user.id, 'delete', input.id, { title: article.title }, getClientIp(ctx.req), getUserAgent(ctx.req));
+
+        return { success: true };
+      }),
+
+    // Protected: Toggle like on article
+    toggleLike: protectedProcedure
+      .input(z.object({ articleId: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        return toggleArticleLike(ctx.user.id, input.articleId);
+      }),
+
+    // Public: Get like count for article
+    getLikeCount: publicProcedure
+      .input(z.object({ articleId: z.number() }))
+      .query(async ({ input }) => {
+        return getArticleLikeCount(input.articleId);
+      }),
+
+    // Public: Check if user has liked article
+    hasLiked: publicProcedure
+      .input(z.object({ articleId: z.number(), userId: z.number().optional() }))
+      .query(async ({ input }) => {
+        if (!input.userId) return false;
+        return hasUserLikedArticle(input.userId, input.articleId);
+      }),
+
+    // Public: Get article with like info
+    getWithLikeInfo: publicProcedure
+      .input(z.object({ articleId: z.number(), userId: z.number().optional() }))
+      .query(async ({ input }) => {
+        return getArticleWithLikeInfo(input.articleId, input.userId);
+      }),
+  }),
+
+  comments: router({
+    // Public: Get approved comments for an article
+    getByArticle: publicProcedure
+      .input(z.object({ articleId: z.number() }))
+      .query(async ({ input }) => {
+        return getCommentsByArticle(input.articleId, true);
+      }),
+
+    // Protected: Create a comment
+    create: protectedProcedure
+      .input(z.object({
+        articleId: z.number(),
+        content: z.string().min(1).max(5000),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Rate limiting for comments
+        const userId = ctx.user.id.toString();
+        if (!checkRateLimit(`comment-${userId}`, 10, 60000)) {
+          throw new TRPCError({ code: 'TOO_MANY_REQUESTS', message: 'Too many comments. Please try again later.' });
+        }
+
+        const article = await getArticleById(input.articleId);
+        if (!article) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Article not found' });
+        }
+
+        return createComment({
+          articleId: input.articleId,
+          userId: ctx.user.id,
+          content: input.content,
+          approved: 0, // Comments need admin approval
+        });
+      }),
+
+    // Admin: Get pending comments
+    getPending: adminProcedure.query(async () => {
+      return getPendingComments();
+    }),
+
+    // Admin: Get all comments for an article (including unapproved)
+    getAllByArticle: adminProcedure
+      .input(z.object({ articleId: z.number() }))
+      .query(async ({ input }) => {
+        return getCommentsByArticle(input.articleId, false);
+      }),
+
+    // Admin: Approve comment
+    approve: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return approveComment(input.id);
+      }),
+
+    // Admin: Reject comment
+    reject: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await rejectComment(input.id);
+        return { success: true };
+      }),
+
+    // Admin: Delete comment
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await deleteComment(input.id);
+        return { success: true };
+      }),
+
+    // Protected: Delete own comment
+    deleteOwn: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database unavailable' });
+        const comment = await db.select().from(comments).where(eq(comments.id, input.id)).limit(1);
+        if (comment.length === 0) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Comment not found' });
+        }
+        if (comment[0].userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'You can only delete your own comments' });
+        }
+        await deleteComment(input.id);
+        return { success: true };
+      }),
+  }),
+
+  advertisements: router({
+    // Public: Get active ads for a specific position
+    getByPosition: publicProcedure
+      .input(z.object({ position: z.enum(["sidebar", "banner_top", "banner_bottom", "inline"]) }))
+      .query(async ({ input }) => {
+        return getActiveAdvertisements(input.position);
+      }),
+
+    // Admin: Get all ads
+    getAll: adminProcedure.query(async () => {
+      return getAllAdvertisements();
+    }),
+
+    // Admin: Create ad
+    create: adminProcedure
+      .input(z.object({
+        title: z.string().min(1).max(255),
+        imageUrl: z.string().url(),
+        linkUrl: z.string().url(),
+        position: z.enum(["sidebar", "banner_top", "banner_bottom", "inline"]),
+        active: z.number().default(1),
+        startDate: z.date().optional(),
+        endDate: z.date().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        return createAdvertisement(input);
+      }),
+
+    // Admin: Update ad
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        title: z.string().min(1).max(255).optional(),
+        imageUrl: z.string().url().optional(),
+        linkUrl: z.string().url().optional(),
+        position: z.enum(["sidebar", "banner_top", "banner_bottom", "inline"]).optional(),
+        active: z.number().optional(),
+        startDate: z.date().optional(),
+        endDate: z.date().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updateData } = input;
+        return updateAdvertisement(id, updateData);
+      }),
+
+    // Admin: Delete ad
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await deleteAdvertisement(input.id);
+        return { success: true };
+      }),
+  }),
+
+  likes: router({
+    // Public: Get like count for an article
+    getCount: publicProcedure
+      .input(z.object({ articleId: z.number() }))
+      .query(async ({ input }) => {
+        return getArticleLikeCount(input.articleId);
+      }),
+
+    // Protected: Check if user liked an article
+    hasUserLiked: protectedProcedure
+      .input(z.object({ articleId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        return hasUserLikedArticle(input.articleId, ctx.user.id);
+      }),
+
+    // Protected: Toggle like on an article
+    toggle: protectedProcedure
+      .input(z.object({ articleId: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        return toggleArticleLike(input.articleId, ctx.user.id);
+      }),
+  }),
+
+  users: router({
+    // Admin: Get all users
+    getAll: adminProcedure.query(async () => {
+      return getAllUsers();
+    }),
+
+    // Admin: Get user by ID
+    getById: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return getUserById(input.id);
+      }),
+
+    // Admin: Update user
+    update: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().max(255).optional(),
+        email: z.string().email().optional(),
+        role: z.enum(['user', 'admin']).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...updateData } = input;
+        return updateUser(id, updateData);
+      }),
+
+    // Protected: Update own profile
+    updateMe: protectedProcedure
+      .input(z.object({
+        name: z.string().max(255).optional(),
+        username: z.string().max(50).optional(),
+        bio: z.string().max(500).optional(),
+        avatarUrl: z.string().url().optional().or(z.literal('')),
+        website: z.string().url().optional().or(z.literal('')),
+        location: z.string().max(100).optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return updateUser(ctx.user.id, input);
+      }),
+
+    // Admin: Delete user
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await deleteUser(input.id);
+        return { success: true };
+      }),
+  }),
+
+  newsletter: router({
+    subscribe: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(async ({ input }) => {
+        await createSubscriber(input.email);
+        return { success: true };
+      }),
+
+    list: adminProcedure.query(async () => {
+      return getAllSubscribers();
+    })
+  }),
+
+  ai: router({
+    chat: publicProcedure
+      .input(z.object({
+        messages: z.array(z.object({
+          role: z.enum(["system", "user", "assistant"]),
+          content: z.string()
+        }))
+      }))
+      .mutation(async ({ input }) => {
+        // Simple mock response for now, can be connected to OpenAI/built-in LLM
+        const userMsg = input.messages[input.messages.length - 1].content;
+        return `I am the BISHOUY AI assistant. You asked: "${userMsg}". How can I help you with more news today?`;
+      })
+  })
+});
+
+export type AppRouter = typeof appRouter;
