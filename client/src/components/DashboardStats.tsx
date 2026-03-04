@@ -22,49 +22,49 @@ export default function DashboardStats() {
                 <p className="font-ui text-sm text-[#8A8880]">High-level metrics for Bishouy.com</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6 flex flex-col justify-between h-32 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <Users size={64} className="text-[#E8A020]" />
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-2 sm:p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <Users size={48} className="text-[#E8A020] sm:w-16 sm:h-16" />
                     </div>
                     <div className="flex items-center gap-2 text-[#8A8880] mb-2 z-10">
-                        <Users size={16} />
-                        <span className="font-ui text-xs font-600 uppercase tracking-widest">Total Users</span>
+                        <Users size={14} className="sm:w-4 sm:h-4" />
+                        <span className="font-ui text-[9px] sm:text-xs font-600 uppercase tracking-widest truncate">Users</span>
                     </div>
-                    <div className="text-4xl font-headline text-[#F2F0EB] z-10">{stats?.totalUsers || 0}</div>
+                    <div className="text-2xl sm:text-4xl font-headline text-[#F2F0EB] z-10">{stats?.totalUsers || 0}</div>
                 </Card>
 
-                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6 flex flex-col justify-between h-32 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <FileText size={64} className="text-[#E8A020]" />
+                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-2 sm:p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <FileText size={48} className="text-[#E8A020] sm:w-16 sm:h-16" />
                     </div>
                     <div className="flex items-center gap-2 text-[#8A8880] mb-2 z-10">
-                        <FileText size={16} />
-                        <span className="font-ui text-xs font-600 uppercase tracking-widest">Articles Published</span>
+                        <FileText size={14} className="sm:w-4 sm:h-4" />
+                        <span className="font-ui text-[9px] sm:text-xs font-600 uppercase tracking-widest truncate">Articles</span>
                     </div>
-                    <div className="text-4xl font-headline text-[#F2F0EB] z-10">{stats?.totalArticles || 0}</div>
+                    <div className="text-2xl sm:text-4xl font-headline text-[#F2F0EB] z-10">{stats?.totalArticles || 0}</div>
                 </Card>
 
-                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6 flex flex-col justify-between h-32 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <MessageSquare size={64} className="text-[#E8A020]" />
+                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-2 sm:p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <MessageSquare size={48} className="text-[#E8A020] sm:w-16 sm:h-16" />
                     </div>
                     <div className="flex items-center gap-2 text-[#8A8880] mb-2 z-10">
-                        <MessageSquare size={16} />
-                        <span className="font-ui text-xs font-600 uppercase tracking-widest">Total Comments</span>
+                        <MessageSquare size={14} className="sm:w-4 sm:h-4" />
+                        <span className="font-ui text-[9px] sm:text-xs font-600 uppercase tracking-widest truncate">Comments</span>
                     </div>
-                    <div className="text-4xl font-headline text-[#F2F0EB] z-10">{stats?.totalComments || 0}</div>
+                    <div className="text-2xl sm:text-4xl font-headline text-[#F2F0EB] z-10">{stats?.totalComments || 0}</div>
                 </Card>
 
-                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6 flex flex-col justify-between h-32 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <Megaphone size={64} className="text-[#E8A020]" />
+                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-2 sm:p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <Megaphone size={48} className="text-[#E8A020] sm:w-16 sm:h-16" />
                     </div>
                     <div className="flex items-center gap-2 text-[#8A8880] mb-2 z-10">
-                        <Megaphone size={16} />
-                        <span className="font-ui text-xs font-600 uppercase tracking-widest">Active Ads</span>
+                        <Megaphone size={14} className="sm:w-4 sm:h-4" />
+                        <span className="font-ui text-[9px] sm:text-xs font-600 uppercase tracking-widest truncate">Active Ads</span>
                     </div>
-                    <div className="text-4xl font-headline text-[#F2F0EB] z-10">{stats?.totalAds || 0}</div>
+                    <div className="text-2xl sm:text-4xl font-headline text-[#F2F0EB] z-10">{stats?.totalAds || 0}</div>
                 </Card>
             </div>
 

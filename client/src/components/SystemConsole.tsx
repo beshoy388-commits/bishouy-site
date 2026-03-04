@@ -8,14 +8,14 @@ export default function SystemConsole() {
 
     return (
         <div className="space-y-6">
-            <header className="flex items-center justify-between">
+            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="font-headline text-2xl text-[#F2F0EB] mb-1">System Debug Console</h2>
-                    <p className="font-ui text-sm text-[#8A8880]">Monitor system events and verification codes in real-time.</p>
+                    <h2 className="font-headline text-xl md:text-2xl text-[#F2F0EB] mb-1">System Debug Console</h2>
+                    <p className="font-ui text-xs text-[#8A8880]">Monitor system events and verification codes in real-time.</p>
                 </div>
                 <button
                     onClick={() => refetch()}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#1C1C1A] border border-[#2A2A28] text-[#F2F0EB] font-ui text-xs rounded-sm hover:border-[#E8A020] transition-colors"
+                    className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#1C1C1A] border border-[#2A2A28] text-[#F2F0EB] font-ui text-[10px] md:text-sm uppercase tracking-widest rounded-sm hover:border-[#E8A020] transition-colors w-full sm:w-auto"
                 >
                     <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
                     Refresh

@@ -16,7 +16,7 @@ export default function GlobalComments() {
 
     const approveMutation = trpc.comments.approve.useMutation({
         onSuccess: () => {
-            toast.success("Commento approvato");
+            toast.success("Comment approved");
             utils.comments.getPending.invalidate();
             utils.comments.getAll.invalidate();
         }
@@ -24,7 +24,7 @@ export default function GlobalComments() {
 
     const rejectMutation = trpc.comments.reject.useMutation({
         onSuccess: () => {
-            toast.success("Commento rifiutato");
+            toast.success("Comment rejected");
             utils.comments.getPending.invalidate();
             utils.comments.getAll.invalidate();
         }
@@ -32,7 +32,7 @@ export default function GlobalComments() {
 
     const deleteMutation = trpc.comments.delete.useMutation({
         onSuccess: () => {
-            toast.success("Commento eliminato definitivamente");
+            toast.success("Comment permanently deleted");
             utils.comments.getPending.invalidate();
             utils.comments.getAll.invalidate();
         }
@@ -43,32 +43,32 @@ export default function GlobalComments() {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
                 <div>
-                    <h2 className="font-headline text-2xl text-[#F2F0EB] mb-2">Commity Center</h2>
-                    <p className="font-ui text-sm text-[#8A8880]">Moderazione Globale e gestione dei dibattiti</p>
+                    <h2 className="font-headline text-xl md:text-2xl text-[#F2F0EB] mb-1 md:mb-2">Community Center</h2>
+                    <p className="font-ui text-xs text-[#8A8880]">Global moderation and community management</p>
                 </div>
 
-                <div className="flex bg-[#1C1C1A] border border-[#2A2A28] rounded-sm p-1">
+                <div className="flex bg-[#1C1C1A] border border-[#2A2A28] rounded-sm p-1 w-full lg:w-auto">
                     <button
                         onClick={() => setFilter("pending")}
-                        className={`px-4 py-2 text-xs font-ui font-600 uppercase tracking-widest transition-colors rounded-sm flex items-center gap-2 ${filter === "pending" ? "bg-[#E8A020] text-[#0F0F0E]" : "text-[#8A8880] hover:text-[#F2F0EB]"
+                        className={`flex-1 lg:flex-none px-4 py-2.5 text-[10px] md:text-xs font-ui font-600 uppercase tracking-widest transition-colors rounded-sm flex items-center justify-center gap-2 ${filter === "pending" ? "bg-[#E8A020] text-[#0F0F0E]" : "text-[#8A8880] hover:text-[#F2F0EB]"
                             }`}
                     >
                         <Clock size={14} />
-                        In Attesa
+                        Pending
                         {(pendingQuery.data?.length || 0) > 0 && (
-                            <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-[10px] ml-1">
+                            <span className="bg-red-500 text-white px-2 py-0.5 rounded-full text-[9px] ml-1">
                                 {pendingQuery.data?.length}
                             </span>
                         )}
                     </button>
                     <button
                         onClick={() => setFilter("all")}
-                        className={`px-4 py-2 text-xs font-ui font-600 uppercase tracking-widest transition-colors rounded-sm flex items-center gap-2 ${filter === "all" ? "bg-[#333330] text-[#E8A020]" : "text-[#8A8880] hover:text-[#F2F0EB]"
+                        className={`flex-1 lg:flex-none px-4 py-2.5 text-[10px] md:text-xs font-ui font-600 uppercase tracking-widest transition-colors rounded-sm flex items-center justify-center gap-2 ${filter === "all" ? "bg-[#333330] text-[#E8A020]" : "text-[#8A8880] hover:text-[#F2F0EB]"
                             }`}
                     >
-                        Tutti i Commenti
+                        All Comments
                     </button>
                 </div>
             </div>
@@ -78,7 +78,7 @@ export default function GlobalComments() {
             ) : !commentsData || commentsData.length === 0 ? (
                 <Card className="bg-[#1C1C1A] border-[#2A2A28] p-12 text-center text-[#8A8880] font-ui flex flex-col items-center">
                     <CheckCircle2 size={48} className="text-[#2A2A28] mb-4" />
-                    <p>Nessun commento trovato in questa sezione.</p>
+                    <p>No comments found in this section.</p>
                 </Card>
             ) : (
                 <div className="space-y-4">
@@ -99,10 +99,10 @@ export default function GlobalComments() {
                                         {/* Meta */}
                                         <div className="flex items-center flex-wrap gap-x-3 gap-y-2 mb-3">
                                             <span className={`flex items-center gap-1 font-ui text-[10px] uppercase tracking-widest px-2 py-1 rounded-sm ${isPending ? "bg-yellow-900/40 text-yellow-500 border border-yellow-500/20" :
-                                                    isApproved ? "bg-green-900/40 text-green-500 border border-green-500/20" :
-                                                        "bg-red-900/40 text-red-500 border border-red-500/20"
+                                                isApproved ? "bg-green-900/40 text-green-500 border border-green-500/20" :
+                                                    "bg-red-900/40 text-red-500 border border-red-500/20"
                                                 }`}>
-                                                {isPending ? "Da moderare" : isApproved ? "Pubblicato" : "Rifiutato"}
+                                                {isPending ? "To Moderate" : isApproved ? "Published" : "Rejected"}
                                             </span>
 
                                             <div className="flex items-center gap-2">
@@ -117,11 +117,11 @@ export default function GlobalComments() {
                                             </div>
 
                                             <span className="font-ui text-xs text-[#555550] flex items-center gap-1">
-                                                su Articolo <ArrowRight size={10} className="inline" /> #{comment.articleId}
+                                                on Article <ArrowRight size={10} className="inline" /> #{comment.articleId}
                                             </span>
 
                                             <span className="font-ui text-[10px] text-[#555550]">
-                                                {new Date(comment.createdAt).toLocaleDateString("it-IT", {
+                                                {new Date(comment.createdAt).toLocaleDateString("en-US", {
                                                     year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
                                                 })}
                                             </span>
@@ -133,7 +133,7 @@ export default function GlobalComments() {
                                             {comment.isEdited === 1 && comment.originalContent && (
                                                 <div className="mt-3 p-3 bg-[#0F0F0E] rounded-sm border border-[#222220] flex flex-col gap-1">
                                                     <p className="font-ui text-[10px] text-[#555550] uppercase tracking-widest flex items-center gap-1">
-                                                        <Clock size={10} /> Testo originale prima dell'edit:
+                                                        <Clock size={10} /> Original text before edit:
                                                     </p>
                                                     <p className="text-[#8A8880] text-xs italic line-through opacity-70">{comment.originalContent}</p>
                                                 </div>
@@ -150,7 +150,7 @@ export default function GlobalComments() {
                                                 className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 py-2 bg-green-900/30 hover:bg-green-900/60 text-green-400 font-ui text-xs uppercase tracking-wider rounded-sm transition-colors disabled:opacity-50 border border-green-500/20"
                                                 title="Approva e pubblica sul sito"
                                             >
-                                                <Check size={14} /> <span className="md:hidden">Approva</span>
+                                                <Check size={14} /> <span className="md:hidden">Approve</span>
                                             </button>
                                         )}
 
@@ -161,19 +161,19 @@ export default function GlobalComments() {
                                                 className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 py-2 bg-yellow-900/30 hover:bg-yellow-900/60 text-yellow-400 font-ui text-xs uppercase tracking-wider rounded-sm transition-colors disabled:opacity-50 border border-yellow-500/20"
                                                 title="Nascondi (Rifiuta)"
                                             >
-                                                <X size={14} /> <span className="md:hidden">Rifiuta</span>
+                                                <X size={14} /> <span className="md:hidden">Reject</span>
                                             </button>
                                         )}
 
                                         <button
                                             onClick={() => {
-                                                if (confirm("Sei sicuro di voler eliminare DEFINITIVAMENTE questo commento? L'azione non può essere annullata.")) {
+                                                if (confirm("Are you sure you want to PERMANENTLY delete this comment? This action cannot be undone.")) {
                                                     deleteMutation.mutate({ id: comment.id });
                                                 }
                                             }}
                                             disabled={deleteMutation.isPending}
                                             className="p-2 bg-[#2A2A28] hover:bg-red-900/30 text-red-500 rounded-sm transition-colors disabled:opacity-50 border border-[#333330] hover:border-red-500/30"
-                                            title="Elimina dal Database"
+                                            title="Delete from Database"
                                         >
                                             <Trash2 size={16} />
                                         </button>

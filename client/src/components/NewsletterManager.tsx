@@ -32,16 +32,16 @@ export default function NewsletterManager() {
     const activeSubscribersCount = listQuery.data?.filter((s: any) => s.active).length || 0;
 
     return (
-        <div className="space-y-8">
-            <div className="flex items-center justify-between mb-8">
+        <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h2 className="font-headline text-2xl text-[#F2F0EB] mb-2">Newsletter Studio</h2>
-                    <p className="font-ui text-sm text-[#8A8880]">Invia aggiornamenti a tutta la tua mailing list</p>
+                    <h2 className="font-headline text-xl md:text-2xl text-[#F2F0EB] mb-1 md:mb-2">Newsletter Studio</h2>
+                    <p className="font-ui text-xs text-[#8A8880]">Send updates to your mailing list</p>
                 </div>
-                <div className="flex items-center gap-3 bg-[#1C1C1A] border border-[#2A2A28] px-4 py-2 rounded-sm">
+                <div className="flex items-center gap-3 bg-[#1C1C1A] border border-[#2A2A28] px-4 py-2 rounded-sm w-full sm:w-auto justify-center">
                     <Users size={16} className="text-[#E8A020]" />
-                    <span className="font-ui text-xs font-600 uppercase tracking-widest text-[#F2F0EB]">
-                        {activeSubscribersCount} Iscritti Attivi
+                    <span className="font-ui text-[10px] sm:text-xs font-600 uppercase tracking-widest text-[#F2F0EB]">
+                        {activeSubscribersCount} Active Subs
                     </span>
                 </div>
             </div>

@@ -79,85 +79,87 @@ export default function AdminPanel() {
     <div className="min-h-screen bg-[#0F0F0E]">
       {/* Header */}
       <div className="bg-[#1C1C1A] border-b border-[#2A2A28] sticky top-0 z-50">
-        <div className="container py-4 flex items-center justify-between">
-          <div>
-            <h1 className="font-display text-2xl text-[#F2F0EB]">ADMIN PANEL</h1>
-            <p className="font-ui text-xs text-[#8A8880]">Logged in as: {user?.name || user?.email}</p>
+        <div className="container py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="text-center md:text-left">
+            <h1 className="font-display text-xl md:text-2xl text-[#F2F0EB]">ADMIN PANEL</h1>
+            <p className="font-ui text-[10px] md:text-xs text-[#8A8880]">Logged in as: {user?.name || user?.email}</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto justify-center">
             <a
               href="/"
-              className="flex items-center gap-2 text-[#8A8880] hover:text-[#E8A020] transition-colors font-ui text-sm"
+              className="flex items-center gap-1.5 text-[#8A8880] hover:text-[#E8A020] transition-colors font-ui text-[10px] md:text-sm uppercase tracking-wider"
             >
-              <Eye size={16} />
-              View Site
+              <Eye size={14} />
+              <span className="hidden xs:inline">View Site</span>
             </a>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
+              className="flex items-center gap-1.5 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-600 uppercase tracking-wider px-3 md:px-4 py-1.5 md:py-2 rounded-sm transition-colors"
             >
-              <LogOut size={14} />
+              <LogOut size={12} />
               Logout
             </button>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="container border-t border-[#2A2A28] flex gap-2 sm:gap-6 overflow-x-auto custom-scrollbar whitespace-nowrap hide-scroll">
-          <button
-            onClick={() => { setActiveTab("dashboard"); setShowForm(false); }}
-            className={`py-3 px-2 sm:px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${activeTab === "dashboard" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-              }`}
-          >
-            <LayoutDashboard size={14} className="hidden sm:inline" /> Dashboard
-          </button>
-          <button
-            onClick={() => { setActiveTab("articles"); setShowForm(false); }}
-            className={`py-3 px-2 sm:px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 ${activeTab === "articles" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-              }`}
-          >
-            Articles
-          </button>
-          <button
-            onClick={() => { setActiveTab("comments"); setShowForm(false); }}
-            className={`py-3 px-2 sm:px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${activeTab === "comments" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-              }`}
-          >
-            <MessageSquare size={14} className="hidden sm:inline" /> Comments
-            {pendingCount > 0 && (
-              <span className="bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                {pendingCount}
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => { setActiveTab("ads"); setShowForm(false); }}
-            className={`py-3 px-2 sm:px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${activeTab === "ads" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-              }`}
-          >
-            <Megaphone size={14} className="hidden sm:inline" /> Ads
-          </button>
-          <button
-            onClick={() => { setActiveTab("newsletter"); setShowForm(false); }}
-            className={`py-3 px-2 sm:px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${activeTab === "newsletter" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-              }`}
-          >
-            <Send size={14} className="hidden sm:inline" /> Newsletter
-          </button>
-          <button
-            onClick={() => { setActiveTab("users"); setShowForm(false); }}
-            className={`py-3 px-2 sm:px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 ${activeTab === "users" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-              }`}
-          >
-            Users
-          </button>
-          <button
-            onClick={() => { setActiveTab("system"); setShowForm(false); }}
-            className={`py-3 px-2 sm:px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${activeTab === "system" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-              }`}
-          >
-            <Terminal size={14} className="hidden sm:inline" /> System
-          </button>
+        {/* Tabs - Scrollable on mobile */}
+        <div className="container border-t border-[#2A2A28]">
+          <div className="flex gap-1 sm:gap-4 overflow-x-auto custom-scrollbar whitespace-nowrap hide-scroll py-1">
+            <button
+              onClick={() => { setActiveTab("dashboard"); setShowForm(false); }}
+              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "dashboard" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+                }`}
+            >
+              <LayoutDashboard size={14} /> <span className="hidden sm:inline">Dashboard</span>
+            </button>
+            <button
+              onClick={() => { setActiveTab("articles"); setShowForm(false); }}
+              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex-shrink-0 ${activeTab === "articles" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+                }`}
+            >
+              Articles
+            </button>
+            <button
+              onClick={() => { setActiveTab("comments"); setShowForm(false); }}
+              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "comments" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+                }`}
+            >
+              <MessageSquare size={14} /> <span className="hidden sm:inline">Comments</span>
+              {pendingCount > 0 && (
+                <span className="bg-red-500 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                  {pendingCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => { setActiveTab("ads"); setShowForm(false); }}
+              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "ads" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+                }`}
+            >
+              <Megaphone size={14} /> <span className="hidden sm:inline">Ads</span>
+            </button>
+            <button
+              onClick={() => { setActiveTab("newsletter"); setShowForm(false); }}
+              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "newsletter" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+                }`}
+            >
+              <Send size={14} /> <span className="hidden sm:inline">Newsletter</span>
+            </button>
+            <button
+              onClick={() => { setActiveTab("users"); setShowForm(false); }}
+              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex-shrink-0 ${activeTab === "users" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+                }`}
+            >
+              Users
+            </button>
+            <button
+              onClick={() => { setActiveTab("system"); setShowForm(false); }}
+              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "system" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+                }`}
+            >
+              <Terminal size={14} /> <span className="hidden sm:inline">System</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -191,16 +193,16 @@ export default function AdminPanel() {
             </div>
           ) : (
             <div>
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
-                  <h2 className="font-headline text-2xl text-[#F2F0EB] mb-2">Articles Management</h2>
-                  <p className="font-ui text-sm text-[#8A8880]">
+                  <h2 className="font-headline text-xl md:text-2xl text-[#F2F0EB] mb-1 md:mb-2">Articles Management</h2>
+                  <p className="font-ui text-xs text-[#8A8880]">
                     Total articles: {articlesQuery.data?.length || 0}
                   </p>
                 </div>
                 <button
                   onClick={() => setShowForm(true)}
-                  className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors"
+                  className="flex items-center justify-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] md:text-xs font-600 uppercase tracking-wider px-6 py-2.5 md:py-3 rounded-sm transition-colors w-full sm:w-auto"
                 >
                   <Plus size={16} />
                   New Article

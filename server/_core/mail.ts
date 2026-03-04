@@ -6,6 +6,8 @@ async function sendBrevoEmail({ to, subject, htmlContent }: { to: string | strin
     return;
   }
 
+  // Verified sender on Brevo — bishouy.com domain authenticated
+  const senderEmail = "no-reply@bishouy.com";
   const recipients = Array.isArray(to) ? to.map(email => ({ email })) : [{ email: to }];
 
   try {
@@ -17,19 +19,20 @@ async function sendBrevoEmail({ to, subject, htmlContent }: { to: string | strin
         "content-type": "application/json"
       },
       body: JSON.stringify({
-        sender: { name: "Bishouy.com", email: "onboarding@brevo.dev" },
+        sender: { name: "Bishouy.com", email: senderEmail },
         to: recipients,
         subject: subject,
         htmlContent: htmlContent
       })
     });
 
+    const result = await response.json();
+
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`Brevo API error: ${JSON.stringify(error)}`);
+      throw new Error(`Brevo API error: ${JSON.stringify(result)}`);
     }
 
-    console.log(`[EMAIL SENT] via Brevo to ${Array.isArray(to) ? to.length + " recipients" : to}`);
+    console.log(`[EMAIL SENT] via Brevo to ${Array.isArray(to) ? to.length + " recipients" : to}. MessageID: ${result.messageId}`);
   } catch (error) {
     console.error("[EMAIL ERROR] Failed to send email via Brevo:", error);
   }

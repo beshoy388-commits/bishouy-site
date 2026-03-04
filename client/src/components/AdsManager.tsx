@@ -52,16 +52,16 @@ export default function AdsManager() {
     };
 
     return (
-        <div className="space-y-8">
-            <div className="flex items-center justify-between mb-8">
+        <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h2 className="font-headline text-2xl text-[#F2F0EB] mb-2">Ads Manager</h2>
-                    <p className="font-ui text-sm text-[#8A8880]">Manage internal banners and affiliate links</p>
+                    <h2 className="font-headline text-xl md:text-2xl text-[#F2F0EB] mb-1 md:mb-2">Ads Manager</h2>
+                    <p className="font-ui text-xs text-[#8A8880]">Manage internal banners and affiliate links</p>
                 </div>
                 {!editingAd && (
                     <button
                         onClick={() => setEditingAd({ position: "sidebar", active: 1, title: "", imageUrl: "", linkUrl: "" })}
-                        className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors"
+                        className="flex items-center justify-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] md:text-xs font-600 uppercase tracking-wider px-4 md:px-6 py-2.5 md:py-3 rounded-sm transition-colors w-full sm:w-auto"
                     >
                         <Plus size={16} />
                         Add New Ad
