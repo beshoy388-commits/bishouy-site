@@ -13,12 +13,16 @@ import { toast } from "sonner";
 import ArticleForm from "@/components/ArticleForm";
 import UsersManagement from "./UsersManagement";
 import SystemConsole from "@/components/SystemConsole";
-import { Loader2, Plus, Edit, Trash2, Eye, LogOut, Check, X, MessageSquare, Clock, Terminal } from "lucide-react";
+import DashboardStats from "@/components/DashboardStats";
+import NewsletterManager from "@/components/NewsletterManager";
+import AdsManager from "@/components/AdsManager";
+import GlobalComments from "@/components/GlobalComments";
+import { Loader2, Plus, Edit, Trash2, Eye, LogOut, MessageSquare, Terminal, LayoutDashboard, Megaphone, Send } from "lucide-react";
 
 export default function AdminPanel() {
   const { user, isAuthenticated, logout } = useAuth();
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"articles" | "users" | "comments" | "system">("articles");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "articles" | "users" | "comments" | "ads" | "newsletter" | "system">("dashboard");
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
 
@@ -47,36 +51,6 @@ export default function AdminPanel() {
     },
   });
 
-  const approveCommentMutation = trpc.comments.approve.useMutation({
-    onSuccess: () => {
-      toast.success("Commento approvato e pubblicato");
-      pendingCommentsQuery.refetch();
-    },
-    onError: (error) => {
-      toast.error("Errore nell'approvazione", { description: error.message });
-    },
-  });
-
-  const rejectCommentMutation = trpc.comments.reject.useMutation({
-    onSuccess: () => {
-      toast.success("Commento rifiutato");
-      pendingCommentsQuery.refetch();
-    },
-    onError: (error) => {
-      toast.error("Errore nel rifiuto", { description: error.message });
-    },
-  });
-
-  const deleteCommentMutation = trpc.comments.delete.useMutation({
-    onSuccess: () => {
-      toast.success("Commento eliminato");
-      pendingCommentsQuery.refetch();
-    },
-    onError: (error) => {
-      toast.error("Errore nell'eliminazione", { description: error.message });
-    },
-  });
-
   const handleLogout = async () => {
     await logout();
     setLocation("/");
@@ -85,20 +59,6 @@ export default function AdminPanel() {
   const handleDelete = (id: number) => {
     if (confirm("Are you sure you want to delete this article?")) {
       deleteArticleMutation.mutate({ id });
-    }
-  };
-
-  const handleApproveComment = (id: number) => {
-    approveCommentMutation.mutate({ id });
-  };
-
-  const handleRejectComment = (id: number) => {
-    rejectCommentMutation.mutate({ id });
-  };
-
-  const handleDeleteComment = (id: number) => {
-    if (confirm("Eliminare definitivamente questo commento?")) {
-      deleteCommentMutation.mutate({ id });
     }
   };
 
@@ -143,31 +103,27 @@ export default function AdminPanel() {
         </div>
 
         {/* Tabs */}
-        <div className="container border-t border-[#2A2A28] flex gap-8">
+        <div className="container border-t border-[#2A2A28] flex gap-2 sm:gap-6 overflow-x-auto custom-scrollbar whitespace-nowrap hide-scroll">
           <button
-            onClick={() => {
-              setActiveTab("articles");
-              setShowForm(false);
-            }}
-            className={`py-3 px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 ${activeTab === "articles"
-              ? "text-[#E8A020] border-[#E8A020]"
-              : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+            onClick={() => { setActiveTab("dashboard"); setShowForm(false); }}
+            className={`py-3 px-2 sm:px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${activeTab === "dashboard" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+              }`}
+          >
+            <LayoutDashboard size={14} className="hidden sm:inline" /> Dashboard
+          </button>
+          <button
+            onClick={() => { setActiveTab("articles"); setShowForm(false); }}
+            className={`py-3 px-2 sm:px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 ${activeTab === "articles" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
               }`}
           >
             Articles
           </button>
           <button
-            onClick={() => {
-              setActiveTab("comments");
-              setShowForm(false);
-            }}
-            className={`py-3 px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${activeTab === "comments"
-              ? "text-[#E8A020] border-[#E8A020]"
-              : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+            onClick={() => { setActiveTab("comments"); setShowForm(false); }}
+            className={`py-3 px-2 sm:px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${activeTab === "comments" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
               }`}
           >
-            <MessageSquare size={14} />
-            Comments
+            <MessageSquare size={14} className="hidden sm:inline" /> Comments
             {pendingCount > 0 && (
               <span className="bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
                 {pendingCount}
@@ -175,37 +131,42 @@ export default function AdminPanel() {
             )}
           </button>
           <button
-            onClick={() => {
-              setActiveTab("users");
-              setShowForm(false);
-            }}
-            className={`py-3 px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 ${activeTab === "users"
-              ? "text-[#E8A020] border-[#E8A020]"
-              : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+            onClick={() => { setActiveTab("ads"); setShowForm(false); }}
+            className={`py-3 px-2 sm:px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${activeTab === "ads" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+              }`}
+          >
+            <Megaphone size={14} className="hidden sm:inline" /> Ads
+          </button>
+          <button
+            onClick={() => { setActiveTab("newsletter"); setShowForm(false); }}
+            className={`py-3 px-2 sm:px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${activeTab === "newsletter" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+              }`}
+          >
+            <Send size={14} className="hidden sm:inline" /> Newsletter
+          </button>
+          <button
+            onClick={() => { setActiveTab("users"); setShowForm(false); }}
+            className={`py-3 px-2 sm:px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 ${activeTab === "users" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
               }`}
           >
             Users
           </button>
           <button
-            onClick={() => {
-              setActiveTab("system");
-              setShowForm(false);
-            }}
-            className={`py-3 px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${activeTab === "system"
-              ? "text-[#E8A020] border-[#E8A020]"
-              : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+            onClick={() => { setActiveTab("system"); setShowForm(false); }}
+            className={`py-3 px-2 sm:px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${activeTab === "system" ? "text-[#E8A020] border-[#E8A020]" : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
               }`}
           >
-            <Terminal size={14} />
-            System
+            <Terminal size={14} className="hidden sm:inline" /> System
           </button>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="container py-8">
-        {/* ── ARTICLES TAB ── */}
-        {activeTab === "articles" ? (
+        {/* ── DASHBOARD TAB ── */}
+        {activeTab === "dashboard" ? (
+          <DashboardStats />
+        ) : activeTab === "articles" ? (
           showForm ? (
             <div>
               <div className="mb-6">
@@ -326,103 +287,15 @@ export default function AdminPanel() {
 
           /* ── COMMENTS TAB ── */
         ) : activeTab === "comments" ? (
-          <div>
-            <div className="mb-8">
-              <h2 className="font-headline text-2xl text-[#F2F0EB] mb-2">Comments Moderation</h2>
-              <p className="font-ui text-sm text-[#8A8880]">
-                {pendingCount > 0
-                  ? `${pendingCount} comment${pendingCount > 1 ? "s" : ""} awaiting approval`
-                  : "No pending comments"}
-              </p>
-            </div>
+          <GlobalComments />
 
-            {pendingCommentsQuery.isLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="animate-spin text-[#E8A020]" size={32} />
-              </div>
-            ) : pendingCount === 0 ? (
-              <Card className="bg-[#1C1C1A] border-[#2A2A28] p-12 text-center">
-                <MessageSquare className="mx-auto mb-4 text-[#555550]" size={40} />
-                <p className="text-[#8A8880] font-ui text-sm">No comments pending moderation</p>
-              </Card>
-            ) : (
-              <div className="grid gap-4">
-                {pendingCommentsQuery.data?.map((comment) => {
-                  const c = comment as any;
-                  const displayName = c.userUsername ? `@${c.userUsername}` : c.userName || "Anonymous";
-                  return (
-                    <Card key={comment.id} className="bg-[#1C1C1A] border-[#2A2A28] p-5">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          {/* Meta */}
-                          <div className="flex items-center gap-3 mb-3">
-                            <span className="flex items-center gap-1 font-ui text-[10px] text-[#E8A020] uppercase tracking-widest bg-[#E8A020]/10 px-2 py-1 rounded-sm">
-                              <Clock size={10} />
-                              Pending
-                            </span>
-                            <span className="font-ui text-[10px] text-[#8A8880] font-medium">
-                              {displayName}
-                            </span>
-                            <span className="font-ui text-[10px] text-[#555550]">
-                              Article #{comment.articleId}
-                            </span>
-                            <span className="font-ui text-[10px] text-[#555550]">
-                              {new Date(comment.createdAt).toLocaleDateString("it-IT", {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </span>
-                          </div>
-                          {/* Content */}
-                          <div>
-                            <p className="text-[#D4D0C8] leading-relaxed text-sm">{comment.content}</p>
-                            {c.isEdited === 1 && c.originalContent && (
-                              <div className="mt-2 p-3 bg-[#0F0F0E] rounded border border-[#2A2A28]">
-                                <p className="font-ui text-[10px] text-[#E8A020] uppercase tracking-widest mb-1">Prima della modifica:</p>
-                                <p className="text-[#8A8880] text-xs italic line-through opacity-70">{c.originalContent}</p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        {/* Actions */}
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          <button
-                            onClick={() => handleApproveComment(comment.id)}
-                            disabled={approveCommentMutation.isPending}
-                            className="flex items-center gap-1.5 px-3 py-2 bg-green-900/30 hover:bg-green-900/60 text-green-400 font-ui text-xs uppercase tracking-wider rounded-sm transition-colors disabled:opacity-50"
-                            title="Approva e pubblica"
-                          >
-                            <Check size={14} />
-                            Approva
-                          </button>
-                          <button
-                            onClick={() => handleRejectComment(comment.id)}
-                            disabled={rejectCommentMutation.isPending}
-                            className="flex items-center gap-1.5 px-3 py-2 bg-yellow-900/30 hover:bg-yellow-900/60 text-yellow-400 font-ui text-xs uppercase tracking-wider rounded-sm transition-colors disabled:opacity-50"
-                            title="Rifiuta"
-                          >
-                            <X size={14} />
-                            Rifiuta
-                          </button>
-                          <button
-                            onClick={() => handleDeleteComment(comment.id)}
-                            disabled={deleteCommentMutation.isPending}
-                            className="p-2 bg-[#2A2A28] hover:bg-red-900/30 text-red-500 rounded-sm transition-colors disabled:opacity-50"
-                            title="Elimina definitivamente"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+          /* ── ADS TAB ── */
+        ) : activeTab === "ads" ? (
+          <AdsManager />
+
+          /* ── NEWSLETTER TAB ── */
+        ) : activeTab === "newsletter" ? (
+          <NewsletterManager />
 
           /* ── USERS TAB ── */
         ) : activeTab === "users" ? (

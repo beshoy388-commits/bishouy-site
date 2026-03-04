@@ -11,7 +11,7 @@ import {
   getAllUsers, getUserById, updateUser, deleteUser,
   toggleArticleLike, getArticleLikeCount, hasUserLikedArticle, getArticleWithLikeInfo, getDb,
   createSubscriber, getAllSubscribers, getUserByEmail, createVerificationCode, getLatestVerificationCode, deleteVerificationCodeByEmail, upsertUser, editComment,
-  createPasswordResetToken, getValidPasswordResetToken, markPasswordResetTokenAsUsed
+  createPasswordResetToken, getValidPasswordResetToken, markPasswordResetTokenAsUsed, getAllComments
 } from "./db";
 import { comments, InsertArticle, articles, users } from "../drizzle/schema";
 import { eq, and } from "drizzle-orm";
@@ -27,7 +27,7 @@ import {
   generateVerificationCode
 } from "./security";
 import { sdk } from "./_core/sdk";
-import { sendVerificationEmail, sendPasswordResetEmail } from "./_core/mail";
+import { sendVerificationEmail, sendPasswordResetEmail, sendNewsletterBroadcast } from "./_core/mail";
 import crypto from 'crypto';
 
 // Admin-only procedure with security checks
@@ -419,6 +419,11 @@ export const appRouter = router({
   }),
 
   comments: router({
+    // Admin: Get ALL comments across the site
+    getAll: adminProcedure.query(async () => {
+      return getAllComments();
+    }),
+
     // Public: Get approved comments for an article
     getByArticle: publicProcedure
       .input(z.object({ articleId: z.number() }))
@@ -686,7 +691,24 @@ export const appRouter = router({
 
     list: adminProcedure.query(async () => {
       return getAllSubscribers();
-    })
+    }),
+
+    broadcast: adminProcedure
+      .input(z.object({
+        subject: z.string().min(1),
+        htmlContent: z.string().min(1)
+      }))
+      .mutation(async ({ input }) => {
+        const subscribers = await getAllSubscribers();
+        const activeEmails = subscribers.filter(s => s.active === 1).map(s => s.email);
+
+        if (activeEmails.length > 0) {
+          // Fire and forget (will run async in background)
+          sendNewsletterBroadcast(input.subject, input.htmlContent, activeEmails).catch(console.error);
+        }
+
+        return { success: true, count: activeEmails.length };
+      })
   }),
 
   ai: router({

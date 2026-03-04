@@ -221,6 +221,32 @@ export async function getCommentsByArticle(articleId: number, onlyApproved: bool
   return rows as CommentWithUser[];
 }
 
+export async function getAllComments(): Promise<CommentWithUser[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  const rows = await db
+    .select({
+      id: comments.id,
+      articleId: comments.articleId,
+      userId: comments.userId,
+      content: comments.content,
+      originalContent: comments.originalContent,
+      isEdited: comments.isEdited,
+      approved: comments.approved,
+      createdAt: comments.createdAt,
+      updatedAt: comments.updatedAt,
+      userName: users.name,
+      userUsername: users.username,
+      userAvatarUrl: users.avatarUrl,
+    })
+    .from(comments)
+    .leftJoin(users, eq(comments.userId, users.id))
+    .orderBy(desc(comments.createdAt));
+
+  return rows as CommentWithUser[];
+}
+
 export async function createComment(data: InsertComment): Promise<Comment> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
@@ -578,4 +604,22 @@ export async function markPasswordResetTokenAsUsed(tokenId: number): Promise<voi
   if (!db) return;
 
   await db.update(passwordResetTokens).set({ used: 1 }).where(eq(passwordResetTokens.id, tokenId));
+}
+
+// System Stats
+export async function getDashboardStats() {
+  const db = await getDb();
+  if (!db) return null;
+
+  const usersCount = await db.select({ count: sql<number>`count(*)` }).from(users);
+  const articlesCount = await db.select({ count: sql<number>`count(*)` }).from(articles);
+  const commentsCount = await db.select({ count: sql<number>`count(*)` }).from(comments);
+  const adsCount = await db.select({ count: sql<number>`count(*)` }).from(advertisements);
+
+  return {
+    totalUsers: usersCount[0]?.count || 0,
+    totalArticles: articlesCount[0]?.count || 0,
+    totalComments: commentsCount[0]?.count || 0,
+    totalAds: adsCount[0]?.count || 0,
+  };
 }

@@ -60,3 +60,31 @@ export async function sendPasswordResetEmail(email: string, resetLink: string) {
     console.error("[EMAIL ERROR] Failed to send password reset email:", error);
   }
 }
+
+export async function sendNewsletterBroadcast(subject: string, htmlContent: string, recipients: string[]) {
+  if (!ENV.resendApiKey) {
+    console.log(`[EMAIL BYPASS] Newsletter broadcast "${subject}" to ${recipients.length} recipients.`);
+    return;
+  }
+
+  // Resend Free Tier limits sending to onboarding@resend.dev, so in prod this requires a verified domain.
+  // We'll batch send to avoid hitting limits directly, or just send one by one.
+  try {
+    for (const email of recipients) {
+      await resend.emails.send({
+        from: "Bishouy.com Newsletter <onboarding@resend.dev>",
+        to: email,
+        subject: subject,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0F0F0E; padding: 40px; border-radius: 8px; color: #F2F0EB; margin-bottom: 30px;">
+            ${htmlContent}
+          </div>
+          <p style="font-size: 11px; color: #555550; text-align: center;">You are receiving this email because you subscribed to Bishouy.com. <br>To unsubscribe, go to your profile settings.</p>
+        `,
+      });
+    }
+    console.log(`[EMAIL SENT] Broadcast sent to ${recipients.length} recipients`);
+  } catch (error) {
+    console.error("[EMAIL ERROR] Failed to send newsletter broadcast:", error);
+  }
+}

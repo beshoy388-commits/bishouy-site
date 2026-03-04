@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
-import { getDb, verificationCodes } from "../db";
+import { getDb, verificationCodes, getDashboardStats } from "../db";
 import { desc } from "drizzle-orm";
 
 export const systemRouter = router({
@@ -34,5 +34,10 @@ export const systemRouter = router({
       const db = await getDb();
       if (!db) return [];
       return db.select().from(verificationCodes).orderBy(desc(verificationCodes.createdAt)).limit(20);
+    }),
+
+  stats: adminProcedure
+    .query(async () => {
+      return getDashboardStats();
     }),
 });
