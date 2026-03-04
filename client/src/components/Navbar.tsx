@@ -224,32 +224,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Category bar — desktop */}
-      <div className="hidden lg:block border-t border-[#222220] bg-[#0F0F0E]/90 backdrop-blur-sm">
-        <div className="container">
-          <div className="flex items-center justify-center gap-8 h-10">
-            <Link
-              href="/"
-              className={`font-ui text-[11px] uppercase tracking-widest transition-colors ${location === "/" ? "text-[#E8A020]" : "text-[#8A8880] hover:text-[#F2F0EB]"
-                }`}
-            >
-              Home
-            </Link>
-            {CATEGORIES.map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/category/${cat.slug}`}
-                className={`font-ui text-[11px] uppercase tracking-widest transition-colors ${location === `/category/${cat.slug}`
-                  ? "text-[#E8A020]"
-                  : "text-[#8A8880] hover:text-[#F2F0EB]"
-                  }`}
-              >
-                {cat.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Mobile menu */}
       {isMenuOpen && (
