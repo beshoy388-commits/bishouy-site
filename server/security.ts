@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { scrypt, randomBytes, timingSafeEqual } from "node:crypto";
+import { scrypt, randomBytes, timingSafeEqual, randomInt } from "node:crypto";
 import { promisify } from "node:util";
 
 const scryptAsync = promisify(scrypt);
@@ -184,5 +184,6 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 }
 
 export function generateVerificationCode(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  // Use crypto.randomInt for cryptographically secure random number
+  return randomInt(100000, 999999).toString();
 }
