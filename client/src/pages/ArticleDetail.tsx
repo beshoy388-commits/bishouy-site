@@ -133,6 +133,15 @@ export default function ArticleDetail() {
     setMeta("name", "twitter:description", description);
     setMeta("name", "twitter:image", image);
 
+    // Canonical link tag
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute("href", url);
+
     // Cleanup: restore on unmount
     return () => {
       document.title = siteTitle;

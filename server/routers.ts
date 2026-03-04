@@ -28,6 +28,7 @@ import {
 } from "./security";
 import { sdk } from "./_core/sdk";
 import { sendVerificationEmail, sendPasswordResetEmail, sendNewsletterBroadcast, sendWelcomeNewsletterEmail } from "./_core/mail";
+import { stripHtml } from "./utils";
 import crypto from 'crypto';
 
 // Admin-only procedure with security checks
@@ -452,7 +453,7 @@ export const appRouter = router({
         return createComment({
           articleId: input.articleId,
           userId: ctx.user.id,
-          content: input.content,
+          content: stripHtml(input.content),
           approved: 0, // Comments need admin approval
         });
       }),
@@ -685,10 +686,11 @@ export const appRouter = router({
     subscribe: publicProcedure
       .input(z.object({ email: z.string().email() }))
       .mutation(async ({ input }) => {
-        const { token } = await createSubscriber(input.email);
+        const cleanEmail = stripHtml(input.email).toLowerCase();
+        const { token } = await createSubscriber(cleanEmail);
         // Send welcome email async (do not block the response)
         if (token) {
-          sendWelcomeNewsletterEmail(input.email, token).catch(console.error);
+          sendWelcomeNewsletterEmail(cleanEmail, token).catch(console.error);
         }
         return { success: true };
       }),
