@@ -16,34 +16,34 @@ export default function NewsletterManager() {
 
     const broadcastMutation = trpc.newsletter.broadcast.useMutation({
         onSuccess: (data: { count: number }) => {
-            toast.success(`Newsletter inviata a ${data.count} iscritti!`);
+            toast.success(`Newsletter sent to ${data.count} subscribers!`);
             setSubject("");
             setContent("");
         },
         onError: (error: any) => {
-            toast.error("Errore nell'invio della newsletter", { description: error.message });
+            toast.error("Error sending newsletter", { description: error.message });
         }
     });
 
     const deleteMutation = trpc.newsletter.delete.useMutation({
         onSuccess: () => {
-            toast.success("Iscritto rimosso permanentemente");
+            toast.success("Subscriber permanently removed");
             utils.newsletter.list.invalidate();
         },
         onError: (error: any) => toast.error(error.message)
     });
 
     const handleSend = () => {
-        if (!subject.trim()) return toast.error("Per favore, inserisci un oggetto.");
-        if (!content.trim()) return toast.error("Per favore, inserisci il corpo dell'email.");
+        if (!subject.trim()) return toast.error("Please enter a subject.");
+        if (!content.trim()) return toast.error("Please enter email body content.");
 
-        if (confirm(`Sei sicuro di voler inviare questa newsletter a TUTTI gli iscritti attivi?`)) {
+        if (confirm(`Are you sure you want to send this newsletter to ALL active subscribers?`)) {
             broadcastMutation.mutate({ subject, htmlContent: content });
         }
     };
 
     const handleDeleteSub = (id: number, email: string) => {
-        if (confirm(`Sei sicuro di voler eliminare PERMANENTEMENTE ${email}?`)) {
+        if (confirm(`Are you sure you want to PERMANENTLY delete ${email}?`)) {
             deleteMutation.mutate({ id });
         }
     };
@@ -74,12 +74,12 @@ export default function NewsletterManager() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
                     <h2 className="font-headline text-xl md:text-2xl text-[#F2F0EB] mb-1 md:mb-2">Newsletter Studio</h2>
-                    <p className="font-ui text-xs text-[#8A8880]">Invia aggiornamenti alla tua mailing list</p>
+                    <p className="font-ui text-xs text-[#8A8880]">Send updates to your mailing list</p>
                 </div>
                 <div className="flex items-center gap-3 bg-[#1C1C1A] border border-[#2A2A28] px-4 py-2 rounded-sm w-full sm:w-auto justify-center">
                     <Users size={16} className="text-[#E8A020]" />
                     <span className="font-ui text-[10px] sm:text-xs font-600 uppercase tracking-widest text-[#F2F0EB]">
-                        {activeSubscribersCount} Iscritti Attivi
+                        {activeSubscribersCount} Active Subscribers
                     </span>
                 </div>
             </div>
@@ -90,44 +90,44 @@ export default function NewsletterManager() {
                         <div className="space-y-6">
                             <div className="space-y-2">
                                 <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block flex items-center gap-1">
-                                    <Type size={12} /> Oggetto dell'email
+                                    <Type size={12} /> Email Subject
                                 </label>
                                 <input
                                     type="text"
                                     value={subject}
                                     onChange={(e) => setSubject(e.target.value)}
                                     className="w-full bg-[#0F0F0E] border border-[#222220] rounded-sm p-3 text-[#F2F0EB] font-ui text-sm focus:outline-none focus:border-[#E8A020] transition-colors"
-                                    placeholder="Es: Breaking News della settimana..."
+                                    placeholder="e.g. Weekly Breaking News..."
                                 />
                             </div>
 
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between mb-2">
                                     <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block flex items-center gap-1">
-                                        <Layout size={12} /> Corpo dell'email (HTML Supportato)
+                                        <Layout size={12} /> Email Body (HTML Supported)
                                     </label>
                                     <div className="flex items-center gap-1">
                                         <button
                                             onClick={() => insertText("<b>", "</b>")}
                                             className="p-1.5 hover:bg-[#2A2A28] text-[#8A8880] hover:text-[#F2F0EB] rounded-sm transition-colors"
-                                            title="Grassetto"
+                                            title="Bold"
                                         >
                                             <Bold size={14} />
                                         </button>
                                         <button
                                             onClick={() => {
-                                                const url = prompt("Inserisci URL:");
+                                                const url = prompt("Enter URL:");
                                                 if (url) insertText(`<a href="${url}" style="color: #E8A020; text-decoration: underline;">`, "</a>");
                                             }}
                                             className="p-1.5 hover:bg-[#2A2A28] text-[#8A8880] hover:text-[#F2F0EB] rounded-sm transition-colors"
-                                            title="Inserisci Link"
+                                            title="Insert Link"
                                         >
                                             <LinkIcon size={14} />
                                         </button>
                                         <button
                                             onClick={() => setShowUploader(!showUploader)}
                                             className={`p-1.5 hover:bg-[#2A2A28] rounded-sm transition-colors ${showUploader ? 'text-[#E8A020] bg-[#2A2A28]' : 'text-[#8A8880] hover:text-[#F2F0EB]'}`}
-                                            title="Carica/Inserisci Immagine"
+                                            title="Upload/Insert Image"
                                         >
                                             <ImageIcon size={14} />
                                         </button>
@@ -136,11 +136,11 @@ export default function NewsletterManager() {
 
                                 {showUploader && (
                                     <div className="mb-4 p-4 bg-[#0F0F0E] border border-[#2A2A28] rounded-sm">
-                                        <p className="text-[10px] font-ui text-[#8A8880] uppercase tracking-widest mb-3">Carica immagine per ottenere l'URL</p>
+                                        <p className="text-[10px] font-ui text-[#8A8880] uppercase tracking-widest mb-3">Upload image to get URL</p>
                                         <ImageUploader
                                             onImageUpload={(url: string) => {
                                                 insertText(`<img src="${url}" alt="Newsletter Image" style="max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 20px 0;" />\n`);
-                                                toast.success("Link immagine inserito!");
+                                                toast.success("Image link inserted!");
                                                 setShowUploader(false);
                                             }}
                                         />
@@ -152,9 +152,9 @@ export default function NewsletterManager() {
                                     value={content}
                                     onChange={(e) => setContent(e.target.value)}
                                     className="w-full bg-[#0F0F0E] border border-[#222220] rounded-sm p-4 text-[#F2F0EB] font-mono text-sm focus:outline-none focus:border-[#E8A020] transition-colors min-h-[400px] resize-y"
-                                    placeholder="Scrivi qui la tua newsletter... Usa l'HTML per una formattazione ricca."
+                                    placeholder="Write your newsletter content here... Use HTML for rich formatting."
                                 />
-                                <p className="text-xs text-[#8A8880] mt-1">L'email verrà wrappata automaticamente nel template di Bishouy.com.</p>
+                                <p className="text-xs text-[#8A8880] mt-1">Email will be automatically wrapped in the Bishouy.com template.</p>
                             </div>
 
                             <div className="pt-4 flex justify-end border-t border-[#2A2A28]">
@@ -164,7 +164,7 @@ export default function NewsletterManager() {
                                     className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-sm font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors"
                                 >
                                     {broadcastMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-                                    Invia a Tutti gli Iscritti
+                                    Send to All Subscribers
                                 </button>
                             </div>
                         </div>
@@ -173,7 +173,7 @@ export default function NewsletterManager() {
 
                 <div className="space-y-6">
                     <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
-                        <h3 className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest mb-4">Gestione Iscritti</h3>
+                        <h3 className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest mb-4">Subscriber Management</h3>
                         {listQuery.isLoading ? (
                             <div className="py-8 flex justify-center"><Loader2 className="animate-spin text-[#E8A020]" /></div>
                         ) : (
@@ -185,28 +185,27 @@ export default function NewsletterManager() {
                                             <p className="text-sm text-[#F2F0EB] truncate">{sub.email}</p>
                                             <p className="text-[10px] text-[#555550]">
                                                 {new Date(sub.createdAt).toLocaleDateString()}
-                                                {!sub.active && <span className="text-red-500 ml-2">● Inattivo</span>}
+                                                {!sub.active && <span className="text-red-500 ml-2">● Inactive</span>}
                                             </p>
                                         </div>
                                         <button
                                             onClick={() => handleDeleteSub(sub.id, sub.email)}
                                             className="opacity-0 group-hover:opacity-100 p-2 text-[#8A8880] hover:text-red-500 transition-all"
-                                            title="Elimina Iscritto"
+                                            title="Delete Subscriber"
                                         >
                                             <Trash2 size={14} />
                                         </button>
                                     </div>
                                 ))}
                                 {listQuery.data?.length === 0 && (
-                                    <p className="text-xs text-[#555550] text-center py-4">Nessun iscritto trovato.</p>
+                                    <p className="text-xs text-[#555550] text-center py-4">No subscribers found.</p>
                                 )}
                             </div>
                         )}
                     </Card>
                     <div className="bg-[#E8A020]/10 border border-[#E8A020]/20 rounded-sm p-4">
                         <p className="text-xs text-[#8A8880] leading-relaxed">
-                            <strong className="text-[#E8A020]">Suggerimento:</strong> Usa i pulsanti sopra l'editor per inserire immagini e formattazione.
-                            Testa sempre la newsletter su te stesso prima di inviarla a tutta la lista.
+                            <strong className="text-[#E8A020]">Tip:</strong> Use the editor toolbar to insert images and formatting. Always test the newsletter on yourself before sending to the full list.
                         </p>
                     </div>
                 </div>

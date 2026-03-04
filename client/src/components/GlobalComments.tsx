@@ -45,7 +45,7 @@ export default function GlobalComments() {
         <div className="space-y-6">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
                 <div>
-                    <h2 className="font-headline text-xl md:text-2xl text-[#F2F0EB] mb-1 md:mb-2">Community Center</h2>
+                    <h2 className="font-headline text-xl md:text-2xl text-[#F2F0EB] mb-1 md:mb-2">Community Hub</h2>
                     <p className="font-ui text-xs text-[#8A8880]">Global moderation and community management</p>
                 </div>
 
@@ -102,7 +102,7 @@ export default function GlobalComments() {
                                                 isApproved ? "bg-green-900/40 text-green-500 border border-green-500/20" :
                                                     "bg-red-900/40 text-red-500 border border-red-500/20"
                                                 }`}>
-                                                {isPending ? "To Moderate" : isApproved ? "Published" : "Rejected"}
+                                                {isPending ? "Needs Moderation" : isApproved ? "Published" : "Rejected"}
                                             </span>
 
                                             <div className="flex items-center gap-2">
@@ -133,7 +133,7 @@ export default function GlobalComments() {
                                             {comment.isEdited === 1 && comment.originalContent && (
                                                 <div className="mt-3 p-3 bg-[#0F0F0E] rounded-sm border border-[#222220] flex flex-col gap-1">
                                                     <p className="font-ui text-[10px] text-[#555550] uppercase tracking-widest flex items-center gap-1">
-                                                        <Clock size={10} /> Original text before edit:
+                                                        <Clock size={10} /> Original text before editing:
                                                     </p>
                                                     <p className="text-[#8A8880] text-xs italic line-through opacity-70">{comment.originalContent}</p>
                                                 </div>
@@ -142,15 +142,15 @@ export default function GlobalComments() {
                                     </div>
 
                                     {/* Actions */}
-                                    <div className="flex items-center gap-2 flex-shrink-0 mt-4 md:mt-0 pt-4 md:pt-0 border-t md:border-t-0 border-[#2A2A28] w-full md:w-auto">
+                                    <div className="flex items-center gap-3 flex-shrink-0 mt-4 md:mt-0 pt-4 md:pt-0 border-t md:border-t-0 border-[#2A2A28] w-full md:w-auto">
                                         {!isApproved && (
                                             <button
                                                 onClick={() => approveMutation.mutate({ id: comment.id })}
                                                 disabled={approveMutation.isPending}
-                                                className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 py-2 bg-green-900/30 hover:bg-green-900/60 text-green-400 font-ui text-xs uppercase tracking-wider rounded-sm transition-colors disabled:opacity-50 border border-green-500/20"
-                                                title="Approva e pubblica sul sito"
+                                                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-green-900/30 hover:bg-green-900/60 text-green-400 font-ui text-xs uppercase tracking-wider rounded-sm transition-colors disabled:opacity-50 border border-green-500/20"
+                                                title="Approve and publish"
                                             >
-                                                <Check size={14} /> <span className="md:hidden">Approve</span>
+                                                <Check size={16} /> <span className="md:hidden">Approve</span>
                                             </button>
                                         )}
 
@@ -158,10 +158,10 @@ export default function GlobalComments() {
                                             <button
                                                 onClick={() => rejectMutation.mutate({ id: comment.id })}
                                                 disabled={rejectMutation.isPending}
-                                                className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-3 py-2 bg-yellow-900/30 hover:bg-yellow-900/60 text-yellow-400 font-ui text-xs uppercase tracking-wider rounded-sm transition-colors disabled:opacity-50 border border-yellow-500/20"
-                                                title="Nascondi (Rifiuta)"
+                                                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-yellow-900/30 hover:bg-yellow-900/60 text-yellow-400 font-ui text-xs uppercase tracking-wider rounded-sm transition-colors disabled:opacity-50 border border-yellow-500/20"
+                                                title="Hide (Reject)"
                                             >
-                                                <X size={14} /> <span className="md:hidden">Reject</span>
+                                                <X size={16} /> <span className="md:hidden">Reject</span>
                                             </button>
                                         )}
 
@@ -172,10 +172,10 @@ export default function GlobalComments() {
                                                 }
                                             }}
                                             disabled={deleteMutation.isPending}
-                                            className="p-2 bg-[#2A2A28] hover:bg-red-900/30 text-red-500 rounded-sm transition-colors disabled:opacity-50 border border-[#333330] hover:border-red-500/30"
+                                            className="p-2.5 bg-[#2A2A28] hover:bg-red-900/30 text-red-500 rounded-sm transition-colors disabled:opacity-50 border border-[#333330] hover:border-red-500/30"
                                             title="Delete from Database"
                                         >
-                                            <Trash2 size={16} />
+                                            <Trash2 size={18} />
                                         </button>
                                     </div>
                                 </div>

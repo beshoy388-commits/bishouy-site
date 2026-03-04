@@ -85,7 +85,7 @@ export default function UsersManagement() {
                 <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">Name</th>
                 <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">Email</th>
                 <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">Role</th>
-                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">Joined</th>
+                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">Joined On</th>
                 <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm text-right">Actions</th>
               </tr>
             </thead>
@@ -158,8 +158,8 @@ export default function UsersManagement() {
                       <td className="py-3 px-4">
                         <span
                           className={`text-[9px] px-2 py-0.5 rounded font-600 uppercase tracking-widest ${user.role === "admin"
-                              ? "bg-[#E8A020] text-[#0F0F0E]"
-                              : "bg-[#2A2A28] text-[#8A8880]"
+                            ? "bg-[#E8A020] text-[#0F0F0E]"
+                            : "bg-[#2A2A28] text-[#8A8880]"
                             }`}
                         >
                           {user.role}
@@ -172,6 +172,7 @@ export default function UsersManagement() {
                         <button
                           onClick={() => handleEdit(user)}
                           className="p-2 text-[#8A8880] hover:text-[#E8A020] transition-colors"
+                          title="Edit"
                         >
                           <Edit2 size={16} />
                         </button>
@@ -179,6 +180,7 @@ export default function UsersManagement() {
                           onClick={() => handleDelete(user.id)}
                           disabled={deleteMutation.isPending}
                           className="p-2 text-[#8A8880] hover:text-red-500 transition-colors"
+                          title="Delete"
                         >
                           <Trash2 size={16} />
                         </button>

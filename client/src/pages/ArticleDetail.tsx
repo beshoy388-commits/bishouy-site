@@ -421,7 +421,7 @@ export default function ArticleDetail() {
                   const displayName = c.userUsername
                     ? `@${c.userUsername}`
                     : c.userName || "Anonymous";
-                  const isOwner = user && user.id === c.userId;
+                  const isOwner = user && (user.id === c.userId || user.role === 'admin');
                   const isEditing = editingCommentId === c.id;
 
                   const ProfileWrapper = ({ children }: { children: React.ReactNode }) => {
@@ -465,18 +465,18 @@ export default function ArticleDetail() {
                           </div>
                         </ProfileWrapper>
 
-                        {/* Actions for the comment owner */}
+                        {/* Actions for the comment owner or admin */}
                         {isOwner && !isEditing && (
-                          <div className="flex items-center gap-2 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                          <div className="flex items-center gap-2 opacity-70 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                             <button
                               onClick={() => {
                                 setEditingCommentId(c.id);
                                 setEditContent(c.content);
                               }}
-                              className="text-[#8A8880] hover:text-[#E8A020] transition-colors p-1"
+                              className="text-[#8A8880] hover:text-[#E8A020] transition-colors p-2"
                               title="Edit comment"
                             >
-                              <Edit2 size={14} />
+                              <Edit2 size={18} />
                             </button>
                             <button
                               onClick={() => {
@@ -484,10 +484,10 @@ export default function ArticleDetail() {
                                   deleteCommentMutation.mutate({ id: c.id });
                                 }
                               }}
-                              className="text-[#8A8880] hover:text-red-500 transition-colors p-1"
+                              className="text-[#8A8880] hover:text-red-500 transition-colors p-2"
                               title="Delete comment"
                             >
-                              <Trash2 size={14} />
+                              <Trash2 size={18} />
                             </button>
                           </div>
                         )}
@@ -554,7 +554,7 @@ export default function ArticleDetail() {
                   className="mt-4 flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
                 >
                   <Send size={14} />
-                  {isSubmitting ? "Submitting..." : "Submit Comment"}
+                  {isSubmitting ? "Submitting..." : "Post Comment"}
                 </button>
               </div>
             ) : (
@@ -564,7 +564,7 @@ export default function ArticleDetail() {
                   href={getLoginUrl()}
                   className="inline-flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
                 >
-                  Login to Comment
+                  Sign in to Comment
                 </a>
               </div>
             )}

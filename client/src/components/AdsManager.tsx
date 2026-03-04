@@ -22,25 +22,25 @@ export default function AdsManager() {
 
     const createAdMutation = trpc.advertisements.create.useMutation({
         onSuccess: () => {
-            toast.success("Pubblicità creata con successo");
+            toast.success("Advertisement created successfully");
             stopEditing();
             adsQuery.refetch();
         },
-        onError: (err) => toast.error("Errore nella creazione della pubblicità", { description: err.message })
+        onError: (err) => toast.error("Error creating advertisement", { description: err.message })
     });
 
     const updateAdMutation = trpc.advertisements.update.useMutation({
         onSuccess: () => {
-            toast.success("Pubblicità aggiornata con successo");
+            toast.success("Advertisement updated successfully");
             stopEditing();
             adsQuery.refetch();
         },
-        onError: (err) => toast.error("Errore nell'aggiornamento della pubblicità", { description: err.message })
+        onError: (err) => toast.error("Error updating advertisement", { description: err.message })
     });
 
     const deleteAdMutation = trpc.advertisements.delete.useMutation({
         onSuccess: () => {
-            toast.success("Pubblicità eliminata");
+            toast.success("Advertisement deleted");
             adsQuery.refetch();
         }
     });
@@ -48,16 +48,22 @@ export default function AdsManager() {
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
         const formData = new FormData(e.target as HTMLFormElement);
+
+        const startDateVal = formData.get("startDate") as string;
+        const endDateVal = formData.get("endDate") as string;
+
         const data = {
             title: formData.get("title") as string,
             imageUrl: tempImageUrl,
             linkUrl: formData.get("linkUrl") as string,
             position: formData.get("position") as "sidebar" | "banner_top" | "banner_bottom" | "inline",
-            active: formData.get("active") === "on" ? 1 : 0
+            active: formData.get("active") === "on" ? 1 : 0,
+            startDate: startDateVal ? new Date(startDateVal) : undefined,
+            endDate: endDateVal ? new Date(endDateVal) : undefined
         };
 
         if (!data.imageUrl) {
-            toast.error("Per favore carica un'immagine o inserisci un URL");
+            toast.error("Please upload an image or enter a URL");
             return;
         }
 
@@ -73,7 +79,7 @@ export default function AdsManager() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
                     <h2 className="font-headline text-xl md:text-2xl text-[#F2F0EB] mb-1 md:mb-2">Ads Manager</h2>
-                    <p className="font-ui text-xs text-[#8A8880]">Gestisci banner interni e link di affiliazione</p>
+                    <p className="font-ui text-xs text-[#8A8880]">Manage internal banners and affiliate links</p>
                 </div>
                 {!editingAd && (
                     <button
@@ -81,7 +87,7 @@ export default function AdsManager() {
                         className="flex items-center justify-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] md:text-xs font-600 uppercase tracking-wider px-4 md:px-6 py-2.5 md:py-3 rounded-sm transition-colors w-full sm:w-auto"
                     >
                         <Plus size={16} />
-                        Nuova Pubblicità
+                        New Advertisement
                     </button>
                 )}
             </div>
@@ -91,7 +97,7 @@ export default function AdsManager() {
                     <form onSubmit={handleSave} className="space-y-6">
                         <div className="flex justify-between items-center mb-6">
                             <h3 className="font-headline text-xl text-[#F2F0EB]">
-                                {editingAd.id ? "Modifica Pubblicità" : "Nuova Pubblicità"}
+                                {editingAd.id ? "Edit Advertisement" : "New Advertisement"}
                             </h3>
                             <button type="button" onClick={stopEditing} className="text-[#8A8880] hover:text-red-500">
                                 <X size={20} />
@@ -117,11 +123,31 @@ export default function AdsManager() {
                                     defaultValue={editingAd.position}
                                     className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm py-2 px-3 text-[#F2F0EB] focus:outline-none focus:border-[#E8A020] transition-colors text-sm"
                                 >
-                                    <option value="banner_top">Banner Top (below navbar)</option>
+                                    <option value="banner_top">Top Banner (below navbar)</option>
                                     <option value="sidebar">Sidebar (articles/home)</option>
                                     <option value="inline">Inline (inside articles)</option>
-                                    <option value="banner_bottom">Banner Bottom</option>
+                                    <option value="banner_bottom">Bottom Banner</option>
                                 </select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block">Campaign Start (Optional)</label>
+                                <input
+                                    name="startDate"
+                                    type="date"
+                                    defaultValue={editingAd.startDate ? new Date(editingAd.startDate).toISOString().split('T')[0] : ""}
+                                    className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm py-2 px-3 text-[#F2F0EB] focus:outline-none focus:border-[#E8A020] transition-colors text-sm"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block">Campaign End (Optional)</label>
+                                <input
+                                    name="endDate"
+                                    type="date"
+                                    defaultValue={editingAd.endDate ? new Date(editingAd.endDate).toISOString().split('T')[0] : ""}
+                                    className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm py-2 px-3 text-[#F2F0EB] focus:outline-none focus:border-[#E8A020] transition-colors text-sm"
+                                />
                             </div>
 
                             <div className="space-y-4">
@@ -129,10 +155,10 @@ export default function AdsManager() {
                                 <ImageUploader
                                     currentImage={tempImageUrl}
                                     onImageUpload={(url) => setTempImageUrl(url)}
-                                    label="Upload Banner/Ad Image"
+                                    label="Upload Banner / Image"
                                 />
                                 <div className="space-y-1">
-                                    <p className="font-ui text-[10px] text-[#555550]">O inserisci manualmente l'URL dell'immagine:</p>
+                                    <p className="font-ui text-[10px] text-[#555550]">Or manually enter image URL:</p>
                                     <input
                                         name="imageUrl"
                                         value={tempImageUrl}
@@ -144,7 +170,7 @@ export default function AdsManager() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block flex items-center gap-1"><LinkIcon size={10} /> URL di destinazione (Link)</label>
+                                <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block flex items-center gap-1"><LinkIcon size={10} /> Destination URL (Link)</label>
                                 <input
                                     name="linkUrl"
                                     defaultValue={editingAd.linkUrl}
@@ -164,7 +190,7 @@ export default function AdsManager() {
                                     defaultChecked={editingAd.active === 1}
                                     className="w-4 h-4 accent-[#E8A020]"
                                 />
-                                Attiva (Mostra sul sito)
+                                Active (Show on site)
                             </label>
                         </div>
 
@@ -174,7 +200,7 @@ export default function AdsManager() {
                                 onClick={stopEditing}
                                 className="px-4 py-2 text-[#8A8880] hover:text-[#F2F0EB] transition-colors text-sm font-ui"
                             >
-                                Annulla
+                                Cancel
                             </button>
                             <button
                                 type="submit"
@@ -182,7 +208,7 @@ export default function AdsManager() {
                                 className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] px-6 py-2 rounded-sm font-ui text-xs font-600 uppercase tracking-widest transition-colors"
                             >
                                 {(createAdMutation.isPending || updateAdMutation.isPending) ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
-                                Salva Pubblicità
+                                Save Advertisement
                             </button>
                         </div>
                     </form>
@@ -190,12 +216,12 @@ export default function AdsManager() {
             ) : (
                 <div className="space-y-4">
                     <div className="bg-[#E8A020]/10 border border-[#E8A020]/20 rounded-sm p-4 text-xs text-[#8A8880]">
-                        Usa questo gestore per visualizzare i tuoi banner personalizzati e tracciare i clic. Per Google AdSense, lo script di tracciamento è già integrato nativamente in tutto il sito.
+                        Use this manager to display your custom banners and track clicks. For Google AdSense, the tracking script is already natively integrated throughout the site.
                     </div>
                     {adsQuery.isLoading ? (
                         <div className="flex justify-center p-8"><Loader2 size={24} className="animate-spin text-[#E8A020]" /></div>
                     ) : adsQuery.data?.length === 0 ? (
-                        <div className="text-center p-8 text-[#555550]">No advertisements active yet. Click "Add New Ad".</div>
+                        <div className="text-center p-8 text-[#555550]">No advertisements active yet. Click "New Advertisement".</div>
                     ) : (
                         <div className="grid grid-cols-1 divide-y divide-[#2A2A28] bg-[#1C1C1A] border border-[#2A2A28] rounded-sm">
                             {adsQuery.data?.map(ad => (
@@ -232,7 +258,7 @@ export default function AdsManager() {
                                                 <Edit size={16} />
                                             </button>
                                             <button
-                                                onClick={() => { if (confirm("Are you sure you want to delete this ad?")) deleteAdMutation.mutate({ id: ad.id }) }}
+                                                onClick={() => { if (confirm("Are you sure you want to delete this advertisement?")) deleteAdMutation.mutate({ id: ad.id }) }}
                                                 className="p-2 text-[#8A8880] hover:text-red-500 hover:bg-red-900/20 rounded-sm transition-colors" title="Delete">
                                                 <Trash2 size={16} />
                                             </button>

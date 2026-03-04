@@ -503,7 +503,7 @@ export const appRouter = router({
         if (comment.length === 0) {
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Comment not found' });
         }
-        if (comment[0].userId !== ctx.user.id) {
+        if (comment[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
           throw new TRPCError({ code: 'FORBIDDEN', message: 'You can only delete your own comments' });
         }
         await deleteComment(input.id);
@@ -521,7 +521,7 @@ export const appRouter = router({
         if (comment.length === 0) {
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Comment not found' });
         }
-        if (comment[0].userId !== ctx.user.id) {
+        if (comment[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
           throw new TRPCError({ code: 'FORBIDDEN', message: 'You can only edit your own comments' });
         }
 

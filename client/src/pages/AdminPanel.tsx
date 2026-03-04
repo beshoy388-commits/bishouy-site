@@ -167,7 +167,10 @@ export default function AdminPanel() {
       <div className="container py-8">
         {/* ── DASHBOARD TAB ── */}
         {activeTab === "dashboard" ? (
-          <DashboardStats />
+          <DashboardStats
+            onTabChange={(tab) => setActiveTab(tab)}
+            onNewArticle={() => setShowForm(true)}
+          />
         ) : activeTab === "articles" ? (
           showForm ? (
             <div>
