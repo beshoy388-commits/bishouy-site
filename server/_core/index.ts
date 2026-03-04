@@ -90,6 +90,7 @@ async function startServer() {
 
       // Comprimi e ottimizza l'immagine prima di salvarla
       const compressedBuffer = await sharp(req.file.buffer)
+        .rotate() // Automatically rotate based on EXIF metadata
         .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
         .webp({ quality: 75 })
         .toBuffer();
