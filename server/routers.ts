@@ -10,7 +10,8 @@ import {
   getActiveAdvertisements, getAllAdvertisements, createAdvertisement, updateAdvertisement, deleteAdvertisement,
   getAllUsers, getUserById, updateUser, deleteUser,
   toggleArticleLike, getArticleLikeCount, hasUserLikedArticle, getArticleWithLikeInfo, getDb,
-  createSubscriber, getAllSubscribers, getUserByEmail, createVerificationCode, getLatestVerificationCode, deleteVerificationCodeByEmail, upsertUser, editComment
+  createSubscriber, getAllSubscribers, getUserByEmail, createVerificationCode, getLatestVerificationCode, deleteVerificationCodeByEmail, upsertUser, editComment,
+  createPasswordResetToken, getValidPasswordResetToken, markPasswordResetTokenAsUsed
 } from "./db";
 import { comments, InsertArticle, articles, users } from "../drizzle/schema";
 import { eq, and } from "drizzle-orm";
@@ -26,7 +27,8 @@ import {
   generateVerificationCode
 } from "./security";
 import { sdk } from "./_core/sdk";
-import { sendVerificationEmail } from "./_core/mail";
+import { sendVerificationEmail, sendPasswordResetEmail } from "./_core/mail";
+import crypto from 'crypto';
 
 // Admin-only procedure with security checks
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -170,6 +172,68 @@ export const appRouter = router({
         ctx.res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: 1000 * 60 * 60 * 24 * 365 });
 
         return { success: true };
+      }),
+
+    forgotPassword: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(async ({ input, ctx }) => {
+        // Anti-abuse: rate limiting by IP (max 3 reqs per hour)
+        const ip = getClientIp(ctx.req);
+        if (!checkRateLimit(`reset-${ip}`, 3, 60 * 60 * 1000)) {
+          throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "Too many password reset requests from this IP. Please try again later." });
+        }
+
+        const user = await getUserByEmail(input.email);
+        // Security best practice: Even if user is not found, we act like it succeeded to prevent email enumeration.
+        if (!user) {
+          return { success: true, message: "If that email exists, a reset link will be sent." };
+        }
+
+        // Create a long unique token
+        const token = crypto.randomBytes(32).toString('hex');
+
+        await createPasswordResetToken({
+          userId: user.id,
+          token,
+          expiresAt: new Date(Date.now() + 30 * 60 * 1000) // 30 minutes
+        });
+
+        // Generate full URL
+        const resetUrl = `${ctx.req.protocol}://${ctx.req.get('host')}/reset-password?token=${token}`;
+
+        await sendPasswordResetEmail(input.email, resetUrl);
+        return { success: true, message: "If that email exists, a reset link will be sent." };
+      }),
+
+    resetPassword: publicProcedure
+      .input(z.object({
+        token: z.string(),
+        newPassword: z.string().min(8)
+      }))
+      .mutation(async ({ input }) => {
+        const resetRecord = await getValidPasswordResetToken(input.token);
+
+        if (!resetRecord || resetRecord.expiresAt < new Date()) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid or expired password reset token." });
+        }
+
+        const user = await getUserById(resetRecord.userId);
+        if (!user) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
+        }
+
+        const hashedPassword = await hashPassword(input.newPassword);
+
+        // Update user
+        await upsertUser({
+          openId: user.openId,
+          password: hashedPassword
+        });
+
+        // Mark token as used to prevent replay attacks
+        await markPasswordResetTokenAsUsed(resetRecord.id);
+
+        return { success: true, message: "Password has been reset successfully." };
       }),
   }),
 

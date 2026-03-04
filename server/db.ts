@@ -1,8 +1,8 @@
 import { eq, desc, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
-export { users, articles, comments, advertisements, articleLikes, subscribers, verificationCodes } from "../drizzle/schema";
-import { InsertUser, User, users, articles, InsertArticle, Article, comments, InsertComment, Comment, advertisements, InsertAdvertisement, Advertisement, articleLikes, ArticleLike, InsertArticleLike, subscribers, InsertSubscriber, verificationCodes, VerificationCode, InsertVerificationCode } from "../drizzle/schema";
+export { users, articles, comments, advertisements, articleLikes, subscribers, verificationCodes, passwordResetTokens } from "../drizzle/schema";
+import { InsertUser, User, users, articles, InsertArticle, Article, comments, InsertComment, Comment, advertisements, InsertAdvertisement, Advertisement, articleLikes, ArticleLike, InsertArticleLike, subscribers, InsertSubscriber, verificationCodes, VerificationCode, InsertVerificationCode, passwordResetTokens, PasswordResetToken, InsertPasswordResetToken } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -524,4 +524,41 @@ export async function deleteVerificationCodeByEmail(email: string) {
   const db = await getDb();
   if (!db) return;
   await db.delete(verificationCodes).where(eq(verificationCodes.email, email));
+}
+
+// Password Reset operations
+export async function createPasswordResetToken(data: InsertPasswordResetToken): Promise<PasswordResetToken> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const created = await db.insert(passwordResetTokens).values(data).returning();
+  if (!created[0]) throw new Error("Failed to create password reset token");
+  return created[0];
+}
+
+export async function getValidPasswordResetToken(token: string): Promise<PasswordResetToken | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  const results = await db
+    .select()
+    .from(passwordResetTokens)
+    .where(
+      and(
+        eq(passwordResetTokens.token, token),
+        eq(passwordResetTokens.used, 0)
+      )
+    )
+    .orderBy(desc(passwordResetTokens.createdAt))
+    .limit(1);
+
+  if (!results[0]) return null;
+  return results[0];
+}
+
+export async function markPasswordResetTokenAsUsed(tokenId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  await db.update(passwordResetTokens).set({ used: 1 }).where(eq(passwordResetTokens.id, tokenId));
 }
