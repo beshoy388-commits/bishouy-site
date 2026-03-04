@@ -20,7 +20,7 @@ import GlobalComments from "@/components/GlobalComments";
 import { Loader2, Plus, Edit, Trash2, Eye, LogOut, MessageSquare, Terminal, LayoutDashboard, Megaphone, Send } from "lucide-react";
 
 export default function AdminPanel() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, loading, logout } = useAuth();
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<"dashboard" | "articles" | "users" | "comments" | "ads" | "newsletter" | "system">("dashboard");
   const [showForm, setShowForm] = useState(false);
@@ -28,6 +28,8 @@ export default function AdminPanel() {
 
   // Redirect if not authenticated or not admin
   useEffect(() => {
+    if (loading) return; // Wait for auth state to load
+
     if (!isAuthenticated) {
       setLocation("/");
       return;
@@ -36,7 +38,7 @@ export default function AdminPanel() {
       toast.error("Access Denied", { description: "You do not have admin privileges" });
       setLocation("/");
     }
-  }, [isAuthenticated, user, setLocation]);
+  }, [isAuthenticated, user, loading, setLocation]);
 
   const articlesQuery = trpc.articles.list.useQuery();
   const pendingCommentsQuery = trpc.comments.getPending.useQuery();

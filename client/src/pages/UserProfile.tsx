@@ -3,7 +3,7 @@ import { useRoute } from "wouter";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Loader2, LogOut, User as UserIcon, Edit2, Save, X } from "lucide-react";
+import { Loader2, LogOut, User as UserIcon, Edit2, Save, X, Bookmark } from "lucide-react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
@@ -34,6 +34,10 @@ export default function UserProfile() {
     onError: (error) => {
       toast.error(error.message || "Failed to update profile");
     },
+  });
+
+  const { data: savedArticles, isLoading: isLoadingBookmarks } = trpc.bookmarks.list.useQuery(undefined, {
+    enabled: !!user,
   });
 
   useEffect(() => {
@@ -309,6 +313,54 @@ export default function UserProfile() {
               </Link>
             </div>
           )}
+
+          {/* Saved Articles Section */}
+          <div className="bg-[#1C1C1A] rounded-sm p-8 mt-8">
+            <h2 className="font-display text-xl text-[#F2F0EB] mb-6 flex items-center gap-2">
+              <Bookmark size={20} className="text-[#E8A020]" />
+              Saved Articles
+            </h2>
+
+            {isLoadingBookmarks ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="animate-spin text-[#E8A020]" size={24} />
+              </div>
+            ) : savedArticles && savedArticles.length > 0 ? (
+              <div className="space-y-4">
+                {savedArticles.map((article) => (
+                  <Link key={article.id} href={`/articolo/${article.slug}`}>
+                    <div className="flex gap-4 group cursor-pointer border border-[#222220] p-4 rounded-sm hover:border-[#E8A020] transition-colors bg-[#0F0F0E]">
+                      {article.image && (
+                        <div className="w-24 h-24 flex-shrink-0 bg-[#222220] rounded-sm overflow-hidden hidden sm:block">
+                          <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <div className="text-[10px] text-[#E8A020] font-ui uppercase tracking-widest font-bold mb-1">
+                          {article.category}
+                        </div>
+                        <h3 className="font-display text-lg text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2">
+                          {article.title}
+                        </h3>
+                        <div className="mt-2 text-xs text-[#8A8880] font-ui uppercase tracking-widest">
+                          {new Date(article.publishedAt || article.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-[#8A8880] mb-4">You haven't saved any articles yet.</p>
+                <Link href="/">
+                  <button className="text-[#E8A020] hover:text-[#D4911C] font-ui text-xs uppercase tracking-wider font-bold">
+                    Discover Articles
+                  </button>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 

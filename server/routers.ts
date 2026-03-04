@@ -11,7 +11,9 @@ import {
   getAllUsers, getUserById, updateUser, deleteUser,
   toggleArticleLike, getArticleLikeCount, hasUserLikedArticle, getArticleWithLikeInfo, getDb,
   createSubscriber, getAllSubscribers, deleteSubscriber, getUserByEmail, createVerificationCode, getLatestVerificationCode, deleteVerificationCodeByEmail, upsertUser, editComment,
-  createPasswordResetToken, getValidPasswordResetToken, markPasswordResetTokenAsUsed, getAllComments
+  createPasswordResetToken, getValidPasswordResetToken, markPasswordResetTokenAsUsed, getAllComments,
+  createSentNewsletterRecord, getAllSentNewsletters,
+  toggleSavedArticle, hasUserSavedArticle, getSavedArticlesByUserId, getRelatedArticles
 } from "./db";
 import { comments, InsertArticle, articles, users } from "../drizzle/schema";
 import { eq, and } from "drizzle-orm";
@@ -294,6 +296,13 @@ export const appRouter = router({
       .input(z.object({ query: z.string() }))
       .query(async ({ input }) => {
         return searchArticles(input.query);
+      }),
+
+    // Public: Get related articles
+    getRelated: publicProcedure
+      .input(z.object({ articleId: z.number(), limit: z.number().default(3) }))
+      .query(async ({ input }) => {
+        return getRelatedArticles(input.articleId, input.limit);
       }),
 
     // Protected: Create article (admin only)
@@ -606,6 +615,27 @@ export const appRouter = router({
       }),
   }),
 
+  bookmarks: router({
+    // Protected: Get saved articles for logged-in user
+    list: protectedProcedure.query(async ({ ctx }) => {
+      return getSavedArticlesByUserId(ctx.user.id);
+    }),
+
+    // Protected: Check if a specific article is saved
+    hasSaved: protectedProcedure
+      .input(z.object({ articleId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        return hasUserSavedArticle(input.articleId, ctx.user.id);
+      }),
+
+    // Protected: Toggle saved status of an article
+    toggle: protectedProcedure
+      .input(z.object({ articleId: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        return toggleSavedArticle(input.articleId, ctx.user.id);
+      }),
+  }),
+
   users: router({
     // Admin: Get all users
     getAll: adminProcedure.query(async () => {
@@ -700,6 +730,10 @@ export const appRouter = router({
       return getAllSubscribers();
     }),
 
+    getHistory: adminProcedure.query(async () => {
+      return getAllSentNewsletters();
+    }),
+
     broadcast: adminProcedure
       .input(z.object({
         subject: z.string().min(1),
@@ -707,17 +741,23 @@ export const appRouter = router({
       }))
       .mutation(async ({ input }) => {
         const subscribers = await getAllSubscribers();
-        const activeEmails = subscribers.filter(s => s.active === 1).map(s => s.email);
+        const activeRecipients = subscribers
+          .filter(s => s.active === 1 && s.unsubscribeToken)
+          .map(s => ({ email: s.email, token: s.unsubscribeToken! }));
 
-        if (subscribers.length > 0) {
-          const activeRecipients = subscribers
-            .filter(s => s.active === 1 && s.unsubscribeToken)
-            .map(s => ({ email: s.email, token: s.unsubscribeToken! }));
+        if (activeRecipients.length > 0) {
           // Fire and forget (will run async in background)
           sendNewsletterBroadcast(input.subject, input.htmlContent, activeRecipients).catch(console.error);
+
+          // Record the broadcast in history
+          await createSentNewsletterRecord({
+            subject: input.subject,
+            content: input.htmlContent,
+            recipientCount: activeRecipients.length
+          });
         }
 
-        return { success: true, count: activeEmails.length };
+        return { success: true, count: activeRecipients.length };
       }),
 
     delete: adminProcedure

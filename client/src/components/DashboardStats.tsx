@@ -28,7 +28,10 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
             </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group">
+                <Card
+                    onClick={() => onTabChange?.("users")}
+                    className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group cursor-pointer hover:border-[#E8A020]/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
                     <div className="absolute top-0 right-0 p-2 sm:p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                         <Users size={48} className="text-[#E8A020] sm:w-16 sm:h-16" />
                     </div>
@@ -39,7 +42,10 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
                     <div className="text-2xl sm:text-4xl font-headline text-[#F2F0EB] z-10">{stats?.totalUsers || 0}</div>
                 </Card>
 
-                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group">
+                <Card
+                    onClick={() => onTabChange?.("articles")}
+                    className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group cursor-pointer hover:border-[#E8A020]/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
                     <div className="absolute top-0 right-0 p-2 sm:p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                         <FileText size={48} className="text-[#E8A020] sm:w-16 sm:h-16" />
                     </div>
@@ -50,7 +56,10 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
                     <div className="text-2xl sm:text-4xl font-headline text-[#F2F0EB] z-10">{stats?.totalArticles || 0}</div>
                 </Card>
 
-                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group">
+                <Card
+                    onClick={() => onTabChange?.("comments")}
+                    className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group cursor-pointer hover:border-[#E8A020]/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
                     <div className="absolute top-0 right-0 p-2 sm:p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                         <MessageSquare size={48} className="text-[#E8A020] sm:w-16 sm:h-16" />
                     </div>
@@ -61,7 +70,10 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
                     <div className="text-2xl sm:text-4xl font-headline text-[#F2F0EB] z-10">{stats?.totalComments || 0}</div>
                 </Card>
 
-                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group">
+                <Card
+                    onClick={() => onTabChange?.("newsletter")}
+                    className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group cursor-pointer hover:border-[#E8A020]/30 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
                     <div className="absolute top-0 right-0 p-2 sm:p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                         <Mail size={48} className="text-[#E8A020] sm:w-16 sm:h-16" />
                     </div>

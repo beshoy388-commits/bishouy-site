@@ -1,8 +1,8 @@
 import { eq, desc, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
-export { users, articles, comments, advertisements, articleLikes, subscribers, verificationCodes, passwordResetTokens } from "../drizzle/schema";
-import { InsertUser, User, users, articles, InsertArticle, Article, comments, InsertComment, Comment, advertisements, InsertAdvertisement, Advertisement, articleLikes, ArticleLike, InsertArticleLike, subscribers, InsertSubscriber, verificationCodes, VerificationCode, InsertVerificationCode, passwordResetTokens, PasswordResetToken, InsertPasswordResetToken } from "../drizzle/schema";
+export { users, articles, comments, advertisements, articleLikes, subscribers, verificationCodes, passwordResetTokens, sentNewsletters, savedArticles } from "../drizzle/schema";
+import { InsertUser, User, users, articles, InsertArticle, Article, comments, InsertComment, Comment, advertisements, InsertAdvertisement, Advertisement, articleLikes, ArticleLike, InsertArticleLike, subscribers, InsertSubscriber, verificationCodes, VerificationCode, InsertVerificationCode, passwordResetTokens, PasswordResetToken, InsertPasswordResetToken, sentNewsletters, SentNewsletter, InsertSentNewsletter, savedArticles, SavedArticle, InsertSavedArticle } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -188,6 +188,23 @@ export async function getArticlesByCategory(category: string, includeDrafts = fa
       )
     )
     .orderBy(desc(articles.createdAt));
+}
+
+export async function getRelatedArticles(articleId: number, limitCount: number = 3): Promise<Article[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  // Fetch recent published articles excluding the current one
+  return db.select()
+    .from(articles)
+    .where(
+      and(
+        eq(articles.status, "published"),
+        sql`${articles.id} != ${articleId}`
+      )
+    )
+    .orderBy(desc(articles.createdAt))
+    .limit(limitCount);
 }
 
 // Type for comment with user info
@@ -510,6 +527,59 @@ export async function getArticleWithLikeInfo(articleId: number, userId?: number)
   return { article, likeCount, userLiked };
 }
 
+// Saved Articles (Bookmarks) queries
+export async function toggleSavedArticle(articleId: number, userId: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const existing = await db
+    .select()
+    .from(savedArticles)
+    .where(and(eq(savedArticles.articleId, articleId), eq(savedArticles.userId, userId)))
+    .limit(1);
+
+  if (existing.length > 0) {
+    // Remove bookmark
+    await db
+      .delete(savedArticles)
+      .where(and(eq(savedArticles.articleId, articleId), eq(savedArticles.userId, userId)));
+    return false; // Bookmark removed
+  } else {
+    // Add bookmark
+    await db.insert(savedArticles).values({ articleId, userId });
+    return true; // Bookmark added
+  }
+}
+
+export async function hasUserSavedArticle(articleId: number, userId: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+
+  const result = await db
+    .select()
+    .from(savedArticles)
+    .where(and(eq(savedArticles.articleId, articleId), eq(savedArticles.userId, userId)))
+    .limit(1);
+
+  return result.length > 0;
+}
+
+export async function getSavedArticlesByUserId(userId: number): Promise<Article[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  const results = await db
+    .select({
+      article: articles
+    })
+    .from(savedArticles)
+    .innerJoin(articles, eq(savedArticles.articleId, articles.id))
+    .where(eq(savedArticles.userId, userId))
+    .orderBy(desc(savedArticles.createdAt));
+
+  return results.map(r => r.article);
+}
+
 export async function searchArticles(query: string, limit: number = 20): Promise<Article[]> {
   const db = await getDb();
   if (!db) return [];
@@ -604,6 +674,21 @@ export async function getAllSubscribers() {
   const db = await getDb();
   if (!db) return [];
   return db.select().from(subscribers).orderBy(desc(subscribers.createdAt));
+}
+
+// Sent newsletter history
+export async function createSentNewsletterRecord(data: InsertSentNewsletter): Promise<SentNewsletter> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const created = await db.insert(sentNewsletters).values(data).returning();
+  if (!created[0]) throw new Error("Failed to record sent newsletter");
+  return created[0];
+}
+
+export async function getAllSentNewsletters(): Promise<SentNewsletter[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(sentNewsletters).orderBy(desc(sentNewsletters.createdAt));
 }
 
 // Verification codes

@@ -147,3 +147,24 @@ export const passwordResetTokens = sqliteTable("password_reset_tokens", {
 
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 export type InsertPasswordResetToken = typeof passwordResetTokens.$inferInsert;
+
+export const sentNewsletters = sqliteTable("sent_newsletters", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  subject: text("subject").notNull(),
+  content: text("content").notNull(),
+  recipientCount: integer("recipientCount", { mode: "number" }).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+});
+
+export type SentNewsletter = typeof sentNewsletters.$inferSelect;
+export type InsertSentNewsletter = typeof sentNewsletters.$inferInsert;
+
+export const savedArticles = sqliteTable("saved_articles", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  articleId: integer("articleId").notNull().references(() => articles.id, { onDelete: "cascade" }),
+  userId: integer("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+});
+
+export type SavedArticle = typeof savedArticles.$inferSelect;
+export type InsertSavedArticle = typeof savedArticles.$inferInsert;

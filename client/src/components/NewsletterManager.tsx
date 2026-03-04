@@ -12,6 +12,8 @@ export default function NewsletterManager() {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const listQuery = trpc.newsletter.list.useQuery();
 
+    const historyQuery = trpc.newsletter.getHistory.useQuery();
+
     const utils = trpc.useUtils();
 
     const broadcastMutation = trpc.newsletter.broadcast.useMutation({
@@ -19,6 +21,7 @@ export default function NewsletterManager() {
             toast.success(`Newsletter sent to ${data.count} subscribers!`);
             setSubject("");
             setContent("");
+            utils.newsletter.getHistory.invalidate();
         },
         onError: (error: any) => {
             toast.error("Error sending newsletter", { description: error.message });
@@ -168,6 +171,38 @@ export default function NewsletterManager() {
                                 </button>
                             </div>
                         </div>
+                    </Card>
+
+                    <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
+                        <div className="flex items-center gap-2 mb-6">
+                            <Mail size={16} className="text-[#E8A020]" />
+                            <h3 className="font-ui text-xs font-600 text-[#F2F0EB] uppercase tracking-widest">Sent History</h3>
+                        </div>
+
+                        {historyQuery.isLoading ? (
+                            <div className="py-8 flex justify-center"><Loader2 className="animate-spin text-[#E8A020]" /></div>
+                        ) : (
+                            <div className="space-y-4">
+                                {historyQuery.data?.map((item: any) => (
+                                    <div key={item.id} className="p-4 bg-[#0F0F0E] border border-[#222220] rounded-sm group hover:border-[#E8A020]/30 transition-colors">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <h4 className="text-sm font-600 text-[#F2F0EB]">{item.subject}</h4>
+                                            <span className="text-[10px] font-ui text-[#8A8880] uppercase bg-[#1C1C1A] px-2 py-0.5 rounded-full">
+                                                {item.recipientCount} Recipients
+                                            </span>
+                                        </div>
+                                        <p className="text-[10px] text-[#555550] flex items-center gap-2">
+                                            {new Date(item.createdAt).toLocaleString()}
+                                        </p>
+                                    </div>
+                                ))}
+                                {historyQuery.data?.length === 0 && (
+                                    <p className="text-xs text-[#555550] text-center py-8 border border-dashed border-[#2A2A28] rounded-sm">
+                                        No sent newsletters yet.
+                                    </p>
+                                )}
+                            </div>
+                        )}
                     </Card>
                 </div>
 

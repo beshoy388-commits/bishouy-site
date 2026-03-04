@@ -3,7 +3,7 @@ import { useRoute } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
-import { Loader2, ArrowLeft, Clock, User, Calendar, Send, Heart, Edit2, Trash2, X, Check } from "lucide-react";
+import { Loader2, ArrowLeft, Clock, User, Calendar, Send, Heart, Edit2, Trash2, X, Check, Share2, Twitter, Facebook, Link as LinkIcon, Bookmark } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -20,6 +20,8 @@ export default function ArticleDetail() {
   const [likeCount, setLikeCount] = useState(0);
   const [userLiked, setUserLiked] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isSaved, setIsSaved] = useState(false);
 
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState("");
@@ -61,6 +63,26 @@ export default function ArticleDetail() {
     },
   });
 
+  // Query per i segnalibri
+  const hasSavedQuery = trpc.bookmarks.hasSaved.useQuery(
+    { articleId: article?.id || 0 },
+    { enabled: !!article?.id && !!user }
+  );
+
+  const toggleBookmarkMutation = trpc.bookmarks.toggle.useMutation({
+    onSuccess: (saved) => {
+      setIsSaved(saved);
+      toast.success(saved ? "Article saved to bookmarks" : "Article removed from bookmarks");
+    },
+    onError: (error) => toast.error(error.message),
+  });
+
+  // Query per articoli correlati
+  const { data: relatedArticles } = trpc.articles.getRelated.useQuery(
+    { articleId: article?.id || 0, limit: 3 },
+    { enabled: !!article?.id }
+  );
+
   // Mutation per creare un commento
   const createCommentMutation = trpc.comments.create.useMutation({
     onSuccess: () => {
@@ -93,9 +115,21 @@ export default function ArticleDetail() {
     onError: (error) => toast.error(error.message),
   });
 
-  // Effect per scrollare in alto
+  // Effect per scrollare in alto e calcolare il progresso
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    const handleScroll = () => {
+      // Calculate scroll progress properly based on document height
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        const progress = Math.min(100, Math.max(0, (window.scrollY / totalHeight) * 100));
+        setScrollProgress(progress);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // SEO: Dynamic title and Open Graph meta tags per article
@@ -163,6 +197,13 @@ export default function ArticleDetail() {
     }
   }, [userLikedQuery.data]);
 
+  // Effect per aggiornare lo stato del salvataggio dell'utente
+  useEffect(() => {
+    if (hasSavedQuery.data !== undefined) {
+      setIsSaved(hasSavedQuery.data);
+    }
+  }, [hasSavedQuery.data]);
+
   // Handler per il click sul like
   const handleLikeClick = () => {
     if (!user) {
@@ -171,6 +212,17 @@ export default function ArticleDetail() {
     }
     if (article) {
       toggleLikeMutation.mutate({ articleId: article.id });
+    }
+  };
+
+  // Handler per il click sul salvataggio (bookmark)
+  const handleBookmarkClick = () => {
+    if (!user) {
+      window.location.href = getLoginUrl();
+      return;
+    }
+    if (article) {
+      toggleBookmarkMutation.mutate({ articleId: article.id });
     }
   };
 
@@ -185,6 +237,29 @@ export default function ArticleDetail() {
       });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleShare = (platform: string) => {
+    if (!article) return;
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent(article.title);
+
+    const links: Record<string, string> = {
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+      twitter: `https://twitter.com/intent/tweet?url=${url}&text=${title}`,
+      whatsapp: `https://api.whatsapp.com/send?text=${title} ${url}`,
+      telegram: `https://t.me/share/url?url=${url}&text=${title}`
+    };
+
+    if (platform === 'copy') {
+      navigator.clipboard.writeText(window.location.href);
+      toast.success("Link copied to clipboard!");
+      return;
+    }
+
+    if (links[platform]) {
+      window.open(links[platform], '_blank', 'width=600,height=400');
     }
   };
 
@@ -307,8 +382,16 @@ export default function ArticleDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F0F0E]">
+    <div className="min-h-screen bg-[#0F0F0E] relative">
       <Navbar />
+
+      {/* Reading Progress Bar */}
+      <div className="fixed top-0 left-0 w-full h-[3px] z-[100] bg-transparent">
+        <div
+          className="h-full bg-[#E8A020] transition-all duration-150 ease-out"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
 
       {/* Hero Image */}
       <section className="relative h-[400px] md:h-[500px] overflow-hidden">
@@ -350,27 +433,121 @@ export default function ArticleDetail() {
               </h1>
               <p className="text-[#8A8880] text-lg mb-6">{article.excerpt}</p>
             </div>
-            {/* Like Button */}
+
+            {/* Quick Actions Desktop */}
+            <div className="hidden md:flex flex-col gap-3 flex-shrink-0">
+              {/* Like Button */}
+              <button
+                onClick={handleLikeClick}
+                disabled={toggleLikeMutation.isPending}
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-200 disabled:opacity-50"
+                style={{
+                  backgroundColor: userLiked ? "#E8A020" : "transparent",
+                  color: userLiked ? "#0F0F0E" : "#8A8880",
+                  border: userLiked ? "none" : "1px solid #2A2A28",
+                }}
+                title={user ? "Like this article" : "Login to like"}
+              >
+                <Heart
+                  size={18}
+                  className={`transition-transform duration-300 ${isAnimating && userLiked ? "scale-125" : "scale-100"}`}
+                  fill={userLiked ? "currentColor" : "none"}
+                />
+                <span className="font-ui text-sm font-600 uppercase tracking-wider">
+                  {likeCount}
+                </span>
+              </button>
+
+              {/* Bookmark Button */}
+              <button
+                onClick={handleBookmarkClick}
+                disabled={toggleBookmarkMutation.isPending}
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-200 disabled:opacity-50"
+                style={{
+                  backgroundColor: isSaved ? "#E8A020" : "transparent",
+                  color: isSaved ? "#0F0F0E" : "#8A8880",
+                  border: isSaved ? "none" : "1px solid #2A2A28",
+                }}
+                title={user ? "Save article" : "Login to save"}
+              >
+                <Bookmark
+                  size={18}
+                  className="transition-transform duration-300"
+                  fill={isSaved ? "currentColor" : "none"}
+                />
+                <span className="font-ui text-sm font-600 uppercase tracking-wider">
+                  {isSaved ? "Saved" : "Save"}
+                </span>
+              </button>
+
+              {/* Share Menu */}
+              <div className="group relative">
+                <button className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-sm border border-[#2A2A28] text-[#8A8880] hover:text-[#E8A020] hover:border-[#E8A020] transition-all bg-[#0F0F0E]">
+                  <Share2 size={18} />
+                  <span className="font-ui text-sm font-600 uppercase tracking-wider">Share</span>
+                </button>
+                <div className="absolute right-0 top-full mt-2 w-48 bg-[#1C1C1A] border border-[#2A2A28] rounded-sm shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden translate-y-2 group-hover:translate-y-0">
+                  <button onClick={() => handleShare('facebook')} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors">
+                    <Facebook size={16} /> Facebook
+                  </button>
+                  <button onClick={() => handleShare('twitter')} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors">
+                    <Twitter size={16} /> X (Twitter)
+                  </button>
+                  <button onClick={() => handleShare('whatsapp')} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" /><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1" /></svg> WhatsApp
+                  </button>
+                  <button onClick={() => handleShare('telegram')} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors">
+                    <Send size={16} /> Telegram
+                  </button>
+                  <button onClick={() => handleShare('copy')} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors border-t border-[#2A2A28]">
+                    <LinkIcon size={16} /> Copy Link
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions Mobile */}
+          <div className="md:hidden flex flex-wrap items-center gap-3 mb-6">
             <button
               onClick={handleLikeClick}
               disabled={toggleLikeMutation.isPending}
-              className="flex-shrink-0 flex items-center gap-2 px-4 py-3 rounded-sm transition-all duration-200 disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-200 disabled:opacity-50"
               style={{
                 backgroundColor: userLiked ? "#E8A020" : "transparent",
                 color: userLiked ? "#0F0F0E" : "#8A8880",
                 border: userLiked ? "none" : "1px solid #2A2A28",
               }}
-              title={user ? "Like this article" : "Login to like"}
             >
               <Heart
                 size={18}
-                className={`transition-transform duration-300 ${isAnimating && userLiked ? "scale-125" : "scale-100"
-                  }`}
+                className={`transition-transform duration-300 ${isAnimating && userLiked ? "scale-125" : "scale-100"}`}
                 fill={userLiked ? "currentColor" : "none"}
               />
-              <span className="font-ui text-sm font-600 uppercase tracking-wider">
-                {likeCount}
-              </span>
+              <span className="font-ui text-sm font-600 uppercase tracking-wider">{likeCount}</span>
+            </button>
+            <button
+              onClick={handleBookmarkClick}
+              disabled={toggleBookmarkMutation.isPending}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-200 disabled:opacity-50"
+              style={{
+                backgroundColor: isSaved ? "#E8A020" : "transparent",
+                color: isSaved ? "#0F0F0E" : "#8A8880",
+                border: isSaved ? "none" : "1px solid #2A2A28",
+              }}
+            >
+              <Bookmark
+                size={18}
+                fill={isSaved ? "currentColor" : "none"}
+              />
+              <span className="font-ui text-sm font-600 uppercase tracking-wider">Save</span>
+            </button>
+            <button
+              onClick={() => handleShare('copy')}
+              className="flex-1 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-sm border border-[#2A2A28] text-[#8A8880] hover:text-[#E8A020] transition-colors"
+            >
+              <Share2 size={18} />
+              <span className="font-ui text-sm font-600 uppercase tracking-wider">Share</span>
             </button>
           </div>
 
@@ -569,6 +746,50 @@ export default function ArticleDetail() {
               </div>
             )}
           </div>
+
+          {/* Related Articles Section */}
+          {relatedArticles && relatedArticles.length > 0 && (
+            <div className="mt-16 pt-12 border-t border-[#1C1C1A]">
+              <h3 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-8">Read Next</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {relatedArticles.map((article) => {
+                  const publishDate = article.publishedAt
+                    ? new Date(article.publishedAt)
+                    : new Date(article.createdAt);
+
+                  return (
+                    <Link key={article.id} href={`/articolo/${article.slug}`}>
+                      <div className="group cursor-pointer">
+                        <div className="aspect-[16/9] overflow-hidden rounded-sm mb-4 relative bg-[#1C1C1A]">
+                          {article.image ? (
+                            <img
+                              src={article.image}
+                              alt={article.title}
+                              className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-[#8A8880]">
+                              No image
+                            </div>
+                          )}
+                          <div className="absolute top-3 left-3 bg-[#E8A020] text-[#0F0F0E] text-[10px] font-ui font-bold uppercase tracking-widest px-2 py-1 rounded-sm">
+                            {article.category}
+                          </div>
+                        </div>
+                        <h4 className="font-display text-lg text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 mb-2">
+                          {article.title}
+                        </h4>
+                        <div className="flex items-center gap-4 text-xs text-[#8A8880] font-ui uppercase tracking-widest">
+                          <span>{article.author}</span>
+                          <span>{publishDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </article>
 
