@@ -10,7 +10,7 @@ import {
   getActiveAdvertisements, getAllAdvertisements, createAdvertisement, updateAdvertisement, deleteAdvertisement,
   getAllUsers, getUserById, updateUser, deleteUser,
   toggleArticleLike, getArticleLikeCount, hasUserLikedArticle, getArticleWithLikeInfo, getDb,
-  createSubscriber, getAllSubscribers, getUserByEmail, createVerificationCode, getLatestVerificationCode, deleteVerificationCodeByEmail, upsertUser
+  createSubscriber, getAllSubscribers, getUserByEmail, createVerificationCode, getLatestVerificationCode, deleteVerificationCodeByEmail, upsertUser, editComment
 } from "./db";
 import { comments, InsertArticle, articles, users } from "../drizzle/schema";
 import { eq, and } from "drizzle-orm";
@@ -439,6 +439,24 @@ export const appRouter = router({
         await deleteComment(input.id);
         return { success: true };
       }),
+
+    // Protected: Edit own comment
+    editOwn: protectedProcedure
+      .input(z.object({ id: z.number(), content: z.string().min(1).max(1000) }))
+      .mutation(async ({ input, ctx }) => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database unavailable' });
+
+        const comment = await db.select().from(comments).where(eq(comments.id, input.id)).limit(1);
+        if (comment.length === 0) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Comment not found' });
+        }
+        if (comment[0].userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'You can only edit your own comments' });
+        }
+
+        return editComment(input.id, input.content, comment[0].content);
+      }),
   }),
 
   advertisements: router({
@@ -565,6 +583,33 @@ export const appRouter = router({
         await deleteUser(input.id);
         return { success: true };
       }),
+
+    // Public: Get user by username for public profile
+    getByUsername: publicProcedure
+      .input(z.object({ username: z.string() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return null;
+
+        const user = await db.select().from(users).where(eq(users.username, input.username)).limit(1);
+        if (!user || user.length === 0) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+        }
+
+        // Return only safe public fields
+        const u = user[0];
+        return {
+          id: u.id,
+          name: u.name,
+          username: u.username,
+          bio: u.bio,
+          avatarUrl: u.avatarUrl,
+          website: u.website,
+          location: u.location,
+          role: u.role,
+          createdAt: u.createdAt
+        };
+      })
   }),
 
   newsletter: router({

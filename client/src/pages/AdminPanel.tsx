@@ -150,8 +150,8 @@ export default function AdminPanel() {
               setShowForm(false);
             }}
             className={`py-3 px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 ${activeTab === "articles"
-                ? "text-[#E8A020] border-[#E8A020]"
-                : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+              ? "text-[#E8A020] border-[#E8A020]"
+              : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
               }`}
           >
             Articles
@@ -162,8 +162,8 @@ export default function AdminPanel() {
               setShowForm(false);
             }}
             className={`py-3 px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${activeTab === "comments"
-                ? "text-[#E8A020] border-[#E8A020]"
-                : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+              ? "text-[#E8A020] border-[#E8A020]"
+              : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
               }`}
           >
             <MessageSquare size={14} />
@@ -180,8 +180,8 @@ export default function AdminPanel() {
               setShowForm(false);
             }}
             className={`py-3 px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 ${activeTab === "users"
-                ? "text-[#E8A020] border-[#E8A020]"
-                : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+              ? "text-[#E8A020] border-[#E8A020]"
+              : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
               }`}
           >
             Users
@@ -192,8 +192,8 @@ export default function AdminPanel() {
               setShowForm(false);
             }}
             className={`py-3 px-4 font-ui text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 ${activeTab === "system"
-                ? "text-[#E8A020] border-[#E8A020]"
-                : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
+              ? "text-[#E8A020] border-[#E8A020]"
+              : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
               }`}
           >
             <Terminal size={14} />
@@ -377,7 +377,15 @@ export default function AdminPanel() {
                             </span>
                           </div>
                           {/* Content */}
-                          <p className="text-[#D4D0C8] leading-relaxed text-sm">{comment.content}</p>
+                          <div>
+                            <p className="text-[#D4D0C8] leading-relaxed text-sm">{comment.content}</p>
+                            {c.isEdited === 1 && c.originalContent && (
+                              <div className="mt-2 p-3 bg-[#0F0F0E] rounded border border-[#2A2A28]">
+                                <p className="font-ui text-[10px] text-[#E8A020] uppercase tracking-widest mb-1">Prima della modifica:</p>
+                                <p className="text-[#8A8880] text-xs italic line-through opacity-70">{c.originalContent}</p>
+                              </div>
+                            )}
+                          </div>
                         </div>
                         {/* Actions */}
                         <div className="flex items-center gap-2 flex-shrink-0">

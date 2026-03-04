@@ -3,7 +3,7 @@ import { useRoute } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
-import { Loader2, ArrowLeft, Clock, User, Calendar, Send, Heart } from "lucide-react";
+import { Loader2, ArrowLeft, Clock, User, Calendar, Send, Heart, Edit2, Trash2, X, Check } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -20,6 +20,9 @@ export default function ArticleDetail() {
   const [likeCount, setLikeCount] = useState(0);
   const [userLiked, setUserLiked] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editContent, setEditContent] = useState("");
 
   // Query per l'articolo
   const { data: article, isLoading } = trpc.articles.getBySlug.useQuery(
@@ -68,6 +71,26 @@ export default function ArticleDetail() {
     onError: (error) => {
       toast.error(error.message || "Failed to submit comment");
     },
+  });
+
+  // Mutation per modificare un commento
+  const editCommentMutation = trpc.comments.editOwn.useMutation({
+    onSuccess: () => {
+      setEditingCommentId(null);
+      setEditContent("");
+      toast.success("Comment updated");
+      refetchComments();
+    },
+    onError: (error) => toast.error(error.message),
+  });
+
+  // Mutation per eliminare un commento
+  const deleteCommentMutation = trpc.comments.deleteOwn.useMutation({
+    onSuccess: () => {
+      toast.success("Comment deleted");
+      refetchComments();
+    },
+    onError: (error) => toast.error(error.message),
   });
 
   // Effect per scrollare in alto
@@ -187,8 +210,8 @@ export default function ArticleDetail() {
               return (
                 <figure
                   className={`my-6 ${imgStyle.position === "left" ? "float-left mr-6 mb-4" :
-                      imgStyle.position === "right" ? "float-right ml-6 mb-4" :
-                        "clear-both"
+                    imgStyle.position === "right" ? "float-right ml-6 mb-4" :
+                      "clear-both"
                     }`}
                   style={{ width: imgStyle.position === "full" ? "100%" : `${imgStyle.width}%` }}
                 >
@@ -347,36 +370,114 @@ export default function ArticleDetail() {
                   const displayName = c.userUsername
                     ? `@${c.userUsername}`
                     : c.userName || "Anonymous";
+                  const isOwner = user && user.id === c.userId;
+                  const isEditing = editingCommentId === c.id;
+
+                  const ProfileWrapper = ({ children }: { children: React.ReactNode }) => {
+                    if (c.userUsername) {
+                      return <Link href={`/u/${c.userUsername}`}>{children}</Link>;
+                    }
+                    return <>{children}</>;
+                  };
+
                   return (
-                    <div key={comment.id} className="bg-[#1C1C1A] rounded-sm p-6">
+                    <div key={c.id} className="bg-[#1C1C1A] rounded-sm p-6 relative group">
                       <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          {c.userAvatarUrl ? (
-                            <img
-                              src={c.userAvatarUrl}
-                              alt={displayName}
-                              className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                            />
-                          ) : (
-                            <div className="w-8 h-8 rounded-full bg-[#2A2A28] flex items-center justify-center flex-shrink-0">
-                              <span className="text-[#8A8880] text-xs font-bold">
-                                {displayName.charAt(0).toUpperCase()}
-                              </span>
+                        <ProfileWrapper>
+                          <div className={`flex items-center gap-3 ${c.userUsername ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}>
+                            {c.userAvatarUrl ? (
+                              <img
+                                src={c.userAvatarUrl}
+                                alt={displayName}
+                                className="w-8 h-8 rounded-full object-cover flex-shrink-0 border border-[#2A2A28]"
+                              />
+                            ) : (
+                              <div className="w-8 h-8 rounded-full bg-[#2A2A28] flex items-center justify-center flex-shrink-0">
+                                <span className="text-[#8A8880] text-xs font-bold">
+                                  {displayName.charAt(1)?.toUpperCase() || displayName.charAt(0).toUpperCase()}
+                                </span>
+                              </div>
+                            )}
+                            <div>
+                              <p className={`font-medium text-sm ${c.userUsername ? 'text-[#E8A020]' : 'text-[#F2F0EB]'}`}>{displayName}</p>
+                              <p className="text-xs text-[#8A8880] flex items-center gap-1.5">
+                                {new Date(c.createdAt).toLocaleDateString("en-US", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                })}
+                                {c.isEdited === 1 && (
+                                  <span className="italic opacity-70">(edited)</span>
+                                )}
+                              </p>
                             </div>
-                          )}
-                          <div>
-                            <p className="font-medium text-[#F2F0EB] text-sm">{displayName}</p>
-                            <p className="text-xs text-[#8A8880]">
-                              {new Date(comment.createdAt).toLocaleDateString("it-IT", {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                              })}
-                            </p>
+                          </div>
+                        </ProfileWrapper>
+
+                        {/* Azioni per il proprietario del commento */}
+                        {isOwner && !isEditing && (
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2">
+                            <button
+                              onClick={() => {
+                                setEditingCommentId(c.id);
+                                setEditContent(c.content);
+                              }}
+                              className="text-[#8A8880] hover:text-[#E8A020] transition-colors p-1"
+                              title="Edit comment"
+                            >
+                              <Edit2 size={14} />
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (window.confirm("Are you sure you want to delete this comment?")) {
+                                  deleteCommentMutation.mutate({ id: c.id });
+                                }
+                              }}
+                              className="text-[#8A8880] hover:text-red-500 transition-colors p-1"
+                              title="Delete comment"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {isEditing ? (
+                        <div className="mt-2">
+                          <textarea
+                            value={editContent}
+                            onChange={(e) => setEditContent(e.target.value)}
+                            className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm p-3 text-[#D4D0C8] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] resize-none"
+                            rows={3}
+                          />
+                          <div className="flex justify-end gap-2 mt-2">
+                            <button
+                              onClick={() => {
+                                setEditingCommentId(null);
+                                setEditContent("");
+                              }}
+                              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-600 text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
+                            >
+                              <X size={12} /> Cancel
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (editContent.trim() && editContent !== c.content) {
+                                  editCommentMutation.mutate({ id: c.id, content: editContent });
+                                } else {
+                                  setEditingCommentId(null);
+                                }
+                              }}
+                              disabled={!editContent.trim() || editCommentMutation.isPending}
+                              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-600 bg-[#2A2A28] text-[#E8A020] hover:bg-[#E8A020] hover:text-[#0F0F0E] rounded-sm transition-colors disabled:opacity-50"
+                            >
+                              <Check size={12} /> Save
+                            </button>
                           </div>
                         </div>
-                      </div>
-                      <p className="text-[#D4D0C8] leading-relaxed">{comment.content}</p>
+                      ) : (
+                        <p className="text-[#D4D0C8] leading-relaxed whitespace-pre-wrap">{c.content}</p>
+                      )}
                     </div>
                   );
                 })}

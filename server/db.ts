@@ -187,6 +187,8 @@ export async function getCommentsByArticle(articleId: number, onlyApproved: bool
       articleId: comments.articleId,
       userId: comments.userId,
       content: comments.content,
+      originalContent: comments.originalContent,
+      isEdited: comments.isEdited,
       approved: comments.approved,
       createdAt: comments.createdAt,
       updatedAt: comments.updatedAt,
@@ -232,6 +234,28 @@ export async function deleteComment(id: number): Promise<void> {
   await db.delete(comments).where(eq(comments.id, id));
 }
 
+export async function editComment(id: number, newContent: string, currentContent: string): Promise<Comment> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const comment = await db.select().from(comments).where(eq(comments.id, id)).limit(1);
+  if (!comment[0]) throw new Error("Comment not found");
+
+  const originalContent = comment[0].originalContent || currentContent;
+
+  const updated = await db.update(comments)
+    .set({
+      content: newContent,
+      originalContent: originalContent,
+      isEdited: 1,
+      updatedAt: new Date()
+    })
+    .where(eq(comments.id, id))
+    .returning();
+
+  return updated[0];
+}
+
 export async function getPendingComments(): Promise<CommentWithUser[]> {
   const db = await getDb();
   if (!db) return [];
@@ -242,6 +266,8 @@ export async function getPendingComments(): Promise<CommentWithUser[]> {
       articleId: comments.articleId,
       userId: comments.userId,
       content: comments.content,
+      originalContent: comments.originalContent,
+      isEdited: comments.isEdited,
       approved: comments.approved,
       createdAt: comments.createdAt,
       updatedAt: comments.updatedAt,

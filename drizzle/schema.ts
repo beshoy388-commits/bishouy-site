@@ -57,6 +57,8 @@ export const comments = sqliteTable("comments", {
   articleId: integer("articleId").notNull().references(() => articles.id, { onDelete: "cascade" }),
   userId: integer("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
+  originalContent: text("originalContent"),
+  isEdited: integer("isEdited", { mode: "number" }).default(0).notNull(),
   approved: integer("approved", { mode: "number" }).default(0).notNull(),
   createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
   updatedAt: integer("updatedAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),

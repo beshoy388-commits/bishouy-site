@@ -9,6 +9,7 @@ import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
 import AdminPanel from "@/pages/AdminPanel";
 import UserProfile from "@/pages/UserProfile";
+import PublicProfile from "@/pages/PublicProfile";
 import AIAssistant from "@/pages/AIAssistant";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
@@ -26,6 +27,7 @@ function Router() {
       <Route path={"/category/:slug"} component={CategoryPage} />
       <Route path={"/search"} component={Search} />
       <Route path={"/profile"} component={UserProfile} />
+      <Route path={"/u/:username"} component={PublicProfile} />
       <Route path={"/privacy-policy"} component={PrivacyPolicy} />
       <Route path={"/terms-of-service"} component={TermsOfService} />
       <Route path={"/admin"} component={AdminPanel} />
