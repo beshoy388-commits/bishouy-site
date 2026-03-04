@@ -73,9 +73,9 @@ export async function sendPasswordResetEmail(email: string, resetLink: string) {
 }
 
 export async function sendNewsletterBroadcast(subject: string, htmlContent: string, recipients: { email: string; token: string }[]) {
-  const baseUrl = ENV.appUrl;
+  const baseUrl = ENV.appUrl.replace(/\/$/, "");
   for (const { email, token } of recipients) {
-    const unsubscribeUrl = `${baseUrl}/unsubscribe?token=${token}`;
+    const unsubscribeUrl = `${baseUrl}/api/unsubscribe?token=${token}`;
     await sendBrevoEmail({
       to: email,
       subject: subject,
@@ -94,8 +94,8 @@ export async function sendNewsletterBroadcast(subject: string, htmlContent: stri
 }
 
 export async function sendWelcomeNewsletterEmail(email: string, unsubscribeToken: string) {
-  const baseUrl = ENV.appUrl;
-  const unsubscribeUrl = `${baseUrl}/unsubscribe?token=${unsubscribeToken}`;
+  const baseUrl = ENV.appUrl.replace(/\/$/, "");
+  const unsubscribeUrl = `${baseUrl}/api/unsubscribe?token=${unsubscribeToken}`;
 
   await sendBrevoEmail({
     to: email,
