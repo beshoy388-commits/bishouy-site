@@ -26,6 +26,7 @@ import {
   generateVerificationCode
 } from "./security";
 import { sdk } from "./_core/sdk";
+import { sendVerificationEmail } from "./_core/mail";
 
 // Admin-only procedure with security checks
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -83,8 +84,8 @@ export const appRouter = router({
           expiresAt: new Date(Date.now() + 30 * 60 * 1000) // 30 mins
         });
 
-        console.log(`[AUTH] Verification code for ${input.email}: ${code}`);
-        return { success: true, message: "Verification code sent to email (check server console in dev)" };
+        await sendVerificationEmail(input.email, code);
+        return { success: true, message: "Verification code sent to email." };
       }),
 
     verifyEmail: publicProcedure
@@ -136,7 +137,7 @@ export const appRouter = router({
           expiresAt: new Date(Date.now() + 30 * 60 * 1000) // 30 mins
         });
 
-        console.log(`[AUTH] Resent verification code for ${input.email}: ${code}`);
+        await sendVerificationEmail(input.email, code);
         return { success: true, message: "Verification code resent." };
       }),
 
