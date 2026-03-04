@@ -18,6 +18,23 @@ export async function getDb() {
         authToken: authToken || undefined
       });
       _db = drizzle(client);
+
+      // Eseguiamo una migrazione manuale "leggera" (non bloccante) per le nuove colonne di commenti,
+      // utile per scavalcare i warning di Drizzle e Turso durante il deploy
+      try {
+        await client.execute('ALTER TABLE comments ADD COLUMN originalContent TEXT;');
+        console.log('[Migration] Added originalContent column to comments');
+      } catch (err) {
+        // Se la colonna esiste già, ignora l'errore
+      }
+
+      try {
+        await client.execute('ALTER TABLE comments ADD COLUMN isEdited INTEGER DEFAULT 0;');
+        console.log('[Migration] Added isEdited column to comments');
+      } catch (err) {
+        // Ignora
+      }
+
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
