@@ -74,11 +74,10 @@ export default function VerifyEmail() {
                         <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#E8A020]/10 text-[#E8A020] mb-4">
                             <ShieldCheck size={24} />
                         </div>
-                        <h1 className="font-display text-3xl text-[#F2F0EB] mb-2">VERIFY EMAIL</h1>
+                        <h1 className="font-display text-3xl text-[#F2F0EB] mb-2 uppercase tracking-wide">Verify Email</h1>
                         <p className="font-ui text-sm text-[#8A8880]">
                             Enter the 6-digit code sent to <span className="text-[#F2F0EB] font-600">{email}</span>.
                         </p>
-                        <p className="font-ui text-[10px] text-[#555550] mt-2 italic">(Check your server console if in development)</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
