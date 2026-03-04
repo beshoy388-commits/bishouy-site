@@ -1,6 +1,6 @@
 /*
  * BISHOUY.COM — Terms of Service
- * EU Compliant Terms of Service
+ * EU Compliant — Updated March 2026 to include social and community features
  */
 
 import { Link } from "wouter";
@@ -26,139 +26,170 @@ export default function TermsOfService() {
             Terms of Service
           </h1>
           <p className="font-ui text-[#8A8880] mb-8">
-            Last updated: March 3, 2026
+            Last updated: March 4, 2026
           </p>
 
           <div className="font-body text-[#F2F0EB] leading-relaxed space-y-6">
+
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
-                1. Agreement to Terms
-              </h2>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">1. Agreement to Terms</h2>
               <p>
-                By accessing and using Bishouy.com (the "Site"), you accept and agree to be bound by and comply with these Terms of Service. If you do not agree to abide by the above, please do not use this service.
+                By accessing or using Bishouy.com (the "Platform"), you agree to be bound by these Terms of Service ("Terms"). These Terms apply to all visitors, registered users, and contributors of content. If you do not agree, you must not use the Platform.
+              </p>
+              <p className="mt-2">
+                These Terms are governed by the laws of the <strong>European Union</strong> and applicable member state law.
               </p>
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
-                2. Use License
-              </h2>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">2. The Platform</h2>
               <p>
-                Permission is granted to temporarily download one copy of the materials (information or software) on Bishouy.com for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:
+                Bishouy.com is a news and community platform that offers:
               </p>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>Modify or copy the materials</li>
-                <li>Use the materials for any commercial purpose or for any public display</li>
-                <li>Attempt to decompile or reverse engineer any software contained on the Site</li>
-                <li>Remove any copyright or other proprietary notations from the materials</li>
-                <li>Transfer the materials to another person or "mirror" the materials on any other server</li>
-                <li>Use the Site in any way that infringes upon the rights of others or restricts their use and enjoyment</li>
+              <ul className="list-disc list-inside space-y-1 ml-4 mt-2">
+                <li>Publication and reading of news articles</li>
+                <li>User accounts with public profiles</li>
+                <li>Comment sections on articles</li>
+                <li>Article like/reaction system</li>
+                <li>Newsletter subscription service</li>
+                <li>AI editorial assistant</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
-                3. Disclaimer
-              </h2>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">3. User Accounts</h2>
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2">3.1 Registration</h3>
+              <p>To access social features, you must create an account by providing a valid email address, name, and password. You agree to:</p>
+              <ul className="list-disc list-inside space-y-1 ml-4 mt-2">
+                <li>Provide accurate and truthful information</li>
+                <li>Verify your email address using the code we send</li>
+                <li>Maintain the security of your password</li>
+                <li>Immediately notify us of any unauthorized access to your account</li>
+              </ul>
+
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">3.2 Account Responsibility</h3>
+              <p>You are solely responsible for all activity that occurs under your account. We are not liable for any loss or damage arising from unauthorized use of your account due to your failure to maintain password security.</p>
+
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">3.3 Account Deletion</h3>
+              <p>You may request deletion of your account at any time by contacting <a href="mailto:privacy@bishouy.com" className="text-[#E8A020] hover:underline">privacy@bishouy.com</a>. Account deletion will result in permanent removal of your profile data, comments, and likes within 30 days.</p>
+            </section>
+
+            <section>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">4. Public Profile</h2>
+              <p>By creating an account, you acknowledge that the following information may be visible to all visitors of the Platform:</p>
+              <ul className="list-disc list-inside space-y-1 ml-4 mt-2">
+                <li>Your username and display name</li>
+                <li>Your profile biography, photo, website, and location (if provided)</li>
+                <li>Your published comments</li>
+              </ul>
+              <p className="mt-2">Your email address is <strong>never</strong> publicly visible. You are responsible for what optional information you choose to add to your public profile.</p>
+            </section>
+
+            <section>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">5. User-Generated Content</h2>
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2">5.1 Comments and Interactions</h3>
+              <p>When you submit a comment or interact with content, you grant Bishouy.com a non-exclusive, royalty-free, worldwide license to store, display, and moderate that content on the Platform.</p>
+
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">5.2 Content Standards</h3>
+              <p>All content you submit must comply with the following standards. Content must not:</p>
+              <ul className="list-disc list-inside space-y-1 ml-4 mt-2">
+                <li>Be defamatory, abusive, threatening, harassing, or hateful</li>
+                <li>Infringe any intellectual property rights</li>
+                <li>Contain spam, malware, or phishing content</li>
+                <li>Promote illegal activities</li>
+                <li>Contain sexual content involving minors</li>
+                <li>Constitute misinformation or deliberately false claims</li>
+                <li>Violate the privacy of others</li>
+              </ul>
+
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">5.3 Moderation</h3>
+              <p>All comments are subject to moderation. We reserve the right to remove any content that violates these Terms without prior notice. Accounts that repeatedly violate these standards may be suspended or permanently banned.</p>
+            </section>
+
+            <section>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">6. Intellectual Property</h2>
               <p>
-                The materials on Bishouy.com are provided on an 'as is' basis. Bishouy.com makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
+                All articles, images, designs, and original content published on Bishouy.com are the intellectual property of Bishouy.com or their respective authors. You may not reproduce, distribute, or use our editorial content without prior written permission.
+              </p>
+              <p className="mt-2">
+                You retain ownership of your original comments and profile content. By submitting it, you grant us a license to display it as described in Section 5.
               </p>
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
-                4. Limitations
-              </h2>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">7. Newsletter</h2>
               <p>
-                In no event shall Bishouy.com or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Bishouy.com, even if Bishouy.com or an authorized representative has been notified orally or in writing of the possibility of such damage.
+                By subscribing to our newsletter, you consent to receiving periodic email communications from Bishouy.com. You may unsubscribe at any time by clicking the unsubscribe link in any newsletter email or by contacting us directly. We use <strong>Brevo</strong> as our email delivery provider.
               </p>
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
-                5. Accuracy of Materials
-              </h2>
-              <p>
-                The materials appearing on Bishouy.com could include technical, typographical, or photographic errors. Bishouy.com does not warrant that any of the materials on its Site are accurate, complete, or current. Bishouy.com may make changes to the materials contained on its Site at any time without notice.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
-                6. Links
-              </h2>
-              <p>
-                Bishouy.com has not reviewed all of the sites linked to its Site and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by Bishouy.com of the site. Use of any such linked website is at the user's own risk.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
-                7. Modifications
-              </h2>
-              <p>
-                Bishouy.com may revise these Terms of Service for its Site at any time without notice. By using this Site, you are agreeing to be bound by the then current version of these Terms of Service.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
-                8. Governing Law
-              </h2>
-              <p>
-                These Terms and Conditions are governed by and construed in accordance with the laws of the European Union, and you irrevocably submit to the exclusive jurisdiction of the courts in that location.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
-                9. User-Generated Content
-              </h2>
-              <p>
-                If you submit, post, or display content on Bishouy.com, you grant us a non-exclusive, royalty-free, perpetual, irrevocable, and fully sublicensable right to use, reproduce, modify, adapt, publish, translate, create derivative works from, distribute, and display such content throughout the world in any media.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
-                10. Prohibited Conduct
-              </h2>
-              <p>
-                You agree not to:
-              </p>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>Violate any applicable law or regulation</li>
-                <li>Infringe on any intellectual property rights</li>
-                <li>Harass, abuse, or threaten other users</li>
-                <li>Post spam, malware, or harmful content</li>
-                <li>Attempt to gain unauthorized access to our systems</li>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">8. Prohibited Conduct</h2>
+              <p>You agree not to:</p>
+              <ul className="list-disc list-inside space-y-1 ml-4 mt-2">
+                <li>Attempt to gain unauthorized access to our systems or other users' accounts</li>
+                <li>Use automated scripts, bots, or scrapers to access content</li>
+                <li>Attack, destabilize, or overload our infrastructure</li>
+                <li>Create multiple accounts to evade a ban</li>
+                <li>Impersonate another user, person, or entity</li>
+                <li>Engage in any activity that violates applicable EU or national laws</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
-                11. Accessibility
-              </h2>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">9. Disclaimer of Warranties</h2>
               <p>
-                Bishouy.com is committed to ensuring digital accessibility for individuals with disabilities. We strive to comply with WCAG 2.1 Level AA standards. If you experience accessibility issues, please contact us at accessibility@bishouy.com.
+                The Platform is provided on an "as is" and "as available" basis. We make no warranties, express or implied, regarding the accuracy, completeness, or reliability of any content. News articles represent the editorial opinion of the authors and do not constitute professional, legal, financial, or medical advice.
               </p>
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
-                12. Contact Information
-              </h2>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">10. Limitation of Liability</h2>
               <p>
-                If you have any questions about these Terms of Service, please contact us at:
+                To the fullest extent permitted by EU law, Bishouy.com shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the Platform. Our total liability shall not exceed the amount paid by you (if any) to access the Platform in the 12 months preceding the claim.
               </p>
+            </section>
+
+            <section>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">11. Links to External Sites</h2>
+              <p>
+                Our Platform may contain links to third-party websites. We are not responsible for the content or privacy practices of those sites. Links do not constitute endorsement by Bishouy.com.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">12. Accessibility</h2>
+              <p>
+                Bishouy.com is committed to ensuring digital accessibility in compliance with WCAG 2.1 Level AA standards. If you experience accessibility issues, please contact us at <a href="mailto:accessibility@bishouy.com" className="text-[#E8A020] hover:underline">accessibility@bishouy.com</a>.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">13. Modifications to the Terms</h2>
+              <p>
+                We reserve the right to modify these Terms at any time. We will notify registered users by email of material changes. Continued use of the Platform after changes are posted constitutes your acceptance of the updated Terms.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">14. Governing Law and Disputes</h2>
+              <p>
+                These Terms are governed by the laws of the European Union. Any disputes shall be subject to the exclusive jurisdiction of the competent EU courts. If you are an EU consumer, you may also use the <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer" className="text-[#E8A020] hover:underline">EU Online Dispute Resolution platform</a>.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">15. Contact</h2>
               <div className="bg-[#1C1C1A] rounded-sm p-4 mt-3">
                 <p className="font-ui text-sm">
                   <strong>Bishouy.com</strong><br />
-                  Email: legal@bishouy.com<br />
-                  Address: [Your Company Address]
+                  General inquiries: <a href="mailto:info@bishouy.com" className="text-[#E8A020] hover:underline">info@bishouy.com</a><br />
+                  Legal matters: <a href="mailto:legal@bishouy.com" className="text-[#E8A020] hover:underline">legal@bishouy.com</a><br />
+                  Privacy: <a href="mailto:privacy@bishouy.com" className="text-[#E8A020] hover:underline">privacy@bishouy.com</a>
                 </p>
               </div>
             </section>
+
           </div>
         </div>
       </section>
