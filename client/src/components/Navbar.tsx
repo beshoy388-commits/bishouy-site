@@ -29,10 +29,22 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [location] = useLocation();
   const { user, logout } = useAuth();
+  const [currentDate, setCurrentDate] = useState("");
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Set formatted dynamic date
+    const date = new Date();
+    const formattedDate = date.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    setCurrentDate(formattedDate);
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -53,7 +65,7 @@ export default function Navbar() {
         <div className="container">
           <div className="flex items-center justify-between h-8">
             <span className="font-ui text-[10px] text-[#8A8880] uppercase tracking-widest">
-              Monday, March 3, 2026
+              {currentDate || "Loading date..."}
             </span>
             <div className="flex items-center gap-4">
               <span className="font-ui text-[10px] text-[#8A8880] uppercase tracking-widest hidden sm:block">

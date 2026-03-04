@@ -17,7 +17,9 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, []);
 
-  const { data: articles, isLoading } = trpc.articles.list.useQuery();
+  const { data: articles, isLoading } = trpc.articles.list.useQuery(undefined, {
+    refetchInterval: 30000, // Refresh articles every 30 seconds
+  });
 
   if (isLoading) {
     return (
