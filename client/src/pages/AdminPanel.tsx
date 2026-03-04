@@ -260,6 +260,15 @@ export default function AdminPanel() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
+                          <a
+                            href={`/articolo/${article.slug}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="p-2 bg-[#2A2A28] hover:bg-[#333330] text-[#8A8880] hover:text-[#E8A020] rounded-sm transition-colors"
+                            title="View on site"
+                          >
+                            <Eye size={16} />
+                          </a>
                           <button
                             onClick={() => {
                               setEditingId(article.id);

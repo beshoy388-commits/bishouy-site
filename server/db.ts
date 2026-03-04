@@ -593,6 +593,13 @@ export async function unsubscribeByToken(token: string): Promise<boolean> {
   return true;
 }
 
+export async function deleteSubscriber(id: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  await db.delete(subscribers).where(eq(subscribers.id, id));
+  return true;
+}
+
 export async function getAllSubscribers() {
   const db = await getDb();
   if (!db) return [];
@@ -670,11 +677,14 @@ export async function getDashboardStats() {
   const commentsCount = await db.select({ count: sql<number>`count(*)` }).from(comments);
   const adsCount = await db.select({ count: sql<number>`count(*)` }).from(advertisements);
 
+  const subCount = await db.select({ count: sql<number>`count(*)` }).from(subscribers);
+
   return {
     totalUsers: usersCount[0]?.count || 0,
     totalArticles: articlesCount[0]?.count || 0,
     totalComments: commentsCount[0]?.count || 0,
     totalAds: adsCount[0]?.count || 0,
+    totalSubscribers: subCount[0]?.count || 0,
   };
 }
 

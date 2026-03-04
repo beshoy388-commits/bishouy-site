@@ -10,7 +10,7 @@ import {
   getActiveAdvertisements, getAllAdvertisements, createAdvertisement, updateAdvertisement, deleteAdvertisement,
   getAllUsers, getUserById, updateUser, deleteUser,
   toggleArticleLike, getArticleLikeCount, hasUserLikedArticle, getArticleWithLikeInfo, getDb,
-  createSubscriber, getAllSubscribers, getUserByEmail, createVerificationCode, getLatestVerificationCode, deleteVerificationCodeByEmail, upsertUser, editComment,
+  createSubscriber, getAllSubscribers, deleteSubscriber, getUserByEmail, createVerificationCode, getLatestVerificationCode, deleteVerificationCodeByEmail, upsertUser, editComment,
   createPasswordResetToken, getValidPasswordResetToken, markPasswordResetTokenAsUsed, getAllComments
 } from "./db";
 import { comments, InsertArticle, articles, users } from "../drizzle/schema";
@@ -718,6 +718,12 @@ export const appRouter = router({
         }
 
         return { success: true, count: activeEmails.length };
+      }),
+
+    delete: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        return deleteSubscriber(input.id);
       })
   }),
 

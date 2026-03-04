@@ -1,6 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import { Card } from "@/components/ui/card";
-import { Users, FileText, MessageSquare, Megaphone, Loader2 } from "lucide-react";
+import { Users, FileText, MessageSquare, Megaphone, Loader2, Mail } from "lucide-react";
 
 export default function DashboardStats() {
     const statsQuery = trpc.system.stats.useQuery();
@@ -58,13 +58,13 @@ export default function DashboardStats() {
 
                 <Card className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-2 sm:p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <Megaphone size={48} className="text-[#E8A020] sm:w-16 sm:h-16" />
+                        <Mail size={48} className="text-[#E8A020] sm:w-16 sm:h-16" />
                     </div>
                     <div className="flex items-center gap-2 text-[#8A8880] mb-2 z-10">
-                        <Megaphone size={14} className="sm:w-4 sm:h-4" />
-                        <span className="font-ui text-[9px] sm:text-xs font-600 uppercase tracking-widest truncate">Active Ads</span>
+                        <Mail size={14} className="sm:w-4 sm:h-4" />
+                        <span className="font-ui text-[9px] sm:text-xs font-600 uppercase tracking-widest truncate">Newsletter</span>
                     </div>
-                    <div className="text-2xl sm:text-4xl font-headline text-[#F2F0EB] z-10">{stats?.totalAds || 0}</div>
+                    <div className="text-2xl sm:text-4xl font-headline text-[#F2F0EB] z-10">{stats?.totalSubscribers || 0}</div>
                 </Card>
             </div>
 
