@@ -5,8 +5,20 @@
  */
 
 import { useState, useEffect } from "react";
+import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Search, Bell, LogIn, LogOut, User as UserIcon, Sparkles } from "lucide-react";
+import {
+  Menu,
+  X,
+  Search,
+  Bell,
+  LogIn,
+  LogOut,
+  User as UserIcon,
+  Sparkles,
+  Shield,
+  UserPlus
+} from "lucide-react";
 import { CATEGORIES } from "@/lib/articles";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -111,12 +123,24 @@ export default function Navbar() {
                 <Sparkles size={16} />
               </Link>
               {user ? (
-                <div className="flex items-center gap-3 pl-3 border-l border-[#2A2A28]">
+                <div className="flex items-center gap-4 pl-4 border-l border-[#2A2A28]">
+                  {user.role === "admin" && (
+                    <Link
+                      href="/admin"
+                      className="flex items-center gap-1.5 text-[#E8A020] hover:text-[#F2F0EB] transition-colors font-ui text-[10px] font-600 uppercase tracking-widest"
+                      title="Admin Panel"
+                    >
+                      <Shield size={14} />
+                      Admin
+                    </Link>
+                  )}
                   <Link
                     href="/profile"
-                    className="font-ui text-xs text-[#8A8880] hover:text-[#E8A020] transition-colors uppercase tracking-wider"
+                    className="flex items-center gap-1.5 text-[#8A8880] hover:text-[#E8A020] transition-colors font-ui text-[10px] font-600 uppercase tracking-widest"
+                    title="Your Profile"
                   >
-                    {user.name || user.email}
+                    <UserIcon size={14} />
+                    Profile
                   </Link>
                   <button
                     onClick={async () => {
