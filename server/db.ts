@@ -35,6 +35,14 @@ export async function getDb() {
         // Ignora
       }
 
+      // Migration for unsubscribe token in newsletter subscribers
+      try {
+        await client.execute('ALTER TABLE subscribers ADD COLUMN unsubscribeToken TEXT;');
+        console.log('[Migration] Added unsubscribeToken column to subscribers');
+      } catch (err) {
+        // Column already exists — ignore
+      }
+
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -529,14 +537,45 @@ export async function searchArticles(query: string, limit: number = 20): Promise
 }
 
 // Newsletter queries
-export async function createSubscriber(email: string): Promise<void> {
+export async function createSubscriber(email: string): Promise<{ token: string }> {
   const db = await getDb();
-  if (!db) return;
+  if (!db) return { token: "" };
 
-  await db.insert(subscribers).values({ email }).onConflictDoUpdate({
+  const { randomBytes } = await import("node:crypto");
+  const token = randomBytes(32).toString("hex");
+
+  await db.insert(subscribers).values({ email, unsubscribeToken: token }).onConflictDoUpdate({
     target: subscribers.email,
     set: { active: 1 }
   });
+
+  // If subscriber already existed, retrieve existing token
+  const existing = await db.select()
+    .from(subscribers)
+    .where(eq(subscribers.email, email))
+    .limit(1);
+  const finalToken = existing[0]?.unsubscribeToken || token;
+
+  return { token: finalToken };
+}
+
+export async function getSubscriberByToken(token: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select()
+    .from(subscribers)
+    .where(eq(subscribers.unsubscribeToken, token))
+    .limit(1);
+  return result[0];
+}
+
+export async function unsubscribeByToken(token: string): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  const subscriber = await getSubscriberByToken(token);
+  if (!subscriber) return false;
+  await db.delete(subscribers).where(eq(subscribers.id, subscriber.id));
+  return true;
 }
 
 export async function getAllSubscribers() {

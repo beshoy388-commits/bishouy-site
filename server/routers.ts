@@ -27,7 +27,7 @@ import {
   generateVerificationCode
 } from "./security";
 import { sdk } from "./_core/sdk";
-import { sendVerificationEmail, sendPasswordResetEmail, sendNewsletterBroadcast } from "./_core/mail";
+import { sendVerificationEmail, sendPasswordResetEmail, sendNewsletterBroadcast, sendWelcomeNewsletterEmail } from "./_core/mail";
 import crypto from 'crypto';
 
 // Admin-only procedure with security checks
@@ -685,7 +685,11 @@ export const appRouter = router({
     subscribe: publicProcedure
       .input(z.object({ email: z.string().email() }))
       .mutation(async ({ input }) => {
-        await createSubscriber(input.email);
+        const { token } = await createSubscriber(input.email);
+        // Send welcome email async (do not block the response)
+        if (token) {
+          sendWelcomeNewsletterEmail(input.email, token).catch(console.error);
+        }
         return { success: true };
       }),
 
@@ -702,9 +706,12 @@ export const appRouter = router({
         const subscribers = await getAllSubscribers();
         const activeEmails = subscribers.filter(s => s.active === 1).map(s => s.email);
 
-        if (activeEmails.length > 0) {
+        if (subscribers.length > 0) {
+          const activeRecipients = subscribers
+            .filter(s => s.active === 1 && s.unsubscribeToken)
+            .map(s => ({ email: s.email, token: s.unsubscribeToken! }));
           // Fire and forget (will run async in background)
-          sendNewsletterBroadcast(input.subject, input.htmlContent, activeEmails).catch(console.error);
+          sendNewsletterBroadcast(input.subject, input.htmlContent, activeRecipients).catch(console.error);
         }
 
         return { success: true, count: activeEmails.length };

@@ -52,6 +52,26 @@ async function startServer() {
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
 
+  // One-click newsletter unsubscribe endpoint
+  app.get("/api/unsubscribe", async (req, res) => {
+    const token = req.query.token as string;
+    if (!token) {
+      return res.redirect("/?unsubscribe=invalid");
+    }
+    try {
+      const { unsubscribeByToken } = await import("../db");
+      const success = await unsubscribeByToken(token);
+      if (success) {
+        return res.redirect("/unsubscribe?status=success");
+      } else {
+        return res.redirect("/unsubscribe?status=notfound");
+      }
+    } catch (err) {
+      console.error("[Unsubscribe] Error:", err);
+      return res.redirect("/unsubscribe?status=error");
+    }
+  });
+
   // File upload endpoint
   const upload = multer({ storage: multer.memoryStorage() });
   app.post("/api/upload", upload.single("file"), async (req, res) => {

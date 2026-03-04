@@ -117,6 +117,8 @@ export const subscribers = sqliteTable("subscribers", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   email: text("email").notNull().unique(),
   active: integer("active", { mode: "number" }).default(1).notNull(),
+  // Unique token used for one-click unsubscribe links in emails
+  unsubscribeToken: text("unsubscribeToken").unique(),
   createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
 
