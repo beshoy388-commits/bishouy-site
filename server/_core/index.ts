@@ -37,7 +37,7 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
-  
+
   // File upload endpoint
   const upload = multer({ storage: multer.memoryStorage() });
   app.post("/api/upload", upload.single("file"), async (req, res) => {
@@ -54,15 +54,8 @@ async function startServer() {
         return res.status(400).json({ error: "File size must be less than 5MB" });
       }
 
-      const timestamp = Date.now();
-      const random = Math.random().toString(36).substring(7);
-      const filename = `${timestamp}-${random}-${req.file.originalname}`;
-
-      const { url } = await storagePut(
-        `uploads/images/${filename}`,
-        req.file.buffer,
-        req.file.mimetype
-      );
+      const b64 = req.file.buffer.toString("base64");
+      const url = `data:${req.file.mimetype};base64,${b64}`;
 
       res.json({ url });
     } catch (error) {
@@ -70,7 +63,7 @@ async function startServer() {
       res.status(500).json({ error: "Upload failed" });
     }
   });
-  
+
   // tRPC API
   app.use(
     "/api/trpc",
