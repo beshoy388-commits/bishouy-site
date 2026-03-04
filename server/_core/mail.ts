@@ -70,9 +70,6 @@ export async function sendPasswordResetEmail(email: string, resetLink: string) {
 }
 
 export async function sendNewsletterBroadcast(subject: string, htmlContent: string, recipients: string[]) {
-  // Brevo allows multiple recipients in one go, but it's better to verify their daily limit.
-  // We'll send them one by one or in small batches to be safe, but Brevo API supports batch.
-  // For now, let's keep it simple and send individually to ensure deliverability tracking per user if needed.
   for (const email of recipients) {
     await sendBrevoEmail({
       to: email,
