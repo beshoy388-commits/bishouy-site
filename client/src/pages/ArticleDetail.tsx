@@ -465,9 +465,9 @@ export default function ArticleDetail() {
                           </div>
                         </ProfileWrapper>
 
-                        {/* Azioni per il proprietario del commento */}
+                        {/* Actions for the comment owner */}
                         {isOwner && !isEditing && (
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2">
+                          <div className="flex items-center gap-2 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                             <button
                               onClick={() => {
                                 setEditingCommentId(c.id);
