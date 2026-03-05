@@ -129,7 +129,9 @@ export default function ArticleCard({
     const category = article.category || "news";
     const lock = article.id || 1;
 
+    // Log the issue if it's an AI generated image failing
     if (img.src.includes('pollinations.ai')) {
+      console.warn(`[Image] AI Image failed for: ${article.slug}. Pivoting to fallback.`);
       // Fallback to themed LoremFlickr with deterministic lock
       img.src = `https://loremflickr.com/1200/800/${encodeURIComponent(category)}/all?lock=${lock}`;
     } else if (img.src.includes('loremflickr.com')) {

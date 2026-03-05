@@ -379,14 +379,27 @@ export const appRouter = router({
           .optional()
       )
       .query(async ({ input }) => {
-        // Public list should focus strictly on published content
-        // Even admins should only see published content in the main feed
-        return getAllArticles(
-          false,
-          input?.category,
-          input?.limit,
-          input?.offset
-        );
+        try {
+          // Robustness: handle null/undefined input and sanitize parameters
+          const category = input?.category || undefined;
+          const limit = Math.min(input?.limit || 20, 100);
+          const offset = input?.offset || 0;
+
+          // Public list should focus strictly on published content
+          return await getAllArticles(
+            false,
+            category,
+            limit,
+            offset
+          );
+        } catch (error) {
+          console.error("[tRPC] Error in articles.list:", error);
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Unable to retrieve articles at this time.",
+            cause: error
+          });
+        }
       }),
 
     // Admin: List ALL articles (including drafts)
