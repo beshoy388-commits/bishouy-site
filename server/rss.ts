@@ -112,6 +112,8 @@ async function rewriteArticle(
   content: string;
   excerpt: string;
   tags: string[];
+  category: string;
+  imagePrompt: string;
   isFeatured: boolean;
   isBreaking: boolean;
 } | null> {
@@ -161,6 +163,8 @@ async function rewriteArticle(
               "excerpt": "A deep, 2-sentence executive summary",
               "content": "Perfectly formatted HTML content...",
               "tags": ["Tag1", "Tag2", "Tag3"],
+              "category": "Pick strictly one of: World, Politics, Economy, Technology, Culture, Sports",
+              "imagePrompt": "A highly detailed, photo-journalistic image generation prompt (max 150 chars)",
               "isFeatured": boolean,
               "isBreaking": boolean
             }`,
@@ -227,9 +231,18 @@ export async function syncRSSFeeds() {
         const existsFinal = await getArticleBySlug(finalSlug);
         if (existsFinal) continue;
 
-        const imageUrl =
-          extractImageUrl(item) ||
-          "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+        const aiCategory =
+          [
+            "World",
+            "Politics",
+            "Economy",
+            "Technology",
+            "Culture",
+            "Sports",
+          ].find(
+            c => c.toLowerCase() === editorialPiece.category?.toLowerCase()
+          ) || "World";
+
         const categoryColors: Record<string, string> = {
           World: "#E8A020",
           Politics: "#C0392B",
@@ -239,6 +252,11 @@ export async function syncRSSFeeds() {
           Sports: "#E67E22",
         };
 
+        const imageUrl = editorialPiece.imagePrompt
+          ? `https://image.pollinations.ai/prompt/${encodeURIComponent(editorialPiece.imagePrompt)}?width=1600&height=900&nologo=true`
+          : extractImageUrl(item) ||
+            "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+
         const articleData: InsertArticle = {
           title: editorialPiece.title,
           slug: finalSlug,
@@ -246,8 +264,8 @@ export async function syncRSSFeeds() {
           content: editorialPiece.content,
           author: "Bishouy Global Team",
           authorRole: "Senior Editorial Staff",
-          category: feedConfig.category,
-          categoryColor: categoryColors[feedConfig.category] || "#E8A020",
+          category: aiCategory,
+          categoryColor: categoryColors[aiCategory] || "#E8A020",
           image: imageUrl,
           status: "draft",
           featured: editorialPiece.isFeatured ? 1 : 0,
