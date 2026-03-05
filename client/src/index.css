@@ -127,6 +127,24 @@
     @apply cursor-pointer;
   }
 
+  /* Smooth transitions on all interactive elements */
+  button,
+  [role="button"],
+  a {
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.15s ease,
+      box-shadow 0.2s ease;
+  }
+
+  /* Premium focus-visible ring for keyboard accessibility */
+  :focus-visible {
+    outline: 2px solid oklch(0.72 0.16 70);
+    outline-offset: 2px;
+  }
+
   h1,
   h2,
   h3,

@@ -43,32 +43,32 @@ export default function ArticleDetail() {
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState("");
 
-  // Query per l'articolo
+  // Query for article data
   const { data: article, isLoading } = trpc.articles.getBySlug.useQuery(
     { slug: slug || "" },
     { enabled: !!slug }
   );
 
-  // Query per i commenti
+  // Query for comments
   const { data: comments, refetch: refetchComments } =
     trpc.comments.getByArticle.useQuery(
       { articleId: article?.id || 0 },
       { enabled: !!article?.id }
     );
 
-  // Query per il conteggio dei like
+  // Query for like count
   const likeCountQuery = trpc.likes.getCount.useQuery(
     { articleId: article?.id || 0 },
     { enabled: !!article?.id }
   );
 
-  // Query per verificare se l'utente ha messo like
+  // Query to check if user has liked
   const userLikedQuery = trpc.likes.hasUserLiked.useQuery(
     { articleId: article?.id || 0 },
     { enabled: !!article?.id && !!user }
   );
 
-  // Mutation per toggleare il like
+  // Mutation to toggle like
   const toggleLikeMutation = trpc.likes.toggle.useMutation({
     onSuccess: (data: any) => {
       setLikeCount(data.likeCount);
@@ -81,7 +81,7 @@ export default function ArticleDetail() {
     },
   });
 
-  // Query per i segnalibri
+  // Query for bookmarks
   const hasSavedQuery = trpc.bookmarks.hasSaved.useQuery(
     { articleId: article?.id || 0 },
     { enabled: !!article?.id && !!user }
@@ -97,13 +97,13 @@ export default function ArticleDetail() {
     onError: error => toast.error(error.message),
   });
 
-  // Query per articoli correlati
+  // Query for related articles
   const { data: relatedArticles } = trpc.articles.getRelated.useQuery(
     { articleId: article?.id || 0, limit: 3 },
     { enabled: !!article?.id }
   );
 
-  // Mutation per creare un commento
+  // Mutation to create a comment
   const createCommentMutation = trpc.comments.create.useMutation({
     onSuccess: () => {
       setCommentText("");
@@ -115,7 +115,7 @@ export default function ArticleDetail() {
     },
   });
 
-  // Mutation per modificare un commento
+  // Mutation to edit a comment
   const editCommentMutation = trpc.comments.editOwn.useMutation({
     onSuccess: () => {
       setEditingCommentId(null);
@@ -126,7 +126,7 @@ export default function ArticleDetail() {
     onError: error => toast.error(error.message),
   });
 
-  // Mutation per eliminare un commento
+  // Mutation to delete a comment
   const deleteCommentMutation = trpc.comments.deleteOwn.useMutation({
     onSuccess: () => {
       toast.success("Comment deleted");
@@ -135,7 +135,7 @@ export default function ArticleDetail() {
     onError: error => toast.error(error.message),
   });
 
-  // Effect per scrollare in alto e calcolare il progresso
+  // Effect to scroll to top and calculate read progress
   useEffect(() => {
     window.scrollTo(0, 0);
 
@@ -207,21 +207,21 @@ export default function ArticleDetail() {
     };
   }, [article]);
 
-  // Effect per aggiornare il conteggio dei like
+  // Effect to update like count
   useEffect(() => {
     if (likeCountQuery.data !== undefined) {
       setLikeCount(likeCountQuery.data);
     }
   }, [likeCountQuery.data]);
 
-  // Effect per aggiornare lo stato del like dell'utente
+  // Effect to update user's like status
   useEffect(() => {
     if (userLikedQuery.data !== undefined) {
       setUserLiked(userLikedQuery.data);
     }
   }, [userLikedQuery.data]);
 
-  // Effect per aggiornare lo stato del salvataggio dell'utente
+  // Effect to update user's bookmark status
   useEffect(() => {
     if (hasSavedQuery.data !== undefined) {
       setIsSaved(hasSavedQuery.data);

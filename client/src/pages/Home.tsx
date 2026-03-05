@@ -139,7 +139,7 @@ export default function Home() {
               editorial team.
             </p>
             <Link href="/register">
-              <button className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors">
+              <button className="bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#E8A020]/20 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-all active:scale-95">
                 Create Free Account
               </button>
             </Link>

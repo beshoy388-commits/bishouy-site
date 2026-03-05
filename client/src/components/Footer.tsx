@@ -4,7 +4,15 @@
  */
 
 import { Link } from "wouter";
-import { Mail, Twitter, Instagram, Facebook, Youtube, Rss } from "lucide-react";
+import {
+  Mail,
+  Twitter,
+  Instagram,
+  Facebook,
+  Youtube,
+  Rss,
+  Loader2,
+} from "lucide-react";
 import { CATEGORIES } from "@/lib/articles";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -61,9 +69,13 @@ export default function Footer() {
               />
               <button
                 type="submit"
-                className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-5 py-2.5 rounded-sm transition-colors whitespace-nowrap"
+                disabled={subscribeMutation.isPending}
+                className="bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#E8A020]/20 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-5 py-2.5 rounded-sm transition-all active:scale-95 whitespace-nowrap disabled:opacity-50 flex items-center gap-2"
               >
-                Subscribe
+                {subscribeMutation.isPending ? (
+                  <Loader2 className="animate-spin" size={12} />
+                ) : null}
+                {subscribeMutation.isPending ? "Subscribing..." : "Subscribe"}
               </button>
             </form>
           </div>

@@ -58,6 +58,7 @@ import { comments, InsertArticle, articles, users } from "../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { GoogleGenAI } from "@google/genai";
+import { aiChatCache } from "./cache";
 import { logArticleAction } from "./audit";
 import {
   checkRateLimit,
@@ -898,7 +899,7 @@ export const appRouter = router({
           ) {
             throw new TRPCError({
               code: "CONFLICT",
-              message: "Questo username è già in uso. Scegline un altro.",
+              message: "This username is already taken. Please choose another.",
             });
           }
           throw error;
@@ -1028,6 +1029,13 @@ export const appRouter = router({
         const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
         const db = await getDb();
 
+        // Create cache key from messages
+        const conversationKey = JSON.stringify(input.messages);
+        const cachedResponse = aiChatCache.get(conversationKey);
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+
         let systemContext = "";
         if (db) {
           const latestArticles = await db
@@ -1071,10 +1079,14 @@ export const appRouter = router({
             },
           });
 
-          return (
+          const responseText =
             response.text ||
-            "I'm sorry, I couldn't process that request at this moment."
-          );
+            "I'm sorry, I couldn't process that request at this moment.";
+
+          // Cache the response for 1 hour
+          aiChatCache.set(conversationKey, responseText, 3600000);
+
+          return responseText;
         } catch (error) {
           console.error("[AI Chat Error]", error);
           throw new TRPCError({

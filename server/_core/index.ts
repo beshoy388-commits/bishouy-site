@@ -17,6 +17,7 @@ import {
   cleanupExpiredResetTokens,
 } from "../db";
 import { syncRSSFeeds } from "../rss";
+import { sendDailyNewsletter } from "../newsletter_job";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -96,7 +97,7 @@ async function startServer() {
           .json({ error: "File size must be less than 5MB" });
       }
 
-      // Comprimi e ottimizza l'immagine prima di salvarla
+      // Compress and optimize the image before saving it
       const compressedBuffer = await sharp(req.file.buffer)
         .rotate() // Automatically rotate based on EXIF metadata
         .resize(800, 800, { fit: "inside", withoutEnlargement: true })
@@ -167,3 +168,20 @@ setInterval(
   },
   6 * 60 * 60 * 1000
 );
+
+// Daily Newsletter interval (every 24 hours)
+setInterval(
+  () => {
+    sendDailyNewsletter().catch(console.error);
+  },
+  24 * 60 * 60 * 1000
+);
+
+// Optional: Run newsletter on production startup if it's the right time
+if (process.env.NODE_ENV === "production") {
+  const currentHour = new Date().getHours();
+  // If we start near 7 AM, send it immediately
+  if (currentHour >= 6 && currentHour <= 8) {
+    sendDailyNewsletter().catch(console.error);
+  }
+}
