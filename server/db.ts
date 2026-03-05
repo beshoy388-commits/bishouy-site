@@ -51,10 +51,18 @@ import {
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
+let _initializing = false;
+let _initPromise: Promise<any> | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
-  if (!_db) {
+  if (_db) return _db;
+
+  if (_initPromise) {
+    return _initPromise;
+  }
+
+  _initPromise = (async () => {
     try {
       const dbUrl = ENV.databaseUrl || "file:sqlite.db";
       const authToken = ENV.databaseAuthToken;
@@ -123,12 +131,15 @@ export async function getDb() {
       }
       // Finalize database initialization after migrations
       _db = drizzle(client);
+      return _db;
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
+      throw error;
     }
-  }
-  return _db;
+  })();
+
+  return _initPromise;
 }
 
 export async function generateUniqueUsername(
