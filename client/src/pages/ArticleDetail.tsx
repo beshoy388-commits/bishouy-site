@@ -69,6 +69,8 @@ export default function ArticleDetail() {
     { enabled: !!article?.id && !!user }
   );
 
+  const utils = trpc.useUtils();
+
   // Mutation to toggle like with Optimistic Updates
   const toggleLikeMutation = trpc.likes.toggle.useMutation({
     onMutate: async () => {
@@ -78,7 +80,7 @@ export default function ArticleDetail() {
 
       // Update state immediately
       setUserLiked(!prevLiked);
-      setLikeCount(prevLiked ? prevCount - 1 : prevCount + 1);
+      setLikeCount(prevLiked ? Math.max(0, prevCount - 1) : prevCount + 1);
 
       if (!prevLiked) {
         setIsAnimating(true);
@@ -91,6 +93,10 @@ export default function ArticleDetail() {
       // Synchronize with server response
       setLikeCount(data.likeCount);
       setUserLiked(data.liked);
+
+      // Invalidate query to ensure data is fresh but don't block
+      utils.likes.getCount.invalidate({ articleId: article!.id });
+      utils.likes.hasUserLiked.invalidate({ articleId: article!.id });
     },
     onError: (error, variables, context) => {
       // Rollback on error
@@ -588,7 +594,7 @@ export default function ArticleDetail() {
               <button
                 onClick={handleLikeClick}
                 className={`flex items-center justify-center gap-2 px-6 py-3 rounded-sm transition-all duration-300 ${userLiked ? "like-button-active" : "like-button-inactive"
-                  } ${toggleLikeMutation.isPending ? "like-button-loading" : ""}`}
+                  }`}
                 title={user ? "Like this article" : "Login to like"}
               >
                 <Heart

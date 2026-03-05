@@ -37,12 +37,41 @@ export default function ArticleCard({
     { enabled: !!user }
   );
 
+  const utils = trpc.useUtils();
+
+  // Mutation to toggle like with Optimistic Updates
   const toggleLikeMutation = trpc.likes.toggle.useMutation({
+    onMutate: async () => {
+      // Logic for optimistic update
+      const prevLiked = userLiked;
+      const prevCount = likeCount;
+
+      // Update state immediately
+      setUserLiked(!prevLiked);
+      setLikeCount(prevLiked ? Math.max(0, prevCount - 1) : prevCount + 1);
+
+      if (!prevLiked) {
+        setIsAnimating(true);
+        setTimeout(() => setIsAnimating(false), 600);
+      }
+
+      return { prevLiked, prevCount };
+    },
     onSuccess: (data: any) => {
+      // Synchronize with server response
       setLikeCount(data.likeCount);
       setUserLiked(data.liked);
-      setIsAnimating(true);
-      setTimeout(() => setIsAnimating(false), 600);
+
+      // Refresh cache without full reload
+      utils.likes.getCount.invalidate({ articleId: article.id });
+      utils.likes.hasUserLiked.invalidate({ articleId: article.id });
+    },
+    onError: (error, variables, context: any) => {
+      // Rollback on error
+      if (context) {
+        setUserLiked(context.prevLiked);
+        setLikeCount(context.prevCount);
+      }
     },
   });
 
@@ -74,21 +103,15 @@ export default function ArticleCard({
   const LikeButton = () => (
     <button
       onClick={handleLikeClick}
-      disabled={toggleLikeMutation.isPending}
-      className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm transition-all duration-200 disabled:opacity-50"
-      style={{
-        backgroundColor: userLiked ? "#E8A020" : "transparent",
-        color: userLiked ? "#0F0F0E" : "#8A8880",
-        border: userLiked ? "none" : "1px solid #2A2A28",
-      }}
+      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm transition-all duration-300 ${userLiked ? "like-button-active" : "like-button-inactive"
+        }`}
     >
       <Heart
         size={14}
-        className={`transition-transform duration-300 ${isAnimating && userLiked ? "scale-125" : "scale-100"
-          }`}
+        className={`${isAnimating && userLiked ? "animate-heart-burst" : ""}`}
         fill={userLiked ? "currentColor" : "none"}
       />
-      <span className="font-ui text-[11px] font-600 uppercase tracking-wider">
+      <span className="font-ui text-[11px] font-700 tabular-nums">
         {likeCount}
       </span>
     </button>
