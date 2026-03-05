@@ -874,6 +874,11 @@ export const appRouter = router({
   }),
 
   users: router({
+    // Admin: Get all users
+    getAll: adminProcedure.query(async () => {
+      return getAllUsers();
+    }),
+
     // Admin: Get user by ID
     getById: adminProcedure
       .input(z.object({ id: z.number() }))

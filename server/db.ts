@@ -84,6 +84,33 @@ export async function getDb() {
         // Ignora
       }
 
+      // Migration for status column in articles (Draft support)
+      try {
+        await client.execute(
+          "ALTER TABLE articles ADD COLUMN status TEXT DEFAULT 'draft' NOT NULL;"
+        );
+        console.log("[Migration] Added status column to articles");
+        // For legacy articles, default them to published
+        await client.execute("UPDATE articles SET status = 'published';");
+      } catch (err) {
+        // Already exists — check if any are null/empty and update
+        try {
+          await client.execute(
+            "UPDATE articles SET status = 'published' WHERE status IS NULL OR status = '';"
+          );
+        } catch (e) {
+          /* ignore */
+        }
+      }
+
+      // Migration for publishedAt column in articles
+      try {
+        await client.execute("ALTER TABLE articles ADD COLUMN publishedAt INTEGER;");
+        console.log("[Migration] Added publishedAt column to articles");
+      } catch (err) {
+        // Already exists
+      }
+
       // Migration for unsubscribe token in newsletter subscribers
       try {
         await client.execute(
