@@ -106,7 +106,8 @@ const openai = new OpenAI({
  */
 async function rewriteArticle(
   originalTitle: string,
-  originalContent?: string
+  originalContent?: string,
+  feedCategory: string = "World"
 ): Promise<{
   title: string;
   content: string;
@@ -165,8 +166,8 @@ async function rewriteArticle(
               "excerpt": "A deep, 2-sentence executive summary",
               "content": "Perfectly formatted HTML content...",
               "tags": ["Tag1", "Tag2", "Tag3"],
-              "category": "Pick strictly one of: World, Politics, Economy, Technology, Culture, Sports",
-              "imagePrompt": "A highly detailed, photo-journalistic image generation prompt (max 150 chars)",
+              "category": "Pick strictly one of: World, Politics, Economy, Technology, Culture, Sports. Use the context provided to decide correctly.",
+              "imagePrompt": "A highly detailed, professional photo-journalistic image generation prompt (max 150 chars). DO NOT use generic terms, be specific about the subject of this article.",
               "seoTitle": "A search-engine optimized title (max 60 chars)",
               "seoDescription": "A compelling meta-description for search results (max 155 chars)",
               "isFeatured": boolean,
@@ -175,7 +176,7 @@ async function rewriteArticle(
         },
         {
           role: "user",
-          content: `INPUT SOURCE:\nTitle: ${originalTitle}\nContext: ${originalContent || "No additional context available."}\n\nEDITORIAL DECISION:\n- "isFeatured": Set to true ONLY if this story has major global consequences or represents a defining moment in its category.\n- "isBreaking": Set to true ONLY if this is a time-sensitive, urgent development that just happened.`,
+          content: `INPUT SOURCE:\nTitle: ${originalTitle}\nExpected Category: ${feedCategory}\nContext: ${originalContent || "No additional context available."}\n\nEDITORIAL DECISION:\n- "isFeatured": Set to true ONLY if this story has major global consequences or represents a defining moment in its category.\n- "isBreaking": Set to true ONLY if this is a time-sensitive, urgent development that just happened.`,
         },
       ],
     });
@@ -243,7 +244,8 @@ export async function syncRSSFeeds() {
 
           const editorialPiece = await rewriteArticle(
             item.title,
-            item.content || item.contentSnippet
+            item.content || item.contentSnippet,
+            feedConfig.category
           );
           if (!editorialPiece) continue;
 
@@ -287,17 +289,19 @@ export async function syncRSSFeeds() {
           }
 
           const aiPrompt = (editorialPiece.imagePrompt || editorialPiece.title)
-            .substring(0, 80) // Shorten to avoid URL issues
-            .replace(/[^\w\s]/gi, ''); // Remove special chars
+            .substring(0, 150) // Use full allowed length
+            .replace(/[^\w\s-]/gi, ' ') // More permissive cleaning
+            .trim();
 
           const aiTags = editorialPiece.tags || [];
           const fallbackKeywords = aiTags.slice(0, 3).join(",") || aiCategory;
 
           // IMAGE LOGIC:
-          // Use Pollinations but with a more robust fallback chain
+          // We prefer AI generated images for thematic consistency, 
+          // falling back to original only if explicitly relevant or AI fails.
           const imageUrl =
+            `https://image.pollinations.ai/prompt/${encodeURIComponent(aiPrompt)}?width=1200&height=800&nologo=true&seed=${Math.floor(Math.random() * 1000000)}&enhance=true` ||
             originalImage ||
-            `https://image.pollinations.ai/prompt/${encodeURIComponent(aiPrompt)}?width=1200&height=800&nologo=true&seed=${Math.floor(Math.random() * 1000000)}` ||
             `https://loremflickr.com/1200/800/${encodeURIComponent(fallbackKeywords)}/all`;
 
           const articleData: InsertArticle = {
