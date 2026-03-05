@@ -66,6 +66,9 @@ export const articles = sqliteTable("articles", {
   seoDescription: text("seoDescription"),
   // Analytics
   viewCount: integer("viewCount", { mode: "number" }).default(0).notNull(),
+  // Tracking
+  sourceUrl: text("sourceUrl"),
+  sourceTitle: text("sourceTitle"),
 });
 
 export type Article = typeof articles.$inferSelect;

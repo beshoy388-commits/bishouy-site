@@ -222,13 +222,18 @@ export async function syncRSSFeeds() {
         // Focus on the top 3 most relevant items
         const itemsToProcess = feed.items.slice(0, 3);
 
+        // Load all articles once per feed to check for duplicates efficiently
+        const existingArticles = await getAllArticles(true);
+
         for (const item of itemsToProcess) {
           if (!item.title) continue;
 
-          // BETTER DUPLICATION CHECK: 
-          // Check if article with similar title already exists
-          const existingArticles = await getAllArticles(true);
+          // ROBUST DUPLICATION CHECK: 
+          // Check by source URL, original title, or rewritten title
+          const itemUrl = item.link || item.guid;
           const alreadyExists = existingArticles.some((a: any) =>
+            (itemUrl && a.sourceUrl === itemUrl) ||
+            (a.sourceTitle === item.title) ||
             a.title.toLowerCase().includes(item.title!.toLowerCase().substring(0, 20))
           );
 
@@ -321,9 +326,15 @@ export async function syncRSSFeeds() {
             breaking: editorialPiece.isBreaking ? 1 : 0,
             tags: JSON.stringify(editorialPiece.tags),
             publishedAt: null as any,
+            sourceUrl: item.link || item.guid || null,
+            sourceTitle: item.title,
           };
 
           await createArticle(articleData);
+
+          // Add to local list to prevent duplicates within the same run
+          existingArticles.push(articleData as any);
+
           newArticlesCount++;
           log(`[RSS] Premium draft ready for review: ${editorialPiece.title}`);
         }

@@ -98,7 +98,9 @@ export async function getDb() {
         { name: "seoTitle", type: "TEXT" },
         { name: "seoDescription", type: "TEXT" },
         { name: "viewCount", type: "INTEGER" },
-        { name: "authorId", type: "INTEGER" }
+        { name: "authorId", type: "INTEGER" },
+        { name: "sourceUrl", type: "TEXT" },
+        { name: "sourceTitle", type: "TEXT" }
       ];
 
       for (const col of articleColumns) {
@@ -944,7 +946,7 @@ export async function getSavedArticlesByUserId(
     .where(eq(savedArticles.userId, userId))
     .orderBy(desc(savedArticles.createdAt));
 
-  return results.map(r => r.article);
+  return results.map((r: any) => r.article);
 }
 
 export async function searchArticles(
@@ -1235,7 +1237,7 @@ export async function trackView(
 
   try {
     // 1. Transaction to update total and log event
-    await db.transaction(async tx => {
+    await db.transaction(async (tx: any) => {
       // Increment total count in articles table
       const article = await tx
         .select({ viewCount: articles.viewCount })
