@@ -86,20 +86,25 @@ export async function getDb() {
 
       // Safer migration for articles table (ensure new columns exist)
       const articleColumns = [
-        { name: "status", type: "TEXT DEFAULT 'published' NOT NULL" },
+        { name: "status", type: "TEXT" },
         { name: "publishedAt", type: "INTEGER" },
         { name: "seoTitle", type: "TEXT" },
         { name: "seoDescription", type: "TEXT" },
-        { name: "viewCount", type: "INTEGER DEFAULT 0" },
+        { name: "viewCount", type: "INTEGER" },
         { name: "authorId", type: "INTEGER" }
       ];
 
       for (const col of articleColumns) {
         try {
+          // Individual execution for maximum reliability
           await client.execute(`ALTER TABLE articles ADD COLUMN ${col.name} ${col.type};`);
-          console.log(`[Migration] Added column ${col.name} to articles`);
+          console.log(`[Migration] Success: Added ${col.name} to articles`);
         } catch (err: any) {
-          // Ignore "already exists" errors
+          // If the column already exists, this is fine
+          if (err.message && (err.message.includes("duplicate") || err.message.includes("already exist"))) {
+            continue;
+          }
+          console.warn(`[Migration] Skip column ${col.name}: ${err.message}`);
         }
       }
 
