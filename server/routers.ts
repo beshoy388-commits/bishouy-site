@@ -1078,7 +1078,7 @@ export const appRouter = router({
 
         try {
           const response = await openai.chat.completions.create({
-            model: "google/gemma-3-27b-it:free",
+            model: "google/gemma-3-4b-it:free",
             messages: [
               {
                 role: "system",
@@ -1097,11 +1097,13 @@ export const appRouter = router({
           aiChatCache.set(conversationKey, responseText, 3600000);
 
           return responseText;
-        } catch (error) {
+        } catch (error: any) {
           console.error("[AI Chat Error]", error);
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
-            message: "Failed to generate AI response",
+            message:
+              "Failed to generate AI response: " +
+              (error.message || "Unknown error"),
           });
         }
       }),

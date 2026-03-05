@@ -123,7 +123,7 @@ async function rewriteArticle(
   try {
     const response = await openai.chat.completions.create({
       // We use a fast, free conversational model via OpenRouter
-      model: "google/gemma-3-27b-it:free",
+      model: "google/gemma-3-4b-it:free",
       response_format: { type: "json_object" },
       messages: [
         {
