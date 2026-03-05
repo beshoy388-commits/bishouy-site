@@ -84,23 +84,24 @@ export async function getDb() {
         // Ignora
       }
 
-      // Migration for status column in articles (Draft support)
+      // Safer migration for status column in articles (Draft support)
       try {
-        await client.execute(
-          "ALTER TABLE articles ADD COLUMN status TEXT DEFAULT 'draft' NOT NULL;"
-        );
+        // Step 1: Add as nullable column first (avoids SQLite constraint issues)
+        await client.execute("ALTER TABLE articles ADD COLUMN status TEXT;");
         console.log("[Migration] Added status column to articles");
-        // For legacy articles, default them to published
+        // Step 2: Set legacy articles to published
         await client.execute("UPDATE articles SET status = 'published';");
-      } catch (err) {
-        // Already exists — check if any are null/empty and update
+      } catch (err: any) {
+        // If error is not 'already exists', log it
+        if (!err.message?.includes("already exists") && !err.message?.includes("duplicate column")) {
+          console.error("[Migration Error] Status column:", err.message);
+        }
+        // Ensuring no nulls in existing column
         try {
           await client.execute(
             "UPDATE articles SET status = 'published' WHERE status IS NULL OR status = '';"
           );
-        } catch (e) {
-          /* ignore */
-        }
+        } catch (e) { /* ignore */ }
       }
 
       // Migration for publishedAt column in articles
