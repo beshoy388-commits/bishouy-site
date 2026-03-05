@@ -166,6 +166,63 @@ html {
   }
 }
 
+/* Premium Animations for Micro-interactions */
+@keyframes heart-burst {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 rgba(232, 160, 32, 0));
+  }
+
+  30% {
+    transform: scale(1.4);
+    filter: drop-shadow(0 0 10px rgba(232, 160, 32, 0.6));
+  }
+
+  50% {
+    transform: scale(0.9);
+  }
+
+  80% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0 rgba(232, 160, 32, 0));
+  }
+}
+
+.animate-heart-burst {
+  animation: heart-burst 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.like-button-active {
+  background: linear-gradient(135deg, #e8a020 0%, #d4911c 100%) !important;
+  box-shadow: 0 4px 15px rgba(232, 160, 32, 0.3);
+  border-color: transparent !important;
+  color: #0f0f0e !important;
+  transform: translateY(-1px);
+}
+
+.like-button-inactive {
+  background: rgba(28, 28, 26, 0.5) !important;
+  border-color: #2a2a28 !important;
+  color: #8a8880 !important;
+  backdrop-filter: blur(4px);
+}
+
+.like-button-inactive:hover {
+  border-color: #e8a020 !important;
+  color: #e8a020 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.like-button-loading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
 @layer components {
   .container {
     width: 100%;

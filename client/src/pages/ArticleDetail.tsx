@@ -69,16 +69,36 @@ export default function ArticleDetail() {
     { enabled: !!article?.id && !!user }
   );
 
-  // Mutation to toggle like
+  // Mutation to toggle like with Optimistic Updates
   const toggleLikeMutation = trpc.likes.toggle.useMutation({
+    onMutate: async () => {
+      // Logic for optimistic update
+      const prevLiked = userLiked;
+      const prevCount = likeCount;
+
+      // Update state immediately
+      setUserLiked(!prevLiked);
+      setLikeCount(prevLiked ? prevCount - 1 : prevCount + 1);
+
+      if (!prevLiked) {
+        setIsAnimating(true);
+        setTimeout(() => setIsAnimating(false), 600);
+      }
+
+      return { prevLiked, prevCount };
+    },
     onSuccess: (data: any) => {
+      // Synchronize with server response
       setLikeCount(data.likeCount);
       setUserLiked(data.liked);
-      setIsAnimating(true);
-      setTimeout(() => setIsAnimating(false), 600);
     },
-    onError: error => {
-      toast.error(error.message || "Failed to like article");
+    onError: (error, variables, context) => {
+      // Rollback on error
+      if (context) {
+        setUserLiked(context.prevLiked);
+        setLikeCount(context.prevCount);
+      }
+      toast.error(error.message || "Failed to sync like");
     },
   });
 
@@ -566,21 +586,16 @@ export default function ArticleDetail() {
               {/* Like Button */}
               <button
                 onClick={handleLikeClick}
-                disabled={toggleLikeMutation.isPending}
-                className="flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-200 disabled:opacity-50"
-                style={{
-                  backgroundColor: userLiked ? "#E8A020" : "transparent",
-                  color: userLiked ? "#0F0F0E" : "#8A8880",
-                  border: userLiked ? "none" : "1px solid #2A2A28",
-                }}
+                className={`flex items-center justify-center gap-2 px-6 py-3 rounded-sm transition-all duration-300 ${userLiked ? "like-button-active" : "like-button-inactive"
+                  } ${toggleLikeMutation.isPending ? "like-button-loading" : ""}`}
                 title={user ? "Like this article" : "Login to like"}
               >
                 <Heart
                   size={18}
-                  className={`transition-transform duration-300 ${isAnimating && userLiked ? "scale-125" : "scale-100"}`}
+                  className={`${isAnimating && userLiked ? "animate-heart-burst" : ""}`}
                   fill={userLiked ? "currentColor" : "none"}
                 />
-                <span className="font-ui text-sm font-600 uppercase tracking-wider">
+                <span className="font-ui text-sm font-700 tabular-nums">
                   {likeCount}
                 </span>
               </button>
@@ -668,20 +683,15 @@ export default function ArticleDetail() {
           <div className="md:hidden flex flex-wrap items-center gap-3 mb-6">
             <button
               onClick={handleLikeClick}
-              disabled={toggleLikeMutation.isPending}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-200 disabled:opacity-50"
-              style={{
-                backgroundColor: userLiked ? "#E8A020" : "transparent",
-                color: userLiked ? "#0F0F0E" : "#8A8880",
-                border: userLiked ? "none" : "1px solid #2A2A28",
-              }}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-300 ${userLiked ? "like-button-active" : "like-button-inactive"
+                } ${toggleLikeMutation.isPending ? "like-button-loading" : ""}`}
             >
               <Heart
                 size={18}
-                className={`transition-transform duration-300 ${isAnimating && userLiked ? "scale-125" : "scale-100"}`}
+                className={`${isAnimating && userLiked ? "animate-heart-burst" : ""}`}
                 fill={userLiked ? "currentColor" : "none"}
               />
-              <span className="font-ui text-sm font-600 uppercase tracking-wider">
+              <span className="font-ui text-sm font-700 tabular-nums">
                 {likeCount}
               </span>
             </button>
