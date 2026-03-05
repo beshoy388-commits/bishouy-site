@@ -51,8 +51,8 @@ async function startServer() {
         directives: {
           "default-src": ["'self'"],
           "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://apis.google.com"],
-          "connect-src": ["'self'", "https://api.openrouter.ai", "https://*.pollinations.ai", "https://*.loremflickr.com", "wss://*.render.com", "https://*.render.com", "https://vitals.vercel-insights.com"],
-          "img-src": ["'self'", "data:", "blob:", "https://images.unsplash.com", "https://*.pollinations.ai", "https://*.loremflickr.com", "https://*.googleusercontent.com"],
+          "connect-src": ["'self'", "https://api.openrouter.ai", "https://pollinations.ai", "https://*.pollinations.ai", "https://loremflickr.com", "https://*.loremflickr.com", "wss://*.render.com", "https://*.render.com", "https://vitals.vercel-insights.com"],
+          "img-src": ["'self'", "data:", "blob:", "https://images.unsplash.com", "https://pollinations.ai", "https://*.pollinations.ai", "https://loremflickr.com", "https://*.loremflickr.com", "https://*.googleusercontent.com"],
           "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
           "font-src": ["'self'", "https://fonts.gstatic.com"],
           "frame-src": ["'self'", "https://*.google.com"],
