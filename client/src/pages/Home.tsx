@@ -77,7 +77,7 @@ export default function Home() {
         a.id !== mainFeatured.id &&
         !secondaryFeatured.some(sf => sf.id === a.id)
     )
-    .slice(0, 9);
+    .slice(0, 12);
 
   return (
     <div className="min-h-screen bg-[#0F0F0E]">

@@ -389,6 +389,26 @@ export const appRouter = router({
         );
       }),
 
+    // Admin: List ALL articles (including drafts)
+    listAdmin: adminProcedure
+      .input(
+        z
+          .object({
+            category: z.string().optional(),
+            limit: z.number().optional().default(50),
+            offset: z.number().optional().default(0),
+          })
+          .optional()
+      )
+      .query(async ({ input }) => {
+        return getAllArticles(
+          true,
+          input?.category,
+          input?.limit,
+          input?.offset
+        );
+      }),
+
     // Public: Get article by ID
     getById: publicProcedure
       .input(z.object({ id: z.number() }))

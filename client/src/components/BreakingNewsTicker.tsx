@@ -5,10 +5,19 @@
  */
 
 import { BREAKING_NEWS } from "@/lib/articles";
+import { trpc } from "@/lib/trpc";
 
 export default function BreakingNewsTicker() {
-  // Duplicate the array for seamless loop
-  const items = [...BREAKING_NEWS, ...BREAKING_NEWS];
+  const { data: breakingArticles } = trpc.articles.list.useQuery({ limit: 10 });
+  const breakingNews = breakingArticles
+    ? breakingArticles.filter(a => a.breaking === 1).map(a => a.title)
+    : [];
+
+  // Fallback to static if none in DB
+  const displayItems = breakingNews.length > 0 ? breakingNews : BREAKING_NEWS;
+
+  // Duplicate for seamless loop
+  const items = [...displayItems, ...displayItems];
 
   return (
     <div className="bg-[#E8A020] overflow-hidden">

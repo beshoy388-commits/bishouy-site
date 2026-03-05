@@ -68,7 +68,7 @@ export default function AdminPanel() {
     }
   }, [isAuthenticated, user, loading, setLocation]);
 
-  const articlesQuery = trpc.articles.list.useQuery();
+  const articlesQuery = trpc.articles.listAdmin.useQuery();
   const pendingCommentsQuery = trpc.comments.getPending.useQuery();
   const triggerAiMutation = trpc.ai.triggerNewsGeneration.useMutation();
 
@@ -159,11 +159,10 @@ export default function AdminPanel() {
                 setActiveTab("dashboard");
                 setShowForm(false);
               }}
-              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${
-                activeTab === "dashboard"
+              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "dashboard"
                   ? "text-[#E8A020] border-[#E8A020]"
                   : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-              }`}
+                }`}
             >
               <LayoutDashboard size={14} />{" "}
               <span className="hidden sm:inline">Dashboard</span>
@@ -173,11 +172,10 @@ export default function AdminPanel() {
                 setActiveTab("articles");
                 setShowForm(false);
               }}
-              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex-shrink-0 ${
-                activeTab === "articles"
+              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex-shrink-0 ${activeTab === "articles"
                   ? "text-[#E8A020] border-[#E8A020]"
                   : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-              }`}
+                }`}
             >
               Articles
             </button>
@@ -186,11 +184,10 @@ export default function AdminPanel() {
                 setActiveTab("comments");
                 setShowForm(false);
               }}
-              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${
-                activeTab === "comments"
+              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "comments"
                   ? "text-[#E8A020] border-[#E8A020]"
                   : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-              }`}
+                }`}
             >
               <MessageSquare size={14} />{" "}
               <span className="hidden sm:inline">Comments</span>
@@ -205,11 +202,10 @@ export default function AdminPanel() {
                 setActiveTab("ads");
                 setShowForm(false);
               }}
-              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${
-                activeTab === "ads"
+              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "ads"
                   ? "text-[#E8A020] border-[#E8A020]"
                   : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-              }`}
+                }`}
             >
               <Megaphone size={14} />{" "}
               <span className="hidden sm:inline">Ads</span>
@@ -219,11 +215,10 @@ export default function AdminPanel() {
                 setActiveTab("newsletter");
                 setShowForm(false);
               }}
-              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${
-                activeTab === "newsletter"
+              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "newsletter"
                   ? "text-[#E8A020] border-[#E8A020]"
                   : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-              }`}
+                }`}
             >
               <Send size={14} />{" "}
               <span className="hidden sm:inline">Newsletter</span>
@@ -233,11 +228,10 @@ export default function AdminPanel() {
                 setActiveTab("users");
                 setShowForm(false);
               }}
-              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex-shrink-0 ${
-                activeTab === "users"
+              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex-shrink-0 ${activeTab === "users"
                   ? "text-[#E8A020] border-[#E8A020]"
                   : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-              }`}
+                }`}
             >
               Users
             </button>
@@ -246,11 +240,10 @@ export default function AdminPanel() {
                 setActiveTab("system");
                 setShowForm(false);
               }}
-              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${
-                activeTab === "system"
+              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "system"
                   ? "text-[#E8A020] border-[#E8A020]"
                   : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-              }`}
+                }`}
             >
               <Terminal size={14} />{" "}
               <span className="hidden sm:inline">System</span>
@@ -479,21 +472,21 @@ export default function AdminPanel() {
             </div>
           )
         ) : /* ── COMMENTS TAB ── */
-        activeTab === "comments" ? (
-          <GlobalComments />
-        ) : /* ── ADS TAB ── */
-        activeTab === "ads" ? (
-          <AdsManager />
-        ) : /* ── NEWSLETTER TAB ── */
-        activeTab === "newsletter" ? (
-          <NewsletterManager />
-        ) : /* ── USERS TAB ── */
-        activeTab === "users" ? (
-          <UsersManagement />
-        ) : (
-          /* ── SYSTEM TAB ── */
-          <SystemConsole />
-        )}
+          activeTab === "comments" ? (
+            <GlobalComments />
+          ) : /* ── ADS TAB ── */
+            activeTab === "ads" ? (
+              <AdsManager />
+            ) : /* ── NEWSLETTER TAB ── */
+              activeTab === "newsletter" ? (
+                <NewsletterManager />
+              ) : /* ── USERS TAB ── */
+                activeTab === "users" ? (
+                  <UsersManagement />
+                ) : (
+                  /* ── SYSTEM TAB ── */
+                  <SystemConsole />
+                )}
       </div>
     </div>
   );
