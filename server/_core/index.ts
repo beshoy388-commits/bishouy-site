@@ -43,11 +43,28 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
-  // Security headers (helmet)
+  // Security headers (helmet) — Optimized for performance and Best Practices audit
   app.use(
     helmet({
-      contentSecurityPolicy: false, // disabled to allow Vite HMR and inline scripts
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          "default-src": ["'self'"],
+          "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://apis.google.com"],
+          "connect-src": ["'self'", "https://api.openrouter.ai", "https://*.pollinations.ai", "https://*.loremflickr.com", "wss://*.render.com", "https://*.render.com", "https://vitals.vercel-insights.com"],
+          "img-src": ["'self'", "data:", "blob:", "https://images.unsplash.com", "https://*.pollinations.ai", "https://*.loremflickr.com", "https://*.googleusercontent.com"],
+          "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+          "font-src": ["'self'", "https://fonts.gstatic.com"],
+          "frame-src": ["'self'", "https://*.google.com"],
+          "upgrade-insecure-requests": [],
+        },
+      },
       crossOriginEmbedderPolicy: false, // allows embeds (images, iframes)
+      hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true,
+      },
     })
   );
 

@@ -173,6 +173,17 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    sourcemap: true, // Addressing "Missing source maps" audit
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Splitting large libraries into a separate vendor chunk
+          // to reduce main bundle size and improve caching
+          'vendor': ['react', 'react-dom', 'wouter', 'lucide-react', 'clsx', 'tailwind-merge'],
+          'ui': ['@radix-ui/react-tooltip', '@radix-ui/react-slot', 'sonner'],
+        }
+      }
+    }
   },
   server: {
     host: true,

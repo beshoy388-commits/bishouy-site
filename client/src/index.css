@@ -82,8 +82,8 @@ html {
   --secondary: oklch(0.18 0.004 60);
   --secondary-foreground: oklch(0.94 0.006 60);
   --muted: oklch(0.18 0.004 60);
-  --muted-foreground: oklch(0.55 0.01 60);
-  /* #8A8880 medium gray */
+  --muted-foreground: oklch(0.65 0.01 60);
+  /* Lightened from 0.55 to 0.65 for better contrast against dark background (~#9A9890) */
   --accent: oklch(0.72 0.16 70);
   --accent-foreground: oklch(0.108 0.004 60);
   --destructive: oklch(0.577 0.245 27.325);
