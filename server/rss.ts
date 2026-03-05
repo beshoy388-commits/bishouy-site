@@ -125,12 +125,12 @@ async function rewriteArticle(
   try {
     const response = await openai.chat.completions.create({
       // We use top-tier models for Pulitzer quality, falling back to other free models if busy
-      model: "meta-llama/llama-3.3-70b-instruct:free",
+      model: "meta-llama/llama-3.3-70b-instruct",
       // @ts-ignore - OpenRouter specific fallback extension
       extra_body: {
         models: [
-          "nousresearch/hermes-3-llama-3.1-405b:free",
-          "meta-llama/llama-3.3-70b-instruct:free",
+          "nousresearch/hermes-3-llama-3.1-405b",
+          "meta-llama/llama-3.3-70b-instruct",
           "google/gemma-3-27b-it:free",
           "openrouter/free",
         ],
@@ -252,10 +252,19 @@ export async function syncRSSFeeds() {
           Sports: "#E67E22",
         };
 
-        const imageUrl = editorialPiece.imagePrompt
-          ? `https://image.pollinations.ai/prompt/${encodeURIComponent(editorialPiece.imagePrompt)}?width=1600&height=900&nologo=true`
-          : extractImageUrl(item) ||
-            "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+        // IMAGE LOGIC:
+        // 1. First choice: The original image from the news source (most authentic)
+        // 2. Second choice: Dynamic themed image from LoremFlickr based on AI tags
+        // 3. Fallback: Professional desk news background
+        const originalImage = extractImageUrl(item);
+        const aiTags = editorialPiece.tags || [];
+        const fallbackKeywords =
+          aiTags.length > 0 ? aiTags.join(",") : aiCategory;
+
+        const imageUrl =
+          originalImage ||
+          `https://loremflickr.com/1200/800/${encodeURIComponent(fallbackKeywords)}/all` ||
+          "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
 
         const articleData: InsertArticle = {
           title: editorialPiece.title,
