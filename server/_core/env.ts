@@ -17,5 +17,5 @@ export const ENV = {
     (process.env.NODE_ENV === "production"
       ? "https://bishouy.com"
       : "http://localhost:3000"),
-  geminiApiKey: process.env.GEMINI_API_KEY ?? "",
+  openRouterApiKey: process.env.OPENROUTER_API_KEY ?? "",
 };

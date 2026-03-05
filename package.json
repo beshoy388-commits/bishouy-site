@@ -15,7 +15,6 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",
     "@aws-sdk/s3-request-presigner": "^3.693.0",
-    "@google/genai": "^1.44.0",
     "@hookform/resolvers": "^5.2.2",
     "@libsql/client": "^0.17.0",
     "@radix-ui/react-accordion": "^1.2.12",
@@ -70,6 +69,7 @@
     "mysql2": "^3.15.0",
     "nanoid": "^5.1.5",
     "next-themes": "^0.4.6",
+    "openai": "^6.25.0",
     "react": "^19.2.1",
     "react-day-picker": "^9.11.1",
     "react-dom": "^19.2.1",

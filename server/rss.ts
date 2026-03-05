@@ -1,5 +1,5 @@
 import Parser from "rss-parser";
-import { GoogleGenAI } from "@google/genai";
+import OpenAI from "openai";
 import { ENV } from "./_core/env";
 import { createArticle, getArticleBySlug } from "./db";
 import { InsertArticle } from "../drizzle/schema";
@@ -91,13 +91,18 @@ function createSlug(title: string): string {
   );
 }
 
-// Using the official Google Gen AI SDK
-const ai = new GoogleGenAI({
-  apiKey: ENV.geminiApiKey as string,
+// Initialize OpenAI configured for OpenRouter
+const openai = new OpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: ENV.openRouterApiKey as string,
+  defaultHeaders: {
+    "HTTP-Referer": ENV.appUrl,
+    "X-Title": "Bishouy News Platform",
+  },
 });
 
 /**
- * Uses Gemini to completely rewrite the article with high standards.
+ * Uses LLM via OpenRouter to completely rewrite the article with high standards.
  */
 async function rewriteArticle(
   originalTitle: string,
@@ -110,29 +115,24 @@ async function rewriteArticle(
   isFeatured: boolean;
   isBreaking: boolean;
 } | null> {
-  if (!ENV.geminiApiKey) {
-    log("[RSS] Cannot rewrite article: GEMINI_API_KEY is not set.");
+  if (!ENV.openRouterApiKey) {
+    log("[RSS] Cannot rewrite article: OPENROUTER_API_KEY is not set.");
     return null;
   }
 
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: [
+    const response = await openai.chat.completions.create({
+      // We use a fast, free conversational model via OpenRouter
+      model: "meta-llama/llama-3-8b-instruct:free",
+      response_format: { type: "json_object" },
+      messages: [
         {
-          role: "user",
-          parts: [
-            {
-              text: `
-            You are a Pulitzer Prize-winning senior foreign correspondent for an elite international news organization. 
+          role: "system",
+          content: `You are a Pulitzer Prize-winning senior foreign correspondent for an elite international news organization. 
             Your writing is characterized by intellectual depth, perfect English, and a serious, investigative tone.
 
-            INPUT SOURCE:
-            Title: ${originalTitle}
-            Context: ${originalContent || "No additional context available."}
-
             STRICT TASK:
-            Rewrite this news item into a definitive, high-value feature article. 
+            Rewrite the news item provided by the user into a definitive, high-value feature article. 
             Do NOT summarize. ELABORATE and ANALYZE.
 
             EDITORIAL STANDARDS:
@@ -146,10 +146,6 @@ async function rewriteArticle(
             5. NO ATTRIBUTION: Never mention external sources (BBC, Reuters, etc.). Write as original reporting.
             6. LENGTH: Minimum 500-700 words.
 
-            EDITORIAL DECISION:
-            - "isFeatured": Set to true ONLY if this story has major global consequences or represents a defining moment in its category.
-            - "isBreaking": Set to true ONLY if this is a time-sensitive, urgent development that just happened.
-
             JSON OUTPUT FORMAT (MANDATORY):
             {
               "title": "A compelling, broad-reach headline",
@@ -158,18 +154,16 @@ async function rewriteArticle(
               "tags": ["Tag1", "Tag2", "Tag3"],
               "isFeatured": boolean,
               "isBreaking": boolean
-            }
-          `,
-            },
-          ],
+            }`,
+        },
+        {
+          role: "user",
+          content: `INPUT SOURCE:\nTitle: ${originalTitle}\nContext: ${originalContent || "No additional context available."}\n\nEDITORIAL DECISION:\n- "isFeatured": Set to true ONLY if this story has major global consequences or represents a defining moment in its category.\n- "isBreaking": Set to true ONLY if this is a time-sensitive, urgent development that just happened.`,
         },
       ],
-      config: {
-        responseMimeType: "application/json",
-      },
     });
 
-    const text = response.text;
+    const text = response.choices[0]?.message?.content;
     if (!text) return null;
 
     return JSON.parse(text);
@@ -186,9 +180,9 @@ export async function syncRSSFeeds() {
   log("[RSS] Initiating Editorial Sync...");
   let newArticlesCount = 0;
 
-  if (!ENV.geminiApiKey) {
-    log("[RSS] Aborting: GEMINI_API_KEY is missing.");
-    return { success: false, message: "GEMINI_API_KEY is missing." };
+  if (!ENV.openRouterApiKey) {
+    log("[RSS] Aborting: OPENROUTER_API_KEY is missing.");
+    return { success: false, message: "OPENROUTER_API_KEY is missing." };
   }
 
   for (const feedConfig of RSS_FEEDS) {

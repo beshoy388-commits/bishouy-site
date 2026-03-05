@@ -57,7 +57,7 @@ import {
 import { comments, InsertArticle, articles, users } from "../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
-import { GoogleGenAI } from "@google/genai";
+import OpenAI from "openai";
 import { aiChatCache } from "./cache";
 import { logArticleAction } from "./audit";
 import {
@@ -1019,14 +1019,21 @@ export const appRouter = router({
           });
         }
 
-        if (!process.env.GEMINI_API_KEY) {
+        if (!process.env.OPENROUTER_API_KEY) {
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
             message: "AI API key not configured",
           });
         }
 
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        const openai = new OpenAI({
+          baseURL: "https://openrouter.ai/api/v1",
+          apiKey: process.env.OPENROUTER_API_KEY,
+          defaultHeaders: {
+            "HTTP-Referer": "https://bishouy.com",
+            "X-Title": "Bishouy AI Assistant",
+          },
+        });
         const db = await getDb();
 
         // Create cache key from messages
@@ -1064,23 +1071,25 @@ export const appRouter = router({
         const chatContents = input.messages
           .filter(m => m.role !== "system")
           .map(m => ({
-            role:
-              m.role === "assistant" ? ("model" as const) : ("user" as const),
-            parts: [{ text: m.content }],
+            role: m.role as "user" | "assistant",
+            content: m.content,
           }));
 
         try {
-          const response = await ai.models.generateContent({
-            model: "gemini-2.0-flash",
-            contents: chatContents,
-            config: {
-              systemInstruction: systemMessage + "\n" + systemContext,
-              temperature: 0.7,
-            },
+          const response = await openai.chat.completions.create({
+            model: "meta-llama/llama-3-8b-instruct:free",
+            messages: [
+              {
+                role: "system",
+                content: systemMessage + "\n" + systemContext,
+              },
+              ...chatContents,
+            ],
+            temperature: 0.7,
           });
 
           const responseText =
-            response.text ||
+            response.choices[0]?.message?.content ||
             "I'm sorry, I couldn't process that request at this moment.";
 
           // Cache the response for 1 hour
