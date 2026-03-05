@@ -422,6 +422,58 @@ export async function trackAdImpression(id: number): Promise<void> {
 }
 
 // User management queries
+export async function getPublicUserByUsername(username: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select({
+    id: users.id,
+    name: users.name,
+    username: users.username,
+    bio: users.bio,
+    avatarUrl: users.avatarUrl,
+    website: users.website,
+    location: users.location,
+    createdAt: users.createdAt,
+    role: users.role,
+  }).from(users).where(eq(users.username, username)).limit(1);
+
+  if (!result[0]) return undefined;
+
+  const commentsCount = await db.select({ count: sql<number>`count(*)` })
+    .from(comments)
+    .where(and(eq(comments.userId, result[0].id), eq(comments.approved, 1)));
+
+  return {
+    ...result[0],
+    totalComments: commentsCount[0]?.count || 0,
+  };
+}
+
+export async function getPublicUserComments(username: string) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const userResult = await db.select({ id: users.id }).from(users).where(eq(users.username, username)).limit(1);
+  if (!userResult[0]) return [];
+
+  return db
+    .select({
+      id: comments.id,
+      content: comments.content,
+      isEdited: comments.isEdited,
+      createdAt: comments.createdAt,
+      articleId: articles.id,
+      articleTitle: articles.title,
+      articleSlug: articles.slug,
+    })
+    .from(comments)
+    .innerJoin(articles, eq(comments.articleId, articles.id))
+    .where(and(eq(comments.userId, userResult[0].id), eq(comments.approved, 1)))
+    .orderBy(desc(comments.createdAt))
+    .limit(20);
+}
+
 export async function getAllUsers(): Promise<User[]> {
   const db = await getDb();
   if (!db) return [];

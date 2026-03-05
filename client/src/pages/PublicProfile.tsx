@@ -8,10 +8,17 @@ export default function PublicProfile() {
     const [, params] = useRoute("/u/:username");
     const username = params?.username;
 
-    const { data: profile, isLoading, error } = trpc.users.getByUsername.useQuery(
+    const { data: profile, isLoading: profileLoading, error } = trpc.users.getByUsername.useQuery(
         { username: username || "" },
         { enabled: !!username }
     );
+
+    const { data: comments, isLoading: commentsLoading } = trpc.users.getPublicComments.useQuery(
+        { username: username || "" },
+        { enabled: !!username }
+    );
+
+    const isLoading = profileLoading || commentsLoading;
 
     if (isLoading) {
         return (
@@ -99,6 +106,37 @@ export default function PublicProfile() {
                                 <span>Joined {joinDate}</span>
                             </div>
                         </div>
+                    </div>
+
+                    <div className="mt-16 bg-[#1C1C1A] border border-[#2A2A28] p-8 md:p-12">
+                        <h2 className="font-display text-2xl text-[#F2F0EB] mb-8 pb-4 border-b border-[#2A2A28]">
+                            Recent Comments
+                        </h2>
+
+                        {comments && comments.length > 0 ? (
+                            <div className="space-y-6">
+                                {comments.map((comment) => (
+                                    <div key={comment.id} className="bg-[#0F0F0E] p-6 rounded-sm border border-[#222220]">
+                                        <div className="flex items-center gap-2 mb-3 text-sm text-[#8A8880] font-ui">
+                                            <span>Commented on</span>
+                                            <a href={`/articolo/${comment.articleSlug}`} className="text-[#E8A020] hover:text-[#D4911C] font-bold line-clamp-1 transition-colors">
+                                                {comment.articleTitle}
+                                            </a>
+                                            <span className="ml-auto text-xs shrink-0">
+                                                {new Date(comment.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                                            </span>
+                                        </div>
+                                        <p className="text-[#D4D0C8] whitespace-pre-wrap leading-relaxed">
+                                            {comment.content}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-[#8A8880] text-center py-8">
+                                {profile.name} hasn't made any public comments yet.
+                            </p>
+                        )}
                     </div>
                 </div>
             </main>

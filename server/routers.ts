@@ -13,7 +13,8 @@ import {
   createSubscriber, getAllSubscribers, deleteSubscriber, getUserByEmail, createVerificationCode, getLatestVerificationCode, deleteVerificationCodeByEmail, upsertUser, editComment,
   createPasswordResetToken, getValidPasswordResetToken, markPasswordResetTokenAsUsed, getAllComments,
   createSentNewsletterRecord, getAllSentNewsletters,
-  toggleSavedArticle, hasUserSavedArticle, getSavedArticlesByUserId, getRelatedArticles
+  toggleSavedArticle, hasUserSavedArticle, getSavedArticlesByUserId, getRelatedArticles,
+  getPublicUserByUsername, getPublicUserComments
 } from "./db";
 import { comments, InsertArticle, articles, users } from "../drizzle/schema";
 import { eq, and } from "drizzle-orm";
@@ -688,28 +689,19 @@ export const appRouter = router({
     getByUsername: publicProcedure
       .input(z.object({ username: z.string() }))
       .query(async ({ input }) => {
-        const db = await getDb();
-        if (!db) return null;
-
-        const user = await db.select().from(users).where(eq(users.username, input.username)).limit(1);
-        if (!user || user.length === 0) {
+        const user = await getPublicUserByUsername(input.username);
+        if (!user) {
           throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
         }
+        return user;
+      }),
 
-        // Return only safe public fields
-        const u = user[0];
-        return {
-          id: u.id,
-          name: u.name,
-          username: u.username,
-          bio: u.bio,
-          avatarUrl: u.avatarUrl,
-          website: u.website,
-          location: u.location,
-          role: u.role,
-          createdAt: u.createdAt
-        };
-      })
+    // Public: Get recent approved comments by a user
+    getPublicComments: publicProcedure
+      .input(z.object({ username: z.string() }))
+      .query(async ({ input }) => {
+        return getPublicUserComments(input.username);
+      }),
   }),
 
   newsletter: router({
