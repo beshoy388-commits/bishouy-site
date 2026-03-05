@@ -62,7 +62,6 @@ export async function getDb() {
         url: dbUrl,
         authToken: authToken || undefined,
       });
-      _db = drizzle(client);
 
       // Eseguiamo una migrazione manuale "leggera" (non bloccante) per le nuove colonne di commenti,
       // utile per scavalcare i warning di Drizzle e Turso durante il deploy
@@ -122,6 +121,8 @@ export async function getDb() {
       } catch (err) {
         // Column already exists — ignore
       }
+      // Finalize database initialization after migrations
+      _db = drizzle(client);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
