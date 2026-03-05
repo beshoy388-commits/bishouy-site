@@ -122,8 +122,17 @@ async function rewriteArticle(
 
   try {
     const response = await openai.chat.completions.create({
-      // We use a fast, free conversational model via OpenRouter
-      model: "openrouter/free",
+      // We use top-tier models for Pulitzer quality, falling back to other free models if busy
+      model: "meta-llama/llama-3.3-70b-instruct:free",
+      // @ts-ignore - OpenRouter specific fallback extension
+      extra_body: {
+        models: [
+          "nousresearch/hermes-3-llama-3.1-405b:free",
+          "meta-llama/llama-3.3-70b-instruct:free",
+          "google/gemma-3-27b-it:free",
+          "openrouter/free",
+        ],
+      },
       response_format: { type: "json_object" },
       messages: [
         {

@@ -1078,7 +1078,16 @@ export const appRouter = router({
 
         try {
           const response = await openai.chat.completions.create({
-            model: "openrouter/free",
+            model: "meta-llama/llama-3.3-70b-instruct:free",
+            // @ts-ignore - OpenRouter specific fallback extension
+            extra_body: {
+              models: [
+                "nousresearch/hermes-3-llama-3.1-405b:free",
+                "meta-llama/llama-3.3-70b-instruct:free",
+                "google/gemma-3-27b-it:free",
+                "openrouter/free",
+              ],
+            },
             messages: [
               {
                 role: "system",
