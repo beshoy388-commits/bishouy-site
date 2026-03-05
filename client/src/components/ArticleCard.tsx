@@ -42,13 +42,18 @@ export default function ArticleCard({
   // Mutation to toggle like with Optimistic Updates
   const toggleLikeMutation = trpc.likes.toggle.useMutation({
     onMutate: async () => {
-      // Logic for optimistic update
+      // 1. Snapshot previous values
       const prevLiked = userLiked;
       const prevCount = likeCount;
 
-      // Update state immediately
+      // 2. Update local state immediately for instant UI
       setUserLiked(!prevLiked);
-      setLikeCount(prevLiked ? Math.max(0, prevCount - 1) : prevCount + 1);
+      const newCount = prevLiked ? Math.max(0, prevCount - 1) : prevCount + 1;
+      setLikeCount(newCount);
+
+      // 3. Update TRPC cache optimistically to prevent "gray-flicker"
+      utils.likes.getCount.setData({ articleId: article.id }, newCount);
+      utils.likes.hasUserLiked.setData({ articleId: article.id }, !prevLiked);
 
       if (!prevLiked) {
         setIsAnimating(true);
@@ -62,15 +67,17 @@ export default function ArticleCard({
       setLikeCount(data.likeCount);
       setUserLiked(data.liked);
 
-      // Refresh cache without full reload
-      utils.likes.getCount.invalidate({ articleId: article.id });
-      utils.likes.hasUserLiked.invalidate({ articleId: article.id });
+      // Also ensure cache is up to date
+      utils.likes.getCount.setData({ articleId: article.id }, data.likeCount);
+      utils.likes.hasUserLiked.setData({ articleId: article.id }, data.liked);
     },
     onError: (error, variables, context: any) => {
       // Rollback on error
       if (context) {
         setUserLiked(context.prevLiked);
         setLikeCount(context.prevCount);
+        utils.likes.getCount.setData({ articleId: article.id }, context.prevCount);
+        utils.likes.hasUserLiked.setData({ articleId: article.id }, context.prevLiked);
       }
     },
   });

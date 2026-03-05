@@ -74,13 +74,18 @@ export default function ArticleDetail() {
   // Mutation to toggle like with Optimistic Updates
   const toggleLikeMutation = trpc.likes.toggle.useMutation({
     onMutate: async () => {
-      // Logic for optimistic update
+      // 1. Snapshot previous values
       const prevLiked = userLiked;
       const prevCount = likeCount;
 
-      // Update state immediately
+      // 2. Update local state immediately
       setUserLiked(!prevLiked);
-      setLikeCount(prevLiked ? Math.max(0, prevCount - 1) : prevCount + 1);
+      const newCount = prevLiked ? Math.max(0, prevCount - 1) : prevCount + 1;
+      setLikeCount(newCount);
+
+      // 3. Update trpc logic cache so that the UI stays in its future state
+      utils.likes.getCount.setData({ articleId: article!.id }, newCount);
+      utils.likes.hasUserLiked.setData({ articleId: article!.id }, !prevLiked);
 
       if (!prevLiked) {
         setIsAnimating(true);
@@ -90,19 +95,21 @@ export default function ArticleDetail() {
       return { prevLiked, prevCount };
     },
     onSuccess: (data: any) => {
-      // Synchronize with server response
+      // 4. Update with actual server data (which should be the same)
       setLikeCount(data.likeCount);
       setUserLiked(data.liked);
 
-      // Invalidate query to ensure data is fresh but don't block
-      utils.likes.getCount.invalidate({ articleId: article!.id });
-      utils.likes.hasUserLiked.invalidate({ articleId: article!.id });
+      // Refresh cache so it's fully grounded in server reality
+      utils.likes.getCount.setData({ articleId: article!.id }, data.likeCount);
+      utils.likes.hasUserLiked.setData({ articleId: article!.id }, data.liked);
     },
-    onError: (error, variables, context) => {
+    onError: (error, variables, context: any) => {
       // Rollback on error
       if (context) {
         setUserLiked(context.prevLiked);
         setLikeCount(context.prevCount);
+        utils.likes.getCount.setData({ articleId: article!.id }, context.prevCount);
+        utils.likes.hasUserLiked.setData({ articleId: article!.id }, context.prevLiked);
       }
       toast.error(error.message || "Failed to sync like");
     },
