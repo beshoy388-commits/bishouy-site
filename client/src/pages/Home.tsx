@@ -64,13 +64,16 @@ export default function Home() {
   }
 
   // Get featured articles (featured = 1)
-  const featured = articles.filter(a => a.featured === 1);
-  const mainFeatured = featured[0] || articles[0];
-  const secondaryFeatured = articles
-    .filter(a => a.id !== mainFeatured.id)
-    .slice(0, 3);
+  const featuredArticles = articles.filter(a => a.featured === 1);
+  const mainFeatured = featuredArticles[0] || articles[0];
 
-  // The rest of the articles for the latest grid (limit to 9)
+  // Editor's Picks: Other featured articles first, then latest non-featured
+  const secondaryFeatured = [
+    ...featuredArticles.filter(a => a.id !== mainFeatured.id),
+    ...articles.filter(a => a.id !== mainFeatured.id && a.featured !== 1)
+  ].slice(0, 3);
+
+  // The rest of the articles for the latest grid
   const gridArticles = articles
     .filter(
       a =>

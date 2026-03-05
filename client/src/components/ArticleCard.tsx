@@ -94,6 +94,19 @@ export default function ArticleCard({
     </button>
   );
 
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const img = e.target as HTMLImageElement;
+    const category = article.category || "news";
+
+    if (img.src.includes('pollinations.ai')) {
+      // Fallback to themed LoremFlickr
+      img.src = `https://loremflickr.com/1200/800/${encodeURIComponent(category)}/all`;
+    } else if (img.src.includes('loremflickr.com')) {
+      // Final fallback to high-quality Unsplash
+      img.src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
+    }
+  };
+
   if (variant === "featured") {
     return (
       <Link href={`/articolo/${article.slug}`}>
@@ -105,22 +118,12 @@ export default function ArticleCard({
               alt={article.title}
               className="img-smart-fit"
               loading="lazy"
-              onError={(e) => {
-                const img = e.target as HTMLImageElement;
-                if (img.src.includes('pollinations.ai')) {
-                  // Fallback to themed LoremFlickr if AI fails
-                  img.src = `https://loremflickr.com/1200/800/${encodeURIComponent(article.category || 'news')}/all`;
-                } else if (img.src.includes('loremflickr.com')) {
-                  // Final fallback to high-quality Unsplash news image
-                  img.src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
-                }
-              }}
+              onError={handleImageError}
             />
           </div>
-          {/* Gradient overlay */}
+          {/* ... (rest of the featured content remains the same) */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0E] via-[#0F0F0E]/60 to-transparent" />
 
-          {/* Content */}
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
             {article.breaking === 1 && (
               <div className="flex items-center gap-2 mb-3">
@@ -153,7 +156,6 @@ export default function ArticleCard({
               </span>
             </div>
 
-            {/* Tags Ribbon */}
             {article.tags && (
               <div className="flex flex-wrap gap-2 pt-2 border-t border-[#1C1C1A]/50">
                 {(() => {
@@ -177,7 +179,6 @@ export default function ArticleCard({
             )}
           </div>
 
-          {/* Like button overlay */}
           {showLikes && (
             <div
               className="absolute top-4 right-4 z-20"
@@ -195,15 +196,13 @@ export default function ArticleCard({
     return (
       <Link href={`/articolo/${article.slug}`}>
         <article className="article-card group flex gap-4 cursor-pointer">
-          <div className="img-zoom flex-shrink-0 w-24 h-20 rounded-sm overflow-hidden">
+          <div className="img-zoom flex-shrink-0 w-24 h-20 rounded-sm overflow-hidden text-[#0F0F0E]">
             <img
               src={article.image}
               alt={article.title}
               className="img-smart-fit"
               loading="lazy"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
-              }}
+              onError={handleImageError}
             />
           </div>
           <div className="flex-1 min-w-0">
@@ -268,6 +267,7 @@ export default function ArticleCard({
             alt={article.title}
             className="w-full h-full object-cover"
             loading="lazy"
+            onError={handleImageError}
           />
           {showLikes && (
             <div
