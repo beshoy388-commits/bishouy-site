@@ -782,7 +782,8 @@ export const appRouter = router({
         const userMsg = input.messages[input.messages.length - 1].content;
         return `I am the BISHOUY AI assistant. You asked: "${userMsg}". How can I help you with more news today?`;
       })
-  })
+  }),
+
 });
 
 export type AppRouter = typeof appRouter;

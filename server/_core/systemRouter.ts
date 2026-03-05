@@ -3,6 +3,7 @@ import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
 import { getDb, verificationCodes, getDashboardStats } from "../db";
 import { desc } from "drizzle-orm";
+import { syncRSSFeeds } from "../rss";
 
 export const systemRouter = router({
   health: publicProcedure
@@ -40,4 +41,8 @@ export const systemRouter = router({
     .query(async () => {
       return getDashboardStats();
     }),
+
+  syncRss: adminProcedure.mutation(async () => {
+    return syncRSSFeeds();
+  }),
 });

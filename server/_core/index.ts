@@ -13,6 +13,7 @@ import { serveStatic, setupVite } from "./vite";
 import multer from "multer";
 import { storagePut } from "../storage";
 import { cleanupExpiredVerificationCodes, cleanupExpiredResetTokens } from "../db";
+import { syncRSSFeeds } from "../rss";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -134,10 +135,22 @@ async function startServer() {
 
 startServer().catch(console.error);
 
-// Run cleanup immediately and then every hour
+// Run cleanups on startup
 cleanupExpiredVerificationCodes();
 cleanupExpiredResetTokens();
+
+// Optional: Run RSS sync on startup (fire and forget)
+if (process.env.NODE_ENV === "production") {
+  syncRSSFeeds().catch(console.error);
+}
+
+// Set up background intervals
 setInterval(() => {
   cleanupExpiredVerificationCodes();
   cleanupExpiredResetTokens();
 }, 60 * 60 * 1000); // every 1 hour
+
+// RSS Sync interval (every 6 hours)
+setInterval(() => {
+  syncRSSFeeds().catch(console.error);
+}, 6 * 60 * 60 * 1000);
