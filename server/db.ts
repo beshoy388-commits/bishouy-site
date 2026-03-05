@@ -84,33 +84,29 @@ export async function getDb() {
         // Ignora
       }
 
-      // Safer migration for status column in articles (Draft support)
-      try {
-        // Step 1: Add as nullable column first (avoids SQLite constraint issues)
-        await client.execute("ALTER TABLE articles ADD COLUMN status TEXT;");
-        console.log("[Migration] Added status column to articles");
-        // Step 2: Set legacy articles to published
-        await client.execute("UPDATE articles SET status = 'published';");
-      } catch (err: any) {
-        // If error is not 'already exists', log it
-        if (!err.message?.includes("already exists") && !err.message?.includes("duplicate column")) {
-          console.error("[Migration Error] Status column:", err.message);
-        }
-        // Ensuring no nulls in existing column
+      // Safer migration for articles table (ensure new columns exist)
+      const articleColumns = [
+        { name: "status", type: "TEXT DEFAULT 'published' NOT NULL" },
+        { name: "publishedAt", type: "INTEGER" },
+        { name: "seoTitle", type: "TEXT" },
+        { name: "seoDescription", type: "TEXT" },
+        { name: "viewCount", type: "INTEGER DEFAULT 0" },
+        { name: "authorId", type: "INTEGER" }
+      ];
+
+      for (const col of articleColumns) {
         try {
-          await client.execute(
-            "UPDATE articles SET status = 'published' WHERE status IS NULL OR status = '';"
-          );
-        } catch (e) { /* ignore */ }
+          await client.execute(`ALTER TABLE articles ADD COLUMN ${col.name} ${col.type};`);
+          console.log(`[Migration] Added column ${col.name} to articles`);
+        } catch (err: any) {
+          // Ignore "already exists" errors
+        }
       }
 
-      // Migration for publishedAt column in articles
+      // Ensure status is 'published' for legacy rows
       try {
-        await client.execute("ALTER TABLE articles ADD COLUMN publishedAt INTEGER;");
-        console.log("[Migration] Added publishedAt column to articles");
-      } catch (err) {
-        // Already exists
-      }
+        await client.execute("UPDATE articles SET status = 'published' WHERE status IS NULL OR status = '';");
+      } catch (e) { /* ignore */ }
 
       // Migration for unsubscribe token in newsletter subscribers
       try {
