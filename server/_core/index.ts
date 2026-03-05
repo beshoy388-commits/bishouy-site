@@ -12,7 +12,10 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import multer from "multer";
 import { storagePut } from "../storage";
-import { cleanupExpiredVerificationCodes, cleanupExpiredResetTokens } from "../db";
+import {
+  cleanupExpiredVerificationCodes,
+  cleanupExpiredResetTokens,
+} from "../db";
 import { syncRSSFeeds } from "../rss";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -39,10 +42,12 @@ async function startServer() {
   const server = createServer(app);
 
   // Security headers (helmet)
-  app.use(helmet({
-    contentSecurityPolicy: false, // disabled to allow Vite HMR and inline scripts
-    crossOriginEmbedderPolicy: false, // allows embeds (images, iframes)
-  }));
+  app.use(
+    helmet({
+      contentSecurityPolicy: false, // disabled to allow Vite HMR and inline scripts
+      crossOriginEmbedderPolicy: false, // allows embeds (images, iframes)
+    })
+  );
 
   // Gzip compression — reduces bandwidth by ~60-80%
   app.use(compression());
@@ -86,13 +91,15 @@ async function startServer() {
       }
 
       if (req.file.size > 5 * 1024 * 1024) {
-        return res.status(400).json({ error: "File size must be less than 5MB" });
+        return res
+          .status(400)
+          .json({ error: "File size must be less than 5MB" });
       }
 
       // Comprimi e ottimizza l'immagine prima di salvarla
       const compressedBuffer = await sharp(req.file.buffer)
         .rotate() // Automatically rotate based on EXIF metadata
-        .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+        .resize(800, 800, { fit: "inside", withoutEnlargement: true })
         .webp({ quality: 75 })
         .toBuffer();
 
@@ -145,12 +152,18 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Set up background intervals
-setInterval(() => {
-  cleanupExpiredVerificationCodes();
-  cleanupExpiredResetTokens();
-}, 60 * 60 * 1000); // every 1 hour
+setInterval(
+  () => {
+    cleanupExpiredVerificationCodes();
+    cleanupExpiredResetTokens();
+  },
+  60 * 60 * 1000
+); // every 1 hour
 
 // RSS Sync interval (every 6 hours)
-setInterval(() => {
-  syncRSSFeeds().catch(console.error);
-}, 6 * 60 * 60 * 1000);
+setInterval(
+  () => {
+    syncRSSFeeds().catch(console.error);
+  },
+  6 * 60 * 60 * 1000
+);

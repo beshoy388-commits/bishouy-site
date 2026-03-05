@@ -58,12 +58,15 @@ class OAuthService {
     };
 
     if (!ENV.oAuthServerUrl) {
-      console.warn("[OAuth] Local bypass: faking token exchange for code:", code);
+      console.warn(
+        "[OAuth] Local bypass: faking token exchange for code:",
+        code
+      );
       return {
         accessToken: `fake-token-${code}`,
         expiresIn: ONE_YEAR_MS / 1000,
         tokenType: "Bearer",
-        refreshToken: `fake-refresh-${code}`
+        refreshToken: `fake-refresh-${code}`,
       } as ExchangeTokenResponse;
     }
 
@@ -79,7 +82,10 @@ class OAuthService {
     token: ExchangeTokenResponse
   ): Promise<GetUserInfoResponse> {
     if (!ENV.oAuthServerUrl) {
-      console.warn("[OAuth] Local bypass: faking user info for token:", token.accessToken);
+      console.warn(
+        "[OAuth] Local bypass: faking user info for token:",
+        token.accessToken
+      );
       return {
         openId: "local-dev-user",
         name: "Local Developer",
@@ -178,7 +184,9 @@ class SDKServer {
   }
 
   private getSessionSecret() {
-    const secret = ENV.cookieSecret || "local-development-secret-key-that-is-at-least-32-chars-long";
+    const secret =
+      ENV.cookieSecret ||
+      "local-development-secret-key-that-is-at-least-32-chars-long";
     return new TextEncoder().encode(secret);
   }
 

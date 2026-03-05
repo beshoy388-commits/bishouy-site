@@ -18,10 +18,18 @@ export const users = sqliteTable("users", {
   website: text("website"),
   location: text("location"),
   loginMethod: text("loginMethod"),
-  role: text("role", { enum: ["user", "admin"] }).default("user").notNull(),
-  createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
-  lastSignedIn: integer("lastSignedIn", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  role: text("role", { enum: ["user", "admin"] })
+    .default("user")
+    .notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+  lastSignedIn: integer("lastSignedIn", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
 
 export type User = typeof users.$inferSelect;
@@ -42,9 +50,15 @@ export const articles = sqliteTable("articles", {
   breaking: integer("breaking", { mode: "number" }).default(0).notNull(),
   readTime: integer("readTime", { mode: "number" }).default(5).notNull(),
   tags: text("tags"),
-  status: text("status", { enum: ["draft", "published"] }).default("published").notNull(),
-  createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  status: text("status", { enum: ["draft", "published"] })
+    .default("published")
+    .notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
   publishedAt: integer("publishedAt", { mode: "timestamp" }),
   authorId: integer("authorId").references(() => users.id),
 });
@@ -54,14 +68,22 @@ export type InsertArticle = typeof articles.$inferInsert;
 
 export const comments = sqliteTable("comments", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  articleId: integer("articleId").notNull().references(() => articles.id, { onDelete: "cascade" }),
-  userId: integer("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  articleId: integer("articleId")
+    .notNull()
+    .references(() => articles.id, { onDelete: "cascade" }),
+  userId: integer("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
   originalContent: text("originalContent"),
   isEdited: integer("isEdited", { mode: "number" }).default(0),
   approved: integer("approved", { mode: "number" }).default(0).notNull(),
-  createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
 
 export type Comment = typeof comments.$inferSelect;
@@ -73,14 +95,20 @@ export const advertisements = sqliteTable("advertisements", {
   description: text("description"),
   imageUrl: text("imageUrl").notNull(),
   linkUrl: text("linkUrl").notNull(),
-  position: text("position", { enum: ["sidebar", "banner_top", "banner_bottom", "inline"] }).notNull(),
+  position: text("position", {
+    enum: ["sidebar", "banner_top", "banner_bottom", "inline"],
+  }).notNull(),
   active: integer("active", { mode: "number" }).default(1).notNull(),
   startDate: integer("startDate", { mode: "timestamp" }),
   endDate: integer("endDate", { mode: "timestamp" }),
   clickCount: integer("clickCount", { mode: "number" }).default(0),
   impressionCount: integer("impressionCount", { mode: "number" }).default(0),
-  createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
-  updatedAt: integer("updatedAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
 
 export type Advertisement = typeof advertisements.$inferSelect;
@@ -88,7 +116,9 @@ export type InsertAdvertisement = typeof advertisements.$inferInsert;
 
 export const auditLogs = sqliteTable("audit_logs", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  userId: integer("userId").notNull().references(() => users.id),
+  userId: integer("userId")
+    .notNull()
+    .references(() => users.id),
   action: text("action").notNull(),
   resource: text("resource").notNull(),
   resourceId: integer("resourceId", { mode: "number" }),
@@ -97,7 +127,9 @@ export const auditLogs = sqliteTable("audit_logs", {
   userAgent: text("userAgent"),
   status: text("status", { enum: ["success", "failure"] }).default("success"),
   errorMessage: text("errorMessage"),
-  createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
 
 export type AuditLog = typeof auditLogs.$inferSelect;
@@ -105,9 +137,15 @@ export type InsertAuditLog = typeof auditLogs.$inferInsert;
 
 export const articleLikes = sqliteTable("article_likes", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  articleId: integer("articleId").notNull().references(() => articles.id, { onDelete: "cascade" }),
-  userId: integer("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
-  createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  articleId: integer("articleId")
+    .notNull()
+    .references(() => articles.id, { onDelete: "cascade" }),
+  userId: integer("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
 
 export type ArticleLike = typeof articleLikes.$inferSelect;
@@ -119,7 +157,9 @@ export const subscribers = sqliteTable("subscribers", {
   active: integer("active", { mode: "number" }).default(1).notNull(),
   // Unique token used for one-click unsubscribe links in emails
   unsubscribeToken: text("unsubscribeToken").unique(),
-  createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
 
 export type Subscriber = typeof subscribers.$inferSelect;
@@ -130,7 +170,9 @@ export const verificationCodes = sqliteTable("verification_codes", {
   email: text("email").notNull(),
   code: text("code").notNull(),
   expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
-  createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
 
 export type VerificationCode = typeof verificationCodes.$inferSelect;
@@ -138,11 +180,15 @@ export type InsertVerificationCode = typeof verificationCodes.$inferInsert;
 
 export const passwordResetTokens = sqliteTable("password_reset_tokens", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  userId: integer("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: integer("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
   token: text("token").notNull().unique(),
   expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
   used: integer("used", { mode: "number" }).default(0).notNull(), // 0 = false, 1 = true
-  createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
 
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
@@ -153,7 +199,9 @@ export const sentNewsletters = sqliteTable("sent_newsletters", {
   subject: text("subject").notNull(),
   content: text("content").notNull(),
   recipientCount: integer("recipientCount", { mode: "number" }).notNull(),
-  createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
 
 export type SentNewsletter = typeof sentNewsletters.$inferSelect;
@@ -161,9 +209,15 @@ export type InsertSentNewsletter = typeof sentNewsletters.$inferInsert;
 
 export const savedArticles = sqliteTable("saved_articles", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  articleId: integer("articleId").notNull().references(() => articles.id, { onDelete: "cascade" }),
-  userId: integer("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
-  createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  articleId: integer("articleId")
+    .notNull()
+    .references(() => articles.id, { onDelete: "cascade" }),
+  userId: integer("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
 });
 
 export type SavedArticle = typeof savedArticles.$inferSelect;

@@ -3,178 +3,265 @@ import { GoogleGenAI } from "@google/genai";
 import { ENV } from "./_core/env";
 import { createArticle, getArticleBySlug } from "./db";
 import { InsertArticle } from "../drizzle/schema";
-import { log } from "./vite";
+
+function log(message: string) {
+  console.log(`[${new Date().toLocaleTimeString()}] ${message}`);
+}
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 type CustomFeed = { title: string };
-type CustomItem = { media?: string; enclosure?: { url: string }; "media:content"?: { $: { url: string } } };
+type CustomItem = {
+  media?: string;
+  enclosure?: { url: string };
+  "media:content"?: { $: { url: string } };
+};
 
 const parser = new Parser<CustomFeed, CustomItem>({
-    customFields: {
-        item: [
-            ['media:content', 'media:content'],
-            ['enclosure', 'enclosure'],
-        ]
-    }
-});
-
-// Using the new Gen AI SDK as per @google/genai module
-const ai = new GoogleGenAI({
-    apiKey: ENV.geminiApiKey || "",
+  customFields: {
+    item: [
+      ["media:content", "media:content"],
+      ["enclosure", "enclosure"],
+    ],
+  },
 });
 
 const RSS_FEEDS = [
-    { url: "https://www.ansa.it/sito/notizie/mondo/mondo_rss.xml", category: "World" },
-    { url: "https://www.ansa.it/sito/notizie/politica/politica_rss.xml", category: "Politics" },
-    // Add more feeds here later if needed
+  // WORLD
+  { url: "http://feeds.bbci.co.uk/news/world/rss.xml", category: "World" },
+  { url: "http://rss.cnn.com/rss/edition_world.rss", category: "World" },
+
+  // POLITICS
+  {
+    url: "https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml",
+    category: "Politics",
+  },
+  { url: "https://www.theguardian.com/politics/rss", category: "Politics" },
+
+  // ECONOMY
+  {
+    url: "https://www.cnbc.com/id/10001147/device/rss/rss.html",
+    category: "Economy",
+  },
+  {
+    url: "https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml",
+    category: "Economy",
+  },
+
+  // TECHNOLOGY
+  { url: "https://feeds.feedburner.com/TechCrunch/", category: "Technology" },
+  { url: "https://www.theverge.com/rss/index.xml", category: "Technology" },
+
+  // CULTURE
+  {
+    url: "https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml",
+    category: "Culture",
+  },
+  { url: "https://www.rollingstone.com/culture/feed/", category: "Culture" },
+
+  // SPORTS
+  { url: "https://www.espn.com/espn/rss/news", category: "Sports" },
+  { url: "https://feeds.bbci.co.uk/sport/rss.xml", category: "Sports" },
 ];
 
 /**
  * Normalizes an RSS item's image URL.
  */
 function extractImageUrl(item: any): string | undefined {
-    if (item.enclosure?.url) {
-        return item.enclosure.url;
-    }
-    if (item["media:content"]?.$?.url) {
-        return item["media:content"].$.url;
-    }
-    return undefined;
+  if (item.enclosure?.url) {
+    return item.enclosure.url;
+  }
+  if (item["media:content"]?.$?.url) {
+    return item["media:content"].$.url;
+  }
+  return undefined;
 }
 
 /**
  * Creates a unique slug from a title.
  */
 function createSlug(title: string): string {
-    return title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "") + "-" + Math.floor(Math.random() * 10000);
+  return (
+    title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") +
+    "-" +
+    Math.floor(Math.random() * 10000)
+  );
 }
 
+// Using the official Google Gen AI SDK
+const ai = new GoogleGenAI({
+  apiKey: ENV.geminiApiKey as string,
+});
+
 /**
- * Uses Gemini to completely rewrite the article.
+ * Uses Gemini to completely rewrite the article with high standards.
  */
-async function rewriteArticle(originalTitle: string, originalContent?: string, originalLink?: string): Promise<{ title: string, content: string, excerpt: string } | null> {
-    if (!ENV.geminiApiKey) {
-        log("[RSS] Cannot rewrite article: GEMINI_API_KEY is not set.");
-        return null;
-    }
+async function rewriteArticle(
+  originalTitle: string,
+  originalContent?: string
+): Promise<{
+  title: string;
+  content: string;
+  excerpt: string;
+  tags: string[];
+  isFeatured: boolean;
+  isBreaking: boolean;
+} | null> {
+  if (!ENV.geminiApiKey) {
+    log("[RSS] Cannot rewrite article: GEMINI_API_KEY is not set.");
+    return null;
+  }
 
-    const prompt = `
-    Sei un giornalista professionista esperto. 
-    Ecco una notizia originale (titolo e/o breve descrizione). 
-    Devi RISCRIVERE COMPLETAMENTE l'articolo in italiano, creando un pezzo giornalistico originale, oggettivo, chiaro e dettagliato. Non devi sembrare un bot, usa un tono professionale da agenzia di stampa internazionale. Non menzionare mai l'autore originale o l'agenzia originale.
-    Scrivi almeno 4-5 paragrafi ben strutturati sfruttando le informazioni di base per creare un articolo coeso. 
-    Se le informazioni originali sono scarse, arricchisci l'articolo contestualizzando l'evento (rimanendo neutrale e oggettivo).
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `
+            You are a Pulitzer Prize-winning senior foreign correspondent for an elite international news organization. 
+            Your writing is characterized by intellectual depth, perfect English, and a serious, investigative tone.
 
-    REGOLE DI FORMATTAZIONE:
-    Rispondi SOLO in formato JSON valido, senza blocchi di codice markdown intorno (nessun \`\`\`json).
-    Usa questa struttura esatta:
-    {
-      "title": "Un nuovo titolo accattivante e non sensazionalistico",
-      "excerpt": "Un riassunto di 1 o 2 frasi",
-      "content": "L'intero articolo riscritto in formato HTML usando tag <p>, <h2> o <h3> dove necessario."
-    }
+            INPUT SOURCE:
+            Title: ${originalTitle}
+            Context: ${originalContent || "No additional context available."}
 
-    Notizia Originale:
-    Titolo: ${originalTitle}
-    Contenuto: ${originalContent || "Nessun contenuto addizionale fornito."}
-    Link (per contesto): ${originalLink || "Nessun link"}
-  `;
+            STRICT TASK:
+            Rewrite this news item into a definitive, high-value feature article. 
+            Do NOT summarize. ELABORATE and ANALYZE.
 
-    try {
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: prompt,
-            config: {
-                responseMimeType: "application/json",
+            EDITORIAL STANDARDS:
+            1. STRUCTURE: 
+               - START with a small "Key Insights" section using <ul> and <li>.
+               - USE hierarchical subheadings (<h2> for major sections, <h3> for details).
+               - USE multiple <p> paragraphs for readability.
+            2. FORMATTING: Use <strong> for emphasis on key dates, names, or critical numbers.
+            3. ADD DEPTH: Include a "Geopolitical Context" or "Economic Impact" section depending on the topic. 
+            4. VOICE: Authoritative, objective, and purely in English.
+            5. NO ATTRIBUTION: Never mention external sources (BBC, Reuters, etc.). Write as original reporting.
+            6. LENGTH: Minimum 500-700 words.
+
+            EDITORIAL DECISION:
+            - "isFeatured": Set to true ONLY if this story has major global consequences or represents a defining moment in its category.
+            - "isBreaking": Set to true ONLY if this is a time-sensitive, urgent development that just happened.
+
+            JSON OUTPUT FORMAT (MANDATORY):
+            {
+              "title": "A compelling, broad-reach headline",
+              "excerpt": "A deep, 2-sentence executive summary",
+              "content": "Perfectly formatted HTML content...",
+              "tags": ["Tag1", "Tag2", "Tag3"],
+              "isFeatured": boolean,
+              "isBreaking": boolean
             }
-        });
+          `,
+            },
+          ],
+        },
+      ],
+      config: {
+        responseMimeType: "application/json",
+      },
+    });
 
-        const text = response.text;
-        if (!text) return null;
+    const text = response.text;
+    if (!text) return null;
 
-        return JSON.parse(text) as { title: string, content: string, excerpt: string };
-
-    } catch (error) {
-        console.error("[RSS AI] Failed to generate article:", error);
-        return null;
-    }
+    return JSON.parse(text);
+  } catch (error) {
+    console.error("[RSS AI] Editorial rewrite failed:", error);
+    return null;
+  }
 }
 
 /**
  * Main function to fetch feeds and save new articles.
  */
 export async function syncRSSFeeds() {
-    log("[RSS] Starting RSS feed sync...");
-    let newArticlesCount = 0;
+  log("[RSS] Initiating Editorial Sync...");
+  let newArticlesCount = 0;
 
-    if (!ENV.geminiApiKey) {
-        log("[RSS] Aborting: GEMINI_API_KEY is missing. Please set it in your .env file.");
-        return { success: false, message: "GEMINI_API_KEY is missing." };
+  if (!ENV.geminiApiKey) {
+    log("[RSS] Aborting: GEMINI_API_KEY is missing.");
+    return { success: false, message: "GEMINI_API_KEY is missing." };
+  }
+
+  for (const feedConfig of RSS_FEEDS) {
+    try {
+      const feed = await parser.parseURL(feedConfig.url);
+      log(`[RSS] Analysis: ${feed.items.length} items from ${feedConfig.url}`);
+
+      // Focus on the top 3 most relevant items
+      const itemsToProcess = feed.items.slice(0, 3);
+
+      for (const item of itemsToProcess) {
+        if (!item.title) continue;
+
+        // Base slug for duplication check
+        const baseSlug = createSlug(item.title).substring(0, 40);
+        const exists = await getArticleBySlug(baseSlug);
+        if (exists) continue;
+
+        log(`[RSS] Editorial team is rewriting: ${item.title}`);
+
+        // Aggressive rate limit protection for Free Tier (70s)
+        await sleep(70000);
+
+        const editorialPiece = await rewriteArticle(
+          item.title,
+          item.content || item.contentSnippet
+        );
+        if (!editorialPiece) continue;
+
+        const finalSlug = createSlug(editorialPiece.title);
+
+        // Final sanity check
+        const existsFinal = await getArticleBySlug(finalSlug);
+        if (existsFinal) continue;
+
+        const imageUrl =
+          extractImageUrl(item) ||
+          "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+        const categoryColors: Record<string, string> = {
+          World: "#E8A020",
+          Politics: "#C0392B",
+          Economy: "#27AE60",
+          Technology: "#2980B9",
+          Culture: "#8E44AD",
+          Sports: "#E67E22",
+        };
+
+        const articleData: InsertArticle = {
+          title: editorialPiece.title,
+          slug: finalSlug,
+          excerpt: editorialPiece.excerpt,
+          content: editorialPiece.content,
+          author: "Bishouy Global Team",
+          authorRole: "Senior Editorial Staff",
+          category: feedConfig.category,
+          categoryColor: categoryColors[feedConfig.category] || "#E8A020",
+          image: imageUrl,
+          status: "draft",
+          featured: editorialPiece.isFeatured ? 1 : 0,
+          breaking: editorialPiece.isBreaking ? 1 : 0,
+          tags: JSON.stringify(editorialPiece.tags),
+          publishedAt: new Date(),
+        };
+
+        await createArticle(articleData);
+        newArticlesCount++;
+        log(`[RSS] Premium draft ready for review: ${editorialPiece.title}`);
+      }
+    } catch (error) {
+      console.error(`[RSS] Workflow Error (${feedConfig.url}):`, error);
     }
+  }
 
-    for (const feedConfig of RSS_FEEDS) {
-        try {
-            const feed = await parser.parseURL(feedConfig.url);
-            log(`[RSS] Fetched ${feed.items.length} items from ${feedConfig.url}`);
-
-            // Only process the 3 most recent items per feed to avoid hitting rate limits too quickly
-            const itemsToProcess = feed.items.slice(0, 3);
-
-            for (const item of itemsToProcess) {
-                if (!item.title) continue;
-
-                const slug = createSlug(item.title);
-
-                // Prevent exact duplicates (basic check before AI generation)
-                const exists = await getArticleBySlug(slug);
-                if (exists) {
-                    log(`[RSS] Article already exists (by approximate slug check): ${item.title}`);
-                    continue;
-                }
-
-                log(`[RSS] Processing new item: ${item.title}`);
-
-                const generated = await rewriteArticle(item.title, item.content || item.contentSnippet, item.link);
-                if (!generated) {
-                    log(`[RSS] Skipping item due to AI generation failure: ${item.title}`);
-                    continue;
-                }
-
-                const generatedSlug = createSlug(generated.title);
-
-                // Final duplicate check post-generation
-                const existsAfterGen = await getArticleBySlug(generatedSlug);
-                if (existsAfterGen) {
-                    continue;
-                }
-
-                const imageUrl = extractImageUrl(item) || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"; // Fallback image
-
-                const articleData: InsertArticle = {
-                    title: generated.title,
-                    slug: generatedSlug,
-                    excerpt: generated.excerpt,
-                    content: generated.content,
-                    author: "Redazione AI",
-                    authorRole: "Autore Virtuale",
-                    category: feedConfig.category,
-                    image: imageUrl,
-                    status: "published",
-                    publishedAt: new Date(),
-                };
-
-                await createArticle(articleData);
-                newArticlesCount++;
-                log(`[RSS] Saved new article: ${generated.title}`);
-            }
-
-        } catch (error) {
-            console.error(`[RSS] Error processing feed ${feedConfig.url}:`, error);
-        }
-    }
-
-    log(`[RSS] Sync complete. Generated ${newArticlesCount} new articles.`);
-    return { success: true, count: newArticlesCount };
+  log(`[RSS] Editorial Sync complete. ${newArticlesCount} new premium drafts.`);
+  return { success: true, count: newArticlesCount };
 }

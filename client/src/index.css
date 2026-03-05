@@ -48,7 +48,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  
+
   /* Custom Bishouy tokens */
   --color-amber: var(--amber);
   --color-amber-dark: var(--amber-dark);
@@ -58,23 +58,23 @@
 
 :root {
   --radius: 0.25rem;
-  
+
   /* Dark Editorial Palette */
-  --background: oklch(0.108 0.004 60);        /* #0F0F0E near-black warm */
-  --foreground: oklch(0.94 0.006 60);          /* #F2F0EB warm white */
-  --card: oklch(0.145 0.004 60);               /* #1C1C1A dark surface */
+  --background: oklch(0.108 0.004 60); /* #0F0F0E near-black warm */
+  --foreground: oklch(0.94 0.006 60); /* #F2F0EB warm white */
+  --card: oklch(0.145 0.004 60); /* #1C1C1A dark surface */
   --card-foreground: oklch(0.94 0.006 60);
   --popover: oklch(0.145 0.004 60);
   --popover-foreground: oklch(0.94 0.006 60);
-  
+
   /* Amber/Gold accent */
-  --primary: oklch(0.72 0.16 70);             /* #E8A020 amber */
+  --primary: oklch(0.72 0.16 70); /* #E8A020 amber */
   --primary-foreground: oklch(0.108 0.004 60);
-  
+
   --secondary: oklch(0.18 0.004 60);
   --secondary-foreground: oklch(0.94 0.006 60);
   --muted: oklch(0.18 0.004 60);
-  --muted-foreground: oklch(0.55 0.01 60);    /* #8A8880 medium gray */
+  --muted-foreground: oklch(0.55 0.01 60); /* #8A8880 medium gray */
   --accent: oklch(0.72 0.16 70);
   --accent-foreground: oklch(0.108 0.004 60);
   --destructive: oklch(0.577 0.245 27.325);
@@ -82,14 +82,14 @@
   --border: oklch(0.22 0.004 60);
   --input: oklch(0.22 0.004 60);
   --ring: oklch(0.72 0.16 70);
-  
+
   /* Chart colors */
   --chart-1: oklch(0.72 0.16 70);
   --chart-2: oklch(0.65 0.14 65);
   --chart-3: oklch(0.58 0.12 60);
-  --chart-4: oklch(0.50 0.10 55);
+  --chart-4: oklch(0.5 0.1 55);
   --chart-5: oklch(0.42 0.08 50);
-  
+
   /* Sidebar */
   --sidebar: oklch(0.13 0.004 60);
   --sidebar-foreground: oklch(0.94 0.006 60);
@@ -99,10 +99,10 @@
   --sidebar-accent-foreground: oklch(0.94 0.006 60);
   --sidebar-border: oklch(0.22 0.004 60);
   --sidebar-ring: oklch(0.72 0.16 70);
-  
+
   /* Custom tokens */
   --amber: oklch(0.72 0.16 70);
-  --amber-dark: oklch(0.60 0.14 65);
+  --amber-dark: oklch(0.6 0.14 65);
   --surface: oklch(0.145 0.004 60);
   --surface-2: oklch(0.18 0.004 60);
 }
@@ -113,7 +113,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'DM Sans', sans-serif;
+    font-family: "DM Sans", sans-serif;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -126,9 +126,14 @@
   input[type="radio"]:not(:disabled) {
     @apply cursor-pointer;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Merriweather', serif;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Merriweather", serif;
   }
 }
 
@@ -160,25 +165,25 @@
       max-width: 1320px;
     }
   }
-  
+
   /* Bishouy Design System */
   .font-display {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: "Bebas Neue", sans-serif;
     letter-spacing: 0.05em;
   }
-  
+
   .font-headline {
-    font-family: 'Merriweather', serif;
+    font-family: "Merriweather", serif;
   }
-  
+
   .font-body {
-    font-family: 'Lora', serif;
+    font-family: "Lora", serif;
   }
-  
+
   .font-ui {
-    font-family: 'DM Sans', sans-serif;
+    font-family: "DM Sans", sans-serif;
   }
-  
+
   /* Amber accent line */
   .amber-line {
     display: block;
@@ -186,12 +191,12 @@
     height: 2px;
     background-color: oklch(0.72 0.16 70);
   }
-  
+
   /* Category badge */
   .category-badge {
     display: inline-block;
     padding: 0.15rem 0.6rem;
-    font-family: 'DM Sans', sans-serif;
+    font-family: "DM Sans", sans-serif;
     font-size: 0.65rem;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -200,45 +205,51 @@
     color: oklch(0.108 0.004 60);
     border-radius: 2px;
   }
-  
+
   /* Article card hover */
   .article-card {
-    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+    transition:
+      transform 0.3s ease-out,
+      box-shadow 0.3s ease-out;
   }
-  
+
   .article-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 32px oklch(0.72 0.16 70 / 0.15);
   }
-  
+
   /* Image zoom on hover */
   .img-zoom {
     overflow: hidden;
   }
-  
+
   .img-zoom img {
     transition: transform 0.5s ease-out;
   }
-  
+
   .img-zoom:hover img {
     transform: scale(1.04);
   }
-  
+
   /* Breaking news ticker */
   @keyframes ticker-scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
   }
-  
+
   .ticker-track {
     animation: ticker-scroll 30s linear infinite;
     white-space: nowrap;
   }
-  
+
   .ticker-track:hover {
     animation-play-state: paused;
   }
-  
+
   /* Fade in staggered */
   @keyframes fadeInUp {
     from {
@@ -250,11 +261,11 @@
       transform: translateY(0);
     }
   }
-  
+
   .fade-in-up {
     animation: fadeInUp 0.5s ease-out forwards;
   }
-  
+
   /* Amber underline hover on titles */
   .title-hover {
     background-image: linear-gradient(oklch(0.72 0.16 70), oklch(0.72 0.16 70));
@@ -264,25 +275,25 @@
     transition: background-size 0.3s ease-out;
     padding-bottom: 1px;
   }
-  
+
   .title-hover:hover {
     background-size: 100% 1px;
   }
-  
+
   /* Scrollbar styling */
   ::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   ::-webkit-scrollbar-track {
     background: oklch(0.108 0.004 60);
   }
-  
+
   ::-webkit-scrollbar-thumb {
-    background: oklch(0.30 0.006 60);
+    background: oklch(0.3 0.006 60);
     border-radius: 3px;
   }
-  
+
   ::-webkit-scrollbar-thumb:hover {
     background: oklch(0.72 0.16 70);
   }

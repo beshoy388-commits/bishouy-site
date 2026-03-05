@@ -5,6 +5,7 @@
  */
 
 import { useEffect } from "react";
+import { Link } from "wouter";
 import Navbar from "@/components/Navbar";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import ArticleCard from "@/components/ArticleCard";
@@ -43,9 +44,19 @@ export default function Home() {
 
   // Get featured articles (featured = 1)
   const featured = articles.filter(a => a.featured === 1);
-  const mainFeatured = featured[0];
-  const secondaryFeatured = featured.slice(1, 3);
-  const gridArticles = articles.slice(3);
+  const mainFeatured = featured[0] || articles[0];
+  const secondaryFeatured = articles
+    .filter(a => a.id !== mainFeatured.id)
+    .slice(0, 3);
+
+  // The rest of the articles for the latest grid (limit to 9)
+  const gridArticles = articles
+    .filter(
+      a =>
+        a.id !== mainFeatured.id &&
+        !secondaryFeatured.some(sf => sf.id === a.id)
+    )
+    .slice(0, 9);
 
   return (
     <div className="min-h-screen bg-[#0F0F0E]">
@@ -53,19 +64,28 @@ export default function Home() {
       <BreakingNewsTicker />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-12 md:pb-16">
+      <section className="pt-32 pb-12">
         <div className="container">
           {mainFeatured && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
               {/* Main featured article — 2 columns */}
               <div className="lg:col-span-2">
                 <ArticleCard article={mainFeatured} variant="featured" />
               </div>
 
-              {/* Secondary featured articles — 1 column */}
-              <div className="space-y-4">
-                {secondaryFeatured.map((article) => (
-                  <ArticleCard key={article.id} article={article} variant="horizontal" />
+              {/* Secondary column — 3 horizontal cards */}
+              <div className="space-y-6">
+                <div className="border-l-2 border-[#E8A020] pl-4 mb-4">
+                  <h3 className="font-display text-sm text-[#F2F0EB] uppercase tracking-widest">
+                    Editor's Picks
+                  </h3>
+                </div>
+                {secondaryFeatured.map(article => (
+                  <ArticleCard
+                    key={article.id}
+                    article={article}
+                    variant="horizontal"
+                  />
                 ))}
               </div>
             </div>
@@ -73,28 +93,33 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="border-t border-[#1C1C1A]">
-        <div className="container py-8">
-          <div className="flex items-center gap-4">
-            <div className="flex-1 h-px bg-gradient-to-r from-[#E8A020] to-transparent" />
-            <span className="font-ui text-[10px] text-[#8A8880] uppercase tracking-widest whitespace-nowrap">
-              Latest News
-            </span>
-            <div className="flex-1 h-px bg-gradient-to-l from-[#E8A020] to-transparent" />
-          </div>
+      {/* Section Divider */}
+      <div className="container py-4">
+        <div className="flex items-center gap-4">
+          <span className="font-display text-lg text-[#F2F0EB] whitespace-nowrap">
+            LATEST STORIES
+          </span>
+          <div className="flex-1 h-px bg-[#1C1C1A]" />
         </div>
       </div>
 
-      {/* Articles Grid */}
-      <section className="py-12 md:py-16">
+      {/* Latest Articles Grid */}
+      <section className="py-8">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {gridArticles.map((article, idx) => (
-              <div key={article.id} className="fade-in-up" style={{ animationDelay: `${idx * 50}ms` }}>
+              <div
+                key={article.id}
+                className="fade-in-up"
+                style={{ animationDelay: `${idx * 50}ms` }}
+              >
                 <ArticleCard article={article} variant="medium" />
               </div>
             ))}
+          </div>
+
+          <div className="mt-16 text-center">
+            <div className="inline-block p-[1px] bg-gradient-to-r from-transparent via-[#E8A020] to-transparent w-full max-w-2xl" />
           </div>
         </div>
       </section>
@@ -107,23 +132,17 @@ export default function Home() {
               <div className="amber-line" />
             </div>
             <h2 className="font-display text-2xl md:text-3xl text-[#F2F0EB] mb-2">
-              Never Miss Breaking News
+              Stay Informed, Stay Ahead
             </h2>
             <p className="font-ui text-sm text-[#8A8880] mb-6 max-w-md mx-auto">
-              Get instant notifications of the most important stories as they happen, delivered to your device.
+              Expert analysis and breaking news from bishouy.com's global
+              editorial team.
             </p>
-            <button
-              onClick={() => {
-                const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
-                if (emailInput) {
-                  emailInput.focus();
-                  emailInput.scrollIntoView({ behavior: "smooth", block: "center" });
-                }
-              }}
-              className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors"
-            >
-              Subscribe to Newsletter
-            </button>
+            <Link href="/register">
+              <button className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors">
+                Create Free Account
+              </button>
+            </Link>
           </div>
         </div>
       </section>

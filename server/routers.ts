@@ -5,20 +5,59 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import {
-  getAllArticles, getArticleById, createArticle, updateArticle, deleteArticle, getArticlesByCategory, searchArticles,
-  getCommentsByArticle, createComment, approveComment, rejectComment, deleteComment, getPendingComments,
-  getActiveAdvertisements, getAllAdvertisements, createAdvertisement, updateAdvertisement, deleteAdvertisement,
-  getAllUsers, getUserById, updateUser, deleteUser,
-  toggleArticleLike, getArticleLikeCount, hasUserLikedArticle, getArticleWithLikeInfo, getDb,
-  createSubscriber, getAllSubscribers, deleteSubscriber, getUserByEmail, createVerificationCode, getLatestVerificationCode, deleteVerificationCodeByEmail, upsertUser, editComment,
-  createPasswordResetToken, getValidPasswordResetToken, markPasswordResetTokenAsUsed, getAllComments,
-  createSentNewsletterRecord, getAllSentNewsletters,
-  toggleSavedArticle, hasUserSavedArticle, getSavedArticlesByUserId, getRelatedArticles,
-  getPublicUserByUsername, getPublicUserComments
+  getAllArticles,
+  getArticleById,
+  createArticle,
+  updateArticle,
+  deleteArticle,
+  getArticlesByCategory,
+  searchArticles,
+  getCommentsByArticle,
+  createComment,
+  approveComment,
+  rejectComment,
+  deleteComment,
+  getPendingComments,
+  getActiveAdvertisements,
+  getAllAdvertisements,
+  createAdvertisement,
+  updateAdvertisement,
+  deleteAdvertisement,
+  getAllUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+  toggleArticleLike,
+  getArticleLikeCount,
+  hasUserLikedArticle,
+  getArticleWithLikeInfo,
+  getDb,
+  createSubscriber,
+  getAllSubscribers,
+  deleteSubscriber,
+  getUserByEmail,
+  createVerificationCode,
+  getLatestVerificationCode,
+  deleteVerificationCodeByEmail,
+  upsertUser,
+  editComment,
+  createPasswordResetToken,
+  getValidPasswordResetToken,
+  markPasswordResetTokenAsUsed,
+  getAllComments,
+  createSentNewsletterRecord,
+  getAllSentNewsletters,
+  toggleSavedArticle,
+  hasUserSavedArticle,
+  getSavedArticlesByUserId,
+  getRelatedArticles,
+  getPublicUserByUsername,
+  getPublicUserComments,
 } from "./db";
 import { comments, InsertArticle, articles, users } from "../drizzle/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { GoogleGenAI } from "@google/genai";
 import { logArticleAction } from "./audit";
 import {
   checkRateLimit,
@@ -27,23 +66,35 @@ import {
   getUserAgent,
   hashPassword,
   verifyPassword,
-  generateVerificationCode
+  generateVerificationCode,
 } from "./security";
 import { sdk } from "./_core/sdk";
-import { sendVerificationEmail, sendPasswordResetEmail, sendNewsletterBroadcast, sendWelcomeNewsletterEmail } from "./_core/mail";
+import {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+  sendNewsletterBroadcast,
+  sendWelcomeNewsletterEmail,
+} from "./_core/mail";
 import { stripHtml } from "./utils";
-import crypto from 'crypto';
+import crypto from "crypto";
+import { syncRSSFeeds } from "./rss";
 
 // Admin-only procedure with security checks
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== 'admin') {
-    throw new TRPCError({ code: 'FORBIDDEN', message: 'Only admins can perform this action' });
+  if (ctx.user.role !== "admin") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Only admins can perform this action",
+    });
   }
 
   // Rate limiting for admin operations
   const userId = ctx.user.id.toString();
   if (!checkRateLimit(`admin-${userId}`, 100, 60000)) {
-    throw new TRPCError({ code: 'TOO_MANY_REQUESTS', message: 'Too many admin requests. Please try again later.' });
+    throw new TRPCError({
+      code: "TOO_MANY_REQUESTS",
+      message: "Too many admin requests. Please try again later.",
+    });
   }
 
   return next({ ctx });
@@ -62,14 +113,20 @@ export const appRouter = router({
     }),
 
     register: publicProcedure
-      .input(z.object({
-        email: z.string().email(),
-        password: z.string().min(8),
-        name: z.string().min(2)
-      }))
+      .input(
+        z.object({
+          email: z.string().email(),
+          password: z.string().min(8),
+          name: z.string().min(2),
+        })
+      )
       .mutation(async ({ input }) => {
         const existing = await getUserByEmail(input.email);
-        if (existing) throw new TRPCError({ code: "BAD_REQUEST", message: "Email already registered" });
+        if (existing)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Email already registered",
+          });
 
         const hashedPassword = await hashPassword(input.password);
         const openId = `local-${Buffer.from(input.email).toString("hex")}`;
@@ -80,14 +137,14 @@ export const appRouter = router({
           password: hashedPassword,
           name: input.name,
           role: "user",
-          isVerified: 0
+          isVerified: 0,
         });
 
         const code = generateVerificationCode();
         await createVerificationCode({
           email: input.email,
           code,
-          expiresAt: new Date(Date.now() + 30 * 60 * 1000) // 30 mins
+          expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 mins
         });
 
         await sendVerificationEmail(input.email, code);
@@ -95,22 +152,32 @@ export const appRouter = router({
       }),
 
     verifyEmail: publicProcedure
-      .input(z.object({
-        email: z.string().email(),
-        code: z.string().length(6)
-      }))
+      .input(
+        z.object({
+          email: z.string().email(),
+          code: z.string().length(6),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         const user = await getUserByEmail(input.email);
-        if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+        if (!user)
+          throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
 
         const latestCode = await getLatestVerificationCode(input.email);
-        if (!latestCode || latestCode.code !== input.code || latestCode.expiresAt < new Date()) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid or expired code" });
+        if (
+          !latestCode ||
+          latestCode.code !== input.code ||
+          latestCode.expiresAt < new Date()
+        ) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Invalid or expired code",
+          });
         }
 
         await upsertUser({
           openId: user.openId,
-          isVerified: 1
+          isVerified: 1,
         });
 
         await deleteVerificationCodeByEmail(input.email);
@@ -121,26 +188,36 @@ export const appRouter = router({
         });
 
         const cookieOptions = getSessionCookieOptions(ctx.req);
-        ctx.res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: 1000 * 60 * 60 * 24 * 365 });
+        ctx.res.cookie(COOKIE_NAME, sessionToken, {
+          ...cookieOptions,
+          maxAge: 1000 * 60 * 60 * 24 * 365,
+        });
 
         return { success: true };
       }),
 
     resendVerification: publicProcedure
-      .input(z.object({
-        email: z.string().email()
-      }))
+      .input(
+        z.object({
+          email: z.string().email(),
+        })
+      )
       .mutation(async ({ input }) => {
         const user = await getUserByEmail(input.email);
-        if (!user) throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
-        if (user.isVerified) throw new TRPCError({ code: "BAD_REQUEST", message: "User already verified" });
+        if (!user)
+          throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+        if (user.isVerified)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "User already verified",
+          });
 
         // Generate new code
         const code = generateVerificationCode();
         await createVerificationCode({
           email: input.email,
           code,
-          expiresAt: new Date(Date.now() + 30 * 60 * 1000) // 30 mins
+          expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 mins
         });
 
         await sendVerificationEmail(input.email, code);
@@ -148,23 +225,34 @@ export const appRouter = router({
       }),
 
     login: publicProcedure
-      .input(z.object({
-        email: z.string().email(),
-        password: z.string()
-      }))
+      .input(
+        z.object({
+          email: z.string().email(),
+          password: z.string(),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         const user = await getUserByEmail(input.email);
         if (!user || !user.password) {
-          throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid credentials" });
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Invalid credentials",
+          });
         }
 
         const isMatch = await verifyPassword(input.password, user.password);
         if (!isMatch) {
-          throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid credentials" });
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Invalid credentials",
+          });
         }
 
         if (!user.isVerified) {
-          throw new TRPCError({ code: "UNAUTHORIZED", message: "Please verify your email first" });
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Please verify your email first",
+          });
         }
 
         const sessionToken = await sdk.createSessionToken(user.openId, {
@@ -173,7 +261,10 @@ export const appRouter = router({
         });
 
         const cookieOptions = getSessionCookieOptions(ctx.req);
-        ctx.res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: 1000 * 60 * 60 * 24 * 365 });
+        ctx.res.cookie(COOKIE_NAME, sessionToken, {
+          ...cookieOptions,
+          maxAge: 1000 * 60 * 60 * 24 * 365,
+        });
 
         return { success: true };
       }),
@@ -184,46 +275,64 @@ export const appRouter = router({
         // Anti-abuse: rate limiting by IP (max 3 reqs per hour)
         const ip = getClientIp(ctx.req);
         if (!checkRateLimit(`reset-${ip}`, 3, 60 * 60 * 1000)) {
-          throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "Too many password reset requests from this IP. Please try again later." });
+          throw new TRPCError({
+            code: "TOO_MANY_REQUESTS",
+            message:
+              "Too many password reset requests from this IP. Please try again later.",
+          });
         }
 
         const user = await getUserByEmail(input.email);
         // Security best practice: Even if user is not found, we act like it succeeded to prevent email enumeration.
         if (!user) {
-          return { success: true, message: "If that email exists, a reset link will be sent." };
+          return {
+            success: true,
+            message: "If that email exists, a reset link will be sent.",
+          };
         }
 
         // Create a long unique token
-        const token = crypto.randomBytes(32).toString('hex');
+        const token = crypto.randomBytes(32).toString("hex");
 
         await createPasswordResetToken({
           userId: user.id,
           token,
-          expiresAt: new Date(Date.now() + 30 * 60 * 1000) // 30 minutes
+          expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 minutes
         });
 
         // Generate full URL
-        const resetUrl = `${ctx.req.protocol}://${ctx.req.get('host')}/reset-password?token=${token}`;
+        const resetUrl = `${ctx.req.protocol}://${ctx.req.get("host")}/reset-password?token=${token}`;
 
         await sendPasswordResetEmail(input.email, resetUrl);
-        return { success: true, message: "If that email exists, a reset link will be sent." };
+        return {
+          success: true,
+          message: "If that email exists, a reset link will be sent.",
+        };
       }),
 
     resetPassword: publicProcedure
-      .input(z.object({
-        token: z.string(),
-        newPassword: z.string().min(8)
-      }))
+      .input(
+        z.object({
+          token: z.string(),
+          newPassword: z.string().min(8),
+        })
+      )
       .mutation(async ({ input }) => {
         const resetRecord = await getValidPasswordResetToken(input.token);
 
         if (!resetRecord || resetRecord.expiresAt < new Date()) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid or expired password reset token." });
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Invalid or expired password reset token.",
+          });
         }
 
         const user = await getUserById(resetRecord.userId);
         if (!user) {
-          throw new TRPCError({ code: "NOT_FOUND", message: "User not found." });
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User not found.",
+          });
         }
 
         const hashedPassword = await hashPassword(input.newPassword);
@@ -231,28 +340,35 @@ export const appRouter = router({
         // Update user
         await upsertUser({
           openId: user.openId,
-          password: hashedPassword
+          password: hashedPassword,
         });
 
         // Mark token as used to prevent replay attacks
         await markPasswordResetTokenAsUsed(resetRecord.id);
 
-        return { success: true, message: "Password has been reset successfully." };
+        return {
+          success: true,
+          message: "Password has been reset successfully.",
+        };
       }),
   }),
 
   articles: router({
-    // Public: Get all articles
-    getAll: publicProcedure.query(async () => {
-      return getAllArticles();
-    }),
+    // Public: Get all articles (now with filters)
+    getAll: publicProcedure
+      .input(z.object({ category: z.string().optional() }).optional())
+      .query(async ({ input }) => {
+        return getAllArticles(false, input?.category);
+      }),
 
-    // Public: List articles (alias for getAll)
-    list: publicProcedure.query(async ({ ctx }) => {
-      // If admin, show everything (drafts included)
-      const isAdmin = ctx.user?.role === "admin";
-      return getAllArticles(isAdmin);
-    }),
+    // Public: List articles (now with filters)
+    list: publicProcedure
+      .input(z.object({ category: z.string().optional() }).optional())
+      .query(async ({ input, ctx }) => {
+        // If admin, show everything (drafts included)
+        const isAdmin = ctx.user?.role === "admin";
+        return getAllArticles(isAdmin, input?.category);
+      }),
 
     // Public: Get article by ID
     getById: publicProcedure
@@ -271,16 +387,24 @@ export const appRouter = router({
         const isAdmin = ctx.user?.role === "admin";
 
         if (!isAdmin) {
-          const result = await db.select().from(articles).where(
-            and(
-              eq(articles.slug, input.slug),
-              eq(articles.status, "published")
+          const result = await db
+            .select()
+            .from(articles)
+            .where(
+              and(
+                eq(articles.slug, input.slug),
+                eq(articles.status, "published")
+              )
             )
-          ).limit(1);
+            .limit(1);
           return result[0] || null;
         }
 
-        const result = await db.select().from(articles).where(eq(articles.slug, input.slug)).limit(1);
+        const result = await db
+          .select()
+          .from(articles)
+          .where(eq(articles.slug, input.slug))
+          .limit(1);
         return result[0] || null;
       }),
 
@@ -308,22 +432,24 @@ export const appRouter = router({
 
     // Protected: Create article (admin only)
     create: adminProcedure
-      .input(z.object({
-        title: z.string().min(1).max(255),
-        slug: z.string().min(1).max(255),
-        excerpt: z.string().min(1).max(500),
-        content: z.string().min(1).max(50000),
-        category: z.string(),
-        categoryColor: z.string(),
-        author: z.string(),
-        authorRole: z.string(),
-        image: z.string(),
-        featured: z.boolean().default(false),
-        breaking: z.boolean().default(false),
-        status: z.enum(["draft", "published"]).default("published"),
-        readTime: z.number().default(5),
-        tags: z.array(z.string()).default([]),
-      }))
+      .input(
+        z.object({
+          title: z.string().min(1).max(255),
+          slug: z.string().min(1).max(255),
+          excerpt: z.string().min(1).max(500),
+          content: z.string().min(1).max(50000),
+          category: z.string(),
+          categoryColor: z.string(),
+          author: z.string(),
+          authorRole: z.string(),
+          image: z.string(),
+          featured: z.boolean().default(false),
+          breaking: z.boolean().default(false),
+          status: z.enum(["draft", "published"]).default("published"),
+          readTime: z.number().default(5),
+          tags: z.array(z.string()).default([]),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         const validatedData = validateAndCleanArticleData(input);
         // Convert boolean to int and array to string for database
@@ -331,45 +457,58 @@ export const appRouter = router({
           ...validatedData,
           featured: validatedData.featured ? 1 : 0,
           breaking: validatedData.breaking ? 1 : 0,
-          tags: Array.isArray(validatedData.tags) ? JSON.stringify(validatedData.tags) : validatedData.tags,
+          tags: Array.isArray(validatedData.tags)
+            ? JSON.stringify(validatedData.tags)
+            : validatedData.tags,
         };
         const article = await createArticle(dbData);
 
         // Log the action
-        await logArticleAction(ctx.user.id, 'create', null, { title: input.title }, getClientIp(ctx.req), getUserAgent(ctx.req));
+        await logArticleAction(
+          ctx.user.id,
+          "create",
+          null,
+          { title: input.title },
+          getClientIp(ctx.req),
+          getUserAgent(ctx.req)
+        );
 
         return article;
       }),
 
     // Protected: Update article (admin only)
     update: adminProcedure
-      .input(z.object({
-        id: z.number(),
-        title: z.string().min(1).max(255).optional(),
-        slug: z.string().min(1).max(255).optional(),
-        excerpt: z.string().min(1).max(500).optional(),
-        content: z.string().min(1).max(50000).optional(),
-        category: z.string().optional(),
-        categoryColor: z.string().optional(),
-        author: z.string().optional(),
-        authorRole: z.string().optional(),
-        image: z.string().optional(),
-        featured: z.boolean().optional(),
-        breaking: z.boolean().optional(),
-        status: z.enum(["draft", "published"]).optional(),
-        readTime: z.number().optional(),
-        tags: z.array(z.string()).optional(),
-      }))
+      .input(
+        z.object({
+          id: z.number(),
+          title: z.string().min(1).max(255).optional(),
+          slug: z.string().min(1).max(255).optional(),
+          excerpt: z.string().min(1).max(500).optional(),
+          content: z.string().min(1).max(50000).optional(),
+          category: z.string().optional(),
+          categoryColor: z.string().optional(),
+          author: z.string().optional(),
+          authorRole: z.string().optional(),
+          image: z.string().optional(),
+          featured: z.boolean().optional(),
+          breaking: z.boolean().optional(),
+          status: z.enum(["draft", "published"]).optional(),
+          readTime: z.number().optional(),
+          tags: z.array(z.string()).optional(),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         const { id, ...updateData } = input;
         // Convert boolean to int and array to string for database
         const dbData: Partial<InsertArticle> = {};
         Object.entries(updateData).forEach(([key, value]) => {
           if (value === undefined) return;
-          if (key === 'featured' || key === 'breaking') {
+          if (key === "featured" || key === "breaking") {
             (dbData as any)[key] = value ? 1 : 0;
-          } else if (key === 'tags') {
-            (dbData as any)[key] = Array.isArray(value) ? JSON.stringify(value) : value;
+          } else if (key === "tags") {
+            (dbData as any)[key] = Array.isArray(value)
+              ? JSON.stringify(value)
+              : value;
           } else {
             (dbData as any)[key] = value;
           }
@@ -377,7 +516,14 @@ export const appRouter = router({
         const article = await updateArticle(id, dbData);
 
         // Log the action
-        await logArticleAction(ctx.user.id, 'update', null, { title: input.title }, getClientIp(ctx.req), getUserAgent(ctx.req));
+        await logArticleAction(
+          ctx.user.id,
+          "update",
+          null,
+          { title: input.title },
+          getClientIp(ctx.req),
+          getUserAgent(ctx.req)
+        );
 
         return article;
       }),
@@ -388,13 +534,23 @@ export const appRouter = router({
       .mutation(async ({ input, ctx }) => {
         const article = await getArticleById(input.id);
         if (!article) {
-          throw new TRPCError({ code: 'NOT_FOUND', message: 'Article not found' });
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Article not found",
+          });
         }
 
         await deleteArticle(input.id);
 
         // Log the action
-        await logArticleAction(ctx.user.id, 'delete', input.id, { title: article.title }, getClientIp(ctx.req), getUserAgent(ctx.req));
+        await logArticleAction(
+          ctx.user.id,
+          "delete",
+          input.id,
+          { title: article.title },
+          getClientIp(ctx.req),
+          getUserAgent(ctx.req)
+        );
 
         return { success: true };
       }),
@@ -444,20 +600,28 @@ export const appRouter = router({
 
     // Protected: Create a comment
     create: protectedProcedure
-      .input(z.object({
-        articleId: z.number(),
-        content: z.string().min(1).max(5000),
-      }))
+      .input(
+        z.object({
+          articleId: z.number(),
+          content: z.string().min(1).max(5000),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         // Rate limiting for comments
         const userId = ctx.user.id.toString();
         if (!checkRateLimit(`comment-${userId}`, 10, 60000)) {
-          throw new TRPCError({ code: 'TOO_MANY_REQUESTS', message: 'Too many comments. Please try again later.' });
+          throw new TRPCError({
+            code: "TOO_MANY_REQUESTS",
+            message: "Too many comments. Please try again later.",
+          });
         }
 
         const article = await getArticleById(input.articleId);
         if (!article) {
-          throw new TRPCError({ code: 'NOT_FOUND', message: 'Article not found' });
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Article not found",
+          });
         }
 
         return createComment({
@@ -508,13 +672,27 @@ export const appRouter = router({
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input, ctx }) => {
         const db = await getDb();
-        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database unavailable' });
-        const comment = await db.select().from(comments).where(eq(comments.id, input.id)).limit(1);
+        if (!db)
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Database unavailable",
+          });
+        const comment = await db
+          .select()
+          .from(comments)
+          .where(eq(comments.id, input.id))
+          .limit(1);
         if (comment.length === 0) {
-          throw new TRPCError({ code: 'NOT_FOUND', message: 'Comment not found' });
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Comment not found",
+          });
         }
-        if (comment[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
-          throw new TRPCError({ code: 'FORBIDDEN', message: 'You can only delete your own comments' });
+        if (comment[0].userId !== ctx.user.id && ctx.user.role !== "admin") {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You can only delete your own comments",
+          });
         }
         await deleteComment(input.id);
         return { success: true };
@@ -525,14 +703,28 @@ export const appRouter = router({
       .input(z.object({ id: z.number(), content: z.string().min(1).max(1000) }))
       .mutation(async ({ input, ctx }) => {
         const db = await getDb();
-        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database unavailable' });
+        if (!db)
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Database unavailable",
+          });
 
-        const comment = await db.select().from(comments).where(eq(comments.id, input.id)).limit(1);
+        const comment = await db
+          .select()
+          .from(comments)
+          .where(eq(comments.id, input.id))
+          .limit(1);
         if (comment.length === 0) {
-          throw new TRPCError({ code: 'NOT_FOUND', message: 'Comment not found' });
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Comment not found",
+          });
         }
-        if (comment[0].userId !== ctx.user.id && ctx.user.role !== 'admin') {
-          throw new TRPCError({ code: 'FORBIDDEN', message: 'You can only edit your own comments' });
+        if (comment[0].userId !== ctx.user.id && ctx.user.role !== "admin") {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You can only edit your own comments",
+          });
         }
 
         return editComment(input.id, input.content, comment[0].content);
@@ -542,7 +734,16 @@ export const appRouter = router({
   advertisements: router({
     // Public: Get active ads for a specific position
     getByPosition: publicProcedure
-      .input(z.object({ position: z.enum(["sidebar", "banner_top", "banner_bottom", "inline"]) }))
+      .input(
+        z.object({
+          position: z.enum([
+            "sidebar",
+            "banner_top",
+            "banner_bottom",
+            "inline",
+          ]),
+        })
+      )
       .query(async ({ input }) => {
         return getActiveAdvertisements(input.position);
       }),
@@ -554,31 +755,42 @@ export const appRouter = router({
 
     // Admin: Create ad
     create: adminProcedure
-      .input(z.object({
-        title: z.string().min(1).max(255),
-        imageUrl: z.string().url(),
-        linkUrl: z.string().url(),
-        position: z.enum(["sidebar", "banner_top", "banner_bottom", "inline"]),
-        active: z.number().default(1),
-        startDate: z.date().optional(),
-        endDate: z.date().optional(),
-      }))
+      .input(
+        z.object({
+          title: z.string().min(1).max(255),
+          imageUrl: z.string().url(),
+          linkUrl: z.string().url(),
+          position: z.enum([
+            "sidebar",
+            "banner_top",
+            "banner_bottom",
+            "inline",
+          ]),
+          active: z.number().default(1),
+          startDate: z.date().optional(),
+          endDate: z.date().optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         return createAdvertisement(input);
       }),
 
     // Admin: Update ad
     update: adminProcedure
-      .input(z.object({
-        id: z.number(),
-        title: z.string().min(1).max(255).optional(),
-        imageUrl: z.string().url().optional(),
-        linkUrl: z.string().url().optional(),
-        position: z.enum(["sidebar", "banner_top", "banner_bottom", "inline"]).optional(),
-        active: z.number().optional(),
-        startDate: z.date().optional(),
-        endDate: z.date().optional(),
-      }))
+      .input(
+        z.object({
+          id: z.number(),
+          title: z.string().min(1).max(255).optional(),
+          imageUrl: z.string().url().optional(),
+          linkUrl: z.string().url().optional(),
+          position: z
+            .enum(["sidebar", "banner_top", "banner_bottom", "inline"])
+            .optional(),
+          active: z.number().optional(),
+          startDate: z.date().optional(),
+          endDate: z.date().optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         const { id, ...updateData } = input;
         return updateAdvertisement(id, updateData);
@@ -652,12 +864,14 @@ export const appRouter = router({
 
     // Admin: Update user
     update: adminProcedure
-      .input(z.object({
-        id: z.number(),
-        name: z.string().max(255).optional(),
-        email: z.string().email().optional(),
-        role: z.enum(['user', 'admin']).optional(),
-      }))
+      .input(
+        z.object({
+          id: z.number(),
+          name: z.string().max(255).optional(),
+          email: z.string().email().optional(),
+          role: z.enum(["user", "admin"]).optional(),
+        })
+      )
       .mutation(async ({ input }) => {
         const { id, ...updateData } = input;
         return updateUser(id, updateData);
@@ -665,22 +879,26 @@ export const appRouter = router({
 
     // Protected: Update own profile
     updateMe: protectedProcedure
-      .input(z.object({
-        name: z.string().max(255).optional(),
-        username: z.string().max(50).optional(),
-        bio: z.string().max(500).optional(),
-        avatarUrl: z.string().url().optional().or(z.literal('')),
-        website: z.string().url().optional().or(z.literal('')),
-        location: z.string().max(100).optional(),
-      }))
+      .input(
+        z.object({
+          name: z.string().max(255).optional(),
+          username: z.string().max(50).optional(),
+          bio: z.string().max(500).optional(),
+          avatarUrl: z.string().url().optional().or(z.literal("")),
+          website: z.string().url().optional().or(z.literal("")),
+          location: z.string().max(100).optional(),
+        })
+      )
       .mutation(async ({ input, ctx }) => {
         try {
           return await updateUser(ctx.user.id, input);
         } catch (error: any) {
-          if (error?.message?.includes('UNIQUE constraint failed: users.username')) {
+          if (
+            error?.message?.includes("UNIQUE constraint failed: users.username")
+          ) {
             throw new TRPCError({
-              code: 'CONFLICT',
-              message: 'Questo username è già in uso. Scegline un altro.',
+              code: "CONFLICT",
+              message: "Questo username è già in uso. Scegline un altro.",
             });
           }
           throw error;
@@ -737,10 +955,12 @@ export const appRouter = router({
     }),
 
     broadcast: adminProcedure
-      .input(z.object({
-        subject: z.string().min(1),
-        htmlContent: z.string().min(1)
-      }))
+      .input(
+        z.object({
+          subject: z.string().min(1),
+          htmlContent: z.string().min(1),
+        })
+      )
       .mutation(async ({ input }) => {
         const subscribers = await getAllSubscribers();
         const activeRecipients = subscribers
@@ -749,13 +969,17 @@ export const appRouter = router({
 
         if (activeRecipients.length > 0) {
           // Fire and forget (will run async in background)
-          sendNewsletterBroadcast(input.subject, input.htmlContent, activeRecipients).catch(console.error);
+          sendNewsletterBroadcast(
+            input.subject,
+            input.htmlContent,
+            activeRecipients
+          ).catch(console.error);
 
           // Record the broadcast in history
           await createSentNewsletterRecord({
             subject: input.subject,
             content: input.htmlContent,
-            recipientCount: activeRecipients.length
+            recipientCount: activeRecipients.length,
           });
         }
 
@@ -766,24 +990,109 @@ export const appRouter = router({
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         return deleteSubscriber(input.id);
-      })
+      }),
   }),
 
   ai: router({
     chat: publicProcedure
-      .input(z.object({
-        messages: z.array(z.object({
-          role: z.enum(["system", "user", "assistant"]),
-          content: z.string()
-        }))
-      }))
-      .mutation(async ({ input }) => {
-        // Simple mock response for now, can be connected to OpenAI/built-in LLM
-        const userMsg = input.messages[input.messages.length - 1].content;
-        return `I am the BISHOUY AI assistant. You asked: "${userMsg}". How can I help you with more news today?`;
-      })
-  }),
+      .input(
+        z.object({
+          messages: z.array(
+            z.object({
+              role: z.enum(["system", "user", "assistant"]),
+              content: z.string(),
+            })
+          ),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        // Rate limiting for AI chat (30 requests per minute per user/IP)
+        const rateLimitKey = ctx.user?.id
+          ? `ai-chat-${ctx.user.id}`
+          : `ai-chat-ip-${getClientIp(ctx.req)}`;
+        if (!checkRateLimit(rateLimitKey, 30, 60000)) {
+          throw new TRPCError({
+            code: "TOO_MANY_REQUESTS",
+            message:
+              "Too many AI requests. Please wait a moment before trying again.",
+          });
+        }
 
+        if (!process.env.GEMINI_API_KEY) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "AI API key not configured",
+          });
+        }
+
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        const db = await getDb();
+
+        let systemContext = "";
+        if (db) {
+          const latestArticles = await db
+            .select({
+              title: articles.title,
+              category: articles.category,
+              excerpt: articles.excerpt,
+              publishedAt: articles.publishedAt,
+            })
+            .from(articles)
+            .where(eq(articles.status, "published"))
+            .orderBy(desc(articles.publishedAt))
+            .limit(10);
+
+          systemContext = `
+            LATEST NEWS CONTEXT (Use this to answer questions about recent events):
+            ${latestArticles.map(a => `- ${a.title} (${a.category}): ${a.excerpt}`).join("\n")}
+          `;
+        }
+
+        const systemMessage =
+          input.messages.find(m => m.role === "system")?.content ||
+          "You are the BISHOUY AI Assistant.";
+
+        // Filter out system messages for the contents array, convert assistant/user
+        const chatContents = input.messages
+          .filter(m => m.role !== "system")
+          .map(m => ({
+            role:
+              m.role === "assistant" ? ("model" as const) : ("user" as const),
+            parts: [{ text: m.content }],
+          }));
+
+        try {
+          const response = await ai.models.generateContent({
+            model: "gemini-2.0-flash",
+            contents: chatContents,
+            config: {
+              systemInstruction: systemMessage + "\n" + systemContext,
+              temperature: 0.7,
+            },
+          });
+
+          return (
+            response.text ||
+            "I'm sorry, I couldn't process that request at this moment."
+          );
+        } catch (error) {
+          console.error("[AI Chat Error]", error);
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to generate AI response",
+          });
+        }
+      }),
+
+    triggerNewsGeneration: adminProcedure.mutation(async () => {
+      // Run asynchronously without awaiting so we don't block the request for long
+      syncRSSFeeds().catch(err => console.error("[Manual AI Sync Error]", err));
+      return {
+        success: true,
+        message: "AI news generation started in the background.",
+      };
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

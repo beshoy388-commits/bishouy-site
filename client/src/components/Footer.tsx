@@ -14,12 +14,14 @@ export default function Footer() {
   const [email, setEmail] = useState("");
   const subscribeMutation = trpc.newsletter.subscribe.useMutation({
     onSuccess: () => {
-      toast.success("Subscribed!", { description: "You'll receive the latest news directly in your inbox." });
+      toast.success("Subscribed!", {
+        description: "You'll receive the latest news directly in your inbox.",
+      });
       setEmail("");
     },
     onError: (error: any) => {
       toast.error("Subscription failed", { description: error.message });
-    }
+    },
   });
 
   const handleNewsletter = (e: React.FormEvent) => {
@@ -41,14 +43,18 @@ export default function Footer() {
                 STAY INFORMED
               </h3>
               <p className="font-ui text-sm text-[#8A8880]">
-                The most important news delivered to your inbox every morning at 7:00 AM.
+                The most important news delivered to your inbox every morning at
+                7:00 AM.
               </p>
             </div>
-            <form onSubmit={handleNewsletter} className="flex gap-2 w-full md:w-auto">
+            <form
+              onSubmit={handleNewsletter}
+              className="flex gap-2 w-full md:w-auto"
+            >
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
                 placeholder="Your email"
                 required
                 className="flex-1 md:w-64 bg-[#1C1C1A] border border-[#2A2A28] text-[#F2F0EB] placeholder-[#555550] font-ui text-sm px-4 py-2.5 rounded-sm focus:outline-none focus:border-[#E8A020] transition-colors"
@@ -75,22 +81,58 @@ export default function Footer() {
               </h2>
             </Link>
             <p className="font-ui text-xs text-[#8A8880] mt-3 leading-relaxed">
-              Independent, in-depth, and accessible journalism. Since 2024, we tell the world's story without filters.
+              Independent, in-depth, and accessible journalism. Since 2024, we
+              tell the world's story without filters.
             </p>
             <div className="flex items-center gap-3 mt-5">
-              <a href="#" onClick={(e) => { e.preventDefault(); toast.info("Social Coming Soon"); }} className="text-[#555550] hover:text-[#E8A020] transition-colors">
+              <a
+                href="#"
+                onClick={e => {
+                  e.preventDefault();
+                  toast.info("Social Coming Soon");
+                }}
+                className="text-[#555550] hover:text-[#E8A020] transition-colors"
+              >
                 <Twitter size={16} />
               </a>
-              <a href="#" onClick={(e) => { e.preventDefault(); toast.info("Social Coming Soon"); }} className="text-[#555550] hover:text-[#E8A020] transition-colors">
+              <a
+                href="#"
+                onClick={e => {
+                  e.preventDefault();
+                  toast.info("Social Coming Soon");
+                }}
+                className="text-[#555550] hover:text-[#E8A020] transition-colors"
+              >
                 <Instagram size={16} />
               </a>
-              <a href="#" onClick={(e) => { e.preventDefault(); toast.info("Social Coming Soon"); }} className="text-[#555550] hover:text-[#E8A020] transition-colors">
+              <a
+                href="#"
+                onClick={e => {
+                  e.preventDefault();
+                  toast.info("Social Coming Soon");
+                }}
+                className="text-[#555550] hover:text-[#E8A020] transition-colors"
+              >
                 <Facebook size={16} />
               </a>
-              <a href="#" onClick={(e) => { e.preventDefault(); toast.info("Social Coming Soon"); }} className="text-[#555550] hover:text-[#E8A020] transition-colors">
+              <a
+                href="#"
+                onClick={e => {
+                  e.preventDefault();
+                  toast.info("Social Coming Soon");
+                }}
+                className="text-[#555550] hover:text-[#E8A020] transition-colors"
+              >
                 <Youtube size={16} />
               </a>
-              <a href="#" onClick={(e) => { e.preventDefault(); toast.info("RSS Feed Coming Soon"); }} className="text-[#555550] hover:text-[#E8A020] transition-colors">
+              <a
+                href="#"
+                onClick={e => {
+                  e.preventDefault();
+                  toast.info("RSS Feed Coming Soon");
+                }}
+                className="text-[#555550] hover:text-[#E8A020] transition-colors"
+              >
                 <Rss size={16} />
               </a>
             </div>
@@ -102,7 +144,7 @@ export default function Footer() {
               Sections
             </h4>
             <ul className="space-y-2.5">
-              {CATEGORIES.map((cat) => (
+              {CATEGORIES.map(cat => (
                 <li key={cat.slug}>
                   <Link
                     href={`/category/${cat.slug}`}
@@ -121,11 +163,20 @@ export default function Footer() {
               About Us
             </h4>
             <ul className="space-y-2.5">
-              {["Editorial Team", "Mission & Values", "Contact", "Careers", "Code of Ethics"].map((item) => (
+              {[
+                "Editorial Team",
+                "Mission & Values",
+                "Contact",
+                "Careers",
+                "Code of Ethics",
+              ].map(item => (
                 <li key={item}>
                   <a
                     href="#"
-                    onClick={(e) => { e.preventDefault(); toast.info("Page Coming Soon"); }}
+                    onClick={e => {
+                      e.preventDefault();
+                      toast.info("Page Coming Soon");
+                    }}
                     className="font-ui text-sm text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
                   >
                     {item}
@@ -147,12 +198,15 @@ export default function Footer() {
                 { label: "Cookie Policy", href: "/privacy-policy" },
                 { label: "Legal Notice", href: "/terms-of-service" },
                 { label: "Advertising", href: "#" },
-              ].map((item) => (
+              ].map(item => (
                 <li key={item.label}>
                   {item.href === "#" ? (
                     <a
                       href="#"
-                      onClick={(e) => { e.preventDefault(); toast.info("Page Coming Soon"); }}
+                      onClick={e => {
+                        e.preventDefault();
+                        toast.info("Page Coming Soon");
+                      }}
                       className="font-ui text-sm text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
                     >
                       {item.label}
@@ -180,7 +234,8 @@ export default function Footer() {
               © 2026 Bishouy.com — All rights reserved
             </p>
             <p className="font-ui text-[11px] text-[#555550]">
-              Registered News Publication · Editor-in-Chief: Bishouy Editorial Team
+              Registered News Publication · Editor-in-Chief: Bishouy Editorial
+              Team
             </p>
           </div>
         </div>

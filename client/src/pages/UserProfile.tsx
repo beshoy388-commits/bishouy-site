@@ -3,7 +3,15 @@ import { useRoute } from "wouter";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Loader2, LogOut, User as UserIcon, Edit2, Save, X, Bookmark } from "lucide-react";
+import {
+  Loader2,
+  LogOut,
+  User as UserIcon,
+  Edit2,
+  Save,
+  X,
+  Bookmark,
+} from "lucide-react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
@@ -31,14 +39,15 @@ export default function UserProfile() {
       setIsEditing(false);
       refresh();
     },
-    onError: (error) => {
+    onError: error => {
       toast.error(error.message || "Failed to update profile");
     },
   });
 
-  const { data: savedArticles, isLoading: isLoadingBookmarks } = trpc.bookmarks.list.useQuery(undefined, {
-    enabled: !!user,
-  });
+  const { data: savedArticles, isLoading: isLoadingBookmarks } =
+    trpc.bookmarks.list.useQuery(undefined, {
+      enabled: !!user,
+    });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -84,7 +93,9 @@ export default function UserProfile() {
       <div className="min-h-screen bg-[#0F0F0E]">
         <Navbar />
         <div className="container pt-32 text-center">
-          <p className="text-[#8A8880] mb-4">Please login to view your profile</p>
+          <p className="text-[#8A8880] mb-4">
+            Please login to view your profile
+          </p>
           <Link href="/">
             <button className="text-[#E8A020] hover:text-[#D4911C]">
               Back to Home
@@ -108,7 +119,11 @@ export default function UserProfile() {
               <div className="flex items-center gap-6">
                 <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#E8A020] to-[#D4911C] flex items-center justify-center overflow-hidden flex-shrink-0">
                   {formData.avatarUrl ? (
-                    <img src={formData.avatarUrl} alt={formData.name} className="w-full h-full object-cover" />
+                    <img
+                      src={formData.avatarUrl}
+                      alt={formData.name}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <UserIcon size={48} className="text-[#0F0F0E]" />
                   )}
@@ -118,7 +133,9 @@ export default function UserProfile() {
                     {formData.name || "User"}
                   </h1>
                   {formData.username && (
-                    <p className="text-[#E8A020] text-sm font-medium">@{formData.username}</p>
+                    <p className="text-[#E8A020] text-sm font-medium">
+                      @{formData.username}
+                    </p>
                   )}
                   <p className="text-[#8A8880] text-sm">{formData.email}</p>
                 </div>
@@ -145,9 +162,13 @@ export default function UserProfile() {
               <div className="space-y-6">
                 {/* Avatar Upload */}
                 <div>
-                  <label className="block text-[#8A8880] text-sm mb-2">Profile Photo</label>
+                  <label className="block text-[#8A8880] text-sm mb-2">
+                    Profile Photo
+                  </label>
                   <ImageUploader
-                    onImageUpload={(url) => setFormData({ ...formData, avatarUrl: url })}
+                    onImageUpload={url =>
+                      setFormData({ ...formData, avatarUrl: url })
+                    }
                     currentImage={formData.avatarUrl}
                     label="Upload Profile Photo"
                   />
@@ -155,24 +176,35 @@ export default function UserProfile() {
 
                 {/* Full Name */}
                 <div>
-                  <label className="block text-[#8A8880] text-sm mb-2">Full Name</label>
+                  <label className="block text-[#8A8880] text-sm mb-2">
+                    Full Name
+                  </label>
                   <input
                     type="text"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     className="w-full bg-[#0F0F0E] border border-[#222220] rounded-sm px-4 py-2 text-[#F2F0EB] focus:outline-none focus:border-[#E8A020]"
                   />
                 </div>
 
                 {/* Username */}
                 <div>
-                  <label className="block text-[#8A8880] text-sm mb-2">Username (@username)</label>
+                  <label className="block text-[#8A8880] text-sm mb-2">
+                    Username (@username)
+                  </label>
                   <div className="flex items-center">
                     <span className="text-[#8A8880] mr-2">@</span>
                     <input
                       type="text"
                       value={formData.username}
-                      onChange={(e) => setFormData({ ...formData, username: e.target.value.toLowerCase() })}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          username: e.target.value.toLowerCase(),
+                        })
+                      }
                       placeholder="yourname"
                       maxLength={50}
                       className="flex-1 bg-[#0F0F0E] border border-[#222220] rounded-sm px-4 py-2 text-[#F2F0EB] focus:outline-none focus:border-[#E8A020]"
@@ -182,36 +214,50 @@ export default function UserProfile() {
 
                 {/* Email */}
                 <div>
-                  <label className="block text-[#8A8880] text-sm mb-2">Email</label>
+                  <label className="block text-[#8A8880] text-sm mb-2">
+                    Email
+                  </label>
                   <input
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     className="w-full bg-[#0F0F0E] border border-[#222220] rounded-sm px-4 py-2 text-[#F2F0EB] focus:outline-none focus:border-[#E8A020]"
                   />
                 </div>
 
                 {/* Bio */}
                 <div>
-                  <label className="block text-[#8A8880] text-sm mb-2">Bio</label>
+                  <label className="block text-[#8A8880] text-sm mb-2">
+                    Bio
+                  </label>
                   <textarea
                     value={formData.bio}
-                    onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, bio: e.target.value })
+                    }
                     placeholder="Tell us about yourself..."
                     maxLength={500}
                     rows={4}
                     className="w-full bg-[#0F0F0E] border border-[#222220] rounded-sm px-4 py-2 text-[#F2F0EB] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] resize-none"
                   />
-                  <p className="text-[#555550] text-xs mt-1">{formData.bio.length}/500</p>
+                  <p className="text-[#555550] text-xs mt-1">
+                    {formData.bio.length}/500
+                  </p>
                 </div>
 
                 {/* Location */}
                 <div>
-                  <label className="block text-[#8A8880] text-sm mb-2">Location</label>
+                  <label className="block text-[#8A8880] text-sm mb-2">
+                    Location
+                  </label>
                   <input
                     type="text"
                     value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, location: e.target.value })
+                    }
                     placeholder="City, Country"
                     className="w-full bg-[#0F0F0E] border border-[#222220] rounded-sm px-4 py-2 text-[#F2F0EB] placeholder-[#555550] focus:outline-none focus:border-[#E8A020]"
                   />
@@ -219,11 +265,15 @@ export default function UserProfile() {
 
                 {/* Website */}
                 <div>
-                  <label className="block text-[#8A8880] text-sm mb-2">Website</label>
+                  <label className="block text-[#8A8880] text-sm mb-2">
+                    Website
+                  </label>
                   <input
                     type="url"
                     value={formData.website}
-                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                    onChange={e =>
+                      setFormData({ ...formData, website: e.target.value })
+                    }
                     placeholder="https://yourwebsite.com"
                     className="w-full bg-[#0F0F0E] border border-[#222220] rounded-sm px-4 py-2 text-[#F2F0EB] placeholder-[#555550] focus:outline-none focus:border-[#E8A020]"
                   />
@@ -258,7 +308,12 @@ export default function UserProfile() {
                 {formData.website && (
                   <div className="border-b border-[#222220] pb-4">
                     <p className="text-[#8A8880] text-sm mb-1">Website</p>
-                    <a href={formData.website} target="_blank" rel="noopener noreferrer" className="text-[#E8A020] hover:text-[#D4911C]">
+                    <a
+                      href={formData.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#E8A020] hover:text-[#D4911C]"
+                    >
                       {formData.website}
                     </a>
                   </div>
@@ -304,7 +359,8 @@ export default function UserProfile() {
                 Admin Tools
               </h2>
               <p className="text-[#8A8880] text-sm mb-6">
-                As an administrator, you have access to the admin panel where you can manage articles, comments, and users.
+                As an administrator, you have access to the admin panel where
+                you can manage articles, comments, and users.
               </p>
               <Link href="/admin">
                 <button className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors">
@@ -327,12 +383,16 @@ export default function UserProfile() {
               </div>
             ) : savedArticles && savedArticles.length > 0 ? (
               <div className="space-y-4">
-                {savedArticles.map((article) => (
+                {savedArticles.map(article => (
                   <Link key={article.id} href={`/articolo/${article.slug}`}>
                     <div className="flex gap-4 group cursor-pointer border border-[#222220] p-4 rounded-sm hover:border-[#E8A020] transition-colors bg-[#0F0F0E]">
                       {article.image && (
                         <div className="w-24 h-24 flex-shrink-0 bg-[#222220] rounded-sm overflow-hidden hidden sm:block">
-                          <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <img
+                            src={article.image}
+                            alt={article.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
                         </div>
                       )}
                       <div className="flex-1">
@@ -343,7 +403,13 @@ export default function UserProfile() {
                           {article.title}
                         </h3>
                         <div className="mt-2 text-xs text-[#8A8880] font-ui uppercase tracking-widest">
-                          {new Date(article.publishedAt || article.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                          {new Date(
+                            article.publishedAt || article.createdAt
+                          ).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
                         </div>
                       </div>
                     </div>
@@ -352,7 +418,9 @@ export default function UserProfile() {
               </div>
             ) : (
               <div className="text-center py-8">
-                <p className="text-[#8A8880] mb-4">You haven't saved any articles yet.</p>
+                <p className="text-[#8A8880] mb-4">
+                  You haven't saved any articles yet.
+                </p>
                 <Link href="/">
                   <button className="text-[#E8A020] hover:text-[#D4911C] font-ui text-xs uppercase tracking-wider font-bold">
                     Discover Articles

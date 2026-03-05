@@ -30,17 +30,19 @@ export const systemRouter = router({
       } as const;
     }),
 
-  getDebugLogs: adminProcedure
-    .query(async () => {
-      const db = await getDb();
-      if (!db) return [];
-      return db.select().from(verificationCodes).orderBy(desc(verificationCodes.createdAt)).limit(20);
-    }),
+  getDebugLogs: adminProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return [];
+    return db
+      .select()
+      .from(verificationCodes)
+      .orderBy(desc(verificationCodes.createdAt))
+      .limit(20);
+  }),
 
-  stats: adminProcedure
-    .query(async () => {
-      return getDashboardStats();
-    }),
+  stats: adminProcedure.query(async () => {
+    return getDashboardStats();
+  }),
 
   syncRss: adminProcedure.mutation(async () => {
     return syncRSSFeeds();

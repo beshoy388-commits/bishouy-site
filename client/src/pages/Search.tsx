@@ -37,7 +37,11 @@ export default function Search() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.history.pushState({}, "", `/search?q=${encodeURIComponent(searchQuery)}`);
+      window.history.pushState(
+        {},
+        "",
+        `/search?q=${encodeURIComponent(searchQuery)}`
+      );
     }
   };
 
@@ -69,7 +73,7 @@ export default function Search() {
                 <input
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={e => setSearchQuery(e.target.value)}
                   placeholder="Search by title, content, or tags..."
                   className="w-full bg-[#1C1C1A] border border-[#2A2A28] rounded-sm px-4 py-3 text-[#D4D0C8] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] transition-colors"
                   autoFocus
@@ -89,9 +93,18 @@ export default function Search() {
                 {isLoading ? (
                   "Searching..."
                 ) : results.length > 0 ? (
-                  <>Found <span className="text-[#E8A020] font-semibold">{results.length}</span> result{results.length !== 1 ? "s" : ""}</>
+                  <>
+                    Found{" "}
+                    <span className="text-[#E8A020] font-semibold">
+                      {results.length}
+                    </span>{" "}
+                    result{results.length !== 1 ? "s" : ""}
+                  </>
                 ) : (
-                  <>No results found for "<span className="text-[#E8A020]">{debouncedQuery}</span>"</>
+                  <>
+                    No results found for "
+                    <span className="text-[#E8A020]">{debouncedQuery}</span>"
+                  </>
                 )}
               </p>
             )}
@@ -115,8 +128,12 @@ export default function Search() {
         ) : results.length > 0 ? (
           <div className="max-w-4xl mx-auto">
             <div className="grid gap-6 md:grid-cols-2">
-              {results.map((article) => (
-                <ArticleCard key={article.id} article={article} variant="medium" />
+              {results.map(article => (
+                <ArticleCard
+                  key={article.id}
+                  article={article}
+                  variant="medium"
+                />
               ))}
             </div>
           </div>

@@ -1,6 +1,14 @@
 import { ENV } from "./env";
 
-async function sendBrevoEmail({ to, subject, htmlContent }: { to: string | string[], subject: string, htmlContent: string }) {
+async function sendBrevoEmail({
+  to,
+  subject,
+  htmlContent,
+}: {
+  to: string | string[];
+  subject: string;
+  htmlContent: string;
+}) {
   if (!ENV.brevoApiKey) {
     console.log(`[EMAIL BYPASS] Brevo API Key missing. Subject: ${subject}`);
     return;
@@ -8,22 +16,24 @@ async function sendBrevoEmail({ to, subject, htmlContent }: { to: string | strin
 
   // Verified sender on Brevo — bishouy.com domain authenticated
   const senderEmail = "no-reply@bishouy.com";
-  const recipients = Array.isArray(to) ? to.map(email => ({ email })) : [{ email: to }];
+  const recipients = Array.isArray(to)
+    ? to.map(email => ({ email }))
+    : [{ email: to }];
 
   try {
     const response = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
-        "accept": "application/json",
+        accept: "application/json",
         "api-key": ENV.brevoApiKey,
-        "content-type": "application/json"
+        "content-type": "application/json",
       },
       body: JSON.stringify({
         sender: { name: "Bishouy.com", email: senderEmail },
         to: recipients,
         subject: subject,
-        htmlContent: htmlContent
-      })
+        htmlContent: htmlContent,
+      }),
     });
 
     const result = await response.json();
@@ -32,7 +42,9 @@ async function sendBrevoEmail({ to, subject, htmlContent }: { to: string | strin
       throw new Error(`Brevo API error: ${JSON.stringify(result)}`);
     }
 
-    console.log(`[EMAIL SENT] via Brevo to ${Array.isArray(to) ? to.length + " recipients" : to}. MessageID: ${result.messageId}`);
+    console.log(
+      `[EMAIL SENT] via Brevo to ${Array.isArray(to) ? to.length + " recipients" : to}. MessageID: ${result.messageId}`
+    );
   } catch (error) {
     console.error("[EMAIL ERROR] Failed to send email via Brevo:", error);
   }
@@ -51,7 +63,7 @@ export async function sendVerificationEmail(email: string, code: string) {
         </div>
         <p style="font-size: 14px; color: #8A8880;">If you didn't request this code, you can safely ignore this email.</p>
       </div>
-    `
+    `,
   });
 }
 
@@ -68,11 +80,15 @@ export async function sendPasswordResetEmail(email: string, resetLink: string) {
         </div>
         <p style="font-size: 14px; color: #8A8880;">This link is valid for 30 minutes. If you didn't request a password reset, you can safely ignore this email.</p>
       </div>
-    `
+    `,
   });
 }
 
-export async function sendNewsletterBroadcast(subject: string, htmlContent: string, recipients: { email: string; token: string }[]) {
+export async function sendNewsletterBroadcast(
+  subject: string,
+  htmlContent: string,
+  recipients: { email: string; token: string }[]
+) {
   const baseUrl = ENV.appUrl.replace(/\/$/, "");
   for (const { email, token } of recipients) {
     const unsubscribeUrl = `${baseUrl}/api/unsubscribe?token=${token}`;
@@ -88,12 +104,15 @@ export async function sendNewsletterBroadcast(subject: string, htmlContent: stri
           <a href="${unsubscribeUrl}" style="color: #8A8880;">Unsubscribe</a> &nbsp;·&nbsp;
           <a href="${baseUrl}/privacy-policy" style="color: #8A8880;">Privacy Policy</a>
         </p>
-      `
+      `,
     });
   }
 }
 
-export async function sendWelcomeNewsletterEmail(email: string, unsubscribeToken: string) {
+export async function sendWelcomeNewsletterEmail(
+  email: string,
+  unsubscribeToken: string
+) {
   const baseUrl = ENV.appUrl.replace(/\/$/, "");
   const unsubscribeUrl = `${baseUrl}/api/unsubscribe?token=${unsubscribeToken}`;
 
@@ -200,7 +219,6 @@ export async function sendWelcomeNewsletterEmail(email: string, unsubscribeToken
 
 </body>
 </html>
-    `
+    `,
   });
 }
-

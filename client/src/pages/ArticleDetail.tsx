@@ -3,7 +3,24 @@ import { useRoute } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
-import { Loader2, ArrowLeft, Clock, User, Calendar, Send, Heart, Edit2, Trash2, X, Check, Share2, Twitter, Facebook, Link as LinkIcon, Bookmark } from "lucide-react";
+import {
+  Loader2,
+  ArrowLeft,
+  Clock,
+  User,
+  Calendar,
+  Send,
+  Heart,
+  Edit2,
+  Trash2,
+  X,
+  Check,
+  Share2,
+  Twitter,
+  Facebook,
+  Link as LinkIcon,
+  Bookmark,
+} from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
@@ -33,10 +50,11 @@ export default function ArticleDetail() {
   );
 
   // Query per i commenti
-  const { data: comments, refetch: refetchComments } = trpc.comments.getByArticle.useQuery(
-    { articleId: article?.id || 0 },
-    { enabled: !!article?.id }
-  );
+  const { data: comments, refetch: refetchComments } =
+    trpc.comments.getByArticle.useQuery(
+      { articleId: article?.id || 0 },
+      { enabled: !!article?.id }
+    );
 
   // Query per il conteggio dei like
   const likeCountQuery = trpc.likes.getCount.useQuery(
@@ -58,7 +76,7 @@ export default function ArticleDetail() {
       setIsAnimating(true);
       setTimeout(() => setIsAnimating(false), 600);
     },
-    onError: (error) => {
+    onError: error => {
       toast.error(error.message || "Failed to like article");
     },
   });
@@ -70,11 +88,13 @@ export default function ArticleDetail() {
   );
 
   const toggleBookmarkMutation = trpc.bookmarks.toggle.useMutation({
-    onSuccess: (saved) => {
+    onSuccess: saved => {
       setIsSaved(saved);
-      toast.success(saved ? "Article saved to bookmarks" : "Article removed from bookmarks");
+      toast.success(
+        saved ? "Article saved to bookmarks" : "Article removed from bookmarks"
+      );
     },
-    onError: (error) => toast.error(error.message),
+    onError: error => toast.error(error.message),
   });
 
   // Query per articoli correlati
@@ -90,7 +110,7 @@ export default function ArticleDetail() {
       toast.success("Comment submitted for moderation");
       refetchComments();
     },
-    onError: (error) => {
+    onError: error => {
       toast.error(error.message || "Failed to submit comment");
     },
   });
@@ -103,7 +123,7 @@ export default function ArticleDetail() {
       toast.success("Comment updated");
       refetchComments();
     },
-    onError: (error) => toast.error(error.message),
+    onError: error => toast.error(error.message),
   });
 
   // Mutation per eliminare un commento
@@ -112,7 +132,7 @@ export default function ArticleDetail() {
       toast.success("Comment deleted");
       refetchComments();
     },
-    onError: (error) => toast.error(error.message),
+    onError: error => toast.error(error.message),
   });
 
   // Effect per scrollare in alto e calcolare il progresso
@@ -121,9 +141,13 @@ export default function ArticleDetail() {
 
     const handleScroll = () => {
       // Calculate scroll progress properly based on document height
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const totalHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
       if (totalHeight > 0) {
-        const progress = Math.min(100, Math.max(0, (window.scrollY / totalHeight) * 100));
+        const progress = Math.min(
+          100,
+          Math.max(0, (window.scrollY / totalHeight) * 100)
+        );
         setScrollProgress(progress);
       }
     };
@@ -138,7 +162,8 @@ export default function ArticleDetail() {
 
     const siteTitle = "Bishouy.com";
     const pageTitle = `${article.title} | ${siteTitle}`;
-    const description = article.excerpt || `Read the latest news on ${siteTitle}`;
+    const description =
+      article.excerpt || `Read the latest news on ${siteTitle}`;
     const image = article.image || "";
     const url = window.location.href;
 
@@ -181,7 +206,6 @@ export default function ArticleDetail() {
       document.title = siteTitle;
     };
   }, [article]);
-
 
   // Effect per aggiornare il conteggio dei like
   useEffect(() => {
@@ -249,17 +273,17 @@ export default function ArticleDetail() {
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
       twitter: `https://twitter.com/intent/tweet?url=${url}&text=${title}`,
       whatsapp: `https://api.whatsapp.com/send?text=${title} ${url}`,
-      telegram: `https://t.me/share/url?url=${url}&text=${title}`
+      telegram: `https://t.me/share/url?url=${url}&text=${title}`,
     };
 
-    if (platform === 'copy') {
+    if (platform === "copy") {
       navigator.clipboard.writeText(window.location.href);
       toast.success("Link copied to clipboard!");
       return;
     }
 
     if (links[platform]) {
-      window.open(links[platform], '_blank', 'width=600,height=400');
+      window.open(links[platform], "_blank", "width=600,height=400");
     }
   };
 
@@ -277,7 +301,9 @@ export default function ArticleDetail() {
       <div className="min-h-screen bg-[#0F0F0E]">
         <Navbar />
         <div className="container py-20 text-center">
-          <h1 className="text-2xl font-bold text-[#F2F0EB] mb-4">Article not found</h1>
+          <h1 className="text-2xl font-bold text-[#F2F0EB] mb-4">
+            Article not found
+          </h1>
           <Link href="/">
             <button className="text-[#E8A020] hover:text-[#F2F0EB] transition-colors">
               Back to Home
@@ -301,9 +327,31 @@ export default function ArticleDetail() {
   };
 
   const tags = parseTags();
-  const publishDate = article.publishedAt ? new Date(article.publishedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : new Date(article.createdAt!).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  const publishDate = article.publishedAt
+    ? new Date(article.publishedAt).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : new Date(article.createdAt!).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
 
   const renderArticleContent = (content: string) => {
+    // Check if content looks like HTML (contains tags)
+    const isHtml = /<[a-z][\s\S]*>/i.test(content);
+
+    if (isHtml) {
+      return (
+        <div
+          className="prose prose-invert max-w-none font-serif text-[#D4D0C8] leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
+      );
+    }
+
     const parts = content.split(/(<!-- img:[a-z]+:\d+% -->)/g);
     let currentImageStyle: { position: string; width: string } | null = null;
 
@@ -328,18 +376,29 @@ export default function ArticleDetail() {
             img: ({ src, alt }) => {
               const imgStyle = style || { position: "center", width: "100" };
               const alignClass =
-                imgStyle.position === "left" ? "mr-auto" :
-                  imgStyle.position === "right" ? "ml-auto" :
-                    imgStyle.position === "full" ? "w-full" :
-                      "mx-auto";
+                imgStyle.position === "left"
+                  ? "mr-auto"
+                  : imgStyle.position === "right"
+                    ? "ml-auto"
+                    : imgStyle.position === "full"
+                      ? "w-full"
+                      : "mx-auto";
 
               return (
                 <figure
-                  className={`my-6 ${imgStyle.position === "left" ? "float-left mr-6 mb-4" :
-                    imgStyle.position === "right" ? "float-right ml-6 mb-4" :
-                      "clear-both"
-                    }`}
-                  style={{ width: imgStyle.position === "full" ? "100%" : `${imgStyle.width}%` }}
+                  className={`my-6 ${
+                    imgStyle.position === "left"
+                      ? "float-left mr-6 mb-4"
+                      : imgStyle.position === "right"
+                        ? "float-right ml-6 mb-4"
+                        : "clear-both"
+                  }`}
+                  style={{
+                    width:
+                      imgStyle.position === "full"
+                        ? "100%"
+                        : `${imgStyle.width}%`,
+                  }}
                 >
                   <img
                     src={src}
@@ -350,27 +409,62 @@ export default function ArticleDetail() {
                 </figure>
               );
             },
-            h1: ({ children }) => <h1 className="font-display text-3xl text-[#F2F0EB] mt-8 mb-4">{children}</h1>,
-            h2: ({ children }) => <h2 className="font-display text-2xl text-[#F2F0EB] mt-6 mb-3">{children}</h2>,
-            h3: ({ children }) => <h3 className="font-display text-xl text-[#F2F0EB] mt-4 mb-2">{children}</h3>,
-            p: ({ children }) => <p className="text-[#D4D0C8] leading-relaxed mb-4">{children}</p>,
+            h1: ({ children }) => (
+              <h1 className="font-display text-3xl text-[#F2F0EB] mt-8 mb-4">
+                {children}
+              </h1>
+            ),
+            h2: ({ children }) => (
+              <h2 className="font-display text-2xl text-[#F2F0EB] mt-6 mb-3">
+                {children}
+              </h2>
+            ),
+            h3: ({ children }) => (
+              <h3 className="font-display text-xl text-[#F2F0EB] mt-4 mb-2">
+                {children}
+              </h3>
+            ),
+            p: ({ children }) => (
+              <p className="text-[#D4D0C8] leading-relaxed mb-4">{children}</p>
+            ),
             blockquote: ({ children }) => (
               <blockquote className="border-l-4 border-[#E8A020] pl-4 my-4 italic text-[#8A8880]">
                 {children}
               </blockquote>
             ),
             a: ({ href, children }) => (
-              <a href={href} className="text-[#E8A020] hover:text-[#D4911C] underline" target="_blank" rel="noopener noreferrer">
+              <a
+                href={href}
+                className="text-[#E8A020] hover:text-[#D4911C] underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {children}
               </a>
             ),
-            ul: ({ children }) => <ul className="list-disc list-inside space-y-1 mb-4 text-[#D4D0C8]">{children}</ul>,
-            ol: ({ children }) => <ol className="list-decimal list-inside space-y-1 mb-4 text-[#D4D0C8]">{children}</ol>,
+            ul: ({ children }) => (
+              <ul className="list-disc list-inside space-y-1 mb-4 text-[#D4D0C8]">
+                {children}
+              </ul>
+            ),
+            ol: ({ children }) => (
+              <ol className="list-decimal list-inside space-y-1 mb-4 text-[#D4D0C8]">
+                {children}
+              </ol>
+            ),
             code: ({ children, className }) => {
               if (className) {
-                return <code className="block bg-[#0F0F0E] p-4 rounded-sm text-[#E8A020] text-sm overflow-x-auto mb-4">{children}</code>;
+                return (
+                  <code className="block bg-[#0F0F0E] p-4 rounded-sm text-[#E8A020] text-sm overflow-x-auto mb-4">
+                    {children}
+                  </code>
+                );
               }
-              return <code className="bg-[#0F0F0E] px-1.5 py-0.5 rounded text-[#E8A020] text-sm">{children}</code>;
+              return (
+                <code className="bg-[#0F0F0E] px-1.5 py-0.5 rounded text-[#E8A020] text-sm">
+                  {children}
+                </code>
+              );
             },
             hr: () => <hr className="border-[#222220] my-8" />,
           }}
@@ -484,22 +578,52 @@ export default function ArticleDetail() {
               <div className="group relative">
                 <button className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-sm border border-[#2A2A28] text-[#8A8880] hover:text-[#E8A020] hover:border-[#E8A020] transition-all bg-[#0F0F0E]">
                   <Share2 size={18} />
-                  <span className="font-ui text-sm font-600 uppercase tracking-wider">Share</span>
+                  <span className="font-ui text-sm font-600 uppercase tracking-wider">
+                    Share
+                  </span>
                 </button>
                 <div className="absolute right-0 top-full mt-2 w-48 bg-[#1C1C1A] border border-[#2A2A28] rounded-sm shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden translate-y-2 group-hover:translate-y-0">
-                  <button onClick={() => handleShare('facebook')} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors">
+                  <button
+                    onClick={() => handleShare("facebook")}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors"
+                  >
                     <Facebook size={16} /> Facebook
                   </button>
-                  <button onClick={() => handleShare('twitter')} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors">
+                  <button
+                    onClick={() => handleShare("twitter")}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors"
+                  >
                     <Twitter size={16} /> X (Twitter)
                   </button>
-                  <button onClick={() => handleShare('whatsapp')} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors">
-                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" /><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1" /></svg> WhatsApp
+                  <button
+                    onClick={() => handleShare("whatsapp")}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
+                      <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1" />
+                    </svg>{" "}
+                    WhatsApp
                   </button>
-                  <button onClick={() => handleShare('telegram')} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors">
+                  <button
+                    onClick={() => handleShare("telegram")}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors"
+                  >
                     <Send size={16} /> Telegram
                   </button>
-                  <button onClick={() => handleShare('copy')} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors border-t border-[#2A2A28]">
+                  <button
+                    onClick={() => handleShare("copy")}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors border-t border-[#2A2A28]"
+                  >
                     <LinkIcon size={16} /> Copy Link
                   </button>
                 </div>
@@ -524,7 +648,9 @@ export default function ArticleDetail() {
                 className={`transition-transform duration-300 ${isAnimating && userLiked ? "scale-125" : "scale-100"}`}
                 fill={userLiked ? "currentColor" : "none"}
               />
-              <span className="font-ui text-sm font-600 uppercase tracking-wider">{likeCount}</span>
+              <span className="font-ui text-sm font-600 uppercase tracking-wider">
+                {likeCount}
+              </span>
             </button>
             <button
               onClick={handleBookmarkClick}
@@ -536,18 +662,19 @@ export default function ArticleDetail() {
                 border: isSaved ? "none" : "1px solid #2A2A28",
               }}
             >
-              <Bookmark
-                size={18}
-                fill={isSaved ? "currentColor" : "none"}
-              />
-              <span className="font-ui text-sm font-600 uppercase tracking-wider">Save</span>
+              <Bookmark size={18} fill={isSaved ? "currentColor" : "none"} />
+              <span className="font-ui text-sm font-600 uppercase tracking-wider">
+                Save
+              </span>
             </button>
             <button
-              onClick={() => handleShare('copy')}
+              onClick={() => handleShare("copy")}
               className="flex-1 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-sm border border-[#2A2A28] text-[#8A8880] hover:text-[#E8A020] transition-colors"
             >
               <Share2 size={18} />
-              <span className="font-ui text-sm font-600 uppercase tracking-wider">Share</span>
+              <span className="font-ui text-sm font-600 uppercase tracking-wider">
+                Share
+              </span>
             </button>
           </div>
 
@@ -579,7 +706,10 @@ export default function ArticleDetail() {
           {tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-12 pb-12 border-b border-[#1C1C1A]">
               {tags.map((tag: string, i: number) => (
-                <span key={i} className="px-3 py-1 bg-[#1C1C1A] text-[#8A8880] font-ui text-xs rounded-sm">
+                <span
+                  key={i}
+                  className="px-3 py-1 bg-[#1C1C1A] text-[#8A8880] font-ui text-xs rounded-sm"
+                >
                   #{tag}
                 </span>
               ))}
@@ -588,31 +718,45 @@ export default function ArticleDetail() {
 
           {/* Comments Section */}
           <div className="max-w-3xl mx-auto">
-            <h3 className="font-headline text-xl font-700 text-[#F2F0EB] mb-6">Comments</h3>
+            <h3 className="font-headline text-xl font-700 text-[#F2F0EB] mb-6">
+              Comments
+            </h3>
 
             {/* Approved Comments */}
             {comments && comments.length > 0 ? (
               <div className="space-y-4 mb-8">
-                {comments.map((comment) => {
+                {comments.map(comment => {
                   const c = comment as any;
                   const displayName = c.userUsername
                     ? `@${c.userUsername}`
                     : c.userName || "Anonymous";
-                  const isOwner = user && (user.id === c.userId || user.role === 'admin');
+                  const isOwner =
+                    user && (user.id === c.userId || user.role === "admin");
                   const isEditing = editingCommentId === c.id;
 
-                  const ProfileWrapper = ({ children }: { children: React.ReactNode }) => {
+                  const ProfileWrapper = ({
+                    children,
+                  }: {
+                    children: React.ReactNode;
+                  }) => {
                     if (c.userUsername) {
-                      return <Link href={`/u/${c.userUsername}`}>{children}</Link>;
+                      return (
+                        <Link href={`/u/${c.userUsername}`}>{children}</Link>
+                      );
                     }
                     return <>{children}</>;
                   };
 
                   return (
-                    <div key={c.id} className="bg-[#1C1C1A] rounded-sm p-6 relative group">
+                    <div
+                      key={c.id}
+                      className="bg-[#1C1C1A] rounded-sm p-6 relative group"
+                    >
                       <div className="flex items-start justify-between mb-3">
                         <ProfileWrapper>
-                          <div className={`flex items-center gap-3 ${c.userUsername ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}>
+                          <div
+                            className={`flex items-center gap-3 ${c.userUsername ? "cursor-pointer hover:opacity-80 transition-opacity" : ""}`}
+                          >
                             {c.userAvatarUrl ? (
                               <img
                                 src={c.userAvatarUrl}
@@ -622,20 +766,30 @@ export default function ArticleDetail() {
                             ) : (
                               <div className="w-8 h-8 rounded-full bg-[#2A2A28] flex items-center justify-center flex-shrink-0">
                                 <span className="text-[#8A8880] text-xs font-bold">
-                                  {displayName.charAt(1)?.toUpperCase() || displayName.charAt(0).toUpperCase()}
+                                  {displayName.charAt(1)?.toUpperCase() ||
+                                    displayName.charAt(0).toUpperCase()}
                                 </span>
                               </div>
                             )}
                             <div>
-                              <p className={`font-medium text-sm ${c.userUsername ? 'text-[#E8A020]' : 'text-[#F2F0EB]'}`}>{displayName}</p>
+                              <p
+                                className={`font-medium text-sm ${c.userUsername ? "text-[#E8A020]" : "text-[#F2F0EB]"}`}
+                              >
+                                {displayName}
+                              </p>
                               <p className="text-xs text-[#8A8880] flex items-center gap-1.5">
-                                {new Date(c.createdAt).toLocaleDateString("en-US", {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                })}
+                                {new Date(c.createdAt).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                  }
+                                )}
                                 {c.isEdited === 1 && (
-                                  <span className="italic opacity-70">(edited)</span>
+                                  <span className="italic opacity-70">
+                                    (edited)
+                                  </span>
                                 )}
                               </p>
                             </div>
@@ -657,7 +811,11 @@ export default function ArticleDetail() {
                             </button>
                             <button
                               onClick={() => {
-                                if (window.confirm("Are you sure you want to delete this comment?")) {
+                                if (
+                                  window.confirm(
+                                    "Are you sure you want to delete this comment?"
+                                  )
+                                ) {
                                   deleteCommentMutation.mutate({ id: c.id });
                                 }
                               }}
@@ -674,7 +832,7 @@ export default function ArticleDetail() {
                         <div className="mt-2">
                           <textarea
                             value={editContent}
-                            onChange={(e) => setEditContent(e.target.value)}
+                            onChange={e => setEditContent(e.target.value)}
                             className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm p-3 text-[#D4D0C8] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] resize-none"
                             rows={3}
                           />
@@ -690,13 +848,22 @@ export default function ArticleDetail() {
                             </button>
                             <button
                               onClick={() => {
-                                if (editContent.trim() && editContent !== c.content) {
-                                  editCommentMutation.mutate({ id: c.id, content: editContent });
+                                if (
+                                  editContent.trim() &&
+                                  editContent !== c.content
+                                ) {
+                                  editCommentMutation.mutate({
+                                    id: c.id,
+                                    content: editContent,
+                                  });
                                 } else {
                                   setEditingCommentId(null);
                                 }
                               }}
-                              disabled={!editContent.trim() || editCommentMutation.isPending}
+                              disabled={
+                                !editContent.trim() ||
+                                editCommentMutation.isPending
+                              }
                               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-600 bg-[#2A2A28] text-[#E8A020] hover:bg-[#E8A020] hover:text-[#0F0F0E] rounded-sm transition-colors disabled:opacity-50"
                             >
                               <Check size={12} /> Save
@@ -704,23 +871,29 @@ export default function ArticleDetail() {
                           </div>
                         </div>
                       ) : (
-                        <p className="text-[#D4D0C8] leading-relaxed whitespace-pre-wrap">{c.content}</p>
+                        <p className="text-[#D4D0C8] leading-relaxed whitespace-pre-wrap">
+                          {c.content}
+                        </p>
                       )}
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <p className="text-[#8A8880] mb-8">No comments yet. Be the first to comment!</p>
+              <p className="text-[#8A8880] mb-8">
+                No comments yet. Be the first to comment!
+              </p>
             )}
 
             {/* Comment Form */}
             {user ? (
               <div className="bg-[#1C1C1A] rounded-sm p-6">
-                <h4 className="font-medium text-[#F2F0EB] mb-4">Leave a Comment</h4>
+                <h4 className="font-medium text-[#F2F0EB] mb-4">
+                  Leave a Comment
+                </h4>
                 <textarea
                   value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
+                  onChange={e => setCommentText(e.target.value)}
                   placeholder="Share your thoughts..."
                   className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm p-3 text-[#D4D0C8] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] resize-none"
                   rows={4}
@@ -736,7 +909,9 @@ export default function ArticleDetail() {
               </div>
             ) : (
               <div className="bg-[#1C1C1A] rounded-sm p-6 text-center">
-                <p className="text-[#8A8880] mb-4">Sign in to leave a comment</p>
+                <p className="text-[#8A8880] mb-4">
+                  Sign in to leave a comment
+                </p>
                 <a
                   href={getLoginUrl()}
                   className="inline-flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
@@ -750,9 +925,11 @@ export default function ArticleDetail() {
           {/* Related Articles Section */}
           {relatedArticles && relatedArticles.length > 0 && (
             <div className="mt-16 pt-12 border-t border-[#1C1C1A]">
-              <h3 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-8">Read Next</h3>
+              <h3 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-8">
+                Read Next
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedArticles.map((article) => {
+                {relatedArticles.map(article => {
                   const publishDate = article.publishedAt
                     ? new Date(article.publishedAt)
                     : new Date(article.createdAt);
@@ -781,7 +958,13 @@ export default function ArticleDetail() {
                         </h4>
                         <div className="flex items-center gap-4 text-xs text-[#8A8880] font-ui uppercase tracking-widest">
                           <span>{article.author}</span>
-                          <span>{publishDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                          <span>
+                            {publishDate.toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </span>
                         </div>
                       </div>
                     </Link>

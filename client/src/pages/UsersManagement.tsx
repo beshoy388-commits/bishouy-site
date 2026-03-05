@@ -22,7 +22,7 @@ export default function UsersManagement() {
       setEditingData(null);
       refetch();
     },
-    onError: (error) => {
+    onError: error => {
       toast.error(error.message || "Failed to update user");
     },
   });
@@ -32,7 +32,7 @@ export default function UsersManagement() {
       toast.success("User deleted successfully");
       refetch();
     },
-    onError: (error) => {
+    onError: error => {
       toast.error(error.message || "Failed to delete user");
     },
   });
@@ -59,7 +59,11 @@ export default function UsersManagement() {
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+    if (
+      confirm(
+        "Are you sure you want to delete this user? This action cannot be undone."
+      )
+    ) {
       await deleteMutation.mutateAsync({ id });
     }
   };
@@ -74,7 +78,9 @@ export default function UsersManagement() {
 
   return (
     <div>
-      <h2 className="font-display text-2xl text-[#F2F0EB] mb-6">User Management</h2>
+      <h2 className="font-display text-2xl text-[#F2F0EB] mb-6">
+        User Management
+      </h2>
 
       <div className="bg-[#1C1C1A] border border-[#222220] rounded-sm overflow-hidden">
         {/* Table - Desktop only */}
@@ -82,24 +88,40 @@ export default function UsersManagement() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-[#222220]">
-                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">Name</th>
-                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">Email</th>
-                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">Role</th>
-                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">Joined On</th>
-                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm text-right">Actions</th>
+                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">
+                  Name
+                </th>
+                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">
+                  Email
+                </th>
+                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">
+                  Role
+                </th>
+                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">
+                  Joined On
+                </th>
+                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm text-right">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
-              {users?.map((user) => (
-                <tr key={user.id} className="border-b border-[#1C1C1A] hover:bg-[#0F0F0E]/50 transition-colors">
+              {users?.map(user => (
+                <tr
+                  key={user.id}
+                  className="border-b border-[#1C1C1A] hover:bg-[#0F0F0E]/50 transition-colors"
+                >
                   {editingId === user.id && editingData ? (
                     <>
                       <td className="py-3 px-4">
                         <input
                           type="text"
                           value={editingData.name}
-                          onChange={(e) =>
-                            setEditingData({ ...editingData, name: e.target.value })
+                          onChange={e =>
+                            setEditingData({
+                              ...editingData,
+                              name: e.target.value,
+                            })
                           }
                           className="w-full bg-[#0F0F0E] border border-[#222220] rounded px-2 py-1 text-[#F2F0EB] text-sm"
                         />
@@ -108,8 +130,11 @@ export default function UsersManagement() {
                         <input
                           type="email"
                           value={editingData.email}
-                          onChange={(e) =>
-                            setEditingData({ ...editingData, email: e.target.value })
+                          onChange={e =>
+                            setEditingData({
+                              ...editingData,
+                              email: e.target.value,
+                            })
                           }
                           className="w-full bg-[#0F0F0E] border border-[#222220] rounded px-2 py-1 text-[#F2F0EB] text-sm"
                         />
@@ -117,7 +142,7 @@ export default function UsersManagement() {
                       <td className="py-3 px-4">
                         <select
                           value={editingData.role}
-                          onChange={(e) =>
+                          onChange={e =>
                             setEditingData({
                               ...editingData,
                               role: e.target.value as "user" | "admin",
@@ -153,14 +178,19 @@ export default function UsersManagement() {
                     </>
                   ) : (
                     <>
-                      <td className="py-3 px-4 text-[#F2F0EB] text-sm font-medium">{user.name || "-"}</td>
-                      <td className="py-3 px-4 text-[#8A8880] text-sm">{user.email}</td>
+                      <td className="py-3 px-4 text-[#F2F0EB] text-sm font-medium">
+                        {user.name || "-"}
+                      </td>
+                      <td className="py-3 px-4 text-[#8A8880] text-sm">
+                        {user.email}
+                      </td>
                       <td className="py-3 px-4">
                         <span
-                          className={`text-[9px] px-2 py-0.5 rounded font-600 uppercase tracking-widest ${user.role === "admin"
-                            ? "bg-[#E8A020] text-[#0F0F0E]"
-                            : "bg-[#2A2A28] text-[#8A8880]"
-                            }`}
+                          className={`text-[9px] px-2 py-0.5 rounded font-600 uppercase tracking-widest ${
+                            user.role === "admin"
+                              ? "bg-[#E8A020] text-[#0F0F0E]"
+                              : "bg-[#2A2A28] text-[#8A8880]"
+                          }`}
                         >
                           {user.role}
                         </span>
@@ -195,25 +225,39 @@ export default function UsersManagement() {
 
         {/* Card Layout - Mobile only */}
         <div className="md:hidden divide-y divide-[#222220]">
-          {users?.map((user) => (
+          {users?.map(user => (
             <div key={user.id} className="p-4 space-y-3">
               {editingId === user.id && editingData ? (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
-                      <label className="text-[9px] text-[#E8A020] uppercase font-600 tracking-wider">Name</label>
+                      <label className="text-[9px] text-[#E8A020] uppercase font-600 tracking-wider">
+                        Name
+                      </label>
                       <input
                         type="text"
                         value={editingData.name}
-                        onChange={(e) => setEditingData({ ...editingData, name: e.target.value })}
+                        onChange={e =>
+                          setEditingData({
+                            ...editingData,
+                            name: e.target.value,
+                          })
+                        }
                         className="w-full bg-[#0F0F0E] border border-[#222220] rounded px-2 py-1.5 text-[#F2F0EB] text-xs"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[9px] text-[#E8A020] uppercase font-600 tracking-wider">Role</label>
+                      <label className="text-[9px] text-[#E8A020] uppercase font-600 tracking-wider">
+                        Role
+                      </label>
                       <select
                         value={editingData.role}
-                        onChange={(e) => setEditingData({ ...editingData, role: e.target.value as "user" | "admin" })}
+                        onChange={e =>
+                          setEditingData({
+                            ...editingData,
+                            role: e.target.value as "user" | "admin",
+                          })
+                        }
                         className="w-full bg-[#0F0F0E] border border-[#222220] rounded px-2 py-1.5 text-[#F2F0EB] text-xs"
                       >
                         <option value="user">User</option>
@@ -222,11 +266,18 @@ export default function UsersManagement() {
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[9px] text-[#E8A020] uppercase font-600 tracking-wider">Email</label>
+                    <label className="text-[9px] text-[#E8A020] uppercase font-600 tracking-wider">
+                      Email
+                    </label>
                     <input
                       type="email"
                       value={editingData.email}
-                      onChange={(e) => setEditingData({ ...editingData, email: e.target.value })}
+                      onChange={e =>
+                        setEditingData({
+                          ...editingData,
+                          email: e.target.value,
+                        })
+                      }
                       className="w-full bg-[#0F0F0E] border border-[#222220] rounded px-2 py-1.5 text-[#F2F0EB] text-xs"
                     />
                   </div>
@@ -249,19 +300,40 @@ export default function UsersManagement() {
                 <>
                   <div className="flex justify-between items-start">
                     <div className="min-w-0 flex-1 mr-3">
-                      <p className="text-[#F2F0EB] font-600 text-sm truncate">{user.name || "Unnamed User"}</p>
-                      <p className="text-[#8A8880] text-xs truncate">{user.email}</p>
+                      <p className="text-[#F2F0EB] font-600 text-sm truncate">
+                        {user.name || "Unnamed User"}
+                      </p>
+                      <p className="text-[#8A8880] text-xs truncate">
+                        {user.email}
+                      </p>
                     </div>
-                    <span className={`text-[9px] px-2 py-0.5 rounded font-600 uppercase tracking-widest flex-shrink-0 ${user.role === "admin" ? "bg-[#E8A020] text-[#0F0F0E]" : "bg-[#2A2A28] text-[#8A8880]"
-                      }`}>
+                    <span
+                      className={`text-[9px] px-2 py-0.5 rounded font-600 uppercase tracking-widest flex-shrink-0 ${
+                        user.role === "admin"
+                          ? "bg-[#E8A020] text-[#0F0F0E]"
+                          : "bg-[#2A2A28] text-[#8A8880]"
+                      }`}
+                    >
                       {user.role}
                     </span>
                   </div>
                   <div className="flex items-center justify-between pt-2">
-                    <span className="text-[10px] text-[#555550]">Joined {new Date(user.createdAt).toLocaleDateString()}</span>
+                    <span className="text-[10px] text-[#555550]">
+                      Joined {new Date(user.createdAt).toLocaleDateString()}
+                    </span>
                     <div className="flex gap-1">
-                      <button onClick={() => handleEdit(user)} className="p-2 text-[#8A8880] hover:text-[#E8A020]"><Edit2 size={16} /></button>
-                      <button onClick={() => handleDelete(user.id)} className="p-2 text-[#8A8880] hover:text-red-500"><Trash2 size={16} /></button>
+                      <button
+                        onClick={() => handleEdit(user)}
+                        className="p-2 text-[#8A8880] hover:text-[#E8A020]"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        className="p-2 text-[#8A8880] hover:text-red-500"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </div>
                 </>

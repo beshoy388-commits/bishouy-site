@@ -110,7 +110,10 @@ export default function CookieConsent() {
                 Cookie Preferences
               </h3>
               <p className="font-ui text-xs text-[#8A8880] leading-relaxed">
-                We use cookies to enhance your experience, analyze site traffic, and serve personalized content. By clicking "Accept All," you consent to our use of cookies. You can customize your preferences or{" "}
+                We use cookies to enhance your experience, analyze site traffic,
+                and serve personalized content. By clicking "Accept All," you
+                consent to our use of cookies. You can customize your
+                preferences or{" "}
                 <a
                   href="/privacy-policy"
                   className="text-[#E8A020] hover:underline"
@@ -175,7 +178,8 @@ export default function CookieConsent() {
                     Essential Cookies
                   </label>
                   <p className="font-ui text-xs text-[#8A8880]">
-                    Required for the website to function properly. Cannot be disabled.
+                    Required for the website to function properly. Cannot be
+                    disabled.
                   </p>
                 </div>
               </div>
@@ -186,7 +190,7 @@ export default function CookieConsent() {
                   type="checkbox"
                   id="analytics"
                   checked={customSettings.analytics}
-                  onChange={(e) =>
+                  onChange={e =>
                     setCustomSettings({
                       ...customSettings,
                       analytics: e.target.checked,
@@ -202,7 +206,8 @@ export default function CookieConsent() {
                     Analytics Cookies
                   </label>
                   <p className="font-ui text-xs text-[#8A8880]">
-                    Help us understand how you use our website to improve your experience.
+                    Help us understand how you use our website to improve your
+                    experience.
                   </p>
                 </div>
               </div>
@@ -213,7 +218,7 @@ export default function CookieConsent() {
                   type="checkbox"
                   id="marketing"
                   checked={customSettings.marketing}
-                  onChange={(e) =>
+                  onChange={e =>
                     setCustomSettings({
                       ...customSettings,
                       marketing: e.target.checked,

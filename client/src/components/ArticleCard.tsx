@@ -18,14 +18,20 @@ interface ArticleCardProps {
   showLikes?: boolean;
 }
 
-export default function ArticleCard({ article, variant = "medium", showLikes = true }: ArticleCardProps) {
+export default function ArticleCard({
+  article,
+  variant = "medium",
+  showLikes = true,
+}: ArticleCardProps) {
   const { user } = useAuth();
   const [likeCount, setLikeCount] = useState(0);
   const [userLiked, setUserLiked] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
   // Fetch like count
-  const likeCountQuery = trpc.likes.getCount.useQuery({ articleId: article.id });
+  const likeCountQuery = trpc.likes.getCount.useQuery({
+    articleId: article.id,
+  });
   const userLikedQuery = trpc.likes.hasUserLiked.useQuery(
     { articleId: article.id },
     { enabled: !!user }
@@ -78,8 +84,9 @@ export default function ArticleCard({ article, variant = "medium", showLikes = t
     >
       <Heart
         size={14}
-        className={`transition-transform duration-300 ${isAnimating && userLiked ? "scale-125" : "scale-100"
-          }`}
+        className={`transition-transform duration-300 ${
+          isAnimating && userLiked ? "scale-125" : "scale-100"
+        }`}
         fill={userLiked ? "currentColor" : "none"}
       />
       <span className="font-ui text-[11px] font-600 uppercase tracking-wider">
@@ -114,14 +121,16 @@ export default function ArticleCard({ article, variant = "medium", showLikes = t
                 </span>
               </div>
             )}
-            <span className="category-badge mb-3 inline-block">{article.category}</span>
+            <span className="category-badge mb-3 inline-block">
+              {article.category}
+            </span>
             <h2 className="font-headline text-2xl md:text-3xl font-900 text-[#F2F0EB] leading-tight mb-3 title-hover">
               {article.title}
             </h2>
             <p className="font-ui text-sm text-[#8A8880] line-clamp-2 mb-4 hidden md:block">
               {article.excerpt}
             </p>
-            <div className="flex items-center gap-4 text-[#8A8880]">
+            <div className="flex items-center gap-4 text-[#8A8880] mb-4">
               <span className="flex items-center gap-1.5 font-ui text-xs">
                 <User size={11} />
                 {article.author}
@@ -130,13 +139,41 @@ export default function ArticleCard({ article, variant = "medium", showLikes = t
                 <Clock size={11} />
                 {article.readTime} min
               </span>
-              <span className="font-ui text-xs ml-auto">{(article as any).date}</span>
+              <span className="font-ui text-xs ml-auto">
+                {(article as any).date}
+              </span>
             </div>
+
+            {/* Tags Ribbon */}
+            {article.tags && (
+              <div className="flex flex-wrap gap-2 pt-2 border-t border-[#1C1C1A]/50">
+                {(() => {
+                  try {
+                    const tags = JSON.parse(article.tags as string);
+                    return Array.isArray(tags)
+                      ? tags.slice(0, 3).map((tag, i) => (
+                          <span
+                            key={i}
+                            className="text-[9px] font-ui uppercase tracking-tighter text-[#E8A020]/70"
+                          >
+                            #{tag}
+                          </span>
+                        ))
+                      : null;
+                  } catch {
+                    return null;
+                  }
+                })()}
+              </div>
+            )}
           </div>
 
           {/* Like button overlay */}
           {showLikes && (
-            <div className="absolute top-4 right-4 z-20" onClick={handleLikeClick}>
+            <div
+              className="absolute top-4 right-4 z-20"
+              onClick={handleLikeClick}
+            >
               <LikeButton />
             </div>
           )}
@@ -158,14 +195,19 @@ export default function ArticleCard({ article, variant = "medium", showLikes = t
             />
           </div>
           <div className="flex-1 min-w-0">
-            <span className="category-badge mb-1.5 inline-block" style={{ backgroundColor: article.categoryColor || "#E8A020" }}>
+            <span
+              className="category-badge mb-1.5 inline-block"
+              style={{ backgroundColor: article.categoryColor || "#E8A020" }}
+            >
               {article.category}
             </span>
             <h3 className="font-headline text-sm font-700 text-[#F2F0EB] leading-snug line-clamp-2 title-hover mb-2">
               {article.title}
             </h3>
             <div className="flex items-center justify-between">
-              <span className="font-ui text-[11px] text-[#8A8880]">{(article as any).date}</span>
+              <span className="font-ui text-[11px] text-[#8A8880]">
+                {(article as any).date}
+              </span>
               {showLikes && <LikeButton />}
             </div>
           </div>
@@ -178,7 +220,10 @@ export default function ArticleCard({ article, variant = "medium", showLikes = t
     return (
       <Link href={`/articolo/${article.slug}`}>
         <article className="article-card group cursor-pointer border-b border-[#1C1C1A] pb-4">
-          <span className="category-badge mb-2 inline-block" style={{ backgroundColor: article.categoryColor || "#E8A020" }}>
+          <span
+            className="category-badge mb-2 inline-block"
+            style={{ backgroundColor: article.categoryColor || "#E8A020" }}
+          >
             {article.category}
           </span>
           <h3 className="font-headline text-sm font-700 text-[#F2F0EB] leading-snug line-clamp-2 title-hover mb-2">
@@ -190,7 +235,11 @@ export default function ArticleCard({ article, variant = "medium", showLikes = t
               <Clock size={10} />
               {article.readTime} min
             </span>
-            {showLikes && <div className="ml-auto" onClick={handleLikeClick}><LikeButton /></div>}
+            {showLikes && (
+              <div className="ml-auto" onClick={handleLikeClick}>
+                <LikeButton />
+              </div>
+            )}
           </div>
         </article>
       </Link>
@@ -209,13 +258,19 @@ export default function ArticleCard({ article, variant = "medium", showLikes = t
             loading="lazy"
           />
           {showLikes && (
-            <div className="absolute top-2 right-2 z-20" onClick={handleLikeClick}>
+            <div
+              className="absolute top-2 right-2 z-20"
+              onClick={handleLikeClick}
+            >
               <LikeButton />
             </div>
           )}
         </div>
         <div className="p-5 flex-1 flex flex-col">
-          <span className="category-badge mb-3 inline-block" style={{ backgroundColor: article.categoryColor || "#E8A020" }}>
+          <span
+            className="category-badge mb-3 inline-block"
+            style={{ backgroundColor: article.categoryColor || "#E8A020" }}
+          >
             {article.category}
           </span>
           <h3 className="font-headline text-base font-700 text-[#F2F0EB] leading-snug line-clamp-2 title-hover mb-2">

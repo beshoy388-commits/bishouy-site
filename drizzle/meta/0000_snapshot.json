@@ -146,12 +146,8 @@
           "name": "article_likes_articleId_articles_id_fk",
           "tableFrom": "article_likes",
           "tableTo": "articles",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -159,12 +155,8 @@
           "name": "article_likes_userId_users_id_fk",
           "tableFrom": "article_likes",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -311,9 +303,7 @@
       "indexes": {
         "articles_slug_unique": {
           "name": "articles_slug_unique",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         }
       },
@@ -322,12 +312,8 @@
           "name": "articles_authorId_users_id_fk",
           "tableFrom": "articles",
           "tableTo": "users",
-          "columnsFrom": [
-            "authorId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["authorId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -424,12 +410,8 @@
           "name": "audit_logs_userId_users_id_fk",
           "tableFrom": "audit_logs",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -498,12 +480,8 @@
           "name": "comments_articleId_articles_id_fk",
           "tableFrom": "comments",
           "tableTo": "articles",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -511,12 +489,8 @@
           "name": "comments_userId_users_id_fk",
           "tableFrom": "comments",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -631,16 +605,12 @@
       "indexes": {
         "users_openId_unique": {
           "name": "users_openId_unique",
-          "columns": [
-            "openId"
-          ],
+          "columns": ["openId"],
           "isUnique": true
         },
         "users_username_unique": {
           "name": "users_username_unique",
-          "columns": [
-            "username"
-          ],
+          "columns": ["username"],
           "isUnique": true
         }
       },

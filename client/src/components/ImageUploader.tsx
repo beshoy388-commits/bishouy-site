@@ -8,7 +8,11 @@ interface ImageUploaderProps {
   label?: string;
 }
 
-export default function ImageUploader({ onImageUpload, currentImage, label = "Upload Image" }: ImageUploaderProps) {
+export default function ImageUploader({
+  onImageUpload,
+  currentImage,
+  label = "Upload Image",
+}: ImageUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string>(currentImage || "");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -97,7 +101,9 @@ export default function ImageUploader({ onImageUpload, currentImage, label = "Up
             <>
               <Upload size={32} className="text-[#E8A020]" />
               <div className="text-center">
-                <p className="font-ui text-sm font-600 text-[#F2F0EB]">{label}</p>
+                <p className="font-ui text-sm font-600 text-[#F2F0EB]">
+                  {label}
+                </p>
                 <p className="font-ui text-xs text-[#8A8880] mt-1">
                   Click to browse or drag and drop
                 </p>

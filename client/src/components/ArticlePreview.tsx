@@ -57,19 +57,29 @@ export default function ArticlePreview({ article }: ArticlePreviewProps) {
             img: ({ src, alt }) => {
               const imgStyle = style || { position: "center", width: "100" };
               const alignClass =
-                imgStyle.position === "left" ? "mr-auto" :
-                imgStyle.position === "right" ? "ml-auto" :
-                imgStyle.position === "full" ? "w-full" :
-                "mx-auto";
+                imgStyle.position === "left"
+                  ? "mr-auto"
+                  : imgStyle.position === "right"
+                    ? "ml-auto"
+                    : imgStyle.position === "full"
+                      ? "w-full"
+                      : "mx-auto";
 
               return (
                 <figure
                   className={`my-6 ${
-                    imgStyle.position === "left" ? "float-left mr-6 mb-4" :
-                    imgStyle.position === "right" ? "float-right ml-6 mb-4" :
-                    "clear-both"
+                    imgStyle.position === "left"
+                      ? "float-left mr-6 mb-4"
+                      : imgStyle.position === "right"
+                        ? "float-right ml-6 mb-4"
+                        : "clear-both"
                   }`}
-                  style={{ width: imgStyle.position === "full" ? "100%" : `${imgStyle.width}%` }}
+                  style={{
+                    width:
+                      imgStyle.position === "full"
+                        ? "100%"
+                        : `${imgStyle.width}%`,
+                  }}
                 >
                   <img
                     src={src}
@@ -91,27 +101,64 @@ export default function ArticlePreview({ article }: ArticlePreviewProps) {
               }
               return <em>{children}</em>;
             },
-            h1: ({ children }) => <h1 className="font-display text-3xl text-[#F2F0EB] mt-8 mb-4">{children}</h1>,
-            h2: ({ children }) => <h2 className="font-display text-2xl text-[#F2F0EB] mt-6 mb-3">{children}</h2>,
-            h3: ({ children }) => <h3 className="font-display text-xl text-[#F2F0EB] mt-4 mb-2">{children}</h3>,
-            p: ({ children }) => <p className="text-[#D4D0C8] leading-relaxed mb-4 font-serif text-base">{children}</p>,
+            h1: ({ children }) => (
+              <h1 className="font-display text-3xl text-[#F2F0EB] mt-8 mb-4">
+                {children}
+              </h1>
+            ),
+            h2: ({ children }) => (
+              <h2 className="font-display text-2xl text-[#F2F0EB] mt-6 mb-3">
+                {children}
+              </h2>
+            ),
+            h3: ({ children }) => (
+              <h3 className="font-display text-xl text-[#F2F0EB] mt-4 mb-2">
+                {children}
+              </h3>
+            ),
+            p: ({ children }) => (
+              <p className="text-[#D4D0C8] leading-relaxed mb-4 font-serif text-base">
+                {children}
+              </p>
+            ),
             blockquote: ({ children }) => (
               <blockquote className="border-l-4 border-[#E8A020] pl-4 my-4 italic text-[#8A8880]">
                 {children}
               </blockquote>
             ),
             a: ({ href, children }) => (
-              <a href={href} className="text-[#E8A020] hover:text-[#D4911C] underline" target="_blank" rel="noopener noreferrer">
+              <a
+                href={href}
+                className="text-[#E8A020] hover:text-[#D4911C] underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {children}
               </a>
             ),
-            ul: ({ children }) => <ul className="list-disc list-inside space-y-1 mb-4 text-[#D4D0C8]">{children}</ul>,
-            ol: ({ children }) => <ol className="list-decimal list-inside space-y-1 mb-4 text-[#D4D0C8]">{children}</ol>,
+            ul: ({ children }) => (
+              <ul className="list-disc list-inside space-y-1 mb-4 text-[#D4D0C8]">
+                {children}
+              </ul>
+            ),
+            ol: ({ children }) => (
+              <ol className="list-decimal list-inside space-y-1 mb-4 text-[#D4D0C8]">
+                {children}
+              </ol>
+            ),
             code: ({ children, className }) => {
               if (className) {
-                return <code className="block bg-[#0F0F0E] p-4 rounded-sm text-[#E8A020] text-sm overflow-x-auto mb-4">{children}</code>;
+                return (
+                  <code className="block bg-[#0F0F0E] p-4 rounded-sm text-[#E8A020] text-sm overflow-x-auto mb-4">
+                    {children}
+                  </code>
+                );
               }
-              return <code className="bg-[#0F0F0E] px-1.5 py-0.5 rounded text-[#E8A020] text-sm">{children}</code>;
+              return (
+                <code className="bg-[#0F0F0E] px-1.5 py-0.5 rounded text-[#E8A020] text-sm">
+                  {children}
+                </code>
+              );
             },
             hr: () => <hr className="border-[#222220] my-8" />,
           }}
@@ -136,8 +183,9 @@ export default function ArticlePreview({ article }: ArticlePreviewProps) {
             src={article.image}
             alt={article.title}
             className="w-full h-full object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Crect fill='%231C1C1A' width='800' height='400'/%3E%3Ctext fill='%23555550' font-family='sans-serif' font-size='20' x='50%25' y='50%25' text-anchor='middle' dy='.3em'%3EHero Image%3C/text%3E%3C/svg%3E";
+            onError={e => {
+              (e.target as HTMLImageElement).src =
+                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Crect fill='%231C1C1A' width='800' height='400'/%3E%3Ctext fill='%23555550' font-family='sans-serif' font-size='20' x='50%25' y='50%25' text-anchor='middle' dy='.3em'%3EHero Image%3C/text%3E%3C/svg%3E";
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0E] via-[#0F0F0E]/40 to-transparent" />
@@ -204,7 +252,9 @@ export default function ArticlePreview({ article }: ArticlePreviewProps) {
             {article.content ? (
               renderContent(article.content)
             ) : (
-              <p className="text-[#555550] italic">No content yet. Start writing in the editor.</p>
+              <p className="text-[#555550] italic">
+                No content yet. Start writing in the editor.
+              </p>
             )}
             <div className="clear-both" />
           </div>

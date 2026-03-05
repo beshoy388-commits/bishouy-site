@@ -17,7 +17,7 @@ import {
   User as UserIcon,
   Sparkles,
   Shield,
-  UserPlus
+  UserPlus,
 } from "lucide-react";
 import { CATEGORIES } from "@/lib/articles";
 import { toast } from "sonner";
@@ -51,14 +51,18 @@ export default function Navbar() {
   const handleSearchClick = () => {
     window.location.href = "/search";
   };
-  const handleNotifications = () => toast.info("Notifications Coming Soon", { description: "Push notifications will be available soon." });
+  const handleNotifications = () =>
+    toast.info("Notifications Coming Soon", {
+      description: "Push notifications will be available soon.",
+    });
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-        ? "bg-[#0F0F0E]/95 backdrop-blur-md border-b border-[#222220]"
-        : "bg-transparent"
-        }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-[#0F0F0E]/95 backdrop-blur-md border-b border-[#222220]"
+          : "bg-transparent"
+      }`}
     >
       {/* Top bar */}
       <div className="border-b border-[#222220] bg-[#0F0F0E]">
@@ -83,7 +87,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16 gap-4">
             {/* Left nav — desktop */}
             <nav className="hidden lg:flex items-center gap-6 flex-1">
-              {CATEGORIES.slice(0, 3).map((cat) => (
+              {CATEGORIES.slice(0, 3).map(cat => (
                 <Link
                   key={cat.slug}
                   href={`/category/${cat.slug}`}
@@ -104,7 +108,7 @@ export default function Navbar() {
 
             {/* Right nav — desktop */}
             <nav className="hidden lg:flex items-center gap-6 flex-1 justify-end">
-              {CATEGORIES.slice(3).map((cat) => (
+              {CATEGORIES.slice(3).map(cat => (
                 <Link
                   key={cat.slug}
                   href={`/category/${cat.slug}`}
@@ -195,7 +199,10 @@ export default function Navbar() {
               </Link>
 
               {user ? (
-                <Link href="/profile" className="text-[#8A8880] hover:text-[#E8A020] transition-colors">
+                <Link
+                  href="/profile"
+                  className="text-[#8A8880] hover:text-[#E8A020] transition-colors"
+                >
                   {user.avatarUrl ? (
                     <img
                       src={user.avatarUrl}
@@ -207,7 +214,10 @@ export default function Navbar() {
                   )}
                 </Link>
               ) : (
-                <Link href="/login" className="text-[#8A8880] hover:text-[#E8A020] transition-colors">
+                <Link
+                  href="/login"
+                  className="text-[#8A8880] hover:text-[#E8A020] transition-colors"
+                >
                   <LogIn size={24} />
                 </Link>
               )}
@@ -224,7 +234,6 @@ export default function Navbar() {
         </div>
       </div>
 
-
       {/* Mobile menu */}
       {isMenuOpen && (
         <div className="lg:hidden bg-[#0F0F0E] border-t border-[#222220]">
@@ -237,7 +246,7 @@ export default function Navbar() {
               >
                 Home
               </Link>
-              {CATEGORIES.map((cat) => (
+              {CATEGORIES.map(cat => (
                 <Link
                   key={cat.slug}
                   href={`/category/${cat.slug}`}
