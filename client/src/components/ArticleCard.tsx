@@ -97,10 +97,11 @@ export default function ArticleCard({
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     const img = e.target as HTMLImageElement;
     const category = article.category || "news";
+    const lock = article.id || 1;
 
     if (img.src.includes('pollinations.ai')) {
-      // Fallback to themed LoremFlickr
-      img.src = `https://loremflickr.com/1200/800/${encodeURIComponent(category)}/all`;
+      // Fallback to themed LoremFlickr with deterministic lock
+      img.src = `https://loremflickr.com/1200/800/${encodeURIComponent(category)}/all?lock=${lock}`;
     } else if (img.src.includes('loremflickr.com')) {
       // Final fallback to high-quality Unsplash
       img.src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";

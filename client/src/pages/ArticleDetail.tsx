@@ -531,9 +531,10 @@ export default function ArticleDetail() {
             onError={(e) => {
               const img = e.target as HTMLImageElement;
               const fallbackUnsplash = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+              const lock = article.id || 1;
 
               if (img.src.includes('pollinations.ai')) {
-                img.src = `https://loremflickr.com/1200/800/${encodeURIComponent(article.category || 'news')}/all`;
+                img.src = `https://loremflickr.com/1200/800/${encodeURIComponent(article.category || 'news')}/all?lock=${lock}`;
               } else if (img.src.includes('loremflickr.com')) {
                 img.src = fallbackUnsplash;
               }
