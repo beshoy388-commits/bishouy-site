@@ -58,6 +58,7 @@ import { comments, InsertArticle, articles, users } from "../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import OpenAI from "openai";
+import { ENV } from "./_core/env";
 import { aiChatCache } from "./cache";
 import { logArticleAction } from "./audit";
 import {
@@ -1019,7 +1020,7 @@ export const appRouter = router({
           });
         }
 
-        if (!process.env.OPENROUTER_API_KEY) {
+        if (!ENV.openRouterApiKey) {
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
             message: "AI API key not configured",
@@ -1028,7 +1029,7 @@ export const appRouter = router({
 
         const openai = new OpenAI({
           baseURL: "https://openrouter.ai/api/v1",
-          apiKey: process.env.OPENROUTER_API_KEY,
+          apiKey: ENV.openRouterApiKey,
           defaultHeaders: {
             "HTTP-Referer": "https://bishouy.com",
             "X-Title": "Bishouy AI Assistant",
@@ -1077,7 +1078,7 @@ export const appRouter = router({
 
         try {
           const response = await openai.chat.completions.create({
-            model: "meta-llama/llama-3-8b-instruct:free",
+            model: "google/gemma-3-27b-it:free",
             messages: [
               {
                 role: "system",

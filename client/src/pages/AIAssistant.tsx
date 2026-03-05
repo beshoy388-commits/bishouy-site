@@ -28,12 +28,14 @@ export default function AIAssistant() {
     },
   });
 
-  // Show a toast if the request fails (e.g. missing GEMINI_API_KEY)
+  // Show a toast if the request fails
   useEffect(() => {
     if (chatMutation.isError) {
-      toast.error("AI assistant failed to respond. Check your GEMINI_API_KEY.");
+      toast.error(
+        chatMutation.error?.message || "AI assistant failed to respond."
+      );
     }
-  }, [chatMutation.isError]);
+  }, [chatMutation.isError, chatMutation.error]);
 
   const handleSend = (content: string) => {
     const newMessages: Message[] = [
