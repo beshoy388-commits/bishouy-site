@@ -18,6 +18,7 @@ import {
 } from "../db";
 import { syncRSSFeeds } from "../rss";
 import { sendDailyNewsletter } from "../newsletter_job";
+import { ENV } from "./env";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -122,6 +123,63 @@ async function startServer() {
       createContext,
     })
   );
+  // SEO: Dynamic Sitemap Generation
+  app.get("/sitemap.xml", async (req, res) => {
+    try {
+      const { getAllArticles } = await import("../db");
+      const articles = await getAllArticles(false); // only published
+      const baseUrl = ENV.appUrl.endsWith("/")
+        ? ENV.appUrl.slice(0, -1)
+        : ENV.appUrl;
+
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${baseUrl}/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/privacy-policy</loc>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/terms-of-service</loc>
+    <priority>0.3</priority>
+  </url>`;
+
+      for (const article of articles) {
+        xml += `
+  <url>
+    <loc>${baseUrl}/articolo/${article.slug}</loc>
+    <lastmod>${article.updatedAt.toISOString().split("T")[0]}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+      }
+
+      xml += `\n</urlset>`;
+
+      res.header("Content-Type", "application/xml");
+      res.send(xml);
+    } catch (err) {
+      console.error("[Sitemap] Generation failed:", err);
+      res.status(500).send("Error generating sitemap");
+    }
+  });
+
+  // SEO: Robots.txt
+  app.get("/robots.txt", (req, res) => {
+    const baseUrl = ENV.appUrl.endsWith("/")
+      ? ENV.appUrl.slice(0, -1)
+      : ENV.appUrl;
+    const robots = `User-agent: *
+Allow: /
+Sitemap: ${baseUrl}/sitemap.xml`;
+    res.header("Content-Type", "text/plain");
+    res.send(robots);
+  });
+
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
