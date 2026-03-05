@@ -53,6 +53,10 @@ import {
   getRelatedArticles,
   getPublicUserByUsername,
   getPublicUserComments,
+  getArticleBySlugWithTracking,
+  getTrendingArticles,
+  getAnalyticsSummary,
+  getBreakingArticles,
 } from "./db";
 import { comments, InsertArticle, articles, users } from "../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
@@ -365,11 +369,24 @@ export const appRouter = router({
 
     // Public: List articles (now with filters)
     list: publicProcedure
-      .input(z.object({ category: z.string().optional() }).optional())
-      .query(async ({ input, ctx }) => {
-        // If admin, show everything (drafts included)
-        const isAdmin = ctx.user?.role === "admin";
-        return getAllArticles(isAdmin, input?.category);
+      .input(
+        z
+          .object({
+            category: z.string().optional(),
+            limit: z.number().optional().default(20),
+            offset: z.number().optional().default(0),
+          })
+          .optional()
+      )
+      .query(async ({ input }) => {
+        // Public list should focus strictly on published content
+        // Even admins should only see published content in the main feed
+        return getAllArticles(
+          false,
+          input?.category,
+          input?.limit,
+          input?.offset
+        );
       }),
 
     // Public: Get article by ID
@@ -379,35 +396,33 @@ export const appRouter = router({
         return getArticleById(input.id);
       }),
 
-    // Public: Get article by slug
+    // Public: Get article by slug (with tracking)
     getBySlug: publicProcedure
       .input(z.object({ slug: z.string() }))
       .query(async ({ input, ctx }) => {
-        const db = await getDb();
-        if (!db) return null;
-
+        const ip = getClientIp(ctx.req);
+        const ua = getUserAgent(ctx.req);
         const isAdmin = ctx.user?.role === "admin";
 
-        if (!isAdmin) {
-          const result = await db
+        // Admin views don't count toward analytics
+        if (isAdmin) {
+          const db = await getDb();
+          const result = await db!
             .select()
             .from(articles)
-            .where(
-              and(
-                eq(articles.slug, input.slug),
-                eq(articles.status, "published")
-              )
-            )
+            .where(eq(articles.slug, input.slug))
             .limit(1);
           return result[0] || null;
         }
 
-        const result = await db
-          .select()
-          .from(articles)
-          .where(eq(articles.slug, input.slug))
-          .limit(1);
-        return result[0] || null;
+        return getArticleBySlugWithTracking(input.slug, ctx.user?.id, ip, ua);
+      }),
+
+    // Public: Get trending articles
+    trending: publicProcedure
+      .input(z.object({ limit: z.number().default(5) }).optional())
+      .query(async ({ input }) => {
+        return getTrendingArticles(input?.limit);
       }),
 
     // Public: Get articles by category
@@ -831,19 +846,14 @@ export const appRouter = router({
   }),
 
   bookmarks: router({
-    // Protected: Get saved articles for logged-in user
     list: protectedProcedure.query(async ({ ctx }) => {
       return getSavedArticlesByUserId(ctx.user.id);
     }),
-
-    // Protected: Check if a specific article is saved
     hasSaved: protectedProcedure
       .input(z.object({ articleId: z.number() }))
       .query(async ({ input, ctx }) => {
         return hasUserSavedArticle(input.articleId, ctx.user.id);
       }),
-
-    // Protected: Toggle saved status of an article
     toggle: protectedProcedure
       .input(z.object({ articleId: z.number() }))
       .mutation(async ({ input, ctx }) => {
@@ -851,12 +861,19 @@ export const appRouter = router({
       }),
   }),
 
-  users: router({
-    // Admin: Get all users
-    getAll: adminProcedure.query(async () => {
-      return getAllUsers();
+  analytics: router({
+    getSummary: adminProcedure.query(async () => {
+      return getAnalyticsSummary();
     }),
+  }),
 
+  notifications: router({
+    getLatest: publicProcedure.query(async () => {
+      return getBreakingArticles(5);
+    }),
+  }),
+
+  users: router({
     // Admin: Get user by ID
     getById: adminProcedure
       .input(z.object({ id: z.number() }))

@@ -122,6 +122,9 @@ export default function ImageUploader({
             src={previewUrl}
             alt="Preview"
             className="w-full max-h-64 object-cover rounded-sm"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+            }}
           />
           {!isUploading && (
             <button

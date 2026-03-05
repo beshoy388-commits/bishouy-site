@@ -11,6 +11,9 @@ import {
   Send,
   ShieldAlert,
   Settings,
+  Eye,
+  TrendingUp,
+  Activity,
 } from "lucide-react";
 
 interface DashboardStatsProps {
@@ -32,8 +35,12 @@ export default function DashboardStats({
   onNewArticle,
 }: DashboardStatsProps) {
   const statsQuery = trpc.system.stats.useQuery();
+  const analyticsQuery = trpc.analytics.getSummary.useQuery(undefined, {
+    refetchInterval: 60000,
+  });
+  const trendingQuery = trpc.articles.trending.useQuery({ limit: 5 });
 
-  if (statsQuery.isLoading) {
+  if (statsQuery.isLoading || analyticsQuery.isLoading) {
     return (
       <div className="flex justify-center items-center py-20">
         <Loader2 className="animate-spin text-[#E8A020]" size={32} />
@@ -129,80 +136,146 @@ export default function DashboardStats({
             {stats?.totalSubscribers || 0}
           </div>
         </Card>
+
+        {/* Global Views Stat */}
+        <Card className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-2 sm:p-4 opacity-5">
+            <Eye size={48} className="text-[#E8A020] sm:w-16 sm:h-16" />
+          </div>
+          <div className="flex items-center gap-2 text-[#8A8880] mb-2 z-10">
+            <Eye size={14} className="sm:w-4 sm:h-4" />
+            <span className="font-ui text-[9px] sm:text-xs font-600 uppercase tracking-widest truncate">
+              Total Views
+            </span>
+          </div>
+          <div className="text-2xl sm:text-4xl font-headline text-[#F2F0EB] z-10">
+            {analyticsQuery.data?.totalViews || 0}
+          </div>
+        </Card>
+
+        <Card className="bg-[#1C1C1A] border-[#2A2A28] p-4 sm:p-6 flex flex-col justify-between h-28 sm:h-32 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-2 sm:p-4 opacity-5">
+            <Activity size={48} className="text-[#E8A020] sm:w-16 sm:h-16" />
+          </div>
+          <div className="flex items-center gap-2 text-[#8A8880] mb-2 z-10">
+            <Activity size={14} className="sm:w-4 sm:h-4" />
+            <span className="font-ui text-[9px] sm:text-xs font-600 uppercase tracking-widest truncate">
+              Views (24h)
+            </span>
+          </div>
+          <div className="text-2xl sm:text-4xl font-headline text-[#F2F0EB] z-10">
+            {analyticsQuery.data?.views24h || 0}
+          </div>
+        </Card>
       </div>
 
-      {/* Quick Actions */}
-      <div>
-        <h3 className="font-display text-lg text-[#F2F0EB] mb-4 uppercase tracking-wider">
-          Quick Actions
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <button
-            onClick={() => {
-              if (onTabChange) onTabChange("articles");
-              if (onNewArticle) onNewArticle();
-            }}
-            className="bg-[#1C1C1A] border border-[#2A2A28] p-4 rounded-sm flex items-center gap-3 hover:bg-[#222220] hover:border-[#E8A020]/30 transition-all text-left group"
-          >
-            <div className="p-2 bg-[#E8A020]/10 rounded-sm text-[#E8A020] group-hover:bg-[#E8A020] group-hover:text-[#0F0F0E] transition-colors">
-              <PlusCircle size={20} />
-            </div>
-            <div>
-              <div className="text-sm font-ui font-600 text-[#F2F0EB]">
-                New Article
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Trending Articles List */}
+        <div>
+          <h3 className="font-display text-lg text-[#F2F0EB] mb-4 uppercase tracking-wider flex items-center gap-2">
+            <TrendingUp size={18} className="text-[#E8A020]" />
+            Trending Stories
+          </h3>
+          <div className="space-y-3">
+            {trendingQuery.data?.map((article, idx) => (
+              <div
+                key={article.id}
+                className="bg-[#1C1C1A] border border-[#2A2A28] p-4 rounded-sm flex items-center justify-between group hover:border-[#E8A020]/30 transition-all"
+              >
+                <div className="flex items-center gap-4">
+                  <span className="text-xl font-headline text-[#2A2A28] group-hover:text-[#E8A020]/20 transition-colors">
+                    0{idx + 1}
+                  </span>
+                  <div>
+                    <div className="text-sm font-headline text-[#F2F0EB] line-clamp-1">
+                      {article.title}
+                    </div>
+                    <div className="text-[10px] text-[#8A8880] uppercase tracking-widest">
+                      {article.category}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-[#E8A020] font-headline text-lg">
+                  {article.viewCount} <span className="text-[10px] font-ui uppercase">views</span>
+                </div>
               </div>
-              <div className="text-[10px] text-[#8A8880]">
-                Publish instantly
-              </div>
-            </div>
-          </button>
+            ))}
+          </div>
+        </div>
 
-          <button
-            onClick={() => onTabChange?.("newsletter")}
-            className="bg-[#1C1C1A] border border-[#2A2A28] p-4 rounded-sm flex items-center gap-3 hover:bg-[#222220] hover:border-[#E8A020]/30 transition-all text-left group"
-          >
-            <div className="p-2 bg-[#E8A020]/10 rounded-sm text-[#E8A020] group-hover:bg-[#E8A020] group-hover:text-[#0F0F0E] transition-colors">
-              <Send size={20} />
-            </div>
-            <div>
-              <div className="text-sm font-ui font-600 text-[#F2F0EB]">
-                Broadcast Email
+        {/* Quick Actions */}
+        <div>
+          <h3 className="font-display text-lg text-[#F2F0EB] mb-4 uppercase tracking-wider">
+            Quick Actions
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <button
+              onClick={() => {
+                if (onTabChange) onTabChange("articles");
+                if (onNewArticle) onNewArticle();
+              }}
+              className="bg-[#1C1C1A] border border-[#2A2A28] p-4 rounded-sm flex items-center gap-3 hover:bg-[#222220] hover:border-[#E8A020]/30 transition-all text-left group"
+            >
+              <div className="p-2 bg-[#E8A020]/10 rounded-sm text-[#E8A020] group-hover:bg-[#E8A020] group-hover:text-[#0F0F0E] transition-colors">
+                <PlusCircle size={20} />
               </div>
-              <div className="text-[10px] text-[#8A8880]">Send newsletter</div>
-            </div>
-          </button>
+              <div>
+                <div className="text-sm font-ui font-600 text-[#F2F0EB]">
+                  New Article
+                </div>
+                <div className="text-[10px] text-[#8A8880]">
+                  Publish instantly
+                </div>
+              </div>
+            </button>
 
-          <button
-            onClick={() => onTabChange?.("comments")}
-            className="bg-[#1C1C1A] border border-[#2A2A28] p-4 rounded-sm flex items-center gap-3 hover:bg-[#222220] hover:border-[#E8A020]/30 transition-all text-left group"
-          >
-            <div className="p-2 bg-[#E8A020]/10 rounded-sm text-[#E8A020] group-hover:bg-[#E8A020] group-hover:text-[#0F0F0E] transition-colors">
-              <ShieldAlert size={20} />
-            </div>
-            <div>
-              <div className="text-sm font-ui font-600 text-[#F2F0EB]">
-                Moderation
+            <button
+              onClick={() => onTabChange?.("newsletter")}
+              className="bg-[#1C1C1A] border border-[#2A2A28] p-4 rounded-sm flex items-center gap-3 hover:bg-[#222220] hover:border-[#E8A020]/30 transition-all text-left group"
+            >
+              <div className="p-2 bg-[#E8A020]/10 rounded-sm text-[#E8A020] group-hover:bg-[#E8A020] group-hover:text-[#0F0F0E] transition-colors">
+                <Send size={20} />
               </div>
-              <div className="text-[10px] text-[#8A8880]">Manage comments</div>
-            </div>
-          </button>
+              <div>
+                <div className="text-sm font-ui font-600 text-[#F2F0EB]">
+                  Broadcast Email
+                </div>
+                <div className="text-[10px] text-[#8A8880]">Send newsletter</div>
+              </div>
+            </button>
 
-          <button
-            onClick={() => onTabChange?.("ads")}
-            className="bg-[#1C1C1A] border border-[#2A2A28] p-4 rounded-sm flex items-center gap-3 hover:bg-[#222220] hover:border-[#E8A020]/30 transition-all text-left group"
-          >
-            <div className="p-2 bg-[#E8A020]/10 rounded-sm text-[#E8A020] group-hover:bg-[#E8A020] group-hover:text-[#0F0F0E] transition-colors">
-              <Megaphone size={20} />
-            </div>
-            <div>
-              <div className="text-sm font-ui font-600 text-[#F2F0EB]">
-                New Ad
+            <button
+              onClick={() => onTabChange?.("comments")}
+              className="bg-[#1C1C1A] border border-[#2A2A28] p-4 rounded-sm flex items-center gap-3 hover:bg-[#222220] hover:border-[#E8A020]/30 transition-all text-left group"
+            >
+              <div className="p-2 bg-[#E8A020]/10 rounded-sm text-[#E8A020] group-hover:bg-[#E8A020] group-hover:text-[#0F0F0E] transition-colors">
+                <ShieldAlert size={20} />
               </div>
-              <div className="text-[10px] text-[#8A8880]">
-                Configure banners
+              <div>
+                <div className="text-sm font-ui font-600 text-[#F2F0EB]">
+                  Moderation
+                </div>
+                <div className="text-[10px] text-[#8A8880]">Manage comments</div>
               </div>
-            </div>
-          </button>
+            </button>
+
+            <button
+              onClick={() => onTabChange?.("ads")}
+              className="bg-[#1C1C1A] border border-[#2A2A28] p-4 rounded-sm flex items-center gap-3 hover:bg-[#222220] hover:border-[#E8A020]/30 transition-all text-left group"
+            >
+              <div className="p-2 bg-[#E8A020]/10 rounded-sm text-[#E8A020] group-hover:bg-[#E8A020] group-hover:text-[#0F0F0E] transition-colors">
+                <Megaphone size={20} />
+              </div>
+              <div>
+                <div className="text-sm font-ui font-600 text-[#F2F0EB]">
+                  New Ad
+                </div>
+                <div className="text-[10px] text-[#8A8880]">
+                  Configure banners
+                </div>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -220,3 +293,4 @@ export default function DashboardStats({
     </div>
   );
 }
+

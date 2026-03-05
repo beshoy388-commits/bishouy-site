@@ -12,6 +12,7 @@ export {
   passwordResetTokens,
   sentNewsletters,
   savedArticles,
+  pageViews,
 } from "../drizzle/schema";
 import {
   InsertUser,
@@ -43,6 +44,9 @@ import {
   savedArticles,
   SavedArticle,
   InsertSavedArticle,
+  pageViews,
+  PageView,
+  InsertPageView,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -218,7 +222,9 @@ export async function upsertUser(user: InsertUser): Promise<void> {
 // Article queries
 export async function getAllArticles(
   includeDrafts = false,
-  category?: string
+  category?: string,
+  limit?: number,
+  offset?: number
 ): Promise<Article[]> {
   const db = await getDb();
   if (!db) return [];
@@ -235,6 +241,13 @@ export async function getAllArticles(
 
   if (conditions.length > 0) {
     query.where(and(...conditions));
+  }
+
+  if (limit) {
+    query.limit(limit);
+  }
+  if (offset) {
+    query.offset(offset);
   }
 
   return query.orderBy(desc(articles.createdAt));
@@ -335,6 +348,18 @@ export async function getRelatedArticles(
     )
     .orderBy(desc(articles.createdAt))
     .limit(limitCount);
+}
+
+export async function getBreakingArticles(limit = 5): Promise<Article[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db
+    .select()
+    .from(articles)
+    .where(and(eq(articles.status, "published"), eq(articles.breaking, 1)))
+    .orderBy(desc(articles.publishedAt))
+    .limit(limit);
 }
 
 // Type for comment with user info
@@ -1141,3 +1166,107 @@ export async function cleanupExpiredResetTokens(): Promise<void> {
     console.error("[Cleanup] Failed to delete expired reset tokens:", error);
   }
 }
+
+export async function getArticleBySlugWithTracking(
+  slug: string,
+  userId?: number,
+  ip?: string,
+  ua?: string
+): Promise<Article | undefined> {
+  const article = await getArticleBySlug(slug);
+  if (article) {
+    await trackView(article.id, userId, ip, ua).catch(err =>
+      console.error("[Analytics] trackView failed:", err)
+    );
+  }
+  return article;
+}
+
+// Analytics queries
+export async function trackView(
+  articleId: number,
+  userId?: number,
+  ip?: string,
+  ua?: string
+): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  try {
+    // 1. Transaction to update total and log event
+    await db.transaction(async tx => {
+      // Increment total count in articles table
+      const article = await tx
+        .select({ viewCount: articles.viewCount })
+        .from(articles)
+        .where(eq(articles.id, articleId))
+        .limit(1);
+
+      if (article[0]) {
+        await tx
+          .update(articles)
+          .set({ viewCount: (article[0].viewCount || 0) + 1 })
+          .where(eq(articles.id, articleId));
+      }
+
+      // Log granular page view
+      await tx.insert(pageViews).values({
+        articleId,
+        userId: userId || null,
+        ipAddress: ip || null,
+        userAgent: ua || null,
+      });
+    });
+  } catch (error) {
+    console.error("[Analytics] trackView error:", error);
+  }
+}
+
+export async function getTrendingArticles(limit = 5): Promise<Article[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db
+    .select()
+    .from(articles)
+    .where(eq(articles.status, "published"))
+    .orderBy(desc(articles.viewCount))
+    .limit(limit);
+}
+
+export async function getAnalyticsSummary() {
+  const db = await getDb();
+  if (!db) return null;
+
+  const totalViewsResult = await db
+    .select({ total: sql<number>`sum(${articles.viewCount})` })
+    .from(articles);
+
+  const totalUsersResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(users);
+
+  const totalArticlesResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(articles);
+
+  const totalCommentsResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(comments);
+
+  // Views in the last 24h
+  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const views24hResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(pageViews)
+    .where(sql`${pageViews.createdAt} >= ${yesterday}`);
+
+  return {
+    totalViews: totalViewsResult[0]?.total || 0,
+    totalUsers: totalUsersResult[0]?.count || 0,
+    totalArticles: totalArticlesResult[0]?.count || 0,
+    totalComments: totalCommentsResult[0]?.count || 0,
+    views24h: views24hResult[0]?.count || 0,
+  };
+}
+

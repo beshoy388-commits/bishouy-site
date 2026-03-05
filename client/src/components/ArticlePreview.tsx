@@ -67,13 +67,12 @@ export default function ArticlePreview({ article }: ArticlePreviewProps) {
 
               return (
                 <figure
-                  className={`my-6 ${
-                    imgStyle.position === "left"
+                  className={`my-6 ${imgStyle.position === "left"
                       ? "float-left mr-6 mb-4"
                       : imgStyle.position === "right"
                         ? "float-right ml-6 mb-4"
                         : "clear-both"
-                  }`}
+                    }`}
                   style={{
                     width:
                       imgStyle.position === "full"
@@ -183,9 +182,13 @@ export default function ArticlePreview({ article }: ArticlePreviewProps) {
             src={article.image}
             alt={article.title}
             className="w-full h-full object-cover"
-            onError={e => {
-              (e.target as HTMLImageElement).src =
-                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Crect fill='%231C1C1A' width='800' height='400'/%3E%3Ctext fill='%23555550' font-family='sans-serif' font-size='20' x='50%25' y='50%25' text-anchor='middle' dy='.3em'%3EHero Image%3C/text%3E%3C/svg%3E";
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+              const parent = (e.target as HTMLElement).parentElement;
+              if (parent) {
+                const blurBg = parent.querySelector('.img-hero-blur-bg') as HTMLElement;
+                if (blurBg) blurBg.style.backgroundImage = 'url(https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80)';
+              }
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0E] via-[#0F0F0E]/40 to-transparent" />

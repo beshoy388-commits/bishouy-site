@@ -11,7 +11,8 @@ import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import ArticleCard from "@/components/ArticleCard";
 import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
-import { Loader2 } from "lucide-react";
+import SEO from "@/components/SEO";
+import ArticleCardSkeleton from "@/components/ArticleCardSkeleton";
 
 export default function Home() {
   useEffect(() => {
@@ -24,8 +25,27 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0F0F0E] flex items-center justify-center">
-        <Loader2 className="animate-spin text-[#E8A020]" size={48} />
+      <div className="min-h-screen bg-[#0F0F0E]">
+        <SEO title="Loading Latest News..." />
+        <Navbar />
+        <div className="container pt-32">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <div className="lg:col-span-2">
+              <ArticleCardSkeleton variant="featured" />
+            </div>
+            <div className="space-y-6">
+              {[1, 2, 3].map(i => (
+                <ArticleCardSkeleton key={i} variant="horizontal" />
+              ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <ArticleCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+        <Footer />
       </div>
     );
   }
@@ -33,6 +53,7 @@ export default function Home() {
   if (!articles || articles.length === 0) {
     return (
       <div className="min-h-screen bg-[#0F0F0E]">
+        <SEO title="No Articles" />
         <Navbar />
         <div className="container pt-32 text-center">
           <p className="text-[#8A8880] text-lg">No articles available yet.</p>
@@ -60,6 +81,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#0F0F0E]">
+      <SEO />
       <Navbar />
       <BreakingNewsTicker />
 

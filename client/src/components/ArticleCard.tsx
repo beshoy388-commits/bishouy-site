@@ -84,9 +84,8 @@ export default function ArticleCard({
     >
       <Heart
         size={14}
-        className={`transition-transform duration-300 ${
-          isAnimating && userLiked ? "scale-125" : "scale-100"
-        }`}
+        className={`transition-transform duration-300 ${isAnimating && userLiked ? "scale-125" : "scale-100"
+          }`}
         fill={userLiked ? "currentColor" : "none"}
       />
       <span className="font-ui text-[11px] font-600 uppercase tracking-wider">
@@ -104,8 +103,18 @@ export default function ArticleCard({
             <img
               src={article.image}
               alt={article.title}
-              className="w-full h-full object-cover"
+              className="img-smart-fit"
               loading="lazy"
+              onError={(e) => {
+                const img = e.target as HTMLImageElement;
+                if (img.src.includes('pollinations.ai')) {
+                  // Fallback to themed LoremFlickr if AI fails
+                  img.src = `https://loremflickr.com/1200/800/${encodeURIComponent(article.category || 'news')}/all`;
+                } else if (img.src.includes('loremflickr.com')) {
+                  // Final fallback to high-quality Unsplash news image
+                  img.src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
+                }
+              }}
             />
           </div>
           {/* Gradient overlay */}
@@ -152,13 +161,13 @@ export default function ArticleCard({
                     const tags = JSON.parse(article.tags as string);
                     return Array.isArray(tags)
                       ? tags.slice(0, 3).map((tag, i) => (
-                          <span
-                            key={i}
-                            className="text-[9px] font-ui uppercase tracking-tighter text-[#E8A020]/70"
-                          >
-                            #{tag}
-                          </span>
-                        ))
+                        <span
+                          key={i}
+                          className="text-[9px] font-ui uppercase tracking-tighter text-[#E8A020]/70"
+                        >
+                          #{tag}
+                        </span>
+                      ))
                       : null;
                   } catch {
                     return null;
@@ -190,8 +199,11 @@ export default function ArticleCard({
             <img
               src={article.image}
               alt={article.title}
-              className="w-full h-full object-cover"
+              className="img-smart-fit"
               loading="lazy"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+              }}
             />
           </div>
           <div className="flex-1 min-w-0">

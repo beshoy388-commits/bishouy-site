@@ -51,7 +51,7 @@ export const articles = sqliteTable("articles", {
   readTime: integer("readTime", { mode: "number" }).default(5).notNull(),
   tags: text("tags"),
   status: text("status", { enum: ["draft", "published"] })
-    .default("published")
+    .default("draft")
     .notNull(),
   createdAt: integer("createdAt", { mode: "timestamp" })
     .$defaultFn(() => new Date())
@@ -61,6 +61,11 @@ export const articles = sqliteTable("articles", {
     .notNull(),
   publishedAt: integer("publishedAt", { mode: "timestamp" }),
   authorId: integer("authorId").references(() => users.id),
+  // SEO Fields
+  seoTitle: text("seoTitle"),
+  seoDescription: text("seoDescription"),
+  // Analytics
+  viewCount: integer("viewCount", { mode: "number" }).default(0).notNull(),
 });
 
 export type Article = typeof articles.$inferSelect;
@@ -222,3 +227,19 @@ export const savedArticles = sqliteTable("saved_articles", {
 
 export type SavedArticle = typeof savedArticles.$inferSelect;
 export type InsertSavedArticle = typeof savedArticles.$inferInsert;
+
+export const pageViews = sqliteTable("page_views", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  articleId: integer("articleId").references(() => articles.id, {
+    onDelete: "cascade",
+  }),
+  userId: integer("userId").references(() => users.id, { onDelete: "set null" }),
+  ipAddress: text("ipAddress"),
+  userAgent: text("userAgent"),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+export type PageView = typeof pageViews.$inferSelect;
+export type InsertPageView = typeof pageViews.$inferInsert;

@@ -27,6 +27,7 @@ import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import SEO from "@/components/SEO";
 
 export default function ArticleDetail() {
   const [match, params] = useRoute("/articolo/:slug");
@@ -161,9 +162,13 @@ export default function ArticleDetail() {
     if (!article) return;
 
     const siteTitle = "Bishouy.com";
-    const pageTitle = `${article.title} | ${siteTitle}`;
+    const pageTitle = article.seoTitle
+      ? `${article.seoTitle} | ${siteTitle}`
+      : `${article.title} | ${siteTitle}`;
     const description =
-      article.excerpt || `Read the latest news on ${siteTitle}`;
+      article.seoDescription ||
+      article.excerpt ||
+      `Read the latest news on ${siteTitle}`;
     const image = article.image || "";
     const url = window.location.href;
 
@@ -329,15 +334,15 @@ export default function ArticleDetail() {
   const tags = parseTags();
   const publishDate = article.publishedAt
     ? new Date(article.publishedAt).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
     : new Date(article.createdAt!).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
 
   const renderArticleContent = (content: string) => {
     // Check if content looks like HTML (contains tags)
@@ -382,17 +387,16 @@ export default function ArticleDetail() {
                     ? "ml-auto"
                     : imgStyle.position === "full"
                       ? "w-full"
-                      : "mx-auto";
+                      : "block mx-auto";
 
               return (
                 <figure
-                  className={`my-6 ${
-                    imgStyle.position === "left"
-                      ? "float-left mr-6 mb-4"
-                      : imgStyle.position === "right"
-                        ? "float-right ml-6 mb-4"
-                        : "clear-both"
-                  }`}
+                  className={`my-6 ${imgStyle.position === "left"
+                    ? "float-left mr-6 mb-4"
+                    : imgStyle.position === "right"
+                      ? "float-right ml-6 mb-4"
+                      : "clear-both"
+                    }`}
                   style={{
                     width:
                       imgStyle.position === "full"
@@ -477,6 +481,12 @@ export default function ArticleDetail() {
 
   return (
     <div className="min-h-screen bg-[#0F0F0E] relative">
+      <SEO
+        title={article?.title}
+        description={article?.excerpt}
+        image={article?.image}
+        type="article"
+      />
       <Navbar />
 
       {/* Reading Progress Bar */}
@@ -488,13 +498,36 @@ export default function ArticleDetail() {
       </div>
 
       {/* Hero Image */}
-      <section className="relative h-[400px] md:h-[500px] overflow-hidden">
-        <img
-          src={article.image}
-          alt={article.title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0E] via-[#0F0F0E]/40 to-transparent" />
+      <section className="relative h-[400px] md:h-[550px] overflow-hidden bg-black">
+        <div className="img-hero-frame">
+          <div
+            className="img-hero-blur-bg"
+            style={{ backgroundImage: `url(${article.image})` }}
+          />
+          <img
+            src={article.image}
+            alt={article.title}
+            className="img-hero-main"
+            onError={(e) => {
+              const img = e.target as HTMLImageElement;
+              const fallbackUnsplash = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
+
+              if (img.src.includes('pollinations.ai')) {
+                img.src = `https://loremflickr.com/1200/800/${encodeURIComponent(article.category || 'news')}/all`;
+              } else if (img.src.includes('loremflickr.com')) {
+                img.src = fallbackUnsplash;
+              }
+
+              // Also update the blur background
+              const parent = img.parentElement;
+              if (parent) {
+                const blurBg = parent.querySelector('.img-hero-blur-bg') as HTMLElement;
+                if (blurBg) blurBg.style.backgroundImage = `url(${img.src})`;
+              }
+            }}
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0E] via-transparent to-transparent pointer-events-none" />
       </section>
 
       {/* Article Content */}

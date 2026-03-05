@@ -147,11 +147,6 @@ startServer().catch(console.error);
 cleanupExpiredVerificationCodes();
 cleanupExpiredResetTokens();
 
-// Optional: Run RSS sync on startup (fire and forget)
-if (process.env.NODE_ENV === "production") {
-  syncRSSFeeds().catch(console.error);
-}
-
 // Set up background intervals
 setInterval(
   () => {
@@ -160,14 +155,6 @@ setInterval(
   },
   60 * 60 * 1000
 ); // every 1 hour
-
-// RSS Sync interval (every 6 hours)
-setInterval(
-  () => {
-    syncRSSFeeds().catch(console.error);
-  },
-  6 * 60 * 60 * 1000
-);
 
 // Daily Newsletter interval (every 24 hours)
 setInterval(

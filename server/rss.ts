@@ -114,6 +114,8 @@ async function rewriteArticle(
   tags: string[];
   category: string;
   imagePrompt: string;
+  seoTitle: string;
+  seoDescription: string;
   isFeatured: boolean;
   isBreaking: boolean;
 } | null> {
@@ -165,6 +167,8 @@ async function rewriteArticle(
               "tags": ["Tag1", "Tag2", "Tag3"],
               "category": "Pick strictly one of: World, Politics, Economy, Technology, Culture, Sports",
               "imagePrompt": "A highly detailed, photo-journalistic image generation prompt (max 150 chars)",
+              "seoTitle": "A search-engine optimized title (max 60 chars)",
+              "seoDescription": "A compelling meta-description for search results (max 155 chars)",
               "isFeatured": boolean,
               "isBreaking": boolean
             }`,
@@ -186,112 +190,150 @@ async function rewriteArticle(
   }
 }
 
+let isSyncRunning = false;
+
 /**
  * Main function to fetch feeds and save new articles.
  */
 export async function syncRSSFeeds() {
+  if (isSyncRunning) {
+    log("[RSS] Sync already in progress, skipping...");
+    return { success: false, message: "Sync already in progress." };
+  }
+
+  isSyncRunning = true;
   log("[RSS] Initiating Editorial Sync...");
   let newArticlesCount = 0;
 
-  if (!ENV.openRouterApiKey) {
-    log("[RSS] Aborting: OPENROUTER_API_KEY is missing.");
-    return { success: false, message: "OPENROUTER_API_KEY is missing." };
-  }
-
-  for (const feedConfig of RSS_FEEDS) {
-    try {
-      const feed = await parser.parseURL(feedConfig.url);
-      log(`[RSS] Analysis: ${feed.items.length} items from ${feedConfig.url}`);
-
-      // Focus on the top 3 most relevant items
-      const itemsToProcess = feed.items.slice(0, 3);
-
-      for (const item of itemsToProcess) {
-        if (!item.title) continue;
-
-        // Base slug for duplication check
-        const baseSlug = createSlug(item.title).substring(0, 40);
-        const exists = await getArticleBySlug(baseSlug);
-        if (exists) continue;
-
-        log(`[RSS] Editorial team is rewriting: ${item.title}`);
-
-        // Aggressive rate limit protection for Free Tier (70s)
-        await sleep(70000);
-
-        const editorialPiece = await rewriteArticle(
-          item.title,
-          item.content || item.contentSnippet
-        );
-        if (!editorialPiece) continue;
-
-        const finalSlug = createSlug(editorialPiece.title);
-
-        // Final sanity check
-        const existsFinal = await getArticleBySlug(finalSlug);
-        if (existsFinal) continue;
-
-        const aiCategory =
-          [
-            "World",
-            "Politics",
-            "Economy",
-            "Technology",
-            "Culture",
-            "Sports",
-          ].find(
-            c => c.toLowerCase() === editorialPiece.category?.toLowerCase()
-          ) || "World";
-
-        const categoryColors: Record<string, string> = {
-          World: "#E8A020",
-          Politics: "#C0392B",
-          Economy: "#27AE60",
-          Technology: "#2980B9",
-          Culture: "#8E44AD",
-          Sports: "#E67E22",
-        };
-
-        // IMAGE LOGIC:
-        // 1. First choice: The original image from the news source (most authentic)
-        // 2. Second choice: Dynamic themed image from LoremFlickr based on AI tags
-        // 3. Fallback: Professional desk news background
-        const originalImage = extractImageUrl(item);
-        const aiTags = editorialPiece.tags || [];
-        const fallbackKeywords =
-          aiTags.length > 0 ? aiTags.join(",") : aiCategory;
-
-        const imageUrl =
-          originalImage ||
-          `https://loremflickr.com/1200/800/${encodeURIComponent(fallbackKeywords)}/all` ||
-          "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
-
-        const articleData: InsertArticle = {
-          title: editorialPiece.title,
-          slug: finalSlug,
-          excerpt: editorialPiece.excerpt,
-          content: editorialPiece.content,
-          author: "Bishouy Global Team",
-          authorRole: "Senior Editorial Staff",
-          category: aiCategory,
-          categoryColor: categoryColors[aiCategory] || "#E8A020",
-          image: imageUrl,
-          status: "draft",
-          featured: editorialPiece.isFeatured ? 1 : 0,
-          breaking: editorialPiece.isBreaking ? 1 : 0,
-          tags: JSON.stringify(editorialPiece.tags),
-          publishedAt: new Date(),
-        };
-
-        await createArticle(articleData);
-        newArticlesCount++;
-        log(`[RSS] Premium draft ready for review: ${editorialPiece.title}`);
-      }
-    } catch (error) {
-      console.error(`[RSS] Workflow Error (${feedConfig.url}):`, error);
+  try {
+    if (!ENV.openRouterApiKey) {
+      log("[RSS] Aborting: OPENROUTER_API_KEY is missing.");
+      return { success: false, message: "OPENROUTER_API_KEY is missing." };
     }
-  }
 
-  log(`[RSS] Editorial Sync complete. ${newArticlesCount} new premium drafts.`);
-  return { success: true, count: newArticlesCount };
+    const { getAllArticles, createArticle, getArticleBySlug } = await import("./db");
+
+    for (const feedConfig of RSS_FEEDS) {
+      try {
+        const feed = await parser.parseURL(feedConfig.url);
+        log(`[RSS] Analysis: ${feed.items.length} items from ${feedConfig.url}`);
+
+        // Focus on the top 3 most relevant items
+        const itemsToProcess = feed.items.slice(0, 3);
+
+        for (const item of itemsToProcess) {
+          if (!item.title) continue;
+
+          // BETTER DUPLICATION CHECK: 
+          // Check if article with similar title already exists
+          const existingArticles = await getAllArticles(true);
+          const alreadyExists = existingArticles.some((a: any) =>
+            a.title.toLowerCase().includes(item.title!.toLowerCase().substring(0, 20))
+          );
+
+          if (alreadyExists) {
+            log(`[RSS] Skipping already processed article: ${item.title}`);
+            continue;
+          }
+
+          log(`[RSS] Editorial team is rewriting: ${item.title}`);
+
+          // Aggressive rate limit protection for Free Tier (70s)
+          await sleep(70000);
+
+          const editorialPiece = await rewriteArticle(
+            item.title,
+            item.content || item.contentSnippet
+          );
+          if (!editorialPiece) continue;
+
+          const finalSlug = createSlug(editorialPiece.title);
+
+          // Final sanity check
+          const existsFinal = await getArticleBySlug(finalSlug);
+          if (existsFinal) continue;
+
+          const aiCategory =
+            [
+              "World",
+              "Politics",
+              "Economy",
+              "Technology",
+              "Culture",
+              "Sports",
+            ].find(
+              c => c.toLowerCase() === editorialPiece.category?.toLowerCase()
+            ) || "World";
+
+          const categoryColors: Record<string, string> = {
+            World: "#E8A020",
+            Politics: "#C0392B",
+            Economy: "#27AE60",
+            Technology: "#2980B9",
+            Culture: "#8E44AD",
+            Sports: "#E67E22",
+          };
+
+          // IMAGE LOGIC:
+          // 1. First choice: The original image from the news source (most authentic)
+          // 2. Second choice: Dynamic AI-generated image from Pollinations.ai based on the AI prompt
+          // 3. Third choice: Themed image from LoremFlickr based on tags
+          // 4. Fallback: Professional desk news background
+          let originalImage = extractImageUrl(item);
+
+          // Ensure HTTPS for original images to avoid Mixed Content issues on the live site
+          if (originalImage && originalImage.startsWith("http://")) {
+            originalImage = originalImage.replace("http://", "https://");
+          }
+
+          const aiPrompt = (editorialPiece.imagePrompt || editorialPiece.title)
+            .substring(0, 80) // Shorten to avoid URL issues
+            .replace(/[^\w\s]/gi, ''); // Remove special chars
+
+          const aiTags = editorialPiece.tags || [];
+          const fallbackKeywords = aiTags.slice(0, 3).join(",") || aiCategory;
+
+          // IMAGE LOGIC:
+          // Use Pollinations but with a more robust fallback chain
+          const imageUrl =
+            originalImage ||
+            `https://image.pollinations.ai/prompt/${encodeURIComponent(aiPrompt)}?width=1200&height=800&nologo=true&seed=${Math.floor(Math.random() * 1000000)}` ||
+            `https://loremflickr.com/1200/800/${encodeURIComponent(fallbackKeywords)}/all`;
+
+          const articleData: InsertArticle = {
+            title: editorialPiece.title,
+            slug: finalSlug,
+            excerpt: editorialPiece.excerpt,
+            content: editorialPiece.content,
+            author: "Redazione AI",
+            authorRole: "Senior AI Correspondent",
+            category: aiCategory,
+            categoryColor: categoryColors[aiCategory] || "#E8A020",
+            image: imageUrl,
+            seoTitle: editorialPiece.seoTitle,
+            seoDescription: editorialPiece.seoDescription,
+            status: "draft",
+            featured: editorialPiece.isFeatured ? 1 : 0,
+            breaking: editorialPiece.isBreaking ? 1 : 0,
+            tags: JSON.stringify(editorialPiece.tags),
+            publishedAt: null as any,
+          };
+
+          await createArticle(articleData);
+          newArticlesCount++;
+          log(`[RSS] Premium draft ready for review: ${editorialPiece.title}`);
+        }
+      } catch (error) {
+        console.error(`[RSS] Workflow Error (${feedConfig.url}):`, error);
+      }
+    }
+
+    log(`[RSS] Editorial Sync complete. ${newArticlesCount} new premium drafts.`);
+    return { success: true, count: newArticlesCount };
+  } catch (err) {
+    console.error(`[RSS] Fatal Error:`, err);
+    return { success: false, message: "Sync failed." };
+  } finally {
+    isSyncRunning = false;
+  }
 }

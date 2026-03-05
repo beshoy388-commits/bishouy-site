@@ -23,6 +23,7 @@ import { CATEGORIES } from "@/lib/articles";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
+import NotificationDrawer from "./NotificationDrawer";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,6 +31,24 @@ export default function Navbar() {
   const [location] = useLocation();
   const { user, logout } = useAuth();
   const [currentDate, setCurrentDate] = useState("");
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+  const notificationsQuery = trpc.notifications.getLatest.useQuery(undefined, {
+    refetchInterval: 60000,
+  });
+
+  const [hasUnread, setHasUnread] = useState(false);
+
+  useEffect(() => {
+    const lastRead = localStorage.getItem("notifications_last_read");
+    const latestCount = notificationsQuery.data?.length || 0;
+
+    if (latestCount > 0) {
+      if (!lastRead || parseInt(lastRead) < Date.now() - 3600000) { // If not read in last hour
+        setHasUnread(true);
+      }
+    }
+  }, [notificationsQuery.data]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -51,18 +70,17 @@ export default function Navbar() {
   const handleSearchClick = () => {
     window.location.href = "/search";
   };
-  const handleNotifications = () =>
-    toast.info("Notifications Coming Soon", {
-      description: "Push notifications will be available soon.",
-    });
+  const handleNotifications = () => {
+    setIsNotificationsOpen(true);
+    setHasUnread(false);
+  };
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
           ? "bg-[#0F0F0E]/95 backdrop-blur-md border-b border-[#222220]"
           : "bg-transparent"
-      }`}
+        }`}
     >
       {/* Top bar */}
       <div className="border-b border-[#222220] bg-[#0F0F0E]">
@@ -126,10 +144,13 @@ export default function Navbar() {
               </button>
               <button
                 onClick={handleNotifications}
-                className="text-[#8A8880] hover:text-[#E8A020] transition-colors"
+                className="text-[#8A8880] hover:text-[#E8A020] transition-colors relative"
                 aria-label="Notifications"
               >
                 <Bell size={16} />
+                {hasUnread && (
+                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
+                )}
               </button>
               <Link
                 href="/ai"
@@ -278,6 +299,11 @@ export default function Navbar() {
           </div>
         </div>
       )}
+      {/* Notification Drawer */}
+      <NotificationDrawer
+        isOpen={isNotificationsOpen}
+        onClose={() => setIsNotificationsOpen(false)}
+      />
     </header>
   );
 }
