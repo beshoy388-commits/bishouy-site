@@ -1078,7 +1078,7 @@ export const appRouter = router({
 
         try {
           const response = await openai.chat.completions.create({
-            model: "google/gemma-3-4b-it:free",
+            model: "openrouter/free",
             messages: [
               {
                 role: "system",
