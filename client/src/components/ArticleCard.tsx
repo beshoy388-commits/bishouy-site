@@ -148,7 +148,8 @@ export default function ArticleCard({
               src={article.image}
               alt={article.title}
               className="img-smart-fit"
-              loading="lazy"
+              loading="eager"
+              fetchPriority="high"
               onError={handleImageError}
             />
           </div>

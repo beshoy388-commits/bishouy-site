@@ -78,8 +78,8 @@ export default function Navbar() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-          ? "bg-[#0F0F0E]/95 backdrop-blur-md border-b border-[#222220]"
-          : "bg-transparent"
+        ? "bg-[#0F0F0E]/95 backdrop-blur-md border-b border-[#222220]"
+        : "bg-transparent"
         }`}
     >
       {/* Top bar */}
@@ -117,11 +117,11 @@ export default function Navbar() {
             </nav>
 
             {/* Logo — center */}
-            <Link href="/" className="flex-shrink-0">
-              <h1 className="font-display text-3xl md:text-4xl text-[#F2F0EB] tracking-wider hover:text-[#E8A020] transition-colors">
+            <Link href="/" className="flex-shrink-0" aria-label="BISHOUY.COM Home">
+              <span className="font-display text-3xl md:text-4xl text-[#F2F0EB] tracking-wider hover:text-[#E8A020] transition-colors block">
                 BISHOUY
                 <span className="text-[#E8A020]">.</span>
-              </h1>
+              </span>
             </Link>
 
             {/* Right nav — desktop */}
@@ -138,14 +138,14 @@ export default function Navbar() {
               <button
                 onClick={handleSearchClick}
                 className="text-[#8A8880] hover:text-[#E8A020] transition-colors"
-                aria-label="Search"
+                aria-label="Open search"
               >
                 <Search size={16} />
               </button>
               <button
                 onClick={handleNotifications}
                 className="text-[#8A8880] hover:text-[#E8A020] transition-colors relative"
-                aria-label="Notifications"
+                aria-label="Open notifications"
               >
                 <Bell size={16} />
                 {hasUnread && (
@@ -156,6 +156,7 @@ export default function Navbar() {
                 href="/ai"
                 className="text-[#8A8880] hover:text-[#E8A020] transition-colors flex items-center gap-1.5"
                 title="AI Assistant"
+                aria-label="Go to AI Assistant"
               >
                 <Sparkles size={16} />
               </Link>
@@ -206,7 +207,7 @@ export default function Navbar() {
               <button
                 onClick={handleSearchClick}
                 className="text-[#8A8880] hover:text-[#E8A020] transition-colors"
-                aria-label="Search"
+                aria-label="Open search on mobile"
               >
                 <Search size={18} />
               </button>
@@ -214,7 +215,7 @@ export default function Navbar() {
               <Link
                 href="/ai"
                 className="text-[#8A8880] hover:text-[#E8A020] transition-colors"
-                aria-label="AI Assistant"
+                aria-label="Go to AI Assistant on mobile"
               >
                 <Sparkles size={18} />
               </Link>
@@ -246,7 +247,7 @@ export default function Navbar() {
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="text-[#F2F0EB] hover:text-[#E8A020] transition-colors ml-1"
-                aria-label="Menu"
+                aria-label={isMenuOpen ? "Close main menu" : "Open main menu"}
               >
                 {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
               </button>

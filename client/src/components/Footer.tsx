@@ -47,9 +47,9 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row items-center gap-6 md:gap-12">
             <div className="flex-1">
               <div className="amber-line mb-3" />
-              <h3 className="font-display text-2xl text-[#F2F0EB] mb-1">
+              <h2 className="font-display text-2xl text-[#F2F0EB] mb-1">
                 STAY INFORMED
-              </h3>
+              </h2>
               <p className="font-ui text-sm text-[#8A8880]">
                 The most important news delivered to your inbox every morning at
                 7:00 AM.
@@ -87,10 +87,10 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand */}
           <div>
-            <Link href="/">
-              <h2 className="font-display text-3xl text-[#F2F0EB] mb-1">
+            <Link href="/" aria-label="BISHOUY.COM Home">
+              <span className="font-display text-3xl text-[#F2F0EB] mb-1 block">
                 BISHOUY<span className="text-[#E8A020]">.</span>
-              </h2>
+              </span>
             </Link>
             <p className="font-ui text-xs text-[#8A8880] mt-3 leading-relaxed">
               Independent, in-depth, and accessible journalism. Since 2024, we
@@ -104,6 +104,7 @@ export default function Footer() {
                   toast.info("Social Coming Soon");
                 }}
                 className="text-[#555550] hover:text-[#E8A020] transition-colors"
+                aria-label="Follow us on Twitter"
               >
                 <Twitter size={16} />
               </a>
@@ -114,6 +115,7 @@ export default function Footer() {
                   toast.info("Social Coming Soon");
                 }}
                 className="text-[#555550] hover:text-[#E8A020] transition-colors"
+                aria-label="Follow us on Instagram"
               >
                 <Instagram size={16} />
               </a>
@@ -124,6 +126,7 @@ export default function Footer() {
                   toast.info("Social Coming Soon");
                 }}
                 className="text-[#555550] hover:text-[#E8A020] transition-colors"
+                aria-label="Follow us on Facebook"
               >
                 <Facebook size={16} />
               </a>
@@ -134,6 +137,7 @@ export default function Footer() {
                   toast.info("Social Coming Soon");
                 }}
                 className="text-[#555550] hover:text-[#E8A020] transition-colors"
+                aria-label="Subscribe to our Youtube channel"
               >
                 <Youtube size={16} />
               </a>
@@ -144,6 +148,7 @@ export default function Footer() {
                   toast.info("RSS Feed Coming Soon");
                 }}
                 className="text-[#555550] hover:text-[#E8A020] transition-colors"
+                aria-label="RSS Feed"
               >
                 <Rss size={16} />
               </a>

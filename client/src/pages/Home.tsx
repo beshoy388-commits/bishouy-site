@@ -83,7 +83,7 @@ export default function Home() {
     .slice(0, 12);
 
   return (
-    <div className="min-h-screen bg-[#0F0F0E]">
+    <main className="min-h-screen bg-[#0F0F0E]">
       <SEO />
       <Navbar />
       <BreakingNewsTicker />
@@ -95,15 +95,19 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
               {/* Main featured article — 2 columns */}
               <div className="lg:col-span-2">
+                <h1 className="font-display text-2xl text-[#F2F0EB] uppercase tracking-[0.2em] mb-8 flex items-center gap-4">
+                  Today's Featured
+                  <div className="flex-1 h-px bg-gradient-to-r from-[#2A2A28] to-transparent" />
+                </h1>
                 <ArticleCard article={mainFeatured} variant="featured" />
               </div>
 
               {/* Secondary column — 3 horizontal cards */}
               <div className="space-y-6">
                 <div className="border-l-2 border-[#E8A020] pl-4 mb-4">
-                  <h3 className="font-display text-sm text-[#F2F0EB] uppercase tracking-widest">
+                  <h2 className="font-display text-sm text-[#F2F0EB] uppercase tracking-widest">
                     Editor's Picks
-                  </h3>
+                  </h2>
                 </div>
                 {secondaryFeatured.map(article => (
                   <ArticleCard
@@ -173,6 +177,6 @@ export default function Home() {
       </section>
 
       <Footer />
-    </div>
+    </main>
   );
 }

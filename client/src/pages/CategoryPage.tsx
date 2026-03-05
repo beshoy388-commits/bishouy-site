@@ -38,7 +38,7 @@ export default function CategoryPage() {
 
   if (!category) {
     return (
-      <div className="min-h-screen bg-[#0F0F0E] flex flex-col items-center justify-center">
+      <main className="min-h-screen bg-[#0F0F0E] flex flex-col items-center justify-center">
         <Navbar />
         <div className="text-center py-20">
           <h1 className="font-display text-4xl text-[#F2F0EB] mb-4">
@@ -55,12 +55,12 @@ export default function CategoryPage() {
           </Link>
         </div>
         <Footer />
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0F0F0E]">
+    <main className="min-h-screen bg-[#0F0F0E]">
       <Navbar />
       <BreakingNewsTicker />
 
@@ -139,6 +139,6 @@ export default function CategoryPage() {
       )}
 
       <Footer />
-    </div>
+    </main>
   );
 }

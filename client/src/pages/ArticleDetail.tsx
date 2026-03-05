@@ -327,16 +327,16 @@ export default function ArticleDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0F0F0E] flex items-center justify-center">
+      <main className="min-h-screen bg-[#0F0F0E] flex items-center justify-center">
         <Navbar />
         <Loader2 className="animate-spin text-[#E8A020]" size={40} />
-      </div>
+      </main>
     );
   }
 
   if (!article) {
     return (
-      <div className="min-h-screen bg-[#0F0F0E]">
+      <main className="min-h-screen bg-[#0F0F0E]">
         <Navbar />
         <div className="container py-20 text-center">
           <h1 className="text-2xl font-bold text-[#F2F0EB] mb-4">
@@ -348,7 +348,7 @@ export default function ArticleDetail() {
             </button>
           </Link>
         </div>
-      </div>
+      </main>
     );
   }
 
@@ -513,7 +513,7 @@ export default function ArticleDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F0F0E] relative">
+    <main className="min-h-screen bg-[#0F0F0E] relative">
       <SEO
         title={article?.title}
         description={article?.excerpt}
@@ -541,6 +541,8 @@ export default function ArticleDetail() {
             src={article.image}
             alt={article.title}
             className="img-hero-main"
+            loading="eager"
+            fetchPriority="high"
             onError={(e) => {
               const img = e.target as HTMLImageElement;
               const fallbackUnsplash = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
@@ -1034,6 +1036,6 @@ export default function ArticleDetail() {
       </article>
 
       <Footer />
-    </div>
+    </main>
   );
 }
