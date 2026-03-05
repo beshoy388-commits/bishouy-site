@@ -51,6 +51,38 @@ export async function getDb() {
   return _db;
 }
 
+export async function generateUniqueUsername(baseName: string): Promise<string> {
+  const db = await getDb();
+  if (!db) return baseName;
+
+  let base = baseName
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove accents
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .substring(0, 20);
+
+  if (!base) base = "user";
+
+  let username = base;
+  let counter = 1;
+
+  while (true) {
+    const existing = await db.select({ id: users.id })
+      .from(users)
+      .where(eq(users.username, username))
+      .limit(1);
+
+    if (existing.length === 0) {
+      return username;
+    }
+
+    username = `${base}${counter}`;
+    counter++;
+  }
+}
+
 export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) {
     throw new Error("User openId is required for upsert");
@@ -96,6 +128,21 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     } else if (user.openId === ENV.ownerOpenId || (ENV.ownerEmail && user.email === ENV.ownerEmail)) {
       values.role = 'admin';
       updateSet.role = 'admin';
+    }
+
+    if (user.username !== undefined) {
+      values.username = user.username;
+      updateSet.username = user.username;
+    } else {
+      // Determine a base name for auto-generation
+      let baseName = "user";
+      if (user.name) {
+        baseName = user.name;
+      } else if (user.email) {
+        baseName = user.email.split("@")[0];
+      }
+      values.username = await generateUniqueUsername(baseName);
+      // We don't add username to updateSet here because we only want to generate it on insert.
     }
 
     if (!values.lastSignedIn) {

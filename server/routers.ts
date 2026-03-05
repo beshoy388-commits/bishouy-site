@@ -674,7 +674,17 @@ export const appRouter = router({
         location: z.string().max(100).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
-        return updateUser(ctx.user.id, input);
+        try {
+          return await updateUser(ctx.user.id, input);
+        } catch (error: any) {
+          if (error?.message?.includes('UNIQUE constraint failed: users.username')) {
+            throw new TRPCError({
+              code: 'CONFLICT',
+              message: 'Questo username è già in uso. Scegline un altro.',
+            });
+          }
+          throw error;
+        }
       }),
 
     // Admin: Delete user
