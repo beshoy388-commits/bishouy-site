@@ -563,7 +563,7 @@ export default function ArticleDetail() {
 
           {/* Category and Breaking Badge */}
           <div className="flex items-center gap-3 mb-6">
-            {article.breaking && (
+            {article.breaking === 1 && (
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#E8A020] animate-pulse" />
                 <span className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest">

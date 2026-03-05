@@ -122,7 +122,7 @@ export default function ArticleCard({
 
           {/* Content */}
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-            {article.breaking && (
+            {article.breaking === 1 && (
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-2 h-2 rounded-full bg-[#E8A020] animate-pulse" />
                 <span className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest">
