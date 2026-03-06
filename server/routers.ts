@@ -674,7 +674,7 @@ export const appRouter = router({
           categoryColor: (categoryColors as any)[generated.category] || "#E8A020",
           author: "Redazione AI",
           authorRole: "Senior AI Correspondent",
-          image: `https://loremflickr.com/1200/800/${encodeURIComponent((generated.tags || []).slice(0, 2).join(",") || generated.title.split(' ').slice(0, 3).join(',') || generated.category || 'news')}/all?lock=${Math.floor(Math.random() * 1000)}`,
+          image: `https://loremflickr.com/1200/800/${encodeURIComponent(generated.imagePrompt?.split(' ').slice(0, 3).join(',') || (generated.tags || []).slice(0, 2).join(",") || generated.category || 'news')}/all?lock=${Math.floor(Math.random() * 1000)}`,
           seoTitle: generated.seoTitle || generated.title,
           seoDescription: generated.seoDescription || generated.excerpt,
           status: "draft",

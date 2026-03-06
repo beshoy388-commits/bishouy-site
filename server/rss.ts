@@ -317,7 +317,7 @@ export async function syncRSSFeeds() {
 
           const imageUrl =
             originalImage ||
-            `https://loremflickr.com/1200/800/${encodeURIComponent(fallbackKeywords || editorialPiece.title.split(' ').slice(0, 3).join(','))}/all?lock=${Math.floor(Math.random() * 1000)}`;
+            `https://loremflickr.com/1200/800/${encodeURIComponent(editorialPiece.imagePrompt?.split(' ').slice(0, 3).join(',') || fallbackKeywords || editorialPiece.title.split(' ').slice(0, 3).join(','))}/all?lock=${Math.floor(Math.random() * 1000)}`;
 
           const articleData: InsertArticle = {
             title: editorialPiece.title,
