@@ -84,6 +84,7 @@ import {
 import { stripHtml } from "./utils";
 import crypto from "crypto";
 import { syncRSSFeeds } from "./rss";
+import { generateArticleFromTopic } from "./ai_service";
 
 // Admin-only procedure with security checks
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -632,6 +633,64 @@ export const appRouter = router({
       .input(z.object({ articleId: z.number(), userId: z.number().optional() }))
       .query(async ({ input }) => {
         return getArticleWithLikeInfo(input.articleId, input.userId);
+      }),
+
+    // Protected: Generate article from topic (admin only)
+    generate: adminProcedure
+      .input(z.object({ topic: z.string().min(3) }))
+      .mutation(async ({ input, ctx }) => {
+        const generated = await generateArticleFromTopic(input.topic);
+
+        const slug = input.topic
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "") +
+          "-" +
+          Math.floor(Math.random() * 10000);
+
+        const categoryColors: Record<string, string> = {
+          World: "#E8A020",
+          Politics: "#C0392B",
+          Economy: "#27AE60",
+          Technology: "#2980B9",
+          Culture: "#8E44AD",
+          Sports: "#E67E22",
+        };
+
+        const articleData: InsertArticle = {
+          title: generated.title,
+          slug,
+          excerpt: generated.excerpt,
+          content: generated.content,
+          category: (generated.category as any) || "World",
+          categoryColor: (categoryColors as any)[generated.category] || "#E8A020",
+          author: "Redazione AI",
+          authorRole: "Senior AI Correspondent",
+          image: `https://loremflickr.com/1200/800/${encodeURIComponent(generated.category || 'news')}/all?lock=${Math.floor(Math.random() * 1000)}`,
+          seoTitle: generated.seoTitle || generated.title,
+          seoDescription: generated.seoDescription || generated.excerpt,
+          status: "draft",
+          featured: 0,
+          breaking: 0,
+          tags: JSON.stringify(generated.tags || []),
+          publishedAt: null as any,
+          sourceUrl: null,
+          sourceTitle: `AI Generated from topic: ${input.topic}`,
+        };
+
+        const article = await createArticle(articleData);
+
+        // Log the action
+        await logArticleAction(
+          ctx.user.id,
+          "ai_generate",
+          article.id,
+          { topic: input.topic, title: generated.title },
+          getClientIp(ctx.req),
+          getUserAgent(ctx.req)
+        );
+
+        return article;
       }),
   }),
 

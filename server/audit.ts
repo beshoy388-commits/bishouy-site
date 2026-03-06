@@ -18,7 +18,7 @@ export async function logAuditAction(data: InsertAuditLog): Promise<void> {
 
 export async function logArticleAction(
   userId: number,
-  action: "create" | "update" | "delete",
+  action: "create" | "update" | "delete" | "ai_generate",
   articleId: number | null,
   changes: Record<string, any> | null,
   ipAddress?: string,
