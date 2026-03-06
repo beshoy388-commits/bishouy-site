@@ -512,6 +512,12 @@ export default function ArticleDetail() {
     });
   };
 
+  const getSafeImage = (img: string | null | undefined, category: string, id: number | string) => {
+    if (!img) return `https://loremflickr.com/1200/800/${encodeURIComponent(category || 'news')}/all?lock=${id}`;
+    if (img.includes('pollinations.ai')) return `https://loremflickr.com/1200/800/${encodeURIComponent(category || 'news')}/all?lock=${id}`;
+    return img;
+  };
+
   return (
     <main className="min-h-screen bg-[#0F0F0E] relative">
       <SEO
@@ -531,30 +537,24 @@ export default function ArticleDetail() {
       </div>
 
       {/* Hero Image */}
+      {/* Hero Image */}
       <section className="relative h-[400px] md:h-[550px] overflow-hidden bg-black">
         <div className="img-hero-frame">
           <div
             className="img-hero-blur-bg"
-            style={{ backgroundImage: `url(${article.image})` }}
+            style={{ backgroundImage: `url(${getSafeImage(article.image, article.category, article.id)})` }}
           />
           <img
-            src={article.image}
+            src={getSafeImage(article.image, article.category, article.id)}
             alt={article.title}
             className="img-hero-main"
             loading="eager"
             fetchPriority="high"
-            onError={(e) => {
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
               const img = e.target as HTMLImageElement;
               const fallbackUnsplash = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
-              const lock = article.id || 1;
+              img.src = fallbackUnsplash;
 
-              if (img.src.includes('pollinations.ai')) {
-                img.src = `https://loremflickr.com/1200/800/${encodeURIComponent(article.category || 'news')}/all?lock=${lock}`;
-              } else if (img.src.includes('loremflickr.com')) {
-                img.src = fallbackUnsplash;
-              }
-
-              // Also update the blur background
               const parent = img.parentElement;
               if (parent) {
                 const blurBg = parent.querySelector('.img-hero-blur-bg') as HTMLElement;
@@ -997,11 +997,15 @@ export default function ArticleDetail() {
                     <Link key={article.id} href={`/articolo/${article.slug}`}>
                       <div className="group cursor-pointer">
                         <div className="aspect-[16/9] overflow-hidden rounded-sm mb-4 relative bg-[#1C1C1A]">
-                          {article.image ? (
+                          {getSafeImage(article.image, article.category, article.id) ? (
                             <img
-                              src={article.image}
+                              src={getSafeImage(article.image, article.category, article.id)}
                               alt={article.title}
                               className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
+                              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                                const img = e.target as HTMLImageElement;
+                                img.src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+                              }}
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-[#8A8880]">

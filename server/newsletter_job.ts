@@ -53,7 +53,7 @@ export async function sendDailyNewsletter() {
           },
           {
             role: "user",
-            content: recentArticles.map(a => `- ${a.title}`).join("\n"),
+            content: recentArticles.map((a: any) => `- ${a.title}`).join("\n"),
           },
         ],
       });
@@ -82,7 +82,7 @@ export async function sendDailyNewsletter() {
       <div style="border-top: 1px solid #1C1C1A; padding-top: 20px;">
         ${recentArticles
       .map(
-        article => `
+        (article: any) => `
           <div style="margin-bottom: 30px; border-bottom: 1px solid #1C1C1A; padding-bottom: 20px;">
             <span style="color: #E8A020; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">${article.category}</span>
             <h2 style="margin: 8px 0; font-size: 20px; line-height: 1.3;">
@@ -113,8 +113,8 @@ export async function sendDailyNewsletter() {
   // 6. Send Broadcast
   const subject = `Bishouy.com Daily: ${recentArticles[0].title}`;
   const recipients = allSubscribers
-    .filter(s => !!s.unsubscribeToken)
-    .map(s => ({
+    .filter((s: any) => !!s.unsubscribeToken)
+    .map((s: any) => ({
       email: s.email,
       token: s.unsubscribeToken as string,
     }));

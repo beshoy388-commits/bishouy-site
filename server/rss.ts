@@ -315,11 +315,7 @@ export async function syncRSSFeeds() {
           const aiTags = editorialPiece.tags || [];
           const fallbackKeywords = aiTags.slice(0, 3).join(",") || aiCategory;
 
-          // IMAGE LOGIC:
-          // We prefer AI generated images for thematic consistency, 
-          // falling back to original only if explicitly relevant or AI fails.
           const imageUrl =
-            `https://image.pollinations.ai/prompt/${encodeURIComponent(aiPrompt)}?width=1200&height=800&nologo=true&seed=${Math.floor(Math.random() * 1000000)}&enhance=true` ||
             originalImage ||
             `https://loremflickr.com/1200/800/${encodeURIComponent(fallbackKeywords)}/all`;
 

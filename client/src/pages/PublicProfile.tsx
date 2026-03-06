@@ -138,7 +138,7 @@ export default function PublicProfile() {
 
             {comments && comments.length > 0 ? (
               <div className="space-y-6">
-                {comments.map(comment => (
+                {comments.map((comment: any) => (
                   <div
                     key={comment.id}
                     className="bg-[#0F0F0E] p-6 rounded-sm border border-[#222220]"

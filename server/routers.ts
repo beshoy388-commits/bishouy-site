@@ -678,7 +678,7 @@ export const appRouter = router({
           articleId: input.articleId,
           userId: ctx.user.id,
           content: stripHtml(input.content),
-          approved: 0, // Comments need admin approval
+          approved: 1, // Auto-approve comments for immediate display
         });
       }),
 
@@ -1021,8 +1021,8 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         const subscribers = await getAllSubscribers();
         const activeRecipients = subscribers
-          .filter(s => s.active === 1 && s.unsubscribeToken)
-          .map(s => ({ email: s.email, token: s.unsubscribeToken! }));
+          .filter((s: any) => s.active === 1 && s.unsubscribeToken)
+          .map((s: any) => ({ email: s.email, token: s.unsubscribeToken! }));
 
         if (activeRecipients.length > 0) {
           // Fire and forget (will run async in background)
@@ -1110,12 +1110,12 @@ export const appRouter = router({
             })
             .from(articles)
             .where(eq(articles.status, "published"))
-            .orderBy(desc(articles.publishedAt))
+            .orderBy(desc(articles.createdAt))
             .limit(10);
 
           systemContext = `
             LATEST NEWS CONTEXT (Use this to answer questions about recent events):
-            ${latestArticles.map(a => `- ${a.title} (${a.category}): ${a.excerpt}`).join("\n")}
+            ${latestArticles.map((a: any) => `- ${a.title} (${a.category}): ${a.excerpt}`).join("\n")}
           `;
         }
 

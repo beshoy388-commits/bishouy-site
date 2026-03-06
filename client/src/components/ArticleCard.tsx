@@ -124,17 +124,21 @@ export default function ArticleCard({
     </button>
   );
 
+  const getSafeImage = (img: string | null | undefined, category: string, id: number | string) => {
+    if (!img) return `https://loremflickr.com/1200/800/${encodeURIComponent(category || 'news')}/all?lock=${id}`;
+    if (img.includes('pollinations.ai')) {
+      return `https://loremflickr.com/1200/800/${encodeURIComponent(category || 'news')}/all?lock=${id}`;
+    }
+    return img;
+  };
+
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     const img = e.target as HTMLImageElement;
     const category = article.category || "news";
     const lock = article.id || 1;
 
     // Log the issue if it's an AI generated image failing
-    if (img.src.includes('pollinations.ai')) {
-      console.warn(`[Image] AI Image failed for: ${article.slug}. Pivoting to fallback.`);
-      // Fallback to themed LoremFlickr with deterministic lock
-      img.src = `https://loremflickr.com/1200/800/${encodeURIComponent(category)}/all?lock=${lock}`;
-    } else if (img.src.includes('loremflickr.com')) {
+    if (img.src.includes('pollinations.ai') || img.src.includes('loremflickr.com')) {
       // Final fallback to high-quality Unsplash
       img.src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
     }
@@ -147,7 +151,7 @@ export default function ArticleCard({
           {/* Background image */}
           <div className="img-zoom absolute inset-0">
             <img
-              src={article.image}
+              src={getSafeImage(article.image, article.category, article.id)}
               alt={article.title}
               className="img-smart-fit"
               loading="eager"
@@ -232,7 +236,7 @@ export default function ArticleCard({
         <article className="article-card group flex gap-4 cursor-pointer">
           <div className="img-zoom flex-shrink-0 w-24 h-20 rounded-sm overflow-hidden text-[#0F0F0E]">
             <img
-              src={article.image}
+              src={getSafeImage(article.image, article.category, article.id)}
               alt={article.title}
               className="img-smart-fit"
               loading="lazy"
@@ -297,7 +301,7 @@ export default function ArticleCard({
       <article className="article-card group cursor-pointer bg-[#1C1C1A] rounded-sm overflow-hidden h-full flex flex-col">
         <div className="img-zoom aspect-video overflow-hidden relative">
           <img
-            src={article.image}
+            src={getSafeImage(article.image, article.category, article.id)}
             alt={article.title}
             className="w-full h-full object-cover"
             loading="lazy"
