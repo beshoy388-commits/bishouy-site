@@ -181,23 +181,20 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5">
               {[
-                "Editorial Team",
-                "Mission & Values",
-                "Contact",
-                "Careers",
-                "Code of Ethics",
+                { label: "About Us", href: "/about" },
+                { label: "Editorial Team", href: "/editorial-team" },
+                { label: "Mission & Values", href: "/mission-values" },
+                { label: "Contact", href: "/contact" },
+                { label: "Careers", href: "/careers" },
+                { label: "Code of Ethics", href: "/code-of-ethics" },
               ].map(item => (
-                <li key={item}>
-                  <a
-                    href="#"
-                    onClick={e => {
-                      e.preventDefault();
-                      toast.info("Page Coming Soon");
-                    }}
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
                     className="font-ui text-sm text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
                   >
-                    {item}
-                  </a>
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>

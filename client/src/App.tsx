@@ -28,6 +28,14 @@ const TermsOfService = lazy(() => import("@/pages/TermsOfService"));
 const Unsubscribe = lazy(() => import("@/pages/Unsubscribe"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
+// About Pages
+const AboutUs = lazy(() => import("@/pages/AboutUs"));
+const EditorialTeam = lazy(() => import("@/pages/EditorialTeam"));
+const MissionValues = lazy(() => import("@/pages/MissionValues"));
+const Contact = lazy(() => import("@/pages/Contact"));
+const Careers = lazy(() => import("@/pages/Careers"));
+const CodeOfEthics = lazy(() => import("@/pages/CodeOfEthics"));
+
 const PageFallback = () => (
   <div className="min-h-screen bg-[#0F0F0E] flex items-center justify-center">
     <Loader2 className="animate-spin text-[#E8A020]" size={40} />
@@ -54,6 +62,12 @@ function Router() {
         <Route path="/forgot-password" component={ForgotPassword} />
         <Route path="/reset-password" component={ResetPassword} />
         <Route path="/unsubscribe" component={Unsubscribe} />
+        <Route path="/about" component={AboutUs} />
+        <Route path="/editorial-team" component={EditorialTeam} />
+        <Route path="/mission-values" component={MissionValues} />
+        <Route path="/contact" component={Contact} />
+        <Route path="/careers" component={Careers} />
+        <Route path="/code-of-ethics" component={CodeOfEthics} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
