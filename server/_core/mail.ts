@@ -222,3 +222,146 @@ export async function sendWelcomeNewsletterEmail(
     `,
   });
 }
+
+export async function sendWelcomeEmailWithBenefits(email: string, name: string) {
+  const baseUrl = ENV.appUrl.replace(/\/$/, "");
+
+  await sendBrevoEmail({
+    to: email,
+    subject: `Benvenuto nell'Elite di Bishouy.com, ${name} — La tua esperienza inizia ora`,
+    htmlContent: `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benvenuto su Bishouy.com</title>
+</head>
+<body style="margin:0; padding:0; background-color:#0A0A09; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #D4D0C8;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0A0A09; padding: 40px 20px;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px; width:100%; background-color:#0F0F0E; border-radius:12px; overflow:hidden; border: 1px solid #1C1C1A; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+                    
+                    <tr>
+                        <td style="background-color:#1C1C1A; padding: 24px 40px; border-bottom: 2px solid #E8A020;">
+                            <table width="100%">
+                                <tr>
+                                    <td>
+                                        <span style="color:#E8A020; font-size:14px; font-weight:800; letter-spacing:6px; text-transform:uppercase;">BISHOUY.COM</span>
+                                    </td>
+                                    <td align="right">
+                                        <span style="color:#555550; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:1px;">Welcome Pack</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 0;">
+                            <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1200&auto=format&fit=crop" alt="Premium Journalism" style="width:100%; height:auto; display:block; border-bottom: 1px solid #1C1C1A;">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding: 48px 40px 32px;">
+                            <h1 style="margin:0 0 16px; font-size:36px; font-weight:900; color:#F2F0EB; line-height:1.1;">
+                                Benvenuto,<br/><span style="color:#E8A020;">${name}.</span>
+                            </h1>
+                            <p style="margin:0 0 24px; font-size:18px; color:#D4D0C8; line-height:1.6;">
+                                Siamo entusiasti di averti con noi. Bishouy.com non è solo un sito di notizie; è la tua nuova bussola nel panorama dell'informazione globale non filtrata.
+                            </p>
+
+                            <div style="background-color:#141412; border-left:4px solid #E8A020; padding: 20px; margin: 32px 0;">
+                                <p style="margin:0; font-size:15px; color:#F2F0EB; font-style:italic; line-height:1.6;">
+                                    "Il nostro obiettivo è fornirti la profondità analitica che meriti, con la velocità di cui hai bisogno."
+                                </p>
+                            </div>
+
+                            <h2 style="font-size:20px; color:#F2F0EB; margin: 40px 0 20px; text-transform:uppercase; letter-spacing:2px; font-weight:700;">I tuoi benefici esclusivi</h2>
+                            
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td valign="top" style="padding-bottom: 24px;">
+                                        <table width="100%">
+                                            <tr>
+                                                <td width="50" valign="top">
+                                                    <div style="width:36px; height:36px; background-color:#E8A020; border-radius:50%; text-align:center; line-height:36px; color:#0F0F0E; font-weight:bold;">1</div>
+                                                </td>
+                                                <td>
+                                                    <p style="margin:0 0 4px; color:#F2F0EB; font-weight:700; font-size:16px;">Accesso Illimitato</p>
+                                                    <p style="margin:0; font-size:14px; color:#8A8880;">Leggi tutti i nostri articoli esclusivi e le analisi investigative senza limiti.</p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top" style="padding-bottom: 24px;">
+                                        <table width="100%">
+                                            <tr>
+                                                <td width="50" valign="top">
+                                                    <div style="width:36px; height:36px; background-color:#E8A020; border-radius:50%; text-align:center; line-height:36px; color:#0F0F0E; font-weight:bold;">2</div>
+                                                </td>
+                                                <td>
+                                                    <p style="margin:0 0 4px; color:#F2F0EB; font-weight:700; font-size:16px;">Intelligenza Artificiale Editoriale</p>
+                                                    <p style="margin:0; font-size:14px; color:#8A8880;">Interagisci con i nostri strumenti IA per approfondire ogni notizia o generare analisi personalizzate.</p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top" style="padding-bottom: 24px;">
+                                        <table width="100%">
+                                            <tr>
+                                                <td width="50" valign="top">
+                                                    <div style="width:36px; height:36px; background-color:#E8A020; border-radius:50%; text-align:center; line-height:36px; color:#0F0F0E; font-weight:bold;">3</div>
+                                                </td>
+                                                <td>
+                                                    <p style="margin:0 0 4px; color:#F2F0EB; font-weight:700; font-size:16px;">Salvataggio Articoli</p>
+                                                    <p style="margin:0; font-size:14px; color:#8A8880;">Crea la tua libreria personale di letture per consultarle quando vuoi, da qualsiasi dispositivo.</p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin: 48px 0 24px;">
+                                <tr>
+                                    <td align="center" style="background-color:#E8A020; border-radius:6px; padding: 18px;">
+                                        <a href="${baseUrl}" style="color:#0F0F0E; text-decoration:none; font-size:16px; font-weight:800; text-transform:uppercase; letter-spacing:2px; display:block;">
+                                            Esplora il sito →
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="margin: 40px 0 0; font-size:15px; color:#8A8880; line-height:1.6; text-align:center;">
+                                Ci vediamo dall'altra parte dell'informazione.<br/>
+                                — <strong style="color:#F2F0EB;">Il Team di Bishouy.com</strong>
+                            </p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="background-color:#070707; padding: 32px 40px; border-top: 1px solid #1C1C1A; text-align:center;">
+                            <p style="margin:0; font-size:11px; color:#444440; line-height:1.8; text-transform:uppercase; letter-spacing:1px;">
+                                &copy; 2026 BISHOUY EDITORIAL GROUP. TUTTI I DIRITTI RISERVATI.<br/>
+                                <a href="${baseUrl}/privacy-policy" style="color:#666660; text-decoration:none;">Privacy</a> &nbsp;·&nbsp; 
+                                <a href="${baseUrl}/contact" style="color:#666660; text-decoration:none;">Contatti</a>
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+    `,
+  });
+}

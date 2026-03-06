@@ -80,6 +80,7 @@ import {
   sendPasswordResetEmail,
   sendNewsletterBroadcast,
   sendWelcomeNewsletterEmail,
+  sendWelcomeEmailWithBenefits,
 } from "./_core/mail";
 import { stripHtml } from "./utils";
 import crypto from "crypto";
@@ -199,6 +200,13 @@ export const appRouter = router({
           ...cookieOptions,
           maxAge: 1000 * 60 * 60 * 24 * 365,
         });
+
+        // Send professional welcome email after successful verification
+        try {
+          await sendWelcomeEmailWithBenefits(user.email!, user.name || "Nuovo Utente");
+        } catch (error) {
+          console.error("[WELCOME EMAIL ERROR]", error);
+        }
 
         return { success: true };
       }),
