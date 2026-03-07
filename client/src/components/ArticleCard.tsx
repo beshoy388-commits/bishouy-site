@@ -89,10 +89,14 @@ export default function ArticleCard({
   }, [likeCountQuery.data]);
 
   useEffect(() => {
+    if (!user) {
+      setUserLiked(false);
+      return;
+    }
     if (userLikedQuery.data !== undefined) {
       setUserLiked(userLikedQuery.data);
     }
-  }, [userLikedQuery.data]);
+  }, [userLikedQuery.data, user]);
 
   const handleLikeClick = (e: React.MouseEvent) => {
     e.preventDefault();

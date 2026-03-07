@@ -122,13 +122,26 @@ export default function ArticleDetail() {
   );
 
   const toggleBookmarkMutation = trpc.bookmarks.toggle.useMutation({
+    onMutate: async () => {
+      const prevSaved = isSaved;
+      setIsSaved(!prevSaved);
+      utils.bookmarks.hasSaved.setData({ articleId: article!.id }, !prevSaved);
+      return { prevSaved };
+    },
     onSuccess: saved => {
       setIsSaved(saved);
+      utils.bookmarks.hasSaved.setData({ articleId: article!.id }, saved);
       toast.success(
         saved ? "Article saved to bookmarks" : "Article removed from bookmarks"
       );
     },
-    onError: error => toast.error(error.message),
+    onError: (error, variables, context: any) => {
+      if (context) {
+        setIsSaved(context.prevSaved);
+        utils.bookmarks.hasSaved.setData({ articleId: article!.id }, context.prevSaved);
+      }
+      toast.error(error.message || "Failed to sync bookmarks");
+    },
   });
 
   // Query for related articles
@@ -254,17 +267,25 @@ export default function ArticleDetail() {
 
   // Effect to update user's like status
   useEffect(() => {
+    if (!user) {
+      setUserLiked(false);
+      return;
+    }
     if (userLikedQuery.data !== undefined) {
       setUserLiked(userLikedQuery.data);
     }
-  }, [userLikedQuery.data]);
+  }, [userLikedQuery.data, user]);
 
   // Effect to update user's bookmark status
   useEffect(() => {
+    if (!user) {
+      setIsSaved(false);
+      return;
+    }
     if (hasSavedQuery.data !== undefined) {
       setIsSaved(hasSavedQuery.data);
     }
-  }, [hasSavedQuery.data]);
+  }, [hasSavedQuery.data, user]);
 
   // Handler per il click sul like
   const handleLikeClick = () => {

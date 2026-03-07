@@ -75,6 +75,7 @@ import {
   generateVerificationCode,
 } from "./security";
 import { sdk } from "./_core/sdk";
+import { sendDailyNewsletter } from "./newsletter_job";
 import {
   sendVerificationEmail,
   sendPasswordResetEmail,
@@ -633,7 +634,7 @@ export const appRouter = router({
       .input(z.object({ articleId: z.number(), userId: z.number().optional() }))
       .query(async ({ input }) => {
         if (!input.userId) return false;
-        return hasUserLikedArticle(input.userId, input.articleId);
+        return hasUserLikedArticle(input.articleId, input.userId);
       }),
 
     // Public: Get article with like info
@@ -941,7 +942,9 @@ export const appRouter = router({
     toggle: protectedProcedure
       .input(z.object({ articleId: z.number() }))
       .mutation(async ({ input, ctx }) => {
-        return toggleArticleLike(input.articleId, ctx.user.id);
+        const liked = await toggleArticleLike(input.articleId, ctx.user.id);
+        const likeCount = await getArticleLikeCount(input.articleId);
+        return { liked, likeCount };
       }),
   }),
 
@@ -1114,6 +1117,28 @@ export const appRouter = router({
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         return deleteSubscriber(input.id);
+      }),
+
+    // Admin-only: Send a manual test of the AI DAILY Newsletter (7 AM template)
+    // This allows the editor to verify the automatic morning brief layout & content.
+    triggerDailyAITest: adminProcedure
+      .input(z.object({ email: z.string().email().optional() }))
+      .mutation(async ({ input, ctx }) => {
+        const testTarget = input.email || ctx.user.email;
+        if (!testTarget) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "No recipient email found.",
+          });
+        }
+        // Send asynchronously
+        sendDailyNewsletter(testTarget).catch(err => {
+          console.error("[Manual Newsletter Test Error]", err);
+        });
+        return {
+          success: true,
+          message: `Daily AI newsletter test sent to ${testTarget}. Check inbox.`,
+        };
       }),
   }),
 
