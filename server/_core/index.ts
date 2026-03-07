@@ -135,17 +135,31 @@ async function startServer() {
           .json({ error: "File size must be less than 5MB" });
       }
 
+      const width = parseInt(req.query.width as string) || 1200;
+      const height = parseInt(req.query.height as string) || 800;
+      const fit = (req.query.fit as "cover" | "contain" | "fill" | "inside" | "outside") || "inside";
+
       // Compress and optimize the image before saving it
       const compressedBuffer = await sharp(req.file.buffer)
-        .rotate() // Automatically rotate based on EXIF metadata
-        .resize(800, 800, { fit: "inside", withoutEnlargement: true })
-        .webp({ quality: 75 })
+        .rotate()
+        .resize(width, height, {
+          fit,
+          withoutEnlargement: true,
+          background: { r: 0, g: 0, b: 0, alpha: 0 }
+        })
+        .webp({ quality: 80 })
         .toBuffer();
 
       const b64 = compressedBuffer.toString("base64");
       const url = `data:image/webp;base64,${b64}`;
 
-      res.json({ url });
+      res.json({
+        url,
+        filename: req.file.originalname,
+        format: "webp",
+        size: compressedBuffer.length,
+        dimensions: { width, height }
+      });
     } catch (error) {
       console.error("Upload error:", error);
       res.status(500).json({ error: "Upload failed" });

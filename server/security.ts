@@ -42,7 +42,7 @@ export function checkRateLimit(
 /**
  * Validate and sanitize input to prevent XSS and injection attacks
  */
-export function sanitizeInput(input: string, maxLength: number = 5000): string {
+export function sanitizeInput(input: string, maxLength: number = 50000): string {
   if (typeof input !== "string") {
     throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid input type" });
   }
@@ -54,8 +54,12 @@ export function sanitizeInput(input: string, maxLength: number = 5000): string {
     });
   }
 
-  // Remove potentially dangerous characters but allow basic HTML for content
-  return input.trim();
+  // Basic sanitization: Remove script tags and event handlers to prevent common XSS
+  // For complex HTML, we rely on the library logic, but this is a safety net
+  return input
+    .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gim, "")
+    .replace(/on\w+\s*=/gim, "x-on=")
+    .trim();
 }
 
 /**
@@ -171,6 +175,14 @@ export function validateAndCleanArticleData(data: any) {
       code: "BAD_REQUEST",
       message: "Excerpt contains suspicious content",
     });
+  }
+
+  if (detectSuspiciousInput(validated.content)) {
+    // We don't block content because it might contain valid code snippets, 
+    // but we ensure it goes through sanitization
+    validated.content = sanitizeInput(validated.content, 50000);
+  } else {
+    validated.content = validated.content.trim();
   }
 
   if (!validateImageUrl(validated.image)) {

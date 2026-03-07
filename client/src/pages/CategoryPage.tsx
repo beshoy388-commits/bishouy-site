@@ -65,31 +65,34 @@ export default function CategoryPage() {
       <BreakingNewsTicker />
 
       {/* Category Header */}
-      <section className="pt-28 md:pt-40 pb-10 md:pb-16 bg-[#11110F] border-b border-[#1C1C1A]">
-        <div className="container">
+      <section className="pt-28 md:pt-40 pb-12 md:pb-24 relative overflow-hidden bg-[#0A0A09]">
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#E8A020]/20 to-transparent" style={{ backgroundColor: category.color + '22' }} />
+        </div>
+
+        <div className="container relative z-10">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-[#8A8880] hover:text-[#E8A020] transition-colors mb-8 font-ui text-xs uppercase tracking-widest"
+            className="inline-flex items-center gap-2 text-[#8A8880] hover:text-[#E8A020] transition-colors mb-10 font-ui text-[10px] uppercase tracking-[0.2em] font-bold"
           >
-            <ArrowLeft size={14} />
-            Back to Home
+            <ArrowLeft size={16} />
+            BACK TO THE SOURCE
           </Link>
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-4">
+          <div className="bg-[#11110F]/60 backdrop-blur-xl border border-[#1C1C1A] p-8 md:p-12 rounded-lg max-w-4xl shadow-2xl">
+            <div className="space-y-8">
               <span
-                className="px-3 py-1 text-[10px] font-ui font-bold uppercase tracking-[0.2em] rounded-sm"
-                style={{ backgroundColor: category.color, color: "#0F0F0E" }}
+                className="px-5 py-2 text-[10px] font-ui font-900 uppercase tracking-[0.4em] rounded-sm inline-block shadow-lg"
+                style={{ backgroundColor: category.color, color: "#000" }}
               >
-                Category
+                {category.name}
               </span>
-              <h1 className="font-display text-5xl md:text-7xl text-[#F2F0EB] leading-none uppercase">
+              <h1 className="font-display text-6xl md:text-9xl text-[#F2F0EB] leading-[0.85] uppercase tracking-tighter">
                 {category.name}
               </h1>
-              <p className="font-ui text-xs md:text-sm text-[#8A8880] uppercase tracking-widest flex items-center gap-3">
-                <span className="w-8 h-[2px] bg-[#E8A020]" />
-                {articles?.length || 0} article
-                {(articles?.length || 0) !== 1 ? "s" : ""} published
+              <div className="h-px w-24 bg-[#E8A020] my-8" />
+              <p className="font-ui text-[10px] md:text-xs text-[#8A8880] uppercase tracking-[0.3em] flex items-center gap-4 font-bold">
+                TOTAL ARCHIVE DEPTH: <span className="text-[#F2F0EB] bg-[#1C1C1A] px-2 py-0.5 rounded">{articles?.length || 0}</span> ARTICLES
               </p>
             </div>
           </div>

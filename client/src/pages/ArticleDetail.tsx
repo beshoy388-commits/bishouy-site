@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import SEO from "@/components/SEO";
+import AdPlacement from "@/components/AdPlacement";
 
 export default function ArticleDetail() {
   const [match, params] = useRoute("/articolo/:slug");
@@ -145,6 +146,10 @@ export default function ArticleDetail() {
     },
   });
 
+  // Query for site settings
+  const { data: settings } = trpc.settings.getAll.useQuery();
+  const allowComments = settings?.find(s => s.key === "allow_comments")?.value !== "false";
+
   // Query for related articles
   const { data: relatedArticles } = trpc.articles.getRelated.useQuery(
     { articleId: article?.id || 0, limit: 3 },
@@ -155,7 +160,9 @@ export default function ArticleDetail() {
   const createCommentMutation = trpc.comments.create.useMutation({
     onSuccess: () => {
       setCommentText("");
-      toast.success("Comment submitted for moderation");
+      toast.success("Comment processing initiated.", {
+        description: "Your insights are being distributed. They will appear shortly.",
+      });
       refetchComments();
     },
     onError: error => {
@@ -905,38 +912,46 @@ export default function ArticleDetail() {
                 )}
 
                 {/* Comment Form */}
-                {user ? (
-                  <div className="bg-[#1C1C1A] rounded-sm p-6">
-                    <h4 className="font-medium text-[#F2F0EB] mb-4">
-                      Leave a Comment
-                    </h4>
-                    <textarea
-                      value={commentText}
-                      onChange={e => setCommentText(e.target.value)}
-                      placeholder="Share your thoughts..."
-                      className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm p-3 text-[#D4D0C8] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] resize-none"
-                      rows={4}
-                    />
-                    <button
-                      onClick={handleSubmitComment}
-                      disabled={isSubmitting || !commentText.trim()}
-                      className="mt-4 flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
-                    >
-                      <Send size={14} />
-                      {isSubmitting ? "Submitting..." : "Post Comment"}
-                    </button>
-                  </div>
+                {allowComments ? (
+                  user ? (
+                    <div className="bg-[#1C1C1A] rounded-sm p-6">
+                      <h4 className="font-medium text-[#F2F0EB] mb-4">
+                        Leave a Comment
+                      </h4>
+                      <textarea
+                        value={commentText}
+                        onChange={e => setCommentText(e.target.value)}
+                        placeholder="Share your thoughts..."
+                        className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm p-3 text-[#D4D0C8] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] resize-none"
+                        rows={4}
+                      />
+                      <button
+                        onClick={handleSubmitComment}
+                        disabled={isSubmitting || !commentText.trim()}
+                        className="mt-4 flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
+                      >
+                        <Send size={14} />
+                        {isSubmitting ? "Submitting..." : "Post Comment"}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="bg-[#1C1C1A] rounded-sm p-6 text-center">
+                      <p className="text-[#8A8880] mb-4">
+                        Sign in to leave a comment
+                      </p>
+                      <a
+                        href={getLoginUrl()}
+                        className="inline-flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
+                      >
+                        Sign in to Comment
+                      </a>
+                    </div>
+                  )
                 ) : (
-                  <div className="bg-[#1C1C1A] rounded-sm p-6 text-center">
-                    <p className="text-[#8A8880] mb-4">
-                      Sign in to leave a comment
+                  <div className="bg-[#1C1C1A]/50 rounded-sm p-6 text-center border border-dashed border-[#222220]">
+                    <p className="text-[#555550] font-ui text-xs uppercase tracking-widest">
+                      Comments are disabled for this article
                     </p>
-                    <a
-                      href={getLoginUrl()}
-                      className="inline-flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
-                    >
-                      Sign in to Comment
-                    </a>
                   </div>
                 )}
               </div>
@@ -1093,12 +1108,20 @@ export default function ArticleDetail() {
                   </div>
                 </div>
               )}
+
+              {/* Sidebar Ad Placement */}
+              <AdPlacement position="sidebar" className="mt-8" />
             </aside>
           </div>
         </div>
       </article>
 
+      {/* Bottom Ad Placement */}
+      <div className="container pb-12 overflow-hidden">
+        <AdPlacement position="banner_bottom" />
+      </div>
+
       <Footer />
-    </main >
+    </main>
   );
 }

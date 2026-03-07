@@ -20,6 +20,7 @@ import GlobalComments from "@/components/GlobalComments";
 import AdminSidebar from "@/components/AdminSidebar";
 import SiteSettings from "@/components/SiteSettings";
 import SecurityStatus from "@/components/SecurityStatus";
+import MediaLibrary from "@/components/MediaLibrary";
 import {
   Loader2,
   Plus,
@@ -48,6 +49,7 @@ export default function AdminPanel() {
     | "system"
     | "settings"
     | "security"
+    | "media"
   >("dashboard");
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -74,6 +76,7 @@ export default function AdminPanel() {
   }, [isAuthenticated, user, loading, setLocation]);
 
   const articlesQuery = trpc.articles.listAdmin.useQuery();
+  const maintenanceStatus = trpc.system.getStatus.useQuery();
   const triggerAiMutation = trpc.ai.triggerNewsGeneration.useMutation();
 
   const deleteArticleMutation = trpc.articles.delete.useMutation({
@@ -134,6 +137,8 @@ export default function AdminPanel() {
             }}
           />
         );
+      case "media":
+        return <MediaLibrary />;
       case "articles":
         if (showForm) {
           return (
@@ -180,28 +185,37 @@ export default function AdminPanel() {
                 </div>
               </div>
               <div className="flex flex-wrap gap-3">
-                <button
-                  onClick={() => {
-                    const promise = triggerAiMutation.mutateAsync();
-                    toast.promise(promise, {
-                      loading: "Engaging AI Agents...",
-                      success: "AI news cycle triggered successfully.",
-                      error: "Agent failure. Check system logs.",
-                    });
-                  }}
-                  className="flex items-center justify-center gap-2 bg-[#1C1C1A] border border-[#2A2A28] hover:border-[#E8A020] text-[#E8A020] font-ui text-[10px] md:text-xs font-bold uppercase tracking-widest px-5 py-3 rounded-sm transition-all hover:scale-105 active:scale-95"
-                  disabled={triggerAiMutation.isPending}
-                >
-                  <Bot size={16} />
-                  {triggerAiMutation.isPending ? "PROCESSING..." : "TRIGGER AI CYCLE"}
-                </button>
-                <button
-                  onClick={() => setShowForm(true)}
-                  className="flex items-center justify-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] md:text-xs font-bold uppercase tracking-widest px-6 py-3 rounded-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-[#E8A020]/10"
-                >
-                  <Plus size={16} />
-                  NEW ARTICLE
-                </button>
+                <div className="flex flex-col gap-1.5 items-end">
+                  <button
+                    onClick={() => {
+                      const promise = triggerAiMutation.mutateAsync();
+                      toast.promise(promise, {
+                        loading: "Engaging AI Agents...",
+                        success: "AI news cycle triggered successfully.",
+                        error: "Agent failure. Check system logs.",
+                      });
+                    }}
+                    className="flex items-center justify-center gap-2 bg-[#1C1C1A] border border-[#2A2A28] hover:border-[#E8A020] text-[#E8A020] font-ui text-[10px] md:text-xs font-bold uppercase tracking-widest px-5 py-3 rounded-sm transition-all hover:scale-105 active:scale-95"
+                    disabled={triggerAiMutation.isPending}
+                  >
+                    <Bot size={16} />
+                    Trigger AI Sync
+                  </button>
+                  <span className="text-[8px] text-[#555550] uppercase tracking-tighter">Manually start automated RSS to AI generation</span>
+                </div>
+                <div className="flex flex-col gap-1.5 items-end">
+                  <button
+                    onClick={() => {
+                      setEditingId(null);
+                      setShowForm(true);
+                    }}
+                    className="flex items-center justify-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] md:text-xs font-bold uppercase tracking-widest px-8 py-3 rounded-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-[#E8A020]/20"
+                  >
+                    <Plus size={16} />
+                    Create Manual Draft
+                  </button>
+                  <span className="text-[8px] text-[#555550] uppercase tracking-tighter">Open editor for a new human-written article</span>
+                </div>
               </div>
             </div>
 
@@ -382,10 +396,10 @@ export default function AdminPanel() {
             </div>
             <button
               onClick={() => setActiveTab("security")}
-              className={`relative transition-colors ${activeTab === 'security' ? 'text-[#E8A020]' : 'text-[#8A8880] hover:text-[#E8A020]'}`}
+              className={`relative p-2 rounded-full transition-all hover:bg-[#1C1C1A] ${activeTab === 'security' ? 'text-[#E8A020] bg-[#E8A020]/10' : 'text-[#8A8880] hover:text-[#E8A020]'}`}
+              title="Security Protocols"
             >
               <ShieldAlert size={20} />
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
             </button>
           </div>
         </header>
@@ -398,8 +412,13 @@ export default function AdminPanel() {
         <footer className="py-6 px-10 border-t border-[#1C1C1A] flex flex-col sm:flex-row justify-between items-center gap-4 text-[9px] font-ui text-[#333330] uppercase tracking-[0.2em]">
           <p>© 2026 BISHOUY ENTERPRISE CORE // ALL RIGHTS RESERVED</p>
           <div className="flex items-center gap-6">
-            <span>SYSTEM STATUS: OPERATIONAL</span>
-            <span className="text-green-500/50">SECURE NODE: ALPHA-09</span>
+            <span className="flex items-center gap-2">
+              SYSTEM STATUS:
+              <span className={maintenanceStatus.data?.maintenance ? "text-red-500 font-bold" : "text-green-500 font-bold"}>
+                {maintenanceStatus.data?.maintenance ? "MAINTENANCE MODE" : "OPERATIONAL"}
+              </span>
+            </span>
+            <span className="text-[#555550]">CORE SECURE: V3.4.0-{Math.random().toString(36).substring(7).toUpperCase()}</span>
           </div>
         </footer>
       </div>

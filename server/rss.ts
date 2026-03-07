@@ -226,12 +226,21 @@ export async function syncRSSFeeds() {
   let newArticlesCount = 0;
 
   try {
+    const { getAllArticles, createArticle, getArticleBySlug, getSiteSettings } = await import("./db");
+
+    // Check if AI generation is enabled in settings
+    const settings = await getSiteSettings();
+    const isAiEnabled = settings.find(s => s.key === "ai_generation_enabled")?.value !== "false";
+
+    if (!isAiEnabled) {
+      log("[RSS] AI Generation is currently DISABLED in site settings. Skipping sync.");
+      return { success: false, message: "AI Generation is disabled in settings." };
+    }
+
     if (!ENV.openRouterApiKey) {
       log("[RSS] Aborting: OPENROUTER_API_KEY is missing.");
       return { success: false, message: "OPENROUTER_API_KEY is missing." };
     }
-
-    const { getAllArticles, createArticle, getArticleBySlug } = await import("./db");
 
     for (const feedConfig of RSS_FEEDS) {
       try {

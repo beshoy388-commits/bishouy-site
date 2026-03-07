@@ -45,6 +45,13 @@ class MemoryCache<T> {
       }
     });
   }
+
+  /**
+   * Clear entire cache store
+   */
+  clear(): void {
+    this.cache.clear();
+  }
 }
 
 // Global cache instance for AI responses

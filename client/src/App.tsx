@@ -76,19 +76,41 @@ function Router() {
   );
 }
 
+const Maintenance = lazy(() => import("@/pages/Maintenance"));
+
+function MaintenanceGuard({ children }: { children: React.ReactNode }) {
+  const { data: status, isLoading } = trpc.system.getStatus.useQuery(undefined, {
+    refetchInterval: 60000,
+  });
+  const { user } = useAuth();
+
+  if (isLoading) return <PageFallback />;
+  if (status?.maintenance && user?.role !== "admin") {
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <Maintenance />
+      </Suspense>
+    );
+  }
+
+  return <>{children}</>;
+}
+
 import { UIProvider, useUI } from "./contexts/UIContext";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import { trpc } from "./lib/trpc";
+import { useAuth } from "./_core/hooks/useAuth";
 
 function AppContent() {
   const { setIsSearchOpen } = useUI();
   return (
-    <>
+    <MaintenanceGuard>
       <Toaster />
       <Router />
       <CookieConsent />
       <BackToTop />
       <MobileBottomNav onSearchClick={() => setIsSearchOpen(true)} />
-    </>
+    </MaintenanceGuard>
   );
 }
 

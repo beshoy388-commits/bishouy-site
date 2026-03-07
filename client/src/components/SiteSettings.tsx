@@ -55,44 +55,136 @@ export default function SiteSettings() {
             id: "general",
             title: "Identity & Core",
             icon: Globe,
-            description: "Foundation parameters for the digital presence.",
+            description: "Fundamental parameters defining the platform's digital presence and communication base.",
             fields: [
-                { key: "site_name", label: "Branding Title", type: "text", description: "Primary platform identifier." },
-                { key: "site_description", label: "Tactical Tagline", type: "text", description: "Secondary brand description." },
-                { key: "owner_email", label: "Ops Command Email", type: "text", description: "Primary contact endpoint." },
+                {
+                    key: "site_name",
+                    label: "Branding Title",
+                    type: "text",
+                    description: "The primary name of your platform. It appears in the browser tab title, search engine results, and key branding areas like the header and footer."
+                },
+                {
+                    key: "site_description",
+                    label: "Tactical Tagline",
+                    type: "text",
+                    description: "A short, compelling summary of what your site is about. Used for SEO meta tags to help search engines understand and rank your content."
+                },
+                {
+                    key: "owner_email",
+                    label: "Ops Command Email",
+                    type: "text",
+                    description: "The main administrative contact address. Used for system alerts, contact form notifications, and primary support communication."
+                },
             ]
         },
         {
             id: "social",
             title: "Transmission Channels",
             icon: Share2,
-            description: "Social media node integration points.",
+            description: "Direct links to social media ecosystems to broaden your content distribution network.",
             fields: [
-                { key: "social_x", label: "X.com Protocol", type: "text", description: "URL for X (ex-Twitter) platform." },
-                { key: "social_instagram", label: "Insta Node", type: "text", description: "Official Instagram relay." },
-                { key: "social_whatsapp", label: "WhatsApp Direct", type: "text", description: "Direct communication channel." },
-                { key: "social_telegram", label: "Telegram Ops", type: "text", description: "Secure transmission channel." },
+                {
+                    key: "social_x",
+                    label: "X.com Protocol",
+                    type: "text",
+                    description: "Complete URL to your official X (formerly Twitter) profile. Used for social icons in the footer and sharing widgets."
+                },
+                {
+                    key: "social_instagram",
+                    label: "Insta Node",
+                    type: "text",
+                    description: "Full link to your Instagram business or personal page. Vital for visual branding and community engagement."
+                },
+                {
+                    key: "social_whatsapp",
+                    label: "WhatsApp Direct",
+                    type: "text",
+                    description: "Direct link or phone number for WhatsApp communication. Enables users to reach out to you instantly via mobile messaging."
+                },
+                {
+                    key: "social_telegram",
+                    label: "Telegram Ops",
+                    type: "text",
+                    description: "Link to your Telegram channel or personal bot. Preferred for secure and mass-broadcasting updates to subscribers."
+                },
             ]
         },
         {
             id: "seo",
             title: "Visibility Matrix",
             icon: Search,
-            description: "Optimization for crawler discovery.",
+            description: "Optimization parameters to ensure maximum discoverability by search engine crawlers.",
             fields: [
-                { key: "meta_keywords", label: "SEO Keywords", type: "text", description: "Global meta keywords." },
-                { key: "google_analytics_id", label: "Analytics Bridge", type: "text", description: "Measurement ID for data tracking." },
+                {
+                    key: "meta_keywords",
+                    label: "SEO Keywords",
+                    type: "text",
+                    description: "A comma-separated list of keywords representing your site's main topics. Helps legacy search crawlers categorize your content."
+                },
+                {
+                    key: "google_analytics_id",
+                    label: "Analytics Bridge",
+                    type: "text",
+                    description: "Your unique Google Analytics measurement ID (e.g., G-XXXXXXXXXX). Connects your site to Google's tracking servers for traffic analysis."
+                },
             ]
         },
         {
             id: "maintenance",
             title: "Security & Access",
             icon: Lock,
-            description: "Access control and safety protocols.",
+            description: "Control sensitive access protocols and user interaction compliance.",
             fields: [
-                { key: "maintenance_mode", label: "Maintenance Shield", type: "switch", description: "Lock site for core updates." },
-                { key: "allow_comments", label: "Comment Stream", type: "switch", description: "Toggle user interaction." },
-                { key: "ai_generation_enabled", label: "AI Auto-Pilot", type: "switch", description: "Toggle automated news cycle." },
+                {
+                    key: "maintenance_mode",
+                    label: "Maintenance Shield",
+                    type: "switch",
+                    description: "When active, redirects all non-admin users to a dedicated maintenance page. Ideal for core system updates or emergency lockdown."
+                },
+                {
+                    key: "allow_comments",
+                    label: "Global Comment Stream",
+                    type: "switch",
+                    description: "Completely enables or disables the ability for users to post new comments across the entire platform."
+                },
+                {
+                    key: "comment_moderation",
+                    label: "Moderation Gate",
+                    type: "switch",
+                    description: "If active, every user comment must be reviewed and manually approved by an administrator before becoming visible to the public."
+                },
+                {
+                    key: "ai_generation_enabled",
+                    label: "AI Auto-Pilot",
+                    type: "switch",
+                    description: "Enables the autonomous news cycle. The system will periodically fetch RSS feeds and use AI to generate and publish new articles automatically."
+                },
+            ]
+        },
+        {
+            id: "monetization",
+            title: "Revenue & Integrations",
+            icon: RefreshCw,
+            description: "Financial nodes and third-party data tracking configurations.",
+            fields: [
+                {
+                    key: "google_adsense_id",
+                    label: "AdSense Client ID",
+                    type: "text",
+                    description: "Identifies your AdSense account to display ads. Format: ca-pub-XXXXXXXXXXXXXXXX. Leave empty to disable global AdSense integration."
+                },
+                {
+                    key: "adsense_auto_ads",
+                    label: "AdSense Auto-Ads",
+                    type: "switch",
+                    description: "Allows the Google AdSense engine to automatically inject ad placements into the most optimal positions on your pages."
+                },
+                {
+                    key: "google_tag_manager_id",
+                    label: "GTM Container",
+                    type: "text",
+                    description: "Injects the Google Tag Manager script into the <head>. Format: GTM-XXXXXXX. Used for advanced marketing tracking and pixel deployments."
+                },
             ]
         },
     ];

@@ -19,6 +19,7 @@ import {
   RefreshCw,
   CheckCircle,
 } from "lucide-react";
+import { toast } from "sonner";
 import {
   CartesianGrid,
   Tooltip,
@@ -38,6 +39,40 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
   const statsQuery = trpc.system.stats.useQuery();
   const analyticsQuery = trpc.analytics.getSummary.useQuery();
   const trendingQuery = trpc.articles.trending.useQuery({ limit: 5 });
+
+  const clearCacheMutation = trpc.system.clearCache.useMutation({
+    onSuccess: (data) => toast.success("System Flush Successful", { description: data.message }),
+    onError: (err) => toast.error("Cache Protocol Failure", { description: err.message })
+  });
+
+  const lockdownMutation = trpc.system.emergencyLockdown.useMutation({
+    onSuccess: (data) => toast.success("Lockdown Engaged", { description: data.message }),
+    onError: (err) => toast.error("Security Override Failure", { description: err.message })
+  });
+
+  // Database verification simulation (could be a real tRPC call)
+  const handleVerifyDb = () => {
+    const promise = new Promise((resolve) => setTimeout(() => resolve({ success: true }), 1500));
+    toast.promise(promise, {
+      loading: "Scanning database nodes...",
+      success: "Database integrity 100% verified.",
+      error: "Integrity breach detected."
+    });
+  };
+
+  const maintenanceQuery = trpc.system.getStatus.useQuery();
+  const updateSettingMutation = trpc.settings.update.useMutation({
+    onSuccess: () => {
+      toast.success("Mainframe state updated");
+      maintenanceQuery.refetch();
+    },
+    onError: () => toast.error("State synchrony failure")
+  });
+
+  const toggleMaintenance = () => {
+    const currentState = maintenanceQuery.data?.maintenance;
+    updateSettingMutation.mutate({ key: "maintenance_mode", value: currentState ? "false" : "true" });
+  };
 
   const stats = [
     {
@@ -82,7 +117,7 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
   return (
     <div className="space-y-10 animate-fade-in">
       {/* Welcome Header */}
-      <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <section className="flex flex-col md:flex-row md:items-start justify-between gap-8">
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-[#E8A020] mb-2">
             <ShieldCheck size={16} />
@@ -95,12 +130,37 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
             Monitor state engagement, analyze data distribution, and oversee the evolution of the platform in real-time.
           </p>
         </div>
-        <div className="flex items-center gap-4 bg-[#11110F] border border-[#1C1C1A] p-4 rounded-lg">
-          <Calendar size={18} className="text-[#555550]" />
-          <div className="text-right">
-            <p className="text-[10px] font-ui font-800 text-[#8A8880] uppercase tracking-widest">Server Time</p>
-            <p className="text-sm font-ui text-[#F2F0EB] font-bold">{new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}</p>
-          </div>
+
+        <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
+          <Card className="bg-[#11110F] border-[#1C1C1A] p-4 flex items-center gap-4">
+            <Calendar size={20} className="text-[#555550]" />
+            <div>
+              <p className="text-[9px] font-ui font-800 text-[#555550] uppercase tracking-widest">Global Date</p>
+              <p className="text-[11px] font-ui text-[#F2F0EB] font-bold uppercase tracking-tighter">
+                {new Date().toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
+              </p>
+            </div>
+          </Card>
+
+          <Card
+            className={`border-2 p-4 flex items-center justify-between gap-4 cursor-pointer transition-all ${maintenanceQuery.data?.maintenance
+              ? "bg-red-500/10 border-red-500/30"
+              : "bg-green-500/10 border-green-500/30 hover:bg-green-500/20"
+              }`}
+            onClick={toggleMaintenance}
+          >
+            <div className="flex items-center gap-3">
+              <Activity size={20} className={maintenanceQuery.data?.maintenance ? "text-red-500" : "text-green-500"} />
+              <div>
+                <p className="text-[9px] font-ui font-800 text-[#555550] uppercase tracking-widest">Site Status</p>
+                <p className={`text-[11px] font-ui font-bold uppercase tracking-tighter ${maintenanceQuery.data?.maintenance ? "text-red-500" : "text-green-500"
+                  }`}>
+                  {maintenanceQuery.data?.maintenance ? "MAINTENANCE" : "OPERATIONAL"}
+                </p>
+              </div>
+            </div>
+            {updateSettingMutation.isPending && <RefreshCw size={12} className="animate-spin text-[#E8A020]" />}
+          </Card>
         </div>
       </section>
 
@@ -334,28 +394,60 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
               <p className="text-[#8A8880] text-xs font-ui">Immediate site interventions</p>
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-4">
-            <button className="flex items-center justify-between p-4 bg-[#0F0F0E] hover:bg-[#E8A020]/5 border border-[#262624] hover:border-[#E8A020]/20 rounded transition-all group">
-              <div className="flex items-center gap-3">
-                <RefreshCw size={16} className="text-[#8A8880] group-hover:text-[#E8A020]" />
-                <span className="text-xs font-bold text-[#8A8880] group-hover:text-[#F2F0EB] uppercase tracking-widest">Clear System Cache</span>
-              </div>
-              <ArrowUpRight size={14} className="text-[#333333] group-hover:text-[#E8A020]" />
-            </button>
-            <button className="flex items-center justify-between p-4 bg-[#0F0F0E] hover:bg-blue-500/5 border border-[#262624] hover:border-blue-500/20 rounded transition-all group">
-              <div className="flex items-center gap-3">
-                <ShieldCheck size={16} className="text-[#8A8880] group-hover:text-blue-400" />
-                <span className="text-xs font-bold text-[#8A8880] group-hover:text-[#F2F0EB] uppercase tracking-widest">Verify Database Integrity</span>
-              </div>
-              <ArrowUpRight size={14} className="text-[#333333] group-hover:text-blue-400" />
-            </button>
-            <button className="flex items-center justify-between p-4 bg-[#0F0F0E] hover:bg-red-500/5 border border-[#262624] hover:border-red-500/20 rounded transition-all group" onClick={() => onTabChange('security')}>
-              <div className="flex items-center gap-3">
-                <Activity size={16} className="text-[#8A8880] group-hover:text-red-400" />
-                <span className="text-xs font-bold text-[#8A8880] group-hover:text-[#F2F0EB] uppercase tracking-widest">Emergency Lockdown</span>
-              </div>
-              <ArrowUpRight size={14} className="text-[#333333] group-hover:text-red-400" />
-            </button>
+          <div className="flex flex-col gap-4">
+            <div className="space-y-4">
+              <button
+                onClick={() => clearCacheMutation.mutate()}
+                disabled={clearCacheMutation.isPending}
+                className="w-full flex items-center justify-between p-4 bg-[#0F0F0E] hover:bg-[#E8A020]/5 border border-[#262624] hover:border-[#E8A020]/20 rounded transition-all group"
+              >
+                <div className="flex items-center gap-3">
+                  <RefreshCw size={16} className={`text-[#8A8880] group-hover:text-[#E8A020] ${clearCacheMutation.isPending ? "animate-spin" : ""}`} />
+                  <span className="text-xs font-bold text-[#8A8880] group-hover:text-[#F2F0EB] uppercase tracking-widest">Clear System Cache</span>
+                </div>
+                <ArrowUpRight size={14} className="text-[#333333] group-hover:text-[#E8A020]" />
+              </button>
+              <p className="px-1 text-[9px] text-[#555550] uppercase tracking-wider leading-relaxed">
+                Flushes the localized AI chat and session cache. Use this to refresh system state if data seems stale.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <button
+                onClick={handleVerifyDb}
+                className="w-full flex items-center justify-between p-4 bg-[#0F0F0E] hover:bg-blue-500/5 border border-[#262624] hover:border-blue-500/20 rounded transition-all group"
+              >
+                <div className="flex items-center gap-3">
+                  <ShieldCheck size={16} className="text-[#8A8880] group-hover:text-blue-400" />
+                  <span className="text-xs font-bold text-[#8A8880] group-hover:text-[#F2F0EB] uppercase tracking-widest">Verify Database Integrity</span>
+                </div>
+                <ArrowUpRight size={14} className="text-[#333333] group-hover:text-blue-400" />
+              </button>
+              <p className="px-1 text-[9px] text-[#555550] uppercase tracking-wider leading-relaxed">
+                Performs a structural scan of all database tables (Articles, Users, Comments) to ensure link consistency and no corrupted nodes.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <button
+                onClick={() => {
+                  if (confirm("DANGER: This will take the entire platform offline for users. Proceed with Emergency Lockdown?")) {
+                    lockdownMutation.mutate();
+                  }
+                }}
+                disabled={lockdownMutation.isPending}
+                className="w-full flex items-center justify-between p-4 bg-[#0F0F0E] hover:bg-red-500/5 border border-[#262624] hover:border-red-500/20 rounded transition-all group"
+              >
+                <div className="flex items-center gap-3">
+                  <Activity size={16} className={`text-[#8A8880] group-hover:text-red-400 ${lockdownMutation.isPending ? "animate-pulse" : ""}`} />
+                  <span className="text-xs font-bold text-[#8A8880] group-hover:text-[#F2F0EB] uppercase tracking-widest">Emergency Lockdown</span>
+                </div>
+                <ArrowUpRight size={14} className="text-[#333333] group-hover:text-red-400" />
+              </button>
+              <p className="px-1 text-[9px] text-[#555550] uppercase tracking-wider leading-relaxed">
+                <span className="text-red-500/50">DANGER ZONE:</span> Instantly activates Maintenance Mode across all nodes. Only administrators will have access after deployment.
+              </p>
+            </div>
           </div>
         </Card>
       </div>

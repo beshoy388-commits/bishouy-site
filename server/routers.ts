@@ -60,7 +60,7 @@ import {
   getSiteSettings,
   updateSiteSetting,
 } from "./db";
-import { comments, InsertArticle, articles, users } from "../drizzle/schema";
+import { comments, InsertArticle, articles, users, verificationCodes } from "../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import OpenAI from "openai";
@@ -90,6 +90,44 @@ import crypto from "crypto";
 import { syncRSSFeeds } from "./rss";
 import { generateArticleFromTopic } from "./ai_service";
 
+// Local cache for maintenance mode to avoid DB spam
+let maintenanceCache: { value: boolean; expires: number } | null = null;
+
+// Middleware to check for maintenance mode
+const maintenanceMiddleware = async ({ ctx, next }: any) => {
+  // Allow admins to bypass maintenance
+  if (ctx.user?.role === "admin") {
+    return next({ ctx });
+  }
+
+  const now = Date.now();
+  let isMaintenance = false;
+
+  if (maintenanceCache && now < maintenanceCache.expires) {
+    isMaintenance = maintenanceCache.value;
+  } else {
+    try {
+      const settings = await getSiteSettings();
+      isMaintenance = settings.find(s => s.key === "maintenance_mode")?.value === "true";
+      maintenanceCache = { value: isMaintenance, expires: now + 5000 }; // Cache for 5 seconds
+    } catch (e) {
+      // If settings table not found, proceed anyway
+    }
+  }
+
+  if (isMaintenance) {
+    throw new TRPCError({
+      code: "SERVICE_UNAVAILABLE",
+      message: "SYSTEM_MAINTENANCE",
+    });
+  }
+
+  return next({ ctx });
+};
+
+// Use maintenance check for public procedures too, unless it's a settings check
+const publicMaintenanceProcedure = publicProcedure.use(maintenanceMiddleware);
+
 // Admin-only procedure with security checks
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== "admin") {
@@ -112,7 +150,43 @@ const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
 });
 
 export const appRouter = router({
-  system: systemRouter,
+  system: router({
+    stats: adminProcedure.query(async () => {
+      const stats = await getAnalyticsSummary();
+      return stats;
+    }),
+    clearCache: adminProcedure.mutation(async () => {
+      aiChatCache.clear();
+      return { success: true, message: "System cache cleared successfully." };
+    }),
+    emergencyLockdown: adminProcedure.mutation(async () => {
+      await updateSiteSetting("maintenance_mode", "true");
+      return { success: true, message: "Emergency lockdown engaged. Platform is now offline." };
+    }),
+    getDebugLogs: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [];
+      return db
+        .select()
+        .from(verificationCodes)
+        .orderBy(desc(verificationCodes.createdAt))
+        .limit(20);
+    }),
+    syncRss: adminProcedure.mutation(async () => {
+      return syncRSSFeeds();
+    }),
+    getStatus: publicProcedure.query(async () => {
+      try {
+        const settings = await getSiteSettings();
+        return {
+          maintenance: settings.find(s => s.key === "maintenance_mode")?.value === "true",
+          siteName: settings.find(s => s.key === "site_name")?.value || "BISHOUY",
+        };
+      } catch (e) {
+        return { maintenance: false, siteName: "BISHOUY" };
+      }
+    }),
+  }),
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
@@ -575,14 +649,20 @@ export const appRouter = router({
             (dbData as any)[key] = value;
           }
         });
+
+        const currentArticle = await getArticleById(id);
+        if (!currentArticle) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Article not found" });
+        }
+
         const article = await updateArticle(id, dbData);
 
-        // Log the action
+        // Log the action with accurate title
         await logArticleAction(
           ctx.user.id,
           "update",
-          null,
-          { title: input.title },
+          id,
+          { title: input.title || currentArticle.title },
           getClientIp(ctx.req),
           getUserAgent(ctx.req)
         );
@@ -744,11 +824,24 @@ export const appRouter = router({
           });
         }
 
+        const settings = await getSiteSettings();
+        const allowComments = settings.find(s => s.key === "allow_comments")?.value !== "false";
+
+        if (!allowComments && ctx.user?.role !== "admin") {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Comments are currently disabled for this site.",
+          });
+        }
+
+        const moderationSetting = settings.find(s => s.key === "comment_moderation")?.value === "true";
+        const isUserAdmin = ctx.user.role === "admin";
+
         return createComment({
           articleId: input.articleId,
           userId: ctx.user.id,
           content: stripHtml(input.content),
-          approved: 1, // Auto-approve comments for immediate display
+          approved: (moderationSetting && !isUserAdmin) ? 0 : 1,
         });
       }),
 
@@ -878,8 +971,9 @@ export const appRouter = router({
       .input(
         z.object({
           title: z.string().min(1).max(255),
-          imageUrl: z.string().url(),
-          linkUrl: z.string().url(),
+          imageUrl: z.string().url().optional(),
+          adCode: z.string().optional(),
+          linkUrl: z.string().url().optional(),
           position: z.enum([
             "sidebar",
             "banner_top",
@@ -902,6 +996,7 @@ export const appRouter = router({
           id: z.number(),
           title: z.string().min(1).max(255).optional(),
           imageUrl: z.string().url().optional(),
+          adCode: z.string().optional(),
           linkUrl: z.string().url().optional(),
           position: z
             .enum(["sidebar", "banner_top", "banner_bottom", "inline"])

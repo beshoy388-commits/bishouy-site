@@ -17,6 +17,8 @@ export default function ImageUploader({
   const [previewUrl, setPreviewUrl] = useState<string>(currentImage || "");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [procOptions, setProcOptions] = useState({ width: 1200, height: 800, fit: 'inside' });
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -40,8 +42,8 @@ export default function ImageUploader({
       const formData = new FormData();
       formData.append("file", file);
 
-      // Upload to server
-      const response = await fetch("/api/upload", {
+      // Upload to server with neural processing options
+      const response = await fetch(`/api/upload?width=${procOptions.width}&height=${procOptions.height}&fit=${procOptions.fit}`, {
         method: "POST",
         body: formData,
         credentials: "include",
@@ -56,7 +58,7 @@ export default function ImageUploader({
 
       setPreviewUrl(imageUrl);
       onImageUpload(imageUrl);
-      toast.success("Image uploaded successfully");
+      toast.success("Intelligence processing complete", { description: "Asset optimized and injected." });
     } catch (error) {
       console.error("Upload error:", error);
       toast.error("Failed to upload image");
@@ -78,6 +80,48 @@ export default function ImageUploader({
 
   return (
     <div className="space-y-4">
+      {/* Photo Intelligence Options */}
+      {!previewUrl && (
+        <div className="grid grid-cols-3 gap-2 p-3 bg-[#11110F] border border-[#1C1C1A] rounded-sm mb-2">
+          <div className="space-y-1">
+            <span className="text-[8px] font-900 text-[#555550] uppercase tracking-widest block">Width</span>
+            <select
+              value={procOptions.width}
+              onChange={e => setProcOptions(prev => ({ ...prev, width: parseInt(e.target.value) }))}
+              className="w-full bg-[#0F0F0E] border border-[#2A2A28] text-[10px] text-[#F2F0EB] p-1 outline-none"
+            >
+              <option value="800">800px</option>
+              <option value="1200">1200px</option>
+              <option value="1920">1920px</option>
+            </select>
+          </div>
+          <div className="space-y-1">
+            <span className="text-[8px] font-900 text-[#555550] uppercase tracking-widest block">Height</span>
+            <select
+              value={procOptions.height}
+              onChange={e => setProcOptions(prev => ({ ...prev, height: parseInt(e.target.value) }))}
+              className="w-full bg-[#0F0F0E] border border-[#2A2A28] text-[10px] text-[#F2F0EB] p-1 outline-none"
+            >
+              <option value="600">600px</option>
+              <option value="800">800px</option>
+              <option value="1080">1080px</option>
+            </select>
+          </div>
+          <div className="space-y-1">
+            <span className="text-[8px] font-900 text-[#555550] uppercase tracking-widest block">Fit Mode</span>
+            <select
+              value={procOptions.fit}
+              onChange={e => setProcOptions(prev => ({ ...prev, fit: e.target.value }))}
+              className="w-full bg-[#0F0F0E] border border-[#2A2A28] text-[10px] text-[#F2F0EB] p-1 outline-none"
+            >
+              <option value="cover">Crop</option>
+              <option value="contain">Contain</option>
+              <option value="inside">Inside</option>
+            </select>
+          </div>
+        </div>
+      )}
+
       <div
         onClick={() => fileInputRef.current?.click()}
         className="relative border-2 border-dashed border-[#2A2A28] rounded-sm p-8 cursor-pointer hover:border-[#E8A020] transition-colors bg-[#0F0F0E] hover:bg-[#0F0F0E]/80"
@@ -95,7 +139,7 @@ export default function ImageUploader({
           {isUploading ? (
             <>
               <Loader2 className="animate-spin text-[#E8A020]" size={32} />
-              <p className="font-ui text-sm text-[#8A8880]">Uploading...</p>
+              <p className="font-ui text-[10px] font-bold text-[#E8A020] uppercase tracking-widest">Neural Processing...</p>
             </>
           ) : (
             <>
@@ -104,11 +148,8 @@ export default function ImageUploader({
                 <p className="font-ui text-sm font-600 text-[#F2F0EB]">
                   {label}
                 </p>
-                <p className="font-ui text-xs text-[#8A8880] mt-1">
-                  Click to browse or drag and drop
-                </p>
-                <p className="font-ui text-xs text-[#555550] mt-1">
-                  Max 5MB • JPG, PNG, WebP
+                <p className="font-ui text-[10px] text-[#555550] mt-1 uppercase tracking-widest font-bold">
+                  Click to scan or drag asset
                 </p>
               </div>
             </>

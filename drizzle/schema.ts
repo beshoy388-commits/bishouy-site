@@ -101,8 +101,9 @@ export const advertisements = sqliteTable("advertisements", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   description: text("description"),
-  imageUrl: text("imageUrl").notNull(),
-  linkUrl: text("linkUrl").notNull(),
+  imageUrl: text("imageUrl"),
+  adCode: text("adCode"), // For AdSense or other script-based ads
+  linkUrl: text("linkUrl"),
   position: text("position", {
     enum: ["sidebar", "banner_top", "banner_bottom", "inline"],
   }).notNull(),

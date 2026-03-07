@@ -26,6 +26,7 @@ import { getLoginUrl } from "@/const";
 import NotificationDrawer from "./NotificationDrawer";
 import SearchOverlay from "./SearchOverlay";
 import { useUI } from "@/contexts/UIContext";
+import AdPlacement from "./AdPlacement";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -280,6 +281,13 @@ export default function Navbar() {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
       />
+      {!location.startsWith("/admin") && (
+        <div className="bg-[#0A0A09] pt-2 pb-4">
+          <div className="container">
+            <AdPlacement position="banner_top" />
+          </div>
+        </div>
+      )}
     </header>
   );
 }

@@ -832,11 +832,11 @@ export async function getArticleLikeCount(articleId: number): Promise<number> {
   if (!db) return 0;
 
   const result = await db
-    .select()
+    .select({ count: sql<number>`count(*)` })
     .from(articleLikes)
     .where(eq(articleLikes.articleId, articleId));
 
-  return result.length;
+  return result[0]?.count || 0;
 }
 
 export async function hasUserLikedArticle(
@@ -1186,21 +1186,18 @@ export async function getAnalyticsSummary() {
   const db = await getDb();
   if (!db) return null;
 
-  const totalViewsResult = await db
-    .select({ total: sql<number>`sum(${articles.viewCount})` })
-    .from(articles);
-
-  const totalUsersResult = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(users);
-
-  const totalArticlesResult = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(articles);
-
-  const totalCommentsResult = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(comments);
+  // Use parallel queries for totals to speed up response
+  const [
+    totalViewsResult,
+    totalUsersResult,
+    totalArticlesResult,
+    totalCommentsResult,
+  ] = await Promise.all([
+    db.select({ total: sql<number>`sum(${articles.viewCount})` }).from(articles),
+    db.select({ count: sql<number>`count(*)` }).from(users),
+    db.select({ count: sql<number>`count(*)` }).from(articles),
+    db.select({ count: sql<number>`count(*)` }).from(comments),
+  ]);
 
   // Views in the last 24h
   const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -1209,28 +1206,34 @@ export async function getAnalyticsSummary() {
     .from(pageViews)
     .where(sql`${pageViews.createdAt} >= ${yesterday}`);
 
-  // Get daily views for the last 7 days
+  // Get daily views for the last 7 days in a single grouped query
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  sevenDaysAgo.setHours(0, 0, 0, 0);
+
+  const dailyViewsRaw = await db
+    .select({
+      day: sql<string>`date(${pageViews.createdAt})`,
+      count: sql<number>`count(*)`,
+    })
+    .from(pageViews)
+    .where(sql`${pageViews.createdAt} >= ${sevenDaysAgo}`)
+    .groupBy(sql`date(${pageViews.createdAt})`)
+    .orderBy(sql`date(${pageViews.createdAt})`);
+
+  // Map to the expected format, ensuring all days are present even with 0 views
   const dailyViews = [];
   for (let i = 6; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
     d.setHours(0, 0, 0, 0);
-    const dayEnd = new Date(d);
-    dayEnd.setHours(23, 59, 59, 999);
+    const dateStr = d.toISOString().split('T')[0];
 
-    const count = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(pageViews)
-      .where(
-        and(
-          sql`${pageViews.createdAt} >= ${d}`,
-          sql`${pageViews.createdAt} <= ${dayEnd}`
-        )
-      );
+    const dbMatch = dailyViewsRaw.find((row: { day: string | null; count: number }) => row.day === dateStr);
 
     dailyViews.push({
       date: d.toISOString(),
-      views: count[0]?.count || 0,
+      views: dbMatch?.count || 0,
     });
   }
 
@@ -1298,18 +1301,11 @@ export async function trackView(
 
   try {
     await db.transaction(async (tx: any) => {
-      const article = await tx
-        .select({ viewCount: articles.viewCount })
-        .from(articles)
-        .where(eq(articles.id, articleId))
-        .limit(1);
-
-      if (article[0]) {
-        await tx
-          .update(articles)
-          .set({ viewCount: (article[0].viewCount || 0) + 1 })
-          .where(eq(articles.id, articleId));
-      }
+      // Single atomic update for viewCount
+      await tx
+        .update(articles)
+        .set({ viewCount: sql`${articles.viewCount} + 1` })
+        .where(eq(articles.id, articleId));
 
       await tx.insert(pageViews).values({
         articleId,
@@ -1354,19 +1350,14 @@ export async function updateSiteSetting(key: string, value: string): Promise<Sit
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  const existing = await getSiteSettingByKey(key);
-  if (existing) {
-    const updated = await db
-      .update(siteSettings)
-      .set({ value, updatedAt: new Date() })
-      .where(eq(siteSettings.key, key))
-      .returning();
-    return updated[0];
-  } else {
-    const created = await db
-      .insert(siteSettings)
-      .values({ key, value, updatedAt: new Date() })
-      .returning();
-    return created[0];
-  }
+  const results = await db
+    .insert(siteSettings)
+    .values({ key, value, updatedAt: new Date() })
+    .onConflictDoUpdate({
+      target: siteSettings.key,
+      set: { value, updatedAt: new Date() },
+    })
+    .returning();
+
+  return results[0];
 }
