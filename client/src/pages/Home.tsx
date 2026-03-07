@@ -13,8 +13,11 @@ import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
 import SEO from "@/components/SEO";
 import ArticleCardSkeleton from "@/components/ArticleCardSkeleton";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 export default function Home() {
+  const { isAuthenticated, loading } = useAuth();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -154,27 +157,29 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-12 md:py-16 border-t border-[#1C1C1A]">
-        <div className="container">
-          <div className="bg-[#1C1C1A] rounded-sm p-8 md:p-12 text-center">
-            <div className="flex justify-center mb-4">
-              <div className="amber-line" />
+      {!loading && !isAuthenticated && (
+        <section className="py-12 md:py-16 border-t border-[#1C1C1A]">
+          <div className="container">
+            <div className="bg-[#1C1C1A] rounded-sm p-8 md:p-12 text-center">
+              <div className="flex justify-center mb-4">
+                <div className="amber-line" />
+              </div>
+              <h2 className="font-display text-2xl md:text-3xl text-[#F2F0EB] mb-2">
+                Stay Informed, Stay Ahead
+              </h2>
+              <p className="font-ui text-sm text-[#8A8880] mb-6 max-w-md mx-auto">
+                Expert analysis and breaking news from bishouy.com's global
+                editorial team.
+              </p>
+              <Link href="/register">
+                <button className="bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#E8A020]/20 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-all active:scale-95">
+                  Create Free Account
+                </button>
+              </Link>
             </div>
-            <h2 className="font-display text-2xl md:text-3xl text-[#F2F0EB] mb-2">
-              Stay Informed, Stay Ahead
-            </h2>
-            <p className="font-ui text-sm text-[#8A8880] mb-6 max-w-md mx-auto">
-              Expert analysis and breaking news from bishouy.com's global
-              editorial team.
-            </p>
-            <Link href="/register">
-              <button className="bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#E8A020]/20 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-all active:scale-95">
-                Create Free Account
-              </button>
-            </Link>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <Footer />
     </main>

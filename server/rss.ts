@@ -216,6 +216,11 @@ export async function syncRSSFeeds() {
     return { success: false, message: "Sync already in progress." };
   }
 
+  if (process.env.DISABLE_RSS_SYNC === "true") {
+    log("[RSS] Sync is DISABLED via environment variable.");
+    return { success: false, message: "RSS Sync is disabled." };
+  }
+
   isSyncRunning = true;
   log("[RSS] Initiating Editorial Sync...");
   let newArticlesCount = 0;
@@ -254,6 +259,12 @@ export async function syncRSSFeeds() {
           if (alreadyExists) {
             log(`[RSS] Skipping already processed article: ${item.title}`);
             continue;
+          }
+
+          // Re-check for kill-switch before each article
+          if (process.env.DISABLE_RSS_SYNC === "true") {
+            log("[RSS] Interrupted by kill-switch.");
+            return { success: false, message: "Sync interrupted." };
           }
 
           log(`[RSS] Editorial team is rewriting: ${item.title}`);
