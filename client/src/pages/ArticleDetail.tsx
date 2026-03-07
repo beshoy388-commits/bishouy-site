@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useRoute } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ArticleDetailSkeleton from "@/components/ArticleDetailSkeleton";
 import { trpc } from "@/lib/trpc";
 import {
   Loader2,
@@ -348,9 +349,9 @@ export default function ArticleDetail() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-[#0F0F0E] flex items-center justify-center">
+      <main className="min-h-screen bg-[#0F0F0E]">
         <Navbar />
-        <Loader2 className="animate-spin text-[#E8A020]" size={40} />
+        <ArticleDetailSkeleton />
       </main>
     );
   }
@@ -610,457 +611,447 @@ export default function ArticleDetail() {
             )}
           </div>
 
-          <div className="flex items-start justify-between gap-4 mb-4">
-            <div className="flex-1">
-              <h1 className="font-display text-3xl md:text-4xl font-900 text-[#F2F0EB] leading-tight mb-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            {/* Main Content Column */}
+            <div className="lg:col-span-8">
+              <h1 className="font-display text-4xl md:text-5xl font-900 text-[#F2F0EB] leading-tight mb-4">
                 {article.title}
               </h1>
-              <p className="text-[#8A8880] text-lg mb-6">{article.excerpt}</p>
-            </div>
+              <p className="text-[#8A8880] text-xl mb-8 leading-relaxed italic border-l-4 border-[#E8A020] pl-6 uppercase tracking-tight">
+                {article.excerpt}
+              </p>
 
-            {/* Quick Actions Desktop */}
-            <div className="hidden md:flex flex-col gap-3 flex-shrink-0">
-              {/* Like Button */}
-              <button
-                onClick={handleLikeClick}
-                className={`flex items-center justify-center gap-2 px-6 py-3 rounded-sm transition-all duration-300 ${userLiked ? "like-button-active" : "like-button-inactive"
-                  }`}
-                title={user ? "Like this article" : "Login to like"}
-              >
-                <Heart
-                  size={18}
-                  className={`${isAnimating && userLiked ? "animate-heart-burst" : ""}`}
-                  fill={userLiked ? "currentColor" : "none"}
-                />
-                <span className="font-ui text-sm font-700 tabular-nums">
-                  {likeCount}
-                </span>
-              </button>
 
-              {/* Bookmark Button */}
-              <button
-                onClick={handleBookmarkClick}
-                disabled={toggleBookmarkMutation.isPending}
-                className="flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-200 disabled:opacity-50"
-                style={{
-                  backgroundColor: isSaved ? "#E8A020" : "transparent",
-                  color: isSaved ? "#0F0F0E" : "#8A8880",
-                  border: isSaved ? "none" : "1px solid #2A2A28",
-                }}
-                title={user ? "Save article" : "Login to save"}
-              >
-                <Bookmark
-                  size={18}
-                  className="transition-transform duration-300"
-                  fill={isSaved ? "currentColor" : "none"}
-                />
-                <span className="font-ui text-sm font-600 uppercase tracking-wider">
-                  {isSaved ? "Saved" : "Save"}
-                </span>
-              </button>
-
-              {/* Share Menu */}
-              <div className="group relative">
-                <button className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-sm border border-[#2A2A28] text-[#8A8880] hover:text-[#E8A020] hover:border-[#E8A020] transition-all bg-[#0F0F0E]">
+              {/* Quick Actions Mobile */}
+              <div className="md:hidden flex flex-wrap items-center gap-3 mb-6">
+                <button
+                  onClick={handleLikeClick}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-300 ${userLiked ? "like-button-active" : "like-button-inactive"
+                    } ${toggleLikeMutation.isPending ? "like-button-loading" : ""}`}
+                >
+                  <Heart
+                    size={18}
+                    className={`${isAnimating && userLiked ? "animate-heart-burst" : ""}`}
+                    fill={userLiked ? "currentColor" : "none"}
+                  />
+                  <span className="font-ui text-sm font-700 tabular-nums">
+                    {likeCount}
+                  </span>
+                </button>
+                <button
+                  onClick={handleBookmarkClick}
+                  disabled={toggleBookmarkMutation.isPending}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-200 disabled:opacity-50"
+                  style={{
+                    backgroundColor: isSaved ? "#E8A020" : "transparent",
+                    color: isSaved ? "#0F0F0E" : "#8A8880",
+                    border: isSaved ? "none" : "1px solid #2A2A28",
+                  }}
+                >
+                  <Bookmark size={18} fill={isSaved ? "currentColor" : "none"} />
+                  <span className="font-ui text-sm font-600 uppercase tracking-wider">
+                    Save
+                  </span>
+                </button>
+                <button
+                  onClick={() => handleShare("copy")}
+                  className="flex-1 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-sm border border-[#2A2A28] text-[#8A8880] hover:text-[#E8A020] transition-colors"
+                >
                   <Share2 size={18} />
                   <span className="font-ui text-sm font-600 uppercase tracking-wider">
                     Share
                   </span>
                 </button>
-                <div className="absolute right-0 top-full mt-2 w-48 bg-[#1C1C1A] border border-[#2A2A28] rounded-sm shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden translate-y-2 group-hover:translate-y-0">
-                  <button
-                    onClick={() => handleShare("facebook")}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors"
-                  >
-                    <Facebook size={16} /> Facebook
-                  </button>
-                  <button
-                    onClick={() => handleShare("twitter")}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors"
-                  >
-                    <Twitter size={16} /> X (Twitter)
-                  </button>
-                  <button
-                    onClick={() => handleShare("whatsapp")}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="16"
-                      height="16"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
-                      <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1" />
-                    </svg>{" "}
-                    WhatsApp
-                  </button>
-                  <button
-                    onClick={() => handleShare("telegram")}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors"
-                  >
-                    <Send size={16} /> Telegram
-                  </button>
-                  <button
-                    onClick={() => handleShare("copy")}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#D4D0C8] hover:bg-[#2A2A28] hover:text-[#E8A020] transition-colors border-t border-[#2A2A28]"
-                  >
-                    <LinkIcon size={16} /> Copy Link
-                  </button>
+              </div>
+
+              {/* Meta Info */}
+              <div className="flex flex-wrap items-center gap-6 text-[#8A8880] text-sm border-t border-b border-[#1C1C1A] py-4">
+                <div className="flex items-center gap-2">
+                  <User size={16} />
+                  <span>{article.author}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar size={16} />
+                  <span>{publishDate}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock size={16} />
+                  <span>{article.readTime} min read</span>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Quick Actions Mobile */}
-          <div className="md:hidden flex flex-wrap items-center gap-3 mb-6">
-            <button
-              onClick={handleLikeClick}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-300 ${userLiked ? "like-button-active" : "like-button-inactive"
-                } ${toggleLikeMutation.isPending ? "like-button-loading" : ""}`}
-            >
-              <Heart
-                size={18}
-                className={`${isAnimating && userLiked ? "animate-heart-burst" : ""}`}
-                fill={userLiked ? "currentColor" : "none"}
-              />
-              <span className="font-ui text-sm font-700 tabular-nums">
-                {likeCount}
-              </span>
-            </button>
-            <button
-              onClick={handleBookmarkClick}
-              disabled={toggleBookmarkMutation.isPending}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-200 disabled:opacity-50"
-              style={{
-                backgroundColor: isSaved ? "#E8A020" : "transparent",
-                color: isSaved ? "#0F0F0E" : "#8A8880",
-                border: isSaved ? "none" : "1px solid #2A2A28",
-              }}
-            >
-              <Bookmark size={18} fill={isSaved ? "currentColor" : "none"} />
-              <span className="font-ui text-sm font-600 uppercase tracking-wider">
-                Save
-              </span>
-            </button>
-            <button
-              onClick={() => handleShare("copy")}
-              className="flex-1 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-sm border border-[#2A2A28] text-[#8A8880] hover:text-[#E8A020] transition-colors"
-            >
-              <Share2 size={18} />
-              <span className="font-ui text-sm font-600 uppercase tracking-wider">
-                Share
-              </span>
-            </button>
-          </div>
+              {/* Article Body */}
+              <div className="prose prose-invert max-w-none mb-12">
+                <div className="font-serif text-[#D4D0C8] leading-relaxed">
+                  {renderArticleContent(article.content)}
+                  <div className="clear-both" />
+                </div>
+              </div>
 
-          {/* Meta Info */}
-          <div className="flex flex-wrap items-center gap-6 text-[#8A8880] text-sm border-t border-b border-[#1C1C1A] py-4">
-            <div className="flex items-center gap-2">
-              <User size={16} />
-              <span>{article.author}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar size={16} />
-              <span>{publishDate}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock size={16} />
-              <span>{article.readTime} min read</span>
-            </div>
-          </div>
-
-          {/* Article Body */}
-          <div className="prose prose-invert max-w-none mb-12">
-            <div className="font-serif text-[#D4D0C8] leading-relaxed">
-              {renderArticleContent(article.content)}
-              <div className="clear-both" />
-            </div>
-          </div>
-
-          {/* Tags */}
-          {tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-12 pb-12 border-b border-[#1C1C1A]">
-              {tags.map((tag: string, i: number) => (
-                <span
-                  key={i}
-                  className="px-3 py-1 bg-[#1C1C1A] text-[#8A8880] font-ui text-xs rounded-sm"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Comments Section */}
-          <div className="max-w-3xl mx-auto">
-            <h3 className="font-headline text-xl font-700 text-[#F2F0EB] mb-6">
-              Comments
-            </h3>
-
-            {/* Approved Comments */}
-            {comments && comments.length > 0 ? (
-              <div className="space-y-4 mb-8">
-                {comments.map(comment => {
-                  const c = comment as any;
-                  const displayName = c.userUsername
-                    ? `@${c.userUsername}`
-                    : c.userName || "Anonymous";
-                  const isOwner =
-                    user && (user.id === c.userId || user.role === "admin");
-                  const isEditing = editingCommentId === c.id;
-
-                  const ProfileWrapper = ({
-                    children,
-                  }: {
-                    children: React.ReactNode;
-                  }) => {
-                    if (c.userUsername) {
-                      return (
-                        <Link href={`/u/${c.userUsername}`}>{children}</Link>
-                      );
-                    }
-                    return <>{children}</>;
-                  };
-
-                  return (
-                    <div
-                      key={c.id}
-                      className="bg-[#1C1C1A] rounded-sm p-6 relative group"
+              {/* Tags */}
+              {tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-12 pb-12 border-b border-[#1C1C1A]">
+                  {tags.map((tag: string, i: number) => (
+                    <span
+                      key={i}
+                      className="px-3 py-1 bg-[#1C1C1A] text-[#8A8880] font-ui text-xs rounded-sm"
                     >
-                      <div className="flex items-start justify-between mb-3">
-                        <ProfileWrapper>
-                          <div
-                            className={`flex items-center gap-3 ${c.userUsername ? "cursor-pointer hover:opacity-80 transition-opacity" : ""}`}
-                          >
-                            {c.userAvatarUrl ? (
-                              <img
-                                src={c.userAvatarUrl}
-                                alt={displayName}
-                                className="w-8 h-8 rounded-full object-cover flex-shrink-0 border border-[#2A2A28]"
-                              />
-                            ) : (
-                              <div className="w-8 h-8 rounded-full bg-[#2A2A28] flex items-center justify-center flex-shrink-0">
-                                <span className="text-[#8A8880] text-xs font-bold">
-                                  {displayName.charAt(1)?.toUpperCase() ||
-                                    displayName.charAt(0).toUpperCase()}
-                                </span>
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Comments Section */}
+              <div className="max-w-3xl mx-auto">
+                <h3 className="font-headline text-xl font-700 text-[#F2F0EB] mb-6">
+                  Comments
+                </h3>
+
+                {/* Approved Comments */}
+                {comments && comments.length > 0 ? (
+                  <div className="space-y-4 mb-8">
+                    {comments.map(comment => {
+                      const c = comment as any;
+                      const displayName = c.userUsername
+                        ? `@${c.userUsername}`
+                        : c.userName || "Anonymous";
+                      const isOwner =
+                        user && (user.id === c.userId || user.role === "admin");
+                      const isEditing = editingCommentId === c.id;
+
+                      const ProfileWrapper = ({
+                        children,
+                      }: {
+                        children: React.ReactNode;
+                      }) => {
+                        if (c.userUsername) {
+                          return (
+                            <Link href={`/u/${c.userUsername}`}>{children}</Link>
+                          );
+                        }
+                        return <>{children}</>;
+                      };
+
+                      return (
+                        <div
+                          key={c.id}
+                          className="bg-[#1C1C1A] rounded-sm p-6 relative group"
+                        >
+                          <div className="flex items-start justify-between mb-3">
+                            <ProfileWrapper>
+                              <div
+                                className={`flex items-center gap-3 ${c.userUsername ? "cursor-pointer hover:opacity-80 transition-opacity" : ""}`}
+                              >
+                                {c.userAvatarUrl ? (
+                                  <img
+                                    src={c.userAvatarUrl}
+                                    alt={displayName}
+                                    className="w-8 h-8 rounded-full object-cover flex-shrink-0 border border-[#2A2A28]"
+                                  />
+                                ) : (
+                                  <div className="w-8 h-8 rounded-full bg-[#2A2A28] flex items-center justify-center flex-shrink-0">
+                                    <span className="text-[#8A8880] text-xs font-bold">
+                                      {displayName.charAt(1)?.toUpperCase() ||
+                                        displayName.charAt(0).toUpperCase()}
+                                    </span>
+                                  </div>
+                                )}
+                                <div>
+                                  <p
+                                    className={`font-medium text-sm ${c.userUsername ? "text-[#E8A020]" : "text-[#F2F0EB]"}`}
+                                  >
+                                    {displayName}
+                                  </p>
+                                  <p className="text-xs text-[#8A8880] flex items-center gap-1.5">
+                                    {new Date(c.createdAt).toLocaleDateString(
+                                      "en-US",
+                                      {
+                                        year: "numeric",
+                                        month: "short",
+                                        day: "numeric",
+                                      }
+                                    )}
+                                    {c.isEdited === 1 && (
+                                      <span className="italic opacity-70">
+                                        (edited)
+                                      </span>
+                                    )}
+                                  </p>
+                                </div>
+                              </div>
+                            </ProfileWrapper>
+
+                            {/* Actions for the comment owner or admin */}
+                            {isOwner && !isEditing && (
+                              <div className="flex items-center gap-2 opacity-70 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                                <button
+                                  onClick={() => {
+                                    setEditingCommentId(c.id);
+                                    setEditContent(c.content);
+                                  }}
+                                  className="text-[#8A8880] hover:text-[#E8A020] transition-colors p-2"
+                                  title="Edit comment"
+                                >
+                                  <Edit2 size={18} />
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (
+                                      window.confirm(
+                                        "Are you sure you want to delete this comment?"
+                                      )
+                                    ) {
+                                      deleteCommentMutation.mutate({ id: c.id });
+                                    }
+                                  }}
+                                  className="text-[#8A8880] hover:text-red-500 transition-colors p-2"
+                                  title="Delete comment"
+                                >
+                                  <Trash2 size={18} />
+                                </button>
                               </div>
                             )}
-                            <div>
-                              <p
-                                className={`font-medium text-sm ${c.userUsername ? "text-[#E8A020]" : "text-[#F2F0EB]"}`}
-                              >
-                                {displayName}
-                              </p>
-                              <p className="text-xs text-[#8A8880] flex items-center gap-1.5">
-                                {new Date(c.createdAt).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
+                          </div>
+
+                          {isEditing ? (
+                            <div className="mt-2">
+                              <textarea
+                                value={editContent}
+                                onChange={e => setEditContent(e.target.value)}
+                                className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm p-3 text-[#D4D0C8] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] resize-none"
+                                rows={3}
+                              />
+                              <div className="flex justify-end gap-2 mt-2">
+                                <button
+                                  onClick={() => {
+                                    setEditingCommentId(null);
+                                    setEditContent("");
+                                  }}
+                                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-600 text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
+                                >
+                                  <X size={12} /> Cancel
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (
+                                      editContent.trim() &&
+                                      editContent !== c.content
+                                    ) {
+                                      editCommentMutation.mutate({
+                                        id: c.id,
+                                        content: editContent,
+                                      });
+                                    } else {
+                                      setEditingCommentId(null);
+                                    }
+                                  }}
+                                  disabled={
+                                    !editContent.trim() ||
+                                    editCommentMutation.isPending
                                   }
-                                )}
-                                {c.isEdited === 1 && (
-                                  <span className="italic opacity-70">
-                                    (edited)
-                                  </span>
-                                )}
-                              </p>
+                                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-600 bg-[#2A2A28] text-[#E8A020] hover:bg-[#E8A020] hover:text-[#0F0F0E] rounded-sm transition-colors disabled:opacity-50"
+                                >
+                                  <Check size={12} /> Save
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                        </ProfileWrapper>
-
-                        {/* Actions for the comment owner or admin */}
-                        {isOwner && !isEditing && (
-                          <div className="flex items-center gap-2 opacity-70 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                            <button
-                              onClick={() => {
-                                setEditingCommentId(c.id);
-                                setEditContent(c.content);
-                              }}
-                              className="text-[#8A8880] hover:text-[#E8A020] transition-colors p-2"
-                              title="Edit comment"
-                            >
-                              <Edit2 size={18} />
-                            </button>
-                            <button
-                              onClick={() => {
-                                if (
-                                  window.confirm(
-                                    "Are you sure you want to delete this comment?"
-                                  )
-                                ) {
-                                  deleteCommentMutation.mutate({ id: c.id });
-                                }
-                              }}
-                              className="text-[#8A8880] hover:text-red-500 transition-colors p-2"
-                              title="Delete comment"
-                            >
-                              <Trash2 size={18} />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-
-                      {isEditing ? (
-                        <div className="mt-2">
-                          <textarea
-                            value={editContent}
-                            onChange={e => setEditContent(e.target.value)}
-                            className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm p-3 text-[#D4D0C8] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] resize-none"
-                            rows={3}
-                          />
-                          <div className="flex justify-end gap-2 mt-2">
-                            <button
-                              onClick={() => {
-                                setEditingCommentId(null);
-                                setEditContent("");
-                              }}
-                              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-600 text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
-                            >
-                              <X size={12} /> Cancel
-                            </button>
-                            <button
-                              onClick={() => {
-                                if (
-                                  editContent.trim() &&
-                                  editContent !== c.content
-                                ) {
-                                  editCommentMutation.mutate({
-                                    id: c.id,
-                                    content: editContent,
-                                  });
-                                } else {
-                                  setEditingCommentId(null);
-                                }
-                              }}
-                              disabled={
-                                !editContent.trim() ||
-                                editCommentMutation.isPending
-                              }
-                              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-600 bg-[#2A2A28] text-[#E8A020] hover:bg-[#E8A020] hover:text-[#0F0F0E] rounded-sm transition-colors disabled:opacity-50"
-                            >
-                              <Check size={12} /> Save
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <p className="text-[#D4D0C8] leading-relaxed whitespace-pre-wrap">
-                          {c.content}
-                        </p>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="text-[#8A8880] mb-8">
-                No comments yet. Be the first to comment!
-              </p>
-            )}
-
-            {/* Comment Form */}
-            {user ? (
-              <div className="bg-[#1C1C1A] rounded-sm p-6">
-                <h4 className="font-medium text-[#F2F0EB] mb-4">
-                  Leave a Comment
-                </h4>
-                <textarea
-                  value={commentText}
-                  onChange={e => setCommentText(e.target.value)}
-                  placeholder="Share your thoughts..."
-                  className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm p-3 text-[#D4D0C8] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] resize-none"
-                  rows={4}
-                />
-                <button
-                  onClick={handleSubmitComment}
-                  disabled={isSubmitting || !commentText.trim()}
-                  className="mt-4 flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
-                >
-                  <Send size={14} />
-                  {isSubmitting ? "Submitting..." : "Post Comment"}
-                </button>
-              </div>
-            ) : (
-              <div className="bg-[#1C1C1A] rounded-sm p-6 text-center">
-                <p className="text-[#8A8880] mb-4">
-                  Sign in to leave a comment
-                </p>
-                <a
-                  href={getLoginUrl()}
-                  className="inline-flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
-                >
-                  Sign in to Comment
-                </a>
-              </div>
-            )}
-          </div>
-
-          {/* Related Articles Section */}
-          {relatedArticles && relatedArticles.length > 0 && (
-            <div className="mt-16 pt-12 border-t border-[#1C1C1A]">
-              <h3 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-8">
-                Read Next
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedArticles.map(article => {
-                  const publishDate = article.publishedAt
-                    ? new Date(article.publishedAt)
-                    : new Date(article.createdAt);
-
-                  return (
-                    <Link key={article.id} href={`/articolo/${article.slug}`}>
-                      <div className="group cursor-pointer">
-                        <div className="aspect-[16/9] overflow-hidden rounded-sm mb-4 relative bg-[#1C1C1A]">
-                          {getSafeImage(article.image, article.category, article.id) ? (
-                            <img
-                              src={getSafeImage(article.image, article.category, article.id)}
-                              alt={article.title}
-                              className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
-                              onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                                const img = e.target as HTMLImageElement;
-                                img.src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
-                              }}
-                            />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-[#8A8880]">
-                              No image
-                            </div>
+                            <p className="text-[#D4D0C8] leading-relaxed whitespace-pre-wrap">
+                              {c.content}
+                            </p>
                           )}
-                          <div className="absolute top-3 left-3 bg-[#E8A020] text-[#0F0F0E] text-[10px] font-ui font-bold uppercase tracking-widest px-2 py-1 rounded-sm">
-                            {article.category}
-                          </div>
                         </div>
-                        <h4 className="font-display text-lg text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 mb-2">
-                          {article.title}
-                        </h4>
-                        <div className="flex items-center gap-4 text-xs text-[#8A8880] font-ui uppercase tracking-widest">
-                          <span>{article.author}</span>
-                          <span>
-                            {publishDate.toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-[#8A8880] mb-8">
+                    No comments yet. Be the first to comment!
+                  </p>
+                )}
+
+                {/* Comment Form */}
+                {user ? (
+                  <div className="bg-[#1C1C1A] rounded-sm p-6">
+                    <h4 className="font-medium text-[#F2F0EB] mb-4">
+                      Leave a Comment
+                    </h4>
+                    <textarea
+                      value={commentText}
+                      onChange={e => setCommentText(e.target.value)}
+                      placeholder="Share your thoughts..."
+                      className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm p-3 text-[#D4D0C8] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] resize-none"
+                      rows={4}
+                    />
+                    <button
+                      onClick={handleSubmitComment}
+                      disabled={isSubmitting || !commentText.trim()}
+                      className="mt-4 flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
+                    >
+                      <Send size={14} />
+                      {isSubmitting ? "Submitting..." : "Post Comment"}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="bg-[#1C1C1A] rounded-sm p-6 text-center">
+                    <p className="text-[#8A8880] mb-4">
+                      Sign in to leave a comment
+                    </p>
+                    <a
+                      href={getLoginUrl()}
+                      className="inline-flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
+                    >
+                      Sign in to Comment
+                    </a>
+                  </div>
+                )}
+              </div>
+
+              {/* Related Articles Section */}
+              {relatedArticles && relatedArticles.length > 0 && (
+                <div className="mt-16 pt-12 border-t border-[#1C1C1A]">
+                  <h3 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-8">
+                    Read Next
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {relatedArticles.map(article => {
+                      const publishDate = article.publishedAt
+                        ? new Date(article.publishedAt)
+                        : new Date(article.createdAt);
+
+                      return (
+                        <Link key={article.id} href={`/articolo/${article.slug}`}>
+                          <div className="group cursor-pointer">
+                            <div className="aspect-[16/9] overflow-hidden rounded-sm mb-4 relative bg-[#1C1C1A]">
+                              {getSafeImage(article.image, article.category, article.id) ? (
+                                <img
+                                  src={getSafeImage(article.image, article.category, article.id)}
+                                  alt={article.title}
+                                  className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
+                                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                                    const img = e.target as HTMLImageElement;
+                                    img.src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+                                  }}
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-[#8A8880]">
+                                  No image
+                                </div>
+                              )}
+                              <div className="absolute top-3 left-3 bg-[#E8A020] text-[#0F0F0E] text-[10px] font-ui font-bold uppercase tracking-widest px-2 py-1 rounded-sm">
+                                {article.category}
+                              </div>
+                            </div>
+                            <h4 className="font-display text-lg text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 mb-2">
+                              {article.title}
+                            </h4>
+                            <div className="flex items-center gap-4 text-xs text-[#8A8880] font-ui uppercase tracking-widest">
+                              <span>{article.author}</span>
+                              <span>
+                                {publishDate.toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+            {/* Sticky Sidebar */}
+            <aside className="hidden lg:block lg:col-span-4 space-y-8 lg:sticky lg:top-32 h-fit mb-12">
+              <div className="bg-[#1C1C1A] rounded-sm p-6 border border-[#2A2A28] shadow-2xl">
+                <h3 className="font-ui text-[10px] font-600 text-[#8A8880] uppercase tracking-widest mb-6 block border-b border-[#2A2A28] pb-2">
+                  Article Actions
+                </h3>
+                <div className="flex flex-col gap-4">
+                  <button
+                    onClick={handleLikeClick}
+                    className={`flex items-center justify-center gap-3 px-6 py-4 rounded-sm transition-all duration-300 ${userLiked ? "like-button-active" : "like-button-inactive"
+                      }`}
+                  >
+                    <Heart
+                      size={20}
+                      className={`${isAnimating && userLiked ? "animate-heart-burst" : ""}`}
+                      fill={userLiked ? "currentColor" : "none"}
+                    />
+                    <span className="font-ui text-sm font-700 tabular-nums">
+                      {likeCount} Likes
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={handleBookmarkClick}
+                    disabled={toggleBookmarkMutation.isPending}
+                    className="flex items-center justify-center gap-3 px-6 py-4 rounded-sm transition-all duration-200 disabled:opacity-50"
+                    style={{
+                      backgroundColor: isSaved ? "#E8A020" : "transparent",
+                      color: isSaved ? "#0F0F0E" : "#8A8880",
+                      border: isSaved ? "none" : "1px solid #2A2A28",
+                    }}
+                  >
+                    <Bookmark size={20} fill={isSaved ? "currentColor" : "none"} />
+                    <span className="font-ui text-sm font-600 uppercase tracking-wider">
+                      {isSaved ? "Saved to Library" : "Save for Later"}
+                    </span>
+                  </button>
+
+                  <div className="pt-6 border-t border-[#2A2A28]">
+                    <span className="font-ui text-[10px] text-[#555550] uppercase tracking-widest mb-4 block">
+                      Share with your network
+                    </span>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button onClick={() => handleShare("facebook")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28]" title="Facebook">
+                        <Facebook size={18} />
+                      </button>
+                      <button onClick={() => handleShare("twitter")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28]" title="X (Twitter)">
+                        <Twitter size={18} />
+                      </button>
+                      <button onClick={() => handleShare("whatsapp")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28]" title="WhatsApp">
+                        <Send size={18} className="rotate-[-45deg]" />
+                      </button>
+                      <button onClick={() => handleShare("copy")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28]" title="Copy Link">
+                        <LinkIcon size={18} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Related Articles in Sidebar */}
+              {relatedArticles && relatedArticles.length > 0 && (
+                <div className="bg-[#1C1C1A] rounded-sm p-6 border border-[#2A2A28]">
+                  <h3 className="font-ui text-[10px] font-600 text-[#8A8880] uppercase tracking-widest mb-6 block border-b border-[#2A2A28] pb-2">
+                    Recommended
+                  </h3>
+                  <div className="space-y-6">
+                    {relatedArticles.slice(0, 3).map(article => (
+                      <Link key={article.id} href={`/articolo/${article.slug}`}>
+                        <div className="group cursor-pointer">
+                          <h4 className="font-headline text-sm text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 mb-1">
+                            {article.title}
+                          </h4>
+                          <span className="text-[10px] font-ui text-[#555550] uppercase tracking-widest">
+                            {article.category}
                           </span>
                         </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </aside>
+          </div>
         </div>
       </article>
 
       <Footer />
-    </main>
+    </main >
   );
 }

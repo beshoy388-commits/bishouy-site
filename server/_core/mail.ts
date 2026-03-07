@@ -96,7 +96,7 @@ export async function sendNewsletterBroadcast(
       to: email,
       subject: subject,
       htmlContent: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0F0F0E; padding: 40px; border-radius: 8px; color: #F2F0EB; margin-bottom: 30px;">
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0F0F0E; padding: 24px; border-radius: 8px; color: #F2F0EB; margin-bottom: 30px; box-sizing: border-box;">
           ${htmlContent}
         </div>
         <p style="font-size: 11px; color: #555550; text-align: center; margin-top: 16px;">
@@ -129,13 +129,6 @@ export async function sendWelcomeNewsletterEmail(
     <tr>
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px; width:100%; background-color:#0F0F0E; border-radius:8px; overflow:hidden; border: 1px solid #1C1C1A;">
-
-          <!-- Header Bar -->
-          <tr>
-            <td style="background-color:#1C1C1A; padding: 18px 32px; border-bottom: 1px solid #2A2A28;">
-              <span style="color:#E8A020; font-size:11px; font-weight:700; letter-spacing:4px; text-transform:uppercase;">BISHOUY.COM</span>
-            </td>
-          </tr>
 
           <!-- Accent line -->
           <tr>
@@ -181,7 +174,7 @@ export async function sendWelcomeNewsletterEmail(
                 <tr>
                   <td style="padding: 8px 0; border-top: 1px solid #1C1C1A;">
                     <span style="color:#E8A020; margin-right:10px;">●</span>
-                    <span style="color:#D4D0C8; font-size:14px;">Curated weekly editorial digest</span>
+                    <span style="color:#D4D0C8; font-size:14px;">Daily editorial briefing every morning</span>
                   </td>
                 </tr>
                 <tr>
@@ -228,14 +221,14 @@ export async function sendWelcomeEmailWithBenefits(email: string, name: string) 
 
   await sendBrevoEmail({
     to: email,
-    subject: `Welcome to the Inner Circle, ${name} — Your Bishouy Experience Starts Now`,
+    subject: `Benvenuto nell'Inner Circle, ${name} — La tua esperienza Bishouy inizia ora`,
     htmlContent: `
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Bishouy.com</title>
+    <title>Benvenuto su Bishouy.com</title>
 </head>
 <body style="margin:0; padding:0; background-color:#0A0A09; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #D4D0C8;">
     <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0A0A09; padding: 40px 20px;">
@@ -244,23 +237,8 @@ export async function sendWelcomeEmailWithBenefits(email: string, name: string) 
                 <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px; width:100%; background-color:#0F0F0E; border-radius:12px; overflow:hidden; border: 1px solid #1C1C1A; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
                     
                     <tr>
-                        <td style="background-color:#1C1C1A; padding: 24px 40px; border-bottom: 2px solid #E8A020;">
-                            <table width="100%">
-                                <tr>
-                                    <td>
-                                        <a href="${baseUrl}" style="color:#E8A020; text-decoration:none; font-size:14px; font-weight:800; letter-spacing:6px; text-transform:uppercase;">BISHOUY.COM</a>
-                                    </td>
-                                    <td align="right">
-                                        <span style="color:#555550; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:1px;">Editorial Society</span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-
-                    <tr>
                         <td style="padding: 0;">
-                            <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1200&auto=format&fit=crop" alt="The Art of Journalism" style="width:100%; height:auto; display:block; border-bottom: 1px solid #1C1C1A;">
+                            <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1200&auto=format&fit=crop" alt="The Art of Journalism" style="width:100%; height:auto; display:block; border-bottom: 2px solid #E8A020;">
                         </td>
                     </tr>
 
@@ -290,8 +268,8 @@ export async function sendWelcomeEmailWithBenefits(email: string, name: string) 
                                                     <div style="width:36px; height:36px; background-color:#E8A020; border-radius:50%; text-align:center; line-height:36px; color:#0F0F0E; font-weight:bold;">1</div>
                                                 </td>
                                                 <td>
-                                                    <p style="margin:0 0 4px; color:#F2F0EB; font-weight:700; font-size:16px;">Unlimited Access</p>
-                                                    <p style="margin:0; font-size:14px; color:#8A8880;">Immerse yourself in our exclusive investigative reports and geopolitical dossiers without limits.</p>
+                                                    <p style="margin:0 0 4px; color:#F2F0EB; font-weight:700; font-size:16px;">Accesso Illimitato</p>
+                                                    <p style="margin:0; font-size:14px; color:#8A8880;">Immergiti senza limiti nelle nostre inchieste esclusive e nei dossier geopolitici.</p>
                                                 </td>
                                             </tr>
                                         </table>

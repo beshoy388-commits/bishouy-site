@@ -24,6 +24,8 @@ import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import NotificationDrawer from "./NotificationDrawer";
+import SearchOverlay from "./SearchOverlay";
+import { useUI } from "@/contexts/UIContext";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -32,6 +34,7 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const [currentDate, setCurrentDate] = useState("");
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const { isSearchOpen, setIsSearchOpen } = useUI();
 
   const notificationsQuery = trpc.notifications.getLatest.useQuery(undefined, {
     refetchInterval: 60000,
@@ -68,7 +71,7 @@ export default function Navbar() {
   }, []);
 
   const handleSearchClick = () => {
-    window.location.href = "/search";
+    setIsSearchOpen(true);
   };
   const handleNotifications = () => {
     setIsNotificationsOpen(true);
@@ -304,6 +307,10 @@ export default function Navbar() {
       <NotificationDrawer
         isOpen={isNotificationsOpen}
         onClose={() => setIsNotificationsOpen(false)}
+      />
+      <SearchOverlay
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
       />
     </header>
   );

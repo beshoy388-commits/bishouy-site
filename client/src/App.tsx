@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import CookieConsent from "@/components/CookieConsent";
+import BackToTop from "@/components/BackToTop";
 import { Loader2 } from "lucide-react";
 
 // Home and common components remain eager for instant first load
@@ -75,15 +76,31 @@ function Router() {
   );
 }
 
+import { UIProvider, useUI } from "./contexts/UIContext";
+import MobileBottomNav from "@/components/MobileBottomNav";
+
+function AppContent() {
+  const { setIsSearchOpen } = useUI();
+  return (
+    <>
+      <Toaster />
+      <Router />
+      <CookieConsent />
+      <BackToTop />
+      <MobileBottomNav onSearchClick={() => setIsSearchOpen(true)} />
+    </>
+  );
+}
+
 function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-          <CookieConsent />
-        </TooltipProvider>
+        <UIProvider>
+          <TooltipProvider>
+            <AppContent />
+          </TooltipProvider>
+        </UIProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

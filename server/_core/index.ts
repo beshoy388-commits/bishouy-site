@@ -18,6 +18,7 @@ import {
 } from "../db";
 import { syncRSSFeeds } from "../rss";
 import { sendDailyNewsletter } from "../newsletter_job";
+import cron from "node-cron";
 import { ENV } from "./env";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -242,27 +243,30 @@ cleanupExpiredVerificationCodes();
 cleanupExpiredResetTokens();
 
 // Set up background intervals
+// Database cleanups: every 1 hour
 setInterval(
   () => {
     cleanupExpiredVerificationCodes();
     cleanupExpiredResetTokens();
   },
   60 * 60 * 1000
-); // every 1 hour
-
-// Daily Newsletter interval (every 24 hours)
-setInterval(
-  () => {
-    sendDailyNewsletter().catch(console.error);
-  },
-  24 * 60 * 60 * 1000
 );
 
-// Optional: Run newsletter on production startup if it's the right time
+// High-Precision Daily Newsletter (Every morning at 7:00 AM)
+// Schedule: 0 7 * * * (Minutes, Hours, Day of Month, Month, Day of Week)
+cron.schedule("0 7 * * *", () => {
+  console.log("[CRON] Executing scheduled Editorial Briefing at 7:00 AM...");
+  sendDailyNewsletter().catch(err => {
+    console.error("[CRON] Newsletter Error:", err);
+  });
+});
+
+// Production Startup Check: If we deploy/restart between 6 AM and 8:30 AM 
+// and no newsletter was sent today, consider sending it.
 if (process.env.NODE_ENV === "production") {
   const currentHour = new Date().getHours();
-  // If we start near 7 AM, send it immediately
   if (currentHour >= 6 && currentHour <= 8) {
+    console.log("[Startup] Detected morning startup. Initiating Editorial Briefing...");
     sendDailyNewsletter().catch(console.error);
   }
 }

@@ -14,6 +14,7 @@ import {
   Link as LinkIcon,
   Image as ImageIcon,
   Plus,
+  Zap,
 } from "lucide-react";
 import ImageUploader from "./ImageUploader";
 
@@ -47,6 +48,23 @@ export default function NewsletterManager() {
     },
     onError: (error: any) => toast.error(error.message),
   });
+
+  const testDailyMutation = trpc.newsletter.triggerDailyAITest.useMutation({
+    onSuccess: data => {
+      toast.success(data.message);
+    },
+    onError: error => {
+      toast.error("Test failed", { description: error.message });
+    },
+  });
+
+  const handleTestDaily = () => {
+    toast.promise(testDailyMutation.mutateAsync({}), {
+      loading: "Generating AI newsletter summary...",
+      success: "Test sent! Check your inbox briefly.",
+      error: "AI generation failed.",
+    });
+  };
 
   const handleSend = () => {
     if (!subject.trim()) return toast.error("Please enter a subject.");
@@ -103,11 +121,21 @@ export default function NewsletterManager() {
             Send updates to your mailing list
           </p>
         </div>
-        <div className="flex items-center gap-3 bg-[#1C1C1A] border border-[#2A2A28] px-4 py-2 rounded-sm w-full sm:w-auto justify-center">
-          <Users size={16} className="text-[#E8A020]" />
-          <span className="font-ui text-[10px] sm:text-xs font-600 uppercase tracking-widest text-[#F2F0EB]">
-            {activeSubscribersCount} Active Subscribers
-          </span>
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-3 bg-[#1C1C1A] border border-[#2A2A28] px-4 py-2 rounded-sm w-full sm:w-auto justify-center">
+            <Users size={16} className="text-[#E8A020]" />
+            <span className="font-ui text-[10px] sm:text-xs font-600 uppercase tracking-widest text-[#F2F0EB]">
+              {activeSubscribersCount} Active Subscribers
+            </span>
+          </div>
+          <button
+            onClick={handleTestDaily}
+            className="flex items-center justify-center gap-2 bg-[#1C1C1A] border border-blue-500/30 hover:border-blue-500 text-blue-400 font-ui text-[10px] md:text-xs font-600 uppercase tracking-wider px-4 py-2.5 rounded-sm transition-colors w-full sm:w-auto"
+            disabled={testDailyMutation.isPending}
+          >
+            <Zap size={14} className={testDailyMutation.isPending ? "animate-pulse" : ""} />
+            Test 7 AM AI Daily
+          </button>
         </div>
       </div>
 
