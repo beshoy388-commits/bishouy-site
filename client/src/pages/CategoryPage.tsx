@@ -65,35 +65,34 @@ export default function CategoryPage() {
       <BreakingNewsTicker />
 
       {/* Category Header */}
-      <section className="pt-32 pb-12">
+      <section className="pt-28 md:pt-40 pb-10 md:pb-16 bg-[#11110F] border-b border-[#1C1C1A]">
         <div className="container">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-[#8A8880] hover:text-[#E8A020] transition-colors mb-6 font-ui text-sm"
+            className="inline-flex items-center gap-2 text-[#8A8880] hover:text-[#E8A020] transition-colors mb-8 font-ui text-xs uppercase tracking-widest"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={14} />
             Back to Home
           </Link>
 
-          <div className="flex items-end gap-4 mb-8">
-            <div>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-4">
               <span
-                className="category-badge mb-3 inline-block"
-                style={{ backgroundColor: category.color }}
+                className="px-3 py-1 text-[10px] font-ui font-bold uppercase tracking-[0.2em] rounded-sm"
+                style={{ backgroundColor: category.color, color: "#0F0F0E" }}
               >
-                {category.name}
+                Category
               </span>
-              <h1 className="font-display text-4xl md:text-5xl text-[#F2F0EB]">
+              <h1 className="font-display text-5xl md:text-7xl text-[#F2F0EB] leading-none uppercase">
                 {category.name}
               </h1>
+              <p className="font-ui text-xs md:text-sm text-[#8A8880] uppercase tracking-widest flex items-center gap-3">
+                <span className="w-8 h-[2px] bg-[#E8A020]" />
+                {articles?.length || 0} article
+                {(articles?.length || 0) !== 1 ? "s" : ""} published
+              </p>
             </div>
-            <div className="flex-1 h-px bg-gradient-to-r from-[#E8A020] to-transparent hidden md:block" />
           </div>
-
-          <p className="font-ui text-[#8A8880] max-w-2xl">
-            {articles?.length || 0} article
-            {(articles?.length || 0) !== 1 ? "s" : ""} in this category
-          </p>
         </div>
       </section>
 

@@ -215,38 +215,6 @@ export default function Navbar() {
                 <Search size={18} />
               </button>
 
-              <Link
-                href="/ai"
-                className="text-[#8A8880] hover:text-[#E8A020] transition-colors"
-                aria-label="Go to AI Assistant on mobile"
-              >
-                <Sparkles size={18} />
-              </Link>
-
-              {user ? (
-                <Link
-                  href="/profile"
-                  className="text-[#8A8880] hover:text-[#E8A020] transition-colors"
-                >
-                  {user.avatarUrl ? (
-                    <img
-                      src={user.avatarUrl}
-                      alt="Profile"
-                      className="w-8 h-8 rounded-full object-cover border border-[#2A2A28]"
-                    />
-                  ) : (
-                    <UserIcon size={24} />
-                  )}
-                </Link>
-              ) : (
-                <Link
-                  href="/login"
-                  className="text-[#8A8880] hover:text-[#E8A020] transition-colors"
-                >
-                  <LogIn size={24} />
-                </Link>
-              )}
-
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="text-[#F2F0EB] hover:text-[#E8A020] transition-colors ml-1"
