@@ -57,6 +57,8 @@ import {
   getTrendingArticles,
   getAnalyticsSummary,
   getBreakingArticles,
+  getSiteSettings,
+  updateSiteSetting,
 } from "./db";
 import { comments, InsertArticle, articles, users } from "../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
@@ -1272,6 +1274,28 @@ export const appRouter = router({
         message: "AI news generation started in the background.",
       };
     }),
+  }),
+  settings: router({
+    getAll: adminProcedure.query(async () => {
+      try {
+        return await getSiteSettings();
+      } catch (e) {
+        console.warn("[Settings] Table not found or DB error:", e);
+        return [];
+      }
+    }),
+    update: adminProcedure
+      .input(z.object({ key: z.string(), value: z.string() }))
+      .mutation(async ({ input }) => {
+        try {
+          return await updateSiteSetting(input.key, input.value);
+        } catch (e) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to update settings in database. Ensure migrations are applied.",
+          });
+        }
+      }),
   }),
 });
 

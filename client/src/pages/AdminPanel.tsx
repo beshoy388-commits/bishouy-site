@@ -17,21 +17,20 @@ import DashboardStats from "@/components/DashboardStats";
 import NewsletterManager from "@/components/NewsletterManager";
 import AdsManager from "@/components/AdsManager";
 import GlobalComments from "@/components/GlobalComments";
+import AdminSidebar from "@/components/AdminSidebar";
+import SiteSettings from "@/components/SiteSettings";
 import {
   Loader2,
   Plus,
   Edit,
   Trash2,
   Eye,
-  LogOut,
-  MessageSquare,
-  Terminal,
-  LayoutDashboard,
-  Megaphone,
-  Send,
-  CheckCircle,
-  FileText,
   Bot,
+  FileText,
+  CheckCircle,
+  Menu,
+  ChevronRight,
+  ShieldAlert,
 } from "lucide-react";
 
 export default function AdminPanel() {
@@ -45,16 +44,19 @@ export default function AdminPanel() {
     | "ads"
     | "newsletter"
     | "system"
+    | "settings"
   >("dashboard");
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [statusFilter, setStatusFilter] = useState<
     "all" | "published" | "draft"
   >("all");
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Redirect if not authenticated or not admin
   useEffect(() => {
-    if (loading) return; // Wait for auth state to load
+    if (loading) return;
 
     if (!isAuthenticated) {
       setLocation("/");
@@ -69,7 +71,6 @@ export default function AdminPanel() {
   }, [isAuthenticated, user, loading, setLocation]);
 
   const articlesQuery = trpc.articles.listAdmin.useQuery();
-  const pendingCommentsQuery = trpc.comments.getPending.useQuery();
   const triggerAiMutation = trpc.ai.triggerNewsGeneration.useMutation();
 
   const deleteArticleMutation = trpc.articles.delete.useMutation({
@@ -111,168 +112,41 @@ export default function AdminPanel() {
     return (
       <div className="min-h-screen bg-[#0F0F0E] flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="animate-spin mx-auto mb-4" size={32} />
-          <p className="text-[#8A8880]">Verifying access...</p>
+          <Loader2 className="animate-spin text-[#E8A020] mx-auto mb-4" size={32} />
+          <p className="text-[#8A8880] font-ui uppercase tracking-widest text-[10px]">Authorizing Access...</p>
         </div>
       </div>
     );
   }
 
-  const pendingCount = pendingCommentsQuery.data?.length || 0;
-
-  return (
-    <div className="min-h-screen bg-[#0F0F0E]">
-      {/* Header */}
-      <div className="bg-[#1C1C1A] border-b border-[#2A2A28] sticky top-0 z-50">
-        <div className="container py-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-center md:text-left">
-            <h1 className="font-display text-xl md:text-2xl text-[#F2F0EB]">
-              ADMIN PANEL
-            </h1>
-            <p className="font-ui text-[10px] md:text-xs text-[#8A8880]">
-              Logged in as: {user?.name || user?.email}
-            </p>
-          </div>
-          <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto justify-center">
-            <a
-              href="/"
-              className="flex items-center gap-1.5 text-[#8A8880] hover:text-[#E8A020] transition-colors font-ui text-[10px] md:text-sm uppercase tracking-wider"
-            >
-              <Eye size={14} />
-              <span className="hidden xs:inline">View Site</span>
-            </a>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-1.5 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-600 uppercase tracking-wider px-3 md:px-4 py-1.5 md:py-2 rounded-sm transition-colors"
-            >
-              <LogOut size={12} />
-              Logout
-            </button>
-          </div>
-        </div>
-
-        {/* Tabs - Scrollable on mobile */}
-        <div className="container border-t border-[#2A2A28]">
-          <div className="flex gap-1 sm:gap-4 overflow-x-auto custom-scrollbar whitespace-nowrap hide-scroll py-1">
-            <button
-              onClick={() => {
-                setActiveTab("dashboard");
-                setShowForm(false);
-              }}
-              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "dashboard"
-                  ? "text-[#E8A020] border-[#E8A020]"
-                  : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-                }`}
-            >
-              <LayoutDashboard size={14} />{" "}
-              <span className="hidden sm:inline">Dashboard</span>
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("articles");
-                setShowForm(false);
-              }}
-              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex-shrink-0 ${activeTab === "articles"
-                  ? "text-[#E8A020] border-[#E8A020]"
-                  : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-                }`}
-            >
-              Articles
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("comments");
-                setShowForm(false);
-              }}
-              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "comments"
-                  ? "text-[#E8A020] border-[#E8A020]"
-                  : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-                }`}
-            >
-              <MessageSquare size={14} />{" "}
-              <span className="hidden sm:inline">Comments</span>
-              {pendingCount > 0 && (
-                <span className="bg-red-500 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                  {pendingCount}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("ads");
-                setShowForm(false);
-              }}
-              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "ads"
-                  ? "text-[#E8A020] border-[#E8A020]"
-                  : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-                }`}
-            >
-              <Megaphone size={14} />{" "}
-              <span className="hidden sm:inline">Ads</span>
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("newsletter");
-                setShowForm(false);
-              }}
-              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "newsletter"
-                  ? "text-[#E8A020] border-[#E8A020]"
-                  : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-                }`}
-            >
-              <Send size={14} />{" "}
-              <span className="hidden sm:inline">Newsletter</span>
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("users");
-                setShowForm(false);
-              }}
-              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex-shrink-0 ${activeTab === "users"
-                  ? "text-[#E8A020] border-[#E8A020]"
-                  : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-                }`}
-            >
-              Users
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("system");
-                setShowForm(false);
-              }}
-              className={`py-3 px-3 sm:px-4 font-ui text-[10px] sm:text-xs md:text-sm font-600 uppercase tracking-wider transition-colors border-b-2 flex items-center gap-2 flex-shrink-0 ${activeTab === "system"
-                  ? "text-[#E8A020] border-[#E8A020]"
-                  : "text-[#8A8880] border-transparent hover:text-[#F2F0EB]"
-                }`}
-            >
-              <Terminal size={14} />{" "}
-              <span className="hidden sm:inline">System</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="container py-8">
-        {/* ── DASHBOARD TAB ── */}
-        {activeTab === "dashboard" ? (
+  const renderContent = () => {
+    switch (activeTab) {
+      case "dashboard":
+        return (
           <DashboardStats
             onTabChange={tab => setActiveTab(tab)}
-            onNewArticle={() => setShowForm(true)}
+            onNewArticle={() => {
+              setActiveTab("articles");
+              setShowForm(true);
+            }}
           />
-        ) : activeTab === "articles" ? (
-          showForm ? (
-            <div>
-              <div className="mb-6">
+        );
+      case "articles":
+        if (showForm) {
+          return (
+            <div className="animate-fade-in">
+              <div className="flex items-center justify-between mb-8">
                 <button
                   onClick={() => {
                     setShowForm(false);
                     setEditingId(null);
                   }}
-                  className="text-[#8A8880] hover:text-[#E8A020] font-ui text-sm"
+                  className="group flex items-center gap-2 text-[#8A8880] hover:text-[#E8A020] transition-colors font-ui text-xs uppercase tracking-widest"
                 >
-                  ← Back to Articles
+                  <span className="w-8 h-8 rounded-full bg-[#1C1C1A] border border-[#2A2A28] flex items-center justify-center group-hover:border-[#E8A020] transition-all">←</span>
+                  Back to List
                 </button>
+                <div className="h-px flex-1 bg-gradient-to-r from-[#2A2A28] to-transparent ml-6" />
               </div>
               <ArticleForm
                 articleId={editingId || undefined}
@@ -283,211 +157,267 @@ export default function AdminPanel() {
                 }}
               />
             </div>
-          ) : (
-            <div>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-                <div>
-                  <h2 className="font-headline text-xl md:text-2xl text-[#F2F0EB] mb-1 md:mb-2">
-                    Articles Management
-                  </h2>
-                  <p className="font-ui text-xs text-[#8A8880]">
-                    Total articles: {articlesQuery.data?.length || 0}
+          );
+        }
+        return (
+          <div className="animate-fade-in">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10">
+              <div>
+                <h2 className="font-headline text-3xl text-[#F2F0EB] mb-2 uppercase tracking-tight">
+                  Publisher HQ
+                </h2>
+                <div className="flex items-center gap-4 text-[#8A8880]">
+                  <p className="font-ui text-xs uppercase tracking-widest">
+                    Index: <span className="text-[#F2F0EB] font-bold">{articlesQuery.data?.length || 0}</span>
+                  </p>
+                  <span className="w-1 h-1 rounded-full bg-[#2A2A28]" />
+                  <p className="font-ui text-xs uppercase tracking-widest">
+                    Queue: <span className="text-blue-400 font-bold">{articlesQuery.data?.filter(a => a.status === 'draft').length || 0}</span>
                   </p>
                 </div>
-                <div className="flex gap-2 w-full sm:w-auto">
-                  <button
-                    onClick={() => {
-                      const promise = triggerAiMutation.mutateAsync();
-                      toast.promise(promise, {
-                        loading: "Starting AI generation...",
-                        success:
-                          "AI is now fetching and generating articles in the background. Check back soon!",
-                        error: "Failed to start AI generation",
-                      });
-                    }}
-                    className="flex items-center justify-center gap-2 bg-[#1C1C1A] border border-[#2A2A28] hover:border-[#E8A020] text-[#E8A020] font-ui text-[10px] md:text-xs font-600 uppercase tracking-wider px-4 py-2.5 md:py-3 rounded-sm transition-colors w-full sm:w-auto"
-                    disabled={triggerAiMutation.isPending}
-                  >
-                    <Bot size={16} />
-                    {triggerAiMutation.isPending
-                      ? "Generating..."
-                      : "Generate AI News"}
-                  </button>
-                  <button
-                    onClick={() => setShowForm(true)}
-                    className="flex items-center justify-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] md:text-xs font-600 uppercase tracking-wider px-6 py-2.5 md:py-3 rounded-sm transition-colors w-full sm:w-auto"
-                  >
-                    <Plus size={16} />
-                    New Article
-                  </button>
-                </div>
               </div>
-
-              {/* Status Filter Tabs */}
-              <div className="flex gap-2 mb-6 border-b border-[#2A2A28] pb-4">
+              <div className="flex flex-wrap gap-3">
                 <button
-                  onClick={() => setStatusFilter("all")}
-                  className={`px-4 py-1.5 rounded-sm font-ui text-[10px] uppercase tracking-wider transition-colors ${statusFilter === "all" ? "bg-[#E8A020] text-[#0F0F0E]" : "bg-[#1C1C1A] text-[#8A8880] hover:text-[#F2F0EB]"}`}
+                  onClick={() => {
+                    const promise = triggerAiMutation.mutateAsync();
+                    toast.promise(promise, {
+                      loading: "Engaging AI Agents...",
+                      success: "AI news cycle triggered successfully.",
+                      error: "Agent failure. Check system logs.",
+                    });
+                  }}
+                  className="flex items-center justify-center gap-2 bg-[#1C1C1A] border border-[#2A2A28] hover:border-[#E8A020] text-[#E8A020] font-ui text-[10px] md:text-xs font-bold uppercase tracking-widest px-5 py-3 rounded-sm transition-all hover:scale-105 active:scale-95"
+                  disabled={triggerAiMutation.isPending}
                 >
-                  All ({articlesQuery.data?.length || 0})
+                  <Bot size={16} />
+                  {triggerAiMutation.isPending ? "PROCESSING..." : "TRIGGER AI CYCLE"}
                 </button>
                 <button
-                  onClick={() => setStatusFilter("published")}
-                  className={`px-4 py-1.5 rounded-sm font-ui text-[10px] uppercase tracking-wider transition-colors ${statusFilter === "published" ? "bg-[#E8A020] text-[#0F0F0E]" : "bg-[#1C1C1A] text-[#8A8880] hover:text-[#F2F0EB]"}`}
+                  onClick={() => setShowForm(true)}
+                  className="flex items-center justify-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] md:text-xs font-bold uppercase tracking-widest px-6 py-3 rounded-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-[#E8A020]/10"
                 >
-                  Published (
-                  {articlesQuery.data?.filter(a => a.status === "published")
-                    .length || 0}
-                  )
-                </button>
-                <button
-                  onClick={() => setStatusFilter("draft")}
-                  className={`px-4 py-1.5 rounded-sm font-ui text-[10px] uppercase tracking-wider transition-colors ${statusFilter === "draft" ? "bg-blue-600 text-white" : "bg-[#1C1C1A] text-[#8A8880] hover:text-[#F2F0EB]"}`}
-                >
-                  Inbox / Drafts (
-                  {articlesQuery.data?.filter(a => a.status === "draft")
-                    .length || 0}
-                  )
+                  <Plus size={16} />
+                  NEW ARTICLE
                 </button>
               </div>
+            </div>
 
-              {articlesQuery.isLoading ? (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="animate-spin text-[#E8A020]" size={32} />
-                </div>
-              ) : articlesQuery.data?.length === 0 ? (
-                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-8 text-center">
-                  <p className="text-[#8A8880] mb-4">No articles yet</p>
-                  <button
-                    onClick={() => setShowForm(true)}
-                    className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-2 rounded-sm transition-colors"
-                  >
-                    Create First Article
-                  </button>
-                </Card>
-              ) : (
-                <div className="grid gap-4">
-                  {articlesQuery.data
-                    ?.filter(a =>
-                      statusFilter === "all" ? true : a.status === statusFilter
-                    )
-                    .map(article => (
-                      <Card
-                        key={article.id}
-                        className={`bg-[#1C1C1A] border-[#2A2A28] p-4 ${article.status === "draft" ? "border-l-4 border-l-blue-500" : ""}`}
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-2 flex-wrap">
-                              <span
-                                className="font-ui text-[10px] font-600 text-white uppercase tracking-widest px-2 py-1 rounded-sm"
-                                style={{
-                                  backgroundColor:
-                                    article.categoryColor || "#E8A020",
-                                }}
-                              >
-                                {article.category}
-                              </span>
-                              {article.status === "draft" && (
-                                <span className="font-ui text-[10px] font-600 bg-blue-500/20 text-blue-400 uppercase tracking-widest px-2 py-1 rounded-sm flex items-center gap-1">
-                                  <FileText size={10} /> DRAFT
-                                </span>
-                              )}
-                              {article.author === "Redazione AI" && (
-                                <span className="font-ui text-[10px] font-600 bg-purple-500/20 text-purple-400 uppercase tracking-widest px-2 py-1 rounded-sm flex items-center gap-1">
-                                  <Bot size={10} /> AI GENERATED
-                                </span>
-                              )}
-                              {article.featured === 1 && (
-                                <span className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest">
-                                  ⭐ Featured
-                                </span>
-                              )}
-                              {article.breaking === 1 && (
-                                <span className="font-ui text-[10px] font-600 text-red-500 uppercase tracking-widest">
-                                  🔴 Breaking
-                                </span>
-                              )}
-                            </div>
-                            <h3 className="font-headline text-lg text-[#F2F0EB] mb-1 truncate">
-                              {article.title}
-                            </h3>
-                            <p className="font-ui text-xs text-[#8A8880] mb-2 line-clamp-2">
-                              {article.excerpt}
-                            </p>
-                            <div className="flex items-center gap-4 text-[10px] text-[#555550]">
-                              <span>By {article.author}</span>
-                              <span>{article.readTime} min read</span>
-                              <span>
-                                {new Date(
-                                  article.createdAt
-                                ).toLocaleDateString()}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Status Filter Tabs */}
+            <div className="flex flex-wrap gap-2 mb-8 bg-[#11110F] p-1.5 rounded-lg border border-[#1C1C1A] w-fit">
+              <button
+                onClick={() => setStatusFilter("all")}
+                className={`px-5 py-2 rounded-md font-ui text-[10px] font-bold uppercase tracking-widest transition-all ${statusFilter === "all" ? "bg-[#E8A020] text-[#0F0F0E] shadow-sm" : "text-[#8A8880] hover:text-[#F2F0EB]"}`}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setStatusFilter("published")}
+                className={`px-5 py-2 rounded-md font-ui text-[10px] font-bold uppercase tracking-widest transition-all ${statusFilter === "published" ? "bg-[#1C1C1A] text-green-400 border border-green-400/20" : "text-[#8A8880] hover:text-[#F2F0EB]"}`}
+              >
+                Published
+              </button>
+              <button
+                onClick={() => setStatusFilter("draft")}
+                className={`px-5 py-2 rounded-md font-ui text-[10px] font-bold uppercase tracking-widest transition-all ${statusFilter === "draft" ? "bg-[#1C1C1A] text-blue-400 border border-blue-400/20" : "text-[#8A8880] hover:text-[#F2F0EB]"}`}
+              >
+                Drafts
+              </button>
+            </div>
+
+            {articlesQuery.isLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="animate-spin text-[#E8A020]" size={32} />
+              </div>
+            ) : (
+              <div className="grid gap-4">
+                {articlesQuery.data
+                  ?.filter(a =>
+                    statusFilter === "all" ? true : a.status === statusFilter
+                  )
+                  .map(article => (
+                    <Card
+                      key={article.id}
+                      className={`group bg-[#1C1C1A] border-[#2A2A28] p-5 hover:border-[#E8A020]/20 transition-all ${article.status === "draft" ? "border-l-4 border-l-blue-500" : ""}`}
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-3 flex-wrap">
+                            <span
+                              className="font-ui text-[9px] font-900 text-[#0F0F0E] uppercase tracking-[0.2em] px-2 py-0.5 rounded-sm"
+                              style={{ backgroundColor: article.categoryColor || "#E8A020" }}
+                            >
+                              {article.category}
+                            </span>
                             {article.status === "draft" && (
-                              <button
-                                onClick={() => handlePublish(article.id)}
-                                disabled={publishArticleMutation.isPending}
-                                className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-sm transition-colors"
-                                title="Publish Now"
-                              >
-                                <CheckCircle size={16} />
-                              </button>
+                              <span className="font-ui text-[9px] font-800 bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase tracking-widest px-2 py-0.5 rounded-sm">
+                                DRAFT
+                              </span>
                             )}
-                            <a
-                              href={`/articolo/${article.slug}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="p-2 bg-[#2A2A28] hover:bg-[#333330] text-[#8A8880] hover:text-[#E8A020] rounded-sm transition-colors"
-                              title="View on site"
-                            >
-                              <Eye size={16} />
-                            </a>
-                            <button
-                              onClick={() => {
-                                setEditingId(article.id);
-                                setShowForm(true);
-                              }}
-                              className="p-2 bg-[#2A2A28] hover:bg-[#333330] text-[#E8A020] rounded-sm transition-colors"
-                              title="Edit article"
-                            >
-                              <Edit size={16} />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(article.id)}
-                              disabled={deleteArticleMutation.isPending}
-                              className="p-2 bg-[#2A2A28] hover:bg-red-900/30 text-red-500 rounded-sm transition-colors disabled:opacity-50"
-                              title="Delete article"
-                            >
-                              <Trash2 size={16} />
-                            </button>
+                            {article.author === "Redazione AI" && (
+                              <span className="font-ui text-[9px] font-800 bg-purple-500/10 text-purple-400 border border-purple-500/20 uppercase tracking-widest px-2 py-0.5 rounded-sm flex items-center gap-1">
+                                <Bot size={10} /> AI
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="font-headline text-lg text-[#F2F0EB] mb-2 group-hover:text-[#E8A020] transition-colors line-clamp-1">
+                            {article.title}
+                          </h3>
+                          <div className="flex flex-wrap items-center gap-y-2 gap-x-6 text-[10px] text-[#555550] uppercase tracking-widest font-bold">
+                            <span className="flex items-center gap-1.5"><FileText size={10} /> {article.author}</span>
+                            <span className="flex items-center gap-1.5"><Eye size={10} /> {article.viewCount || 0} Views</span>
+                            <span className="flex items-center gap-1.5">
+                              {new Date(article.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: 'short' })}
+                            </span>
                           </div>
                         </div>
-                      </Card>
-                    ))}
-                </div>
-              )}
+                        <div className="flex items-center gap-2 self-end sm:self-center">
+                          {article.status === "draft" && (
+                            <button
+                              onClick={() => handlePublish(article.id)}
+                              disabled={publishArticleMutation.isPending}
+                              className="p-3 bg-[#E8A020] text-[#0F0F0E] hover:scale-105 active:scale-95 rounded-lg transition-all shadow-lg shadow-[#E8A020]/10"
+                              title="Publish Now"
+                            >
+                              <CheckCircle size={18} />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => {
+                              setEditingId(article.id);
+                              setShowForm(true);
+                            }}
+                            className="p-3 bg-[#11110F] border border-[#2A2A28] text-[#8A8880] hover:text-[#E8A020] hover:border-[#E8A020] rounded-lg transition-all"
+                            title="Edit"
+                          >
+                            <Edit size={18} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(article.id)}
+                            className="p-3 bg-[#11110F] border border-[#2A2A28] text-[#8A8880] hover:text-red-500 hover:border-red-500/50 rounded-lg transition-all"
+                            title="Delete"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                          <a
+                            href={`/articolo/${article.slug}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="p-3 bg-[#11110F] border border-[#2A2A28] text-[#8A8880] hover:text-[#F2F0EB] rounded-lg transition-all"
+                            title="Preview"
+                          >
+                            <ChevronRight size={18} />
+                          </a>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+              </div>
+            )}
+          </div>
+        );
+      case "users":
+        return <UsersManagement />;
+      case "comments":
+        return <GlobalComments />;
+      case "ads":
+        return <AdsManager />;
+      case "newsletter":
+        return <NewsletterManager />;
+      case "settings":
+        return <SiteSettings />;
+      case "system":
+        return <SystemConsole />;
+      default:
+        return <div>Tab not implemented</div>;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0A0A09] text-[#F2F0EB] selection:bg-[#E8A020] selection:text-[#0F0F0E]">
+      {/* Sidebar - Desktop */}
+      <AdminSidebar
+        activeTab={activeTab}
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          setIsMobileMenuOpen(false);
+          setShowForm(false);
+          setEditingId(null);
+        }}
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={setIsSidebarCollapsed}
+        onLogout={handleLogout}
+      />
+
+      {/* Main Layout Area */}
+      <div
+        className={`transition-all duration-300 min-h-screen flex flex-col ${isSidebarCollapsed ? "lg:pl-20" : "lg:pl-64"
+          }`}
+      >
+        {/* Top Header Barra */}
+        <header className="h-20 border-b border-[#1C1C1A] bg-[#0A0A09]/80 backdrop-blur-xl sticky top-0 z-[90] flex items-center justify-between px-6 lg:px-10">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="lg:hidden p-2 text-[#8A8880] hover:text-[#F2F0EB]"
+            >
+              <Menu size={24} />
+            </button>
+            <h2 className="font-ui text-[10px] font-900 uppercase tracking-[0.4em] text-[#E8A020] hidden sm:block">
+              COMMAND CENTER // {activeTab}
+            </h2>
+          </div>
+
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-3 pr-6 border-r border-[#1C1C1A]">
+              <div className="flex flex-col items-end">
+                <span className="text-[10px] font-ui font-800 text-[#F2F0EB] uppercase tracking-widest">{user?.name}</span>
+                <span className="text-[9px] font-ui text-[#8A8880] uppercase tracking-tighter">Root Administrator</span>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#E8A020] to-[#D4911C] border border-[#0A0A09]" />
             </div>
-          )
-        ) : /* ── COMMENTS TAB ── */
-          activeTab === "comments" ? (
-            <GlobalComments />
-          ) : /* ── ADS TAB ── */
-            activeTab === "ads" ? (
-              <AdsManager />
-            ) : /* ── NEWSLETTER TAB ── */
-              activeTab === "newsletter" ? (
-                <NewsletterManager />
-              ) : /* ── USERS TAB ── */
-                activeTab === "users" ? (
-                  <UsersManagement />
-                ) : (
-                  /* ── SYSTEM TAB ── */
-                  <SystemConsole />
-                )}
+            <button className="relative text-[#8A8880] hover:text-[#E8A020] transition-colors">
+              <ShieldAlert size={20} />
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            </button>
+          </div>
+        </header>
+
+        {/* Dynamic Content Surface */}
+        <main className="flex-1 p-6 lg:p-12 max-w-7xl mx-auto w-full">
+          {renderContent()}
+        </main>
+
+        <footer className="py-6 px-10 border-t border-[#1C1C1A] flex flex-col sm:flex-row justify-between items-center gap-4 text-[9px] font-ui text-[#333330] uppercase tracking-[0.2em]">
+          <p>© 2026 BISHOUY ENTERPRISE CORE // ALL RIGHTS RESERVED</p>
+          <div className="flex items-center gap-6">
+            <span>SYSTEM STATUS: OPERATIONAL</span>
+            <span className="text-green-500/50">SECURE NODE: ALPHA-09</span>
+          </div>
+        </footer>
       </div>
+
+      {/* Mobile Sidebar Overlay */}
+      {isMobileMenuOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[95] lg:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <div className="fixed top-0 left-0 h-screen w-72 bg-[#11110F] z-[100] border-r border-[#1C1C1A] animate-slide-in-left">
+            <AdminSidebar
+              activeTab={activeTab}
+              setActiveTab={(tab) => {
+                setActiveTab(tab);
+                setIsMobileMenuOpen(false);
+                setShowForm(false);
+              }}
+              isCollapsed={false}
+              setIsCollapsed={() => { }}
+              onLogout={handleLogout}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

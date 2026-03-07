@@ -13,6 +13,7 @@ export {
   sentNewsletters,
   savedArticles,
   pageViews,
+  siteSettings,
 } from "../drizzle/schema";
 import {
   InsertUser,
@@ -47,6 +48,9 @@ import {
   pageViews,
   PageView,
   InsertPageView,
+  siteSettings,
+  SiteSetting,
+  InsertSiteSetting,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -1164,21 +1168,85 @@ export async function getDashboardStats() {
     .select({ count: sql<number>`count(*)` })
     .from(subscribers);
 
+  const viewsResult = await db
+    .select({ total: sql<number>`sum(${articles.viewCount})` })
+    .from(articles);
+
   return {
     totalUsers: usersCount[0]?.count || 0,
     totalArticles: articlesCount[0]?.count || 0,
     totalComments: commentsCount[0]?.count || 0,
     totalAds: adsCount[0]?.count || 0,
     totalSubscribers: subCount[0]?.count || 0,
+    totalViews: viewsResult[0]?.total || 0,
   };
 }
 
+export async function getAnalyticsSummary() {
+  const db = await getDb();
+  if (!db) return null;
+
+  const totalViewsResult = await db
+    .select({ total: sql<number>`sum(${articles.viewCount})` })
+    .from(articles);
+
+  const totalUsersResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(users);
+
+  const totalArticlesResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(articles);
+
+  const totalCommentsResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(comments);
+
+  // Views in the last 24h
+  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const views24hResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(pageViews)
+    .where(sql`${pageViews.createdAt} >= ${yesterday}`);
+
+  // Get daily views for the last 7 days
+  const dailyViews = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    d.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(d);
+    dayEnd.setHours(23, 59, 59, 999);
+
+    const count = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(pageViews)
+      .where(
+        and(
+          sql`${pageViews.createdAt} >= ${d}`,
+          sql`${pageViews.createdAt} <= ${dayEnd}`
+        )
+      );
+
+    dailyViews.push({
+      date: d.toISOString(),
+      views: count[0]?.count || 0,
+    });
+  }
+
+  return {
+    totalViews: totalViewsResult[0]?.total || 0,
+    totalUsers: totalUsersResult[0]?.count || 0,
+    totalArticles: totalArticlesResult[0]?.count || 0,
+    totalComments: totalCommentsResult[0]?.count || 0,
+    views24h: views24hResult[0]?.count || 0,
+    dailyViews,
+  };
+}
+
+
 // ─── Cleanup Jobs ────────────────────────────────────────────────────────────
 
-/**
- * Delete expired verification codes from the DB.
- * Called at server startup and every hour.
- */
 export async function cleanupExpiredVerificationCodes(): Promise<void> {
   try {
     const db = await getDb();
@@ -1187,17 +1255,10 @@ export async function cleanupExpiredVerificationCodes(): Promise<void> {
       .delete(verificationCodes)
       .where(sql`${verificationCodes.expiresAt} < ${now}`);
   } catch (error) {
-    console.error(
-      "[Cleanup] Failed to delete expired verification codes:",
-      error
-    );
+    console.error("[Cleanup] Failed to delete expired verification codes:", error);
   }
 }
 
-/**
- * Delete expired and used password reset tokens from the DB.
- * Called at server startup and every hour.
- */
 export async function cleanupExpiredResetTokens(): Promise<void> {
   try {
     const db = await getDb();
@@ -1236,9 +1297,7 @@ export async function trackView(
   if (!db) return;
 
   try {
-    // 1. Transaction to update total and log event
     await db.transaction(async (tx: any) => {
-      // Increment total count in articles table
       const article = await tx
         .select({ viewCount: articles.viewCount })
         .from(articles)
@@ -1252,7 +1311,6 @@ export async function trackView(
           .where(eq(articles.id, articleId));
       }
 
-      // Log granular page view
       await tx.insert(pageViews).values({
         articleId,
         userId: userId || null,
@@ -1277,39 +1335,38 @@ export async function getTrendingArticles(limit = 5): Promise<Article[]> {
     .limit(limit);
 }
 
-export async function getAnalyticsSummary() {
+
+// Site Settings queries
+export async function getSiteSettings(): Promise<SiteSetting[]> {
   const db = await getDb();
-  if (!db) return null;
-
-  const totalViewsResult = await db
-    .select({ total: sql<number>`sum(${articles.viewCount})` })
-    .from(articles);
-
-  const totalUsersResult = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(users);
-
-  const totalArticlesResult = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(articles);
-
-  const totalCommentsResult = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(comments);
-
-  // Views in the last 24h
-  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  const views24hResult = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(pageViews)
-    .where(sql`${pageViews.createdAt} >= ${yesterday}`);
-
-  return {
-    totalViews: totalViewsResult[0]?.total || 0,
-    totalUsers: totalUsersResult[0]?.count || 0,
-    totalArticles: totalArticlesResult[0]?.count || 0,
-    totalComments: totalCommentsResult[0]?.count || 0,
-    views24h: views24hResult[0]?.count || 0,
-  };
+  if (!db) return [];
+  return db.select().from(siteSettings);
 }
 
+export async function getSiteSettingByKey(key: string): Promise<SiteSetting | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(siteSettings).where(eq(siteSettings.key, key)).limit(1);
+  return result[0];
+}
+
+export async function updateSiteSetting(key: string, value: string): Promise<SiteSetting> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const existing = await getSiteSettingByKey(key);
+  if (existing) {
+    const updated = await db
+      .update(siteSettings)
+      .set({ value, updatedAt: new Date() })
+      .where(eq(siteSettings.key, key))
+      .returning();
+    return updated[0];
+  } else {
+    const created = await db
+      .insert(siteSettings)
+      .values({ key, value, updatedAt: new Date() })
+      .returning();
+    return created[0];
+  }
+}
