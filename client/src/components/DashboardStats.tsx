@@ -16,6 +16,8 @@ import {
   Cpu,
   Globe,
   Terminal,
+  RefreshCw,
+  CheckCircle,
 } from "lucide-react";
 import {
   CartesianGrid,
@@ -301,6 +303,62 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
           </table>
         </div>
       </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Card className="bg-[#1C1C1A] border-[#2A2A28] p-8">
+          <div className="flex items-center justify-between mb-8 border-b border-[#262624] pb-5">
+            <div>
+              <h3 className="text-[#F2F0EB] font-headline text-lg uppercase tracking-tight">System Dynamics</h3>
+              <p className="text-[#8A8880] text-xs font-ui">Real-time event stream</p>
+            </div>
+          </div>
+          <div className="space-y-6">
+            {[
+              { type: 'AI', msg: 'New article generated: "Global Tech Trends"', time: 'Just now', color: 'text-purple-400' },
+              { type: 'USER', msg: 'New comment on "Economy Today"', time: '4 mins ago', color: 'text-blue-400' },
+              { type: 'SYS', msg: 'Ad campaign "Spring 2026" rotated', time: '12 mins ago', color: 'text-[#E8A020]' },
+              { type: 'SEC', msg: 'Suspicious IP 192.168.0.1 blocked', time: '1 hour ago', color: 'text-red-400' },
+            ].map((ev, i) => (
+              <div key={i} className="flex items-center gap-4 group">
+                <div className={`text-[9px] font-900 px-2 py-0.5 rounded border border-current opacity-70 ${ev.color}`}>{ev.type}</div>
+                <p className="text-xs text-[#F2F0EB] font-ui flex-1">{ev.msg}</p>
+                <span className="text-[10px] text-[#555550] uppercase tracking-widest">{ev.time}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card className="bg-[#1C1C1A] border-[#2A2A28] p-8">
+          <div className="flex items-center justify-between mb-8 border-b border-[#262624] pb-5">
+            <div>
+              <h3 className="text-[#F2F0EB] font-headline text-lg uppercase tracking-tight">Quick Actions</h3>
+              <p className="text-[#8A8880] text-xs font-ui">Immediate site interventions</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-4">
+            <button className="flex items-center justify-between p-4 bg-[#0F0F0E] hover:bg-[#E8A020]/5 border border-[#262624] hover:border-[#E8A020]/20 rounded transition-all group">
+              <div className="flex items-center gap-3">
+                <RefreshCw size={16} className="text-[#8A8880] group-hover:text-[#E8A020]" />
+                <span className="text-xs font-bold text-[#8A8880] group-hover:text-[#F2F0EB] uppercase tracking-widest">Clear System Cache</span>
+              </div>
+              <ArrowUpRight size={14} className="text-[#333333] group-hover:text-[#E8A020]" />
+            </button>
+            <button className="flex items-center justify-between p-4 bg-[#0F0F0E] hover:bg-blue-500/5 border border-[#262624] hover:border-blue-500/20 rounded transition-all group">
+              <div className="flex items-center gap-3">
+                <ShieldCheck size={16} className="text-[#8A8880] group-hover:text-blue-400" />
+                <span className="text-xs font-bold text-[#8A8880] group-hover:text-[#F2F0EB] uppercase tracking-widest">Verify Database Integrity</span>
+              </div>
+              <ArrowUpRight size={14} className="text-[#333333] group-hover:text-blue-400" />
+            </button>
+            <button className="flex items-center justify-between p-4 bg-[#0F0F0E] hover:bg-red-500/5 border border-[#262624] hover:border-red-500/20 rounded transition-all group" onClick={() => onTabChange('security')}>
+              <div className="flex items-center gap-3">
+                <Activity size={16} className="text-[#8A8880] group-hover:text-red-400" />
+                <span className="text-xs font-bold text-[#8A8880] group-hover:text-[#F2F0EB] uppercase tracking-widest">Emergency Lockdown</span>
+              </div>
+              <ArrowUpRight size={14} className="text-[#333333] group-hover:text-red-400" />
+            </button>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -19,6 +19,7 @@ import AdsManager from "@/components/AdsManager";
 import GlobalComments from "@/components/GlobalComments";
 import AdminSidebar from "@/components/AdminSidebar";
 import SiteSettings from "@/components/SiteSettings";
+import SecurityStatus from "@/components/SecurityStatus";
 import {
   Loader2,
   Plus,
@@ -31,6 +32,7 @@ import {
   Menu,
   ChevronRight,
   ShieldAlert,
+  Terminal,
 } from "lucide-react";
 
 export default function AdminPanel() {
@@ -45,6 +47,7 @@ export default function AdminPanel() {
     | "newsletter"
     | "system"
     | "settings"
+    | "security"
   >("dashboard");
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -327,6 +330,8 @@ export default function AdminPanel() {
         return <SiteSettings />;
       case "system":
         return <SystemConsole />;
+      case "security":
+        return <SecurityStatus />;
       default:
         return <div>Tab not implemented</div>;
     }
@@ -375,7 +380,10 @@ export default function AdminPanel() {
               </div>
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#E8A020] to-[#D4911C] border border-[#0A0A09]" />
             </div>
-            <button className="relative text-[#8A8880] hover:text-[#E8A020] transition-colors">
+            <button
+              onClick={() => setActiveTab("security")}
+              className={`relative transition-colors ${activeTab === 'security' ? 'text-[#E8A020]' : 'text-[#8A8880] hover:text-[#E8A020]'}`}
+            >
               <ShieldAlert size={20} />
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
             </button>

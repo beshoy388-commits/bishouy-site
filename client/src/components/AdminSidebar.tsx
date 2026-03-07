@@ -15,6 +15,7 @@ import {
     Bell
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
 
 interface AdminSidebarProps {
     activeTab: string;
@@ -32,11 +33,13 @@ export default function AdminSidebar({
     onLogout
 }: AdminSidebarProps) {
     const [, setLocation] = useLocation();
+    const pendingComments = trpc.comments.getPending.useQuery();
+    const pendingCount = pendingComments.data?.length || 0;
 
     const menuItems = [
         { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
         { id: "articles", label: "Articles", icon: FileText },
-        { id: "comments", label: "Comments", icon: MessageSquare },
+        { id: "comments", label: "Comments", icon: MessageSquare, badge: pendingCount > 0 ? pendingCount : undefined },
         { id: "users", label: "Users", icon: User },
         { id: "ads", label: "Advertisements", icon: Megaphone },
         { id: "newsletter", label: "Newsletter", icon: Send },
@@ -83,13 +86,20 @@ export default function AdminSidebar({
                         key={item.id}
                         onClick={() => setActiveTab(item.id)}
                         className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group relative ${activeTab === item.id
-                                ? "bg-[#E8A020] text-[#0F0F0E]"
-                                : "text-[#8A8880] hover:text-[#F2F0EB] hover:bg-[#1C1C1A]"
+                            ? "bg-[#E8A020] text-[#0F0F0E]"
+                            : "text-[#8A8880] hover:text-[#F2F0EB] hover:bg-[#1C1C1A]"
                             }`}
                     >
                         <item.icon size={20} strokeWidth={activeTab === item.id ? 2.5 : 2} />
                         {!isCollapsed && (
                             <span className="font-ui text-sm font-600 tracking-wide">{item.label}</span>
+                        )}
+
+                        {item.badge !== undefined && (
+                            <span className={`absolute ${isCollapsed ? "-top-1 -right-1" : "right-3"} flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold ${activeTab === item.id ? "bg-[#0F0F0E] text-[#E8A020]" : "bg-red-500 text-white shadow-lg shadow-red-500/20"
+                                }`}>
+                                {item.badge}
+                            </span>
                         )}
 
                         {/* Tooltip for collapsed state */}
