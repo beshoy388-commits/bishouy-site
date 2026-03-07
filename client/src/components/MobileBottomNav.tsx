@@ -50,7 +50,7 @@ export default function MobileBottomNav({ onSearchClick }: { onSearchClick: () =
                         <div className="p-1">
                             <Search size={22} />
                         </div>
-                        <span className="text-[10px] font-ui font-800 uppercase tracking-widest leading-none">Cerca</span>
+                        <span className="text-[10px] font-ui font-800 uppercase tracking-widest leading-none">Search</span>
                     </button>
 
                     {/* Profile/Login */}
@@ -66,7 +66,7 @@ export default function MobileBottomNav({ onSearchClick }: { onSearchClick: () =
                                         <User size={22} strokeWidth={isActive("/profile") ? 2.5 : 2} />
                                     </div>
                                 )}
-                                <span className="text-[10px] font-ui font-800 uppercase tracking-widest leading-none">Profilo</span>
+                                <span className="text-[10px] font-ui font-800 uppercase tracking-widest leading-none">Profile</span>
                             </button>
                         </Link>
                     ) : (
@@ -75,7 +75,7 @@ export default function MobileBottomNav({ onSearchClick }: { onSearchClick: () =
                                 <div className={`p-1 rounded-full transition-colors ${isActive("/login") ? "bg-[#E8A020]/10" : "bg-transparent"}`}>
                                     <User size={22} strokeWidth={isActive("/login") ? 2.5 : 2} />
                                 </div>
-                                <span className="text-[10px] font-ui font-800 uppercase tracking-widest leading-none">Accedi</span>
+                                <span className="text-[10px] font-ui font-800 uppercase tracking-widest leading-none">Login</span>
                             </button>
                         </Link>
                     )}
