@@ -21,6 +21,7 @@ import AdminSidebar from "@/components/AdminSidebar";
 import SiteSettings from "@/components/SiteSettings";
 import SecurityStatus from "@/components/SecurityStatus";
 import MediaLibrary from "@/components/MediaLibrary";
+import PulseModeration from "@/components/PulseModeration";
 import {
   Loader2,
   Plus,
@@ -50,6 +51,7 @@ export default function AdminPanel() {
     | "settings"
     | "security"
     | "media"
+    | "pulse"
   >("dashboard");
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -346,6 +348,8 @@ export default function AdminPanel() {
         return <SystemConsole />;
       case "security":
         return <SecurityStatus />;
+      case "pulse":
+        return <PulseModeration />;
       default:
         return <div>Tab not implemented</div>;
     }

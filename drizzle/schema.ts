@@ -260,3 +260,41 @@ export const siteSettings = sqliteTable("site_settings", {
 
 export type SiteSetting = typeof siteSettings.$inferSelect;
 export type InsertSiteSetting = typeof siteSettings.$inferInsert;
+
+export const socialPosts = sqliteTable("social_posts", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  content: text("content").notNull(),
+  authorId: integer("authorId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  status: text("status", { enum: ["approved", "pending", "rejected", "flagged"] })
+    .default("pending")
+    .notNull(),
+  aiScore: integer("aiScore", { mode: "number" }).default(0),
+  aiReason: text("aiReason"),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: integer("updatedAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+export type SocialPost = typeof socialPosts.$inferSelect;
+export type InsertSocialPost = typeof socialPosts.$inferInsert;
+
+export const socialLikes = sqliteTable("social_likes", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  postId: integer("postId")
+    .notNull()
+    .references(() => socialPosts.id, { onDelete: "cascade" }),
+  userId: integer("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+export type SocialLike = typeof socialLikes.$inferSelect;
+export type InsertSocialLike = typeof socialLikes.$inferInsert;

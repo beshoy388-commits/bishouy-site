@@ -13,7 +13,8 @@ import {
     ChevronRight,
     LogOut,
     Bell,
-    Image as ImageIcon
+    Image as ImageIcon,
+    Zap
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -37,10 +38,14 @@ export default function AdminSidebar({
     const pendingComments = trpc.comments.getPending.useQuery();
     const pendingCount = pendingComments.data?.length || 0;
 
+    const flaggedPosts = trpc.social.adminList.useQuery({ status: 'flagged' });
+    const flaggedCount = flaggedPosts.data?.length || 0;
+
     const menuItems = [
         { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
         { id: "articles", label: "Articles", icon: FileText },
         { id: "media", label: "Media Library", icon: ImageIcon },
+        { id: "pulse", label: "Social Pulse", icon: Zap, badge: flaggedCount > 0 ? flaggedCount : undefined },
         { id: "comments", label: "Comments", icon: MessageSquare, badge: pendingCount > 0 ? pendingCount : undefined },
         { id: "users", label: "Users", icon: User },
         { id: "ads", label: "Advertisements", icon: Megaphone },

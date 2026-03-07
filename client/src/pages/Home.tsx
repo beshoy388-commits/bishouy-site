@@ -14,6 +14,7 @@ import { trpc } from "@/lib/trpc";
 import SEO from "@/components/SEO";
 import ArticleCardSkeleton from "@/components/ArticleCardSkeleton";
 import { useAuth } from "@/_core/hooks/useAuth";
+import SocialPulse from "@/components/SocialPulse";
 
 export default function Home() {
   const { isAuthenticated, loading } = useAuth();
@@ -135,19 +136,36 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Latest Articles Grid */}
+      {/* Latest Articles + Social Pulse */}
       <section className="py-8">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {gridArticles.map((article, idx) => (
-              <div
-                key={article.id}
-                className="fade-in-up"
-                style={{ animationDelay: `${idx * 50}ms` }}
-              >
-                <ArticleCard article={article} variant="medium" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            {/* Articles Column */}
+            <div className="lg:col-span-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {gridArticles.map((article, idx) => (
+                  <div
+                    key={article.id}
+                    className="fade-in-up"
+                    style={{ animationDelay: `${idx * 50}ms` }}
+                  >
+                    <ArticleCard article={article} variant="medium" />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Social Pulse Sidebar */}
+            <aside className="lg:col-span-4 lg:sticky lg:top-24 h-fit space-y-8">
+              <div className="border-l-2 border-[#E8A020] pl-4 mb-4">
+                <h2 className="font-display text-sm text-[#F2F0EB] uppercase tracking-widest">
+                  COMMUNITY PULSE
+                </h2>
+              </div>
+              <div className="h-[700px]">
+                <SocialPulse />
+              </div>
+            </aside>
           </div>
 
           <div className="mt-16 text-center">

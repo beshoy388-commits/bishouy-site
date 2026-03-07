@@ -51,6 +51,12 @@ import {
   siteSettings,
   SiteSetting,
   InsertSiteSetting,
+  socialPosts,
+  SocialPost,
+  InsertSocialPost,
+  socialLikes,
+  SocialLike,
+  InsertSocialLike,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -1360,4 +1366,109 @@ export async function updateSiteSetting(key: string, value: string): Promise<Sit
     .returning();
 
   return results[0];
+}
+
+// ─── Social Pulse Queries ─────────────────────────────────────────────────────
+
+export async function getSocialPosts(status: "approved" | "pending" | "rejected" | "flagged" = "approved", limit = 50): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db
+    .select({
+      id: socialPosts.id,
+      content: socialPosts.content,
+      status: socialPosts.status,
+      aiScore: socialPosts.aiScore,
+      aiReason: socialPosts.aiReason,
+      createdAt: socialPosts.createdAt,
+      authorId: socialPosts.authorId,
+      authorName: users.name,
+      authorAvatar: users.avatarUrl,
+      authorRole: users.role,
+    })
+    .from(socialPosts)
+    .innerJoin(users, eq(socialPosts.authorId, users.id))
+    .where(eq(socialPosts.status, status))
+    .orderBy(desc(socialPosts.createdAt))
+    .limit(limit);
+}
+
+export async function createSocialPost(data: InsertSocialPost): Promise<SocialPost> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const results = await db.insert(socialPosts).values(data).returning();
+  return results[0];
+}
+
+export async function updateSocialPostStatus(
+  id: number,
+  status: "approved" | "rejected" | "flagged",
+  aiScore?: number,
+  aiReason?: string
+): Promise<SocialPost | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const results = await db
+    .update(socialPosts)
+    .set({
+      status,
+      aiScore: aiScore ?? undefined,
+      aiReason: aiReason ?? undefined,
+      updatedAt: new Date()
+    })
+    .where(eq(socialPosts.id, id))
+    .returning();
+
+  return results[0];
+}
+
+export async function toggleSocialLike(postId: number, userId: number): Promise<{ liked: boolean }> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const existing = await db
+    .select()
+    .from(socialLikes)
+    .where(and(eq(socialLikes.postId, postId), eq(socialLikes.userId, userId)))
+    .limit(1);
+
+  if (existing.length > 0) {
+    await db
+      .delete(socialLikes)
+      .where(and(eq(socialLikes.postId, postId), eq(socialLikes.userId, userId)));
+    return { liked: false };
+  } else {
+    await db.insert(socialLikes).values({ postId, userId });
+    return { liked: true };
+  }
+}
+
+export async function getSocialLikeCount(postId: number): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const result = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(socialLikes)
+    .where(eq(socialLikes.postId, postId));
+  return result[0]?.count || 0;
+}
+
+export async function hasUserLikedSocialPost(postId: number, userId: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  const result = await db
+    .select()
+    .from(socialLikes)
+    .where(and(eq(socialLikes.postId, postId), eq(socialLikes.userId, userId)))
+    .limit(1);
+  return result.length > 0;
+}
+
+export async function deleteSocialPost(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(socialPosts).where(eq(socialPosts.id, id));
 }

@@ -64,3 +64,62 @@ export async function generateArticleFromTopic(topic: string) {
 
     return JSON.parse(text);
 }
+
+/**
+ * AI Content Moderation for Social Posts and Comments.
+ * Returns a toxicity score and a final action decision.
+ */
+export async function moderateContent(content: string): Promise<{
+    score: number;
+    action: "approved" | "rejected" | "flagged";
+    reason: string;
+}> {
+    if (!ENV.openRouterApiKey) {
+        return { score: 0, action: "approved", reason: "AI Moderation skipped: API key missing" };
+    }
+
+    try {
+        const response = await (openai.chat.completions.create as any)({
+            model: "meta-llama/llama-3.1-8b-instruct:free",
+            response_format: { type: "json_object" },
+            messages: [
+                {
+                    role: "system",
+                    content: `You are an AI Safety Sentinel for a premium news platform. 
+          Your job is to analyze user-generated content for toxicity, hate speech, spam, or harassment.
+          
+          RATING SCALE:
+          0-20: Completely safe, constructive.
+          21-50: Potentially offensive, mildly rude, or borderline spam.
+          51-100: Toxic, hate speech, high-risk spam, or severe harassment.
+
+          DECISION LOGIC:
+          - If score <= 30: "approved"
+          - If score > 30 AND <= 60: "flagged" (requires human review)
+          - If score > 60: "rejected"
+
+          JSON OUTPUT FORMAT:
+          {
+            "score": number,
+            "action": "approved" | "rejected" | "flagged",
+            "reason": "Brief explanation of the decision"
+          }`,
+                },
+                {
+                    role: "user",
+                    content: `CONTENT TO ANALYZE: "${content}"`,
+                },
+            ],
+        });
+
+        const result = JSON.parse(response.choices[0]?.message?.content || "{}");
+        return {
+            score: result.score ?? 0,
+            action: result.action ?? "flagged",
+            reason: result.reason ?? "Unknown analysis result",
+        };
+    } catch (error) {
+        console.error("[AI Sentinel] Moderation failed:", error);
+        return { score: 50, action: "flagged", reason: "System error during AI scan" };
+    }
+}
