@@ -104,6 +104,7 @@ import { useLocation } from "wouter";
 import LiveAnalyticsTracker from "@/components/LiveAnalyticsTracker";
 
 import GoogleAdSense from "@/components/GoogleAdSense";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 function AppContent() {
   const { setIsSearchOpen } = useUI();
@@ -115,6 +116,7 @@ function AppContent() {
       <Toaster />
       <LiveAnalyticsTracker />
       <GoogleAdSense />
+      <GoogleAnalytics />
       <Router />
       <CookieConsent />
       <BackToTop />
