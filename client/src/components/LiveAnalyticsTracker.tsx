@@ -10,17 +10,23 @@ export default function LiveAnalyticsTracker() {
         // Generate or retrieve a persistent session ID for this browser
         let sessionId = localStorage.getItem("visitor_session_id");
         if (!sessionId) {
-            sessionId = crypto.randomUUID();
+            sessionId = typeof crypto !== 'undefined' && crypto.randomUUID
+                ? crypto.randomUUID()
+                : Math.random().toString(36).substring(2) + Date.now().toString(36);
             localStorage.setItem("visitor_session_id", sessionId);
         }
 
         const currentSessionId = sessionId;
 
         const sendHeartbeat = () => {
-            heartbeatMutation.mutate({
-                sessionId: currentSessionId,
-                currentPath: location,
-            });
+            try {
+                heartbeatMutation.mutate({
+                    sessionId: currentSessionId,
+                    currentPath: window.location.pathname,
+                });
+            } catch (e) {
+                // Silent fail for analytics
+            }
         };
 
         // Send immediate heartbeat on mount or path change

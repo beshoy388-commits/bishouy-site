@@ -1,4 +1,4 @@
-import { eq, desc, and, sql } from "drizzle-orm";
+import { eq, desc, and, sql, gt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
 export {
@@ -1499,6 +1499,28 @@ export async function updateVisitorSession(data: InsertVisitorSession) {
   const db = await getDb();
   if (!db) return;
 
+  // Failsafe table check
+  try {
+    const tableExists = await (db as any).run(sql`SELECT name FROM sqlite_master WHERE type='table' AND name='visitor_sessions'`);
+    if (!(tableExists.rows?.length > 0)) {
+      console.log("[Analytics] Failsafe: Creating visitor_sessions table");
+      await (db as any).run(sql`
+          CREATE TABLE IF NOT EXISTS visitor_sessions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            sessionId TEXT NOT NULL UNIQUE,
+            userId INTEGER REFERENCES users(id) ON DELETE SET NULL,
+            ipAddress TEXT,
+            userAgent TEXT,
+            location TEXT,
+            currentPath TEXT,
+            lastActiveAt INTEGER NOT NULL
+          );
+        `);
+    }
+  } catch (e) {
+    // Already exists or wrong driver, ignore
+  }
+
   const existing = await db
     .select()
     .from(visitorSessions)
@@ -1558,6 +1580,6 @@ export async function getActiveVisitors(minutes: number = 5) {
     })
     .from(visitorSessions)
     .leftJoin(users, eq(visitorSessions.userId, users.id))
-    .where(sql`${visitorSessions.lastActiveAt} > ${cutoff.getTime()}`)
+    .where(gt(visitorSessions.lastActiveAt, cutoff))
     .orderBy(desc(visitorSessions.lastActiveAt));
 }

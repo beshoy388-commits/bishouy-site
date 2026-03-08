@@ -1086,6 +1086,8 @@ export const appRouter = router({
         const ip = getClientIp(ctx.req);
         const ua = getUserAgent(ctx.req);
 
+        console.log(`[Heartbeat] Session: ${input.sessionId}, Path: ${input.currentPath}, User: ${ctx.user?.id || 'Guest'}`);
+
         // Basic location placeholder (or we could fetch from API)
         // For now we'll just store information we already have
         await updateVisitorSession({
