@@ -375,18 +375,22 @@ export async function syncRSSFeeds() {
           existingArticles.push(articleData as any);
 
           newArticlesCount++;
-          log(`[RSS] Premium draft ready for review (#${newArticlesCount}): ${editorialPiece.title}`);
+          log(`[RSS] Premium draft ready for review: ${editorialPiece.title}`);
+
+          // CRITICAL: Stop after generating exactly ONE article as per user request
+          isSyncRunning = false;
+          return { success: true, count: 1, message: "Un articolo è stato generato con successo." };
         }
       } catch (error: any) {
         log(`[RSS] Workflow Error (${feedConfig.url}): ${error.message || error}`);
       }
     }
 
-    log(`[RSS] Editorial Sync complete. ${newArticlesCount} new premium drafts.`);
-    return { success: true, count: newArticlesCount };
+    log(`[RSS] Editorial Sync complete. No new articles found to rewrite.`);
+    return { success: true, count: 0, message: "Nessuna nuova notizia trovata da elaborare." };
   } catch (err) {
     console.error(`[RSS] Fatal Error:`, err);
-    return { success: false, message: "Sync failed." };
+    return { success: false, message: "Errore durante la generazione." };
   } finally {
     isSyncRunning = false;
   }

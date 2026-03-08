@@ -1401,12 +1401,19 @@ export const appRouter = router({
       }),
 
     triggerNewsGeneration: adminProcedure.mutation(async () => {
-      // Run asynchronously without awaiting so we don't block the request for long
-      syncRSSFeeds().catch(err => console.error("[Manual AI Sync Error]", err));
-      return {
-        success: true,
-        message: "Generazione articoli AI avviata con successo.",
-      };
+      try {
+        const result = await syncRSSFeeds();
+        return {
+          success: result.success,
+          message: result.message || "Generazione completata.",
+        };
+      } catch (err: any) {
+        console.error("[Manual AI Sync Error]", err);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Errore durante la generazione dell'articolo: " + err.message
+        });
+      }
     }),
   }),
   settings: router({
