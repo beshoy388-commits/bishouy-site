@@ -107,17 +107,17 @@ export default function CookieConsent() {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex-1">
               <h3 className="font-headline text-lg font-700 text-[#F2F0EB] mb-1 uppercase tracking-tighter">
-                Preferenze <span className="text-[#E8A020]">Cookie</span>
+                Cookie <span className="text-[#E8A020]">Preferences</span>
               </h3>
               <p className="font-ui text-xs text-[#8A8880] leading-relaxed max-w-2xl">
-                Utilizziamo i cookie per migliorare la tua esperienza, analizzare il traffico del sito
-                e servire contenuti personalizzati. Facendo clic su "Accetta tutto", acconsenti al nostro utilizzo dei cookie.
-                Puoi personalizzare le tue preferenze o{" "}
+                We use cookies to enhance your experience, analyze site traffic,
+                and serve personalized content. By clicking "Accept All," you
+                consent to our use of cookies. You can customize your preferences or{" "}
                 <a
                   href="/privacy-policy"
                   className="text-[#E8A020] hover:underline font-bold"
                 >
-                  leggere la nostra privacy policy
+                  read our privacy policy
                 </a>
                 .
               </p>
@@ -129,19 +129,19 @@ export default function CookieConsent() {
                 className="flex items-center justify-center gap-2 text-[#8A8880] hover:text-[#F2F0EB] font-ui text-[10px] uppercase tracking-widest transition-all px-4 py-2 border border-[#1C1C1A] rounded-md w-full sm:w-auto"
               >
                 <Settings size={14} />
-                Impostazioni
+                Settings
               </button>
               <button
                 onClick={handleRejectAll}
                 className="bg-[#1C1C1A] hover:bg-[#2A2A28] border border-[#2A2A28] text-[#F2F0EB] font-ui text-[10px] font-bold uppercase tracking-widest px-6 py-3 rounded-md transition-all w-full sm:w-auto"
               >
-                Rifiuta
+                Reject
               </button>
               <button
                 onClick={handleAcceptAll}
                 className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-bold uppercase tracking-widest px-8 py-3 rounded-md transition-all shadow-lg shadow-[#E8A020]/10 w-full sm:w-auto"
               >
-                Accetta Tutto
+                Accept All
               </button>
             </div>
           </div>
@@ -149,7 +149,7 @@ export default function CookieConsent() {
           <div className="bg-[#1C1C1A] rounded-xl p-6 border border-[#2A2A28]">
             <div className="flex items-center justify-between mb-6">
               <h3 className="font-headline text-lg font-700 text-[#F2F0EB] uppercase tracking-tighter">
-                Impostazioni <span className="text-[#E8A020]">Cookie</span>
+                Cookie <span className="text-[#E8A020]">Settings</span>
               </h3>
               <button
                 onClick={() => setShowSettings(false)}
@@ -174,10 +174,10 @@ export default function CookieConsent() {
                     htmlFor="necessary"
                     className="font-ui text-xs font-bold text-[#F2F0EB] block mb-1 uppercase tracking-widest"
                   >
-                    Cookie Essenziali
+                    Essential Cookies
                   </label>
                   <p className="font-ui text-[10px] text-[#555550] leading-relaxed">
-                    Necessari per il corretto funzionamento del sito. Non possono essere disabilitati.
+                    Required for the website to function properly. Cannot be disabled.
                   </p>
                 </div>
               </div>
@@ -201,10 +201,10 @@ export default function CookieConsent() {
                     htmlFor="analytics"
                     className="font-ui text-xs font-bold text-[#F2F0EB] block mb-1 uppercase tracking-widest"
                   >
-                    Cookie Analitici
+                    Analytics Cookies
                   </label>
                   <p className="font-ui text-[10px] text-[#555550] leading-relaxed">
-                    Ci aiutano a capire come utilizzi il nostro sito per migliorare la tua esperienza.
+                    Help us understand how you use our website to improve your experience.
                   </p>
                 </div>
               </div>
@@ -228,10 +228,10 @@ export default function CookieConsent() {
                     htmlFor="marketing"
                     className="font-ui text-xs font-bold text-[#F2F0EB] block mb-1 uppercase tracking-widest"
                   >
-                    Cookie di Marketing
+                    Marketing Cookies
                   </label>
                   <p className="font-ui text-[10px] text-[#555550] leading-relaxed">
-                    Utilizzati per tracciare la tua attività e mostrarti annunci personalizzati.
+                    Used to track your activity and show you personalized ads.
                   </p>
                 </div>
               </div>
@@ -242,13 +242,13 @@ export default function CookieConsent() {
                 onClick={handleRejectAll}
                 className="flex-1 bg-[#1C1C1A] hover:bg-[#2A2A28] border border-[#2A2A28] text-[#F2F0EB] font-ui text-[10px] font-bold uppercase tracking-widest px-4 py-3 rounded-md transition-all"
               >
-                Rifiuta Tutto
+                Reject All
               </button>
               <button
                 onClick={handleSaveCustom}
                 className="flex-1 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-bold uppercase tracking-widest px-4 py-3 rounded-md transition-all shadow-lg shadow-[#E8A020]/10"
               >
-                Salva Preferenze
+                Save Preferences
               </button>
             </div>
           </div>
