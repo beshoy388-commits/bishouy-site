@@ -229,8 +229,13 @@ export async function syncRSSFeeds() {
     const { getAllArticles, createArticle, getArticleBySlug, getSiteSettings } = await import("./db");
 
     // Check if AI generation is enabled in settings
-    const settings = await getSiteSettings();
-    const isAiEnabled = settings.find(s => s.key === "ai_generation_enabled")?.value !== "false";
+    let isAiEnabled = false;
+    try {
+      const settings = await getSiteSettings();
+      isAiEnabled = settings.find(s => s.key === "ai_generation_enabled")?.value === "true";
+    } catch (e) {
+      log("[RSS] Could not fetch site settings. Defaulting AI Generation to DISABLED.");
+    }
 
     if (!isAiEnabled) {
       log("[RSS] AI Generation is currently DISABLED in site settings. Skipping sync.");

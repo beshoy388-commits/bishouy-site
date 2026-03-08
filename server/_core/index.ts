@@ -50,7 +50,14 @@ async function startServer() {
       contentSecurityPolicy: {
         directives: {
           "default-src": ["'self'"],
-          "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://apis.google.com"],
+          "script-src": [
+            "'self'",
+            "'unsafe-inline'",
+            "'unsafe-eval'",
+            "https://apis.google.com",
+            "https://pagead2.googlesyndication.com",
+            "https://adservice.google.com",
+          ],
           "connect-src": [
             "'self'",
             "https://api.openrouter.ai",
@@ -61,6 +68,8 @@ async function startServer() {
             "wss://*.render.com",
             "https://*.render.com",
             "https://vitals.vercel-insights.com",
+            "https://pagead2.googlesyndication.com",
+            "https://googleads.g.doubleclick.net",
           ],
           "img-src": [
             "'self'",
@@ -75,7 +84,12 @@ async function startServer() {
             "https://fonts.googleapis.com",
           ],
           "font-src": ["'self'", "https://fonts.gstatic.com"],
-          "frame-src": ["'self'", "https://*.google.com"],
+          "frame-src": [
+            "'self'",
+            "https://*.google.com",
+            "https://googleads.g.doubleclick.net",
+            "https://tpc.googlesyndication.com",
+          ],
           "upgrade-insecure-requests": [],
         },
       },
@@ -272,6 +286,15 @@ cron.schedule("0 7 * * *", () => {
   console.log("[CRON] Executing scheduled Editorial Briefing at 7:00 AM...");
   sendDailyNewsletter().catch(err => {
     console.error("[CRON] Newsletter Error:", err);
+  });
+});
+
+// Schedule RSS Sync: Every 2 hours
+// This autonomous cycle will ONLY execute if ai_generation_enabled is "true" in Site Settings
+cron.schedule("0 */2 * * *", () => {
+  console.log("[CRON] Initiating Autonomous Editorial Cycle...");
+  syncRSSFeeds().catch(err => {
+    console.error("[CRON] RSS Sync Error:", err);
   });
 });
 

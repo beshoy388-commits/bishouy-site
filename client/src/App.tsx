@@ -100,16 +100,23 @@ import { UIProvider, useUI } from "./contexts/UIContext";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { trpc } from "./lib/trpc";
 import { useAuth } from "./_core/hooks/useAuth";
+import { useLocation } from "wouter";
+
+import GoogleAdSense from "@/components/GoogleAdSense";
 
 function AppContent() {
   const { setIsSearchOpen } = useUI();
+  const [location] = useLocation();
+  const isAdminPage = location.startsWith("/admin");
+
   return (
     <MaintenanceGuard>
       <Toaster />
+      <GoogleAdSense />
       <Router />
       <CookieConsent />
       <BackToTop />
-      <MobileBottomNav onSearchClick={() => setIsSearchOpen(true)} />
+      {!isAdminPage && <MobileBottomNav onSearchClick={() => setIsSearchOpen(true)} />}
     </MaintenanceGuard>
   );
 }

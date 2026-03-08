@@ -369,6 +369,7 @@ export default function AdminPanel() {
         isCollapsed={isSidebarCollapsed}
         setIsCollapsed={setIsSidebarCollapsed}
         onLogout={handleLogout}
+        className="hidden lg:flex z-[100]"
       />
 
       {/* Main Layout Area */}
@@ -377,7 +378,7 @@ export default function AdminPanel() {
           }`}
       >
         {/* Top Header Barra */}
-        <header className="h-20 border-b border-[#1C1C1A] bg-[#0A0A09]/80 backdrop-blur-xl sticky top-0 z-[90] flex items-center justify-between px-6 lg:px-10">
+        <header className="h-16 lg:h-20 border-b border-[#1C1C1A] bg-[#0A0A09]/80 backdrop-blur-xl sticky top-0 z-[90] flex items-center justify-between px-4 lg:px-10">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -409,7 +410,7 @@ export default function AdminPanel() {
         </header>
 
         {/* Dynamic Content Surface */}
-        <main className="flex-1 p-6 lg:p-12 max-w-7xl mx-auto w-full">
+        <main className="flex-1 p-4 lg:p-12 max-w-7xl mx-auto w-full">
           {renderContent()}
         </main>
 
@@ -427,27 +428,27 @@ export default function AdminPanel() {
         </footer>
       </div>
 
-      {/* Mobile Sidebar Overlay */}
+      {/* Mobile Sidebar - Slide in */}
+      <AdminSidebar
+        activeTab={activeTab}
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          setIsMobileMenuOpen(false);
+          setShowForm(false);
+          setEditingId(null);
+        }}
+        isCollapsed={false}
+        setIsCollapsed={() => { }}
+        onLogout={handleLogout}
+        className={`lg:hidden w-[280px] z-[110] shadow-2xl transition-transform duration-300 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+      />
+
+      {/* Mobile Overlay Backdrop */}
       {isMobileMenuOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[95] lg:hidden"
-            onClick={() => setIsMobileMenuOpen(false)}
-          />
-          <div className="fixed top-0 left-0 h-screen w-72 bg-[#11110F] z-[100] border-r border-[#1C1C1A] animate-slide-in-left">
-            <AdminSidebar
-              activeTab={activeTab}
-              setActiveTab={(tab) => {
-                setActiveTab(tab);
-                setIsMobileMenuOpen(false);
-                setShowForm(false);
-              }}
-              isCollapsed={false}
-              setIsCollapsed={() => { }}
-              onLogout={handleLogout}
-            />
-          </div>
-        </>
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[105] lg:hidden transition-opacity duration-300"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
       )}
     </div>
   );

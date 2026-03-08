@@ -25,6 +25,7 @@ interface AdminSidebarProps {
     isCollapsed: boolean;
     setIsCollapsed: (collapsed: boolean) => void;
     onLogout: () => void;
+    className?: string;
 }
 
 export default function AdminSidebar({
@@ -32,7 +33,8 @@ export default function AdminSidebar({
     setActiveTab,
     isCollapsed,
     setIsCollapsed,
-    onLogout
+    onLogout,
+    className = ""
 }: AdminSidebarProps) {
     const [, setLocation] = useLocation();
     const pendingComments = trpc.comments.getPending.useQuery();
@@ -56,8 +58,7 @@ export default function AdminSidebar({
 
     return (
         <div
-            className={`fixed top-0 left-0 h-screen bg-[#11110F] border-r border-[#1C1C1A] transition-all duration-300 z-[100] flex flex-col ${isCollapsed ? "w-20" : "w-64"
-                }`}
+            className={`fixed top-0 left-0 h-screen bg-[#11110F] border-r border-[#1C1C1A] transition-all duration-300 z-[50] flex flex-col ${isCollapsed ? "w-20" : "w-64"} ${className}`}
         >
             {/* Brand */}
             <div className="h-20 flex items-center px-6 border-b border-[#1C1C1A]">
