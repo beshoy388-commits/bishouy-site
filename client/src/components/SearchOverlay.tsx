@@ -67,7 +67,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                             searchQuery.data.map((article) => (
                                 <Link
                                     key={article.id}
-                                    href={`/articolo/${article.slug}`}
+                                    href={`/article/${article.slug}`}
                                     onClick={onClose}
                                 >
                                     <div className="group flex gap-4 p-4 rounded-sm hover:bg-[#1C1C1A] transition-all cursor-pointer">

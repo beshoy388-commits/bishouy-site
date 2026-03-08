@@ -218,7 +218,7 @@ async function startServer() {
       for (const article of articles) {
         xml += `
   <url>
-    <loc>${baseUrl}/articolo/${article.slug}</loc>
+    <loc>${baseUrl}/article/${article.slug}</loc>
     <lastmod>${article.updatedAt.toISOString().split("T")[0]}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

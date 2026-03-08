@@ -90,10 +90,10 @@ export async function sendDailyNewsletter(testEmail?: string) {
           <div style="margin-bottom: 40px; border-bottom: 1px solid #1C1C1A; padding-bottom: 32px;">
             <span style="color: #E8A020; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 8px;">${article.category}</span>
             <h2 style="margin: 0 0 12px; font-size: 22px; line-height: 1.3; font-weight: 700;">
-              <a href="${baseUrl}/articolo/${article.slug}" style="color: #F2F0EB; text-decoration: none;">${article.title}</a>
+              <a href="${baseUrl}/article/${article.slug}" style="color: #F2F0EB; text-decoration: none;">${article.title}</a>
             </h2>
             <p style="color: #8A8880; font-size: 15px; line-height: 1.6; margin: 0 0 16px;">${article.excerpt}</p>
-            <a href="${baseUrl}/articolo/${article.slug}" style="color: #E8A020; font-size: 12px; font-weight: 800; text-decoration: none; text-transform: uppercase; letter-spacing: 1.5px;">Read Full Story →</a>
+            <a href="${baseUrl}/article/${article.slug}" style="color: #E8A020; font-size: 12px; font-weight: 800; text-decoration: none; text-transform: uppercase; letter-spacing: 1.5px;">Read Full Story →</a>
           </div>
         `
       )

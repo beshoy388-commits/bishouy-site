@@ -150,7 +150,7 @@ export default function ArticleCard({
 
   if (variant === "featured") {
     return (
-      <Link href={`/articolo/${article.slug}`}>
+      <Link href={`/article/${article.slug}`}>
         <article className="article-card group relative h-full min-h-[480px] overflow-hidden rounded-sm cursor-pointer">
           {/* Background image */}
           <div className="img-zoom absolute inset-0">
@@ -236,7 +236,7 @@ export default function ArticleCard({
 
   if (variant === "horizontal") {
     return (
-      <Link href={`/articolo/${article.slug}`}>
+      <Link href={`/article/${article.slug}`}>
         <article className="article-card group flex gap-4 cursor-pointer">
           <div className="img-zoom flex-shrink-0 w-24 h-20 rounded-sm overflow-hidden text-[#0F0F0E]">
             <img
@@ -271,7 +271,7 @@ export default function ArticleCard({
 
   if (variant === "small") {
     return (
-      <Link href={`/articolo/${article.slug}`}>
+      <Link href={`/article/${article.slug}`}>
         <article className="article-card group cursor-pointer border-b border-[#1C1C1A] pb-4">
           <span
             className="category-badge mb-2 inline-block"
@@ -301,7 +301,7 @@ export default function ArticleCard({
 
   // Default: medium card
   return (
-    <Link href={`/articolo/${article.slug}`}>
+    <Link href={`/article/${article.slug}`}>
       <article className="article-card group cursor-pointer bg-[#1C1C1A] rounded-sm overflow-hidden h-full flex flex-col">
         <div className="img-zoom aspect-video overflow-hidden relative">
           <img

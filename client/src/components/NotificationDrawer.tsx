@@ -76,7 +76,7 @@ export default function NotificationDrawer({ isOpen, onClose }: NotificationDraw
                             {notifications.map((article) => (
                                 <Link
                                     key={article.id}
-                                    href={`/articolo/${article.slug}`}
+                                    href={`/article/${article.slug}`}
                                     onClick={onClose}
                                     className="block group"
                                 >

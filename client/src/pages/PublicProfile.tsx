@@ -146,7 +146,7 @@ export default function PublicProfile() {
                     <div className="flex items-center gap-2 mb-3 text-sm text-[#8A8880] font-ui">
                       <span>Commented on</span>
                       <a
-                        href={`/articolo/${comment.articleSlug}`}
+                        href={`/article/${comment.articleSlug}`}
                         className="text-[#E8A020] hover:text-[#D4911C] font-bold line-clamp-1 transition-colors"
                       >
                         {comment.articleTitle}

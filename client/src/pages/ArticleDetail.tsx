@@ -32,7 +32,7 @@ import SEO from "@/components/SEO";
 import AdPlacement from "@/components/AdPlacement";
 
 export default function ArticleDetail() {
-  const [match, params] = useRoute("/articolo/:slug");
+  const [match, params] = useRoute("/article/:slug");
   const slug = params?.slug as string;
   const { user } = useAuth();
   const [commentText, setCommentText] = useState("");
@@ -969,7 +969,7 @@ export default function ArticleDetail() {
                         : new Date(article.createdAt);
 
                       return (
-                        <Link key={article.id} href={`/articolo/${article.slug}`}>
+                        <Link key={article.id} href={`/article/${article.slug}`}>
                           <div className="group cursor-pointer">
                             <div className="aspect-[16/9] overflow-hidden rounded-sm mb-4 relative bg-[#1C1C1A]">
                               {getSafeImage(article.image, article.category, article.id) ? (
@@ -1094,7 +1094,7 @@ export default function ArticleDetail() {
                   </h3>
                   <div className="space-y-6">
                     {relatedArticles.slice(0, 3).map(article => (
-                      <Link key={article.id} href={`/articolo/${article.slug}`}>
+                      <Link key={article.id} href={`/article/${article.slug}`}>
                         <div className="group cursor-pointer">
                           <h4 className="font-headline text-sm text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 mb-1">
                             {article.title}

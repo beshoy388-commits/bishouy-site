@@ -384,7 +384,7 @@ export default function UserProfile() {
             ) : savedArticles && savedArticles.length > 0 ? (
               <div className="space-y-4">
                 {savedArticles.map(article => (
-                  <Link key={article.id} href={`/articolo/${article.slug}`}>
+                  <Link key={article.id} href={`/article/${article.slug}`}>
                     <div className="flex gap-4 group cursor-pointer border border-[#222220] p-4 rounded-sm hover:border-[#E8A020] transition-colors bg-[#0F0F0E]">
                       {article.image && (
                         <div className="w-24 h-24 flex-shrink-0 bg-[#222220] rounded-sm overflow-hidden hidden sm:block">

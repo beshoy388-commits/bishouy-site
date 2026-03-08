@@ -48,7 +48,7 @@ function Router() {
     <Suspense fallback={<PageFallback />}>
       <Switch>
         <Route path="/" component={Home} />
-        <Route path="/articolo/:slug" component={ArticleDetail} />
+        <Route path="/article/:slug" component={ArticleDetail} />
         <Route path="/category/:slug" component={CategoryPage} />
         <Route path="/search" component={Search} />
         <Route path="/profile" component={UserProfile} />

@@ -324,7 +324,7 @@ export default function AdminPanel() {
                             <Trash2 size={18} />
                           </button>
                           <a
-                            href={`/articolo/${article.slug}`}
+                            href={`/article/${article.slug}`}
                             target="_blank"
                             rel="noreferrer"
                             className="p-3 bg-[#11110F] border border-[#2A2A28] text-[#8A8880] hover:text-[#F2F0EB] rounded-lg transition-all"
