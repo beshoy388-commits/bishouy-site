@@ -14,6 +14,7 @@ export {
   savedArticles,
   pageViews,
   siteSettings,
+  visitorSessions,
 } from "../drizzle/schema";
 import {
   InsertUser,
@@ -57,6 +58,9 @@ import {
   socialLikes,
   SocialLike,
   InsertSocialLike,
+  visitorSessions,
+  VisitorSession,
+  InsertVisitorSession,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -90,6 +94,24 @@ export async function getDb() {
         console.log("[Migration] Added originalContent column to comments");
       } catch (err) {
         // Se la colonna esiste già, ignora l'errore
+      }
+
+      try {
+        await client.execute(`
+          CREATE TABLE IF NOT EXISTS visitor_sessions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            sessionId TEXT NOT NULL UNIQUE,
+            userId INTEGER REFERENCES users(id) ON DELETE SET NULL,
+            ipAddress TEXT,
+            userAgent TEXT,
+            location TEXT,
+            currentPath TEXT,
+            lastActiveAt INTEGER NOT NULL
+          );
+        `);
+        console.log("[Migration] Created visitor_sessions table if not exists");
+      } catch (err) {
+        console.error("[Migration] Error creating visitor_sessions:", err);
       }
 
       try {
@@ -1471,4 +1493,71 @@ export async function deleteSocialPost(id: number): Promise<void> {
   const db = await getDb();
   if (!db) return;
   await db.delete(socialPosts).where(eq(socialPosts.id, id));
+}
+
+export async function updateVisitorSession(data: InsertVisitorSession) {
+  const db = await getDb();
+  if (!db) return;
+
+  const existing = await db
+    .select()
+    .from(visitorSessions)
+    .where(eq(visitorSessions.sessionId, data.sessionId))
+    .limit(1);
+
+  let location = existing[0]?.location;
+
+  // Attempt simple GeoIP lookup if location is missing and IP is present
+  if (!location && data.ipAddress && data.ipAddress !== '127.0.0.1' && data.ipAddress !== '::1') {
+    try {
+      const response = await fetch(`https://ipapi.co/${data.ipAddress}/json/`);
+      const geo = await response.json();
+      if (geo.city && geo.country_name) {
+        location = `${geo.city}, ${geo.country_name}`;
+      }
+    } catch (err) {
+      console.warn("[Analytics] GeoIP lookup failed:", err);
+    }
+  }
+
+  if (existing.length > 0) {
+    return db
+      .update(visitorSessions)
+      .set({
+        ...data,
+        location: location || data.location,
+        lastActiveAt: new Date(),
+      })
+      .where(eq(visitorSessions.sessionId, data.sessionId));
+  } else {
+    return db.insert(visitorSessions).values({
+      ...data,
+      location: location || data.location,
+    });
+  }
+}
+
+export async function getActiveVisitors(minutes: number = 5) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const cutoff = new Date(Date.now() - minutes * 60 * 1000);
+
+  return db
+    .select({
+      id: visitorSessions.id,
+      sessionId: visitorSessions.sessionId,
+      userId: visitorSessions.userId,
+      ipAddress: visitorSessions.ipAddress,
+      userAgent: visitorSessions.userAgent,
+      location: visitorSessions.location,
+      currentPath: visitorSessions.currentPath,
+      lastActiveAt: visitorSessions.lastActiveAt,
+      userName: users.name,
+      userRole: users.role,
+    })
+    .from(visitorSessions)
+    .leftJoin(users, eq(visitorSessions.userId, users.id))
+    .where(sql`${visitorSessions.lastActiveAt} > ${cutoff.getTime()}`)
+    .orderBy(desc(visitorSessions.lastActiveAt));
 }

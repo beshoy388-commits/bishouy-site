@@ -101,6 +101,7 @@ import MobileBottomNav from "@/components/MobileBottomNav";
 import { trpc } from "./lib/trpc";
 import { useAuth } from "./_core/hooks/useAuth";
 import { useLocation } from "wouter";
+import LiveAnalyticsTracker from "@/components/LiveAnalyticsTracker";
 
 import GoogleAdSense from "@/components/GoogleAdSense";
 
@@ -112,6 +113,7 @@ function AppContent() {
   return (
     <MaintenanceGuard>
       <Toaster />
+      <LiveAnalyticsTracker />
       <GoogleAdSense />
       <Router />
       <CookieConsent />

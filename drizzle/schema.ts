@@ -298,3 +298,18 @@ export const socialLikes = sqliteTable("social_likes", {
 
 export type SocialLike = typeof socialLikes.$inferSelect;
 export type InsertSocialLike = typeof socialLikes.$inferInsert;
+export const visitorSessions = sqliteTable("visitor_sessions", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  sessionId: text("sessionId").notNull().unique(), // Unique identifier for the browser session
+  userId: integer("userId").references(() => users.id, { onDelete: "set null" }),
+  ipAddress: text("ipAddress"),
+  userAgent: text("userAgent"),
+  location: text("location"), // JSON or string containing city, country, etc.
+  currentPath: text("currentPath"),
+  lastActiveAt: integer("lastActiveAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+export type VisitorSession = typeof visitorSessions.$inferSelect;
+export type InsertVisitorSession = typeof visitorSessions.$inferInsert;

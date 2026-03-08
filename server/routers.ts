@@ -66,6 +66,8 @@ import {
   hasUserLikedSocialPost,
   deleteSocialPost,
   updateSocialPostStatus,
+  updateVisitorSession,
+  getActiveVisitors,
 } from "./db";
 import { comments, InsertArticle, articles, users, verificationCodes } from "../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
@@ -1074,6 +1076,31 @@ export const appRouter = router({
   analytics: router({
     getSummary: adminProcedure.query(async () => {
       return getAnalyticsSummary();
+    }),
+    heartbeat: publicProcedure
+      .input(z.object({
+        sessionId: z.string(),
+        currentPath: z.string(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const ip = getClientIp(ctx.req);
+        const ua = getUserAgent(ctx.req);
+
+        // Basic location placeholder (or we could fetch from API)
+        // For now we'll just store information we already have
+        await updateVisitorSession({
+          sessionId: input.sessionId,
+          userId: ctx.user?.id || null,
+          ipAddress: ip,
+          userAgent: ua,
+          currentPath: input.currentPath,
+          lastActiveAt: new Date(),
+        });
+
+        return { success: true };
+      }),
+    getLiveVisitors: adminProcedure.query(async () => {
+      return getActiveVisitors(5); // Last 5 minutes
     }),
   }),
 

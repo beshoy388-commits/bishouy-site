@@ -14,7 +14,8 @@ import {
     LogOut,
     Bell,
     Image as ImageIcon,
-    Zap
+    Zap,
+    Activity
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -45,6 +46,7 @@ export default function AdminSidebar({
 
     const menuItems = [
         { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+        { id: "live", label: "Live Analytics", icon: Activity },
         { id: "articles", label: "Articles", icon: FileText },
         { id: "media", label: "Media Library", icon: ImageIcon },
         { id: "pulse", label: "Social Pulse", icon: Zap, badge: flaggedCount > 0 ? flaggedCount : undefined },

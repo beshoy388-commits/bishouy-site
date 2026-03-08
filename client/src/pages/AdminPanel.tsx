@@ -22,6 +22,7 @@ import SiteSettings from "@/components/SiteSettings";
 import SecurityStatus from "@/components/SecurityStatus";
 import MediaLibrary from "@/components/MediaLibrary";
 import PulseModeration from "@/components/PulseModeration";
+import LiveAnalytics from "@/components/LiveAnalytics";
 import {
   Loader2,
   Plus,
@@ -52,6 +53,7 @@ export default function AdminPanel() {
     | "security"
     | "media"
     | "pulse"
+    | "live"
   >("dashboard");
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -139,6 +141,10 @@ export default function AdminPanel() {
             }}
           />
         );
+      case "live":
+        return <LiveAnalytics />;
+      case "pulse":
+        return <PulseModeration />;
       case "media":
         return <MediaLibrary />;
       case "articles":
