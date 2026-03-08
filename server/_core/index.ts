@@ -3,6 +3,8 @@ import express from "express";
 import { createServer } from "http";
 import net from "net";
 import sharp from "sharp";
+import path from "path";
+import fs from "fs";
 import helmet from "helmet";
 import compression from "compression";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
@@ -243,6 +245,22 @@ Allow: /
 Sitemap: ${baseUrl}/sitemap.xml`;
     res.header("Content-Type", "text/plain");
     res.send(robots);
+  });
+
+  // SEO: ads.txt
+  app.get("/ads.txt", (req, res) => {
+    const adsTxtPath = path.resolve(import.meta.dirname, "../..", "client", "public", "ads.txt");
+    if (fs.existsSync(adsTxtPath)) {
+      res.header("Content-Type", "text/plain");
+      return res.sendFile(adsTxtPath);
+    }
+    // Fallback if not in client/public (e.g. production build path)
+    const prodAdsPath = path.resolve(import.meta.dirname, "public", "ads.txt");
+    if (fs.existsSync(prodAdsPath)) {
+      res.header("Content-Type", "text/plain");
+      return res.sendFile(prodAdsPath);
+    }
+    res.status(404).send("ads.txt not found");
   });
 
   // development mode uses Vite, production mode uses static files
