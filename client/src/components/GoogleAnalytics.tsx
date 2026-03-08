@@ -8,7 +8,7 @@ declare global {
 }
 
 export default function GoogleAnalytics() {
-    const GA_TRACKING_ID = "G-1ECBQX6ZY9";
+    const GA_TRACKING_ID = "G-Y4HWX7Y000";
 
     useEffect(() => {
         // 1. Inietta il primo script (Gtag JS)
