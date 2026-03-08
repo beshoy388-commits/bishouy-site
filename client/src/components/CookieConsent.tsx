@@ -101,91 +101,89 @@ export default function CookieConsent() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#0F0F0E] border-t border-[#1C1C1A] p-4 md:p-6">
-      <div className="container">
+    <div className="fixed bottom-0 left-0 right-0 z-[100] bg-[#0F0F0E]/95 backdrop-blur-xl border-t border-[#1C1C1A] p-5 md:p-8 pb-32 md:pb-8 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+      <div className="container max-w-6xl mx-auto">
         {!showSettings ? (
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex-1">
-              <h3 className="font-headline text-sm font-700 text-[#F2F0EB] mb-2">
-                Cookie Preferences
+              <h3 className="font-headline text-lg font-700 text-[#F2F0EB] mb-1 uppercase tracking-tighter">
+                Preferenze <span className="text-[#E8A020]">Cookie</span>
               </h3>
-              <p className="font-ui text-xs text-[#8A8880] leading-relaxed">
-                We use cookies to enhance your experience, analyze site traffic,
-                and serve personalized content. By clicking "Accept All," you
-                consent to our use of cookies. You can customize your
-                preferences or{" "}
+              <p className="font-ui text-xs text-[#8A8880] leading-relaxed max-w-2xl">
+                Utilizziamo i cookie per migliorare la tua esperienza, analizzare il traffico del sito
+                e servire contenuti personalizzati. Facendo clic su "Accetta tutto", acconsenti al nostro utilizzo dei cookie.
+                Puoi personalizzare le tue preferenze o{" "}
                 <a
                   href="/privacy-policy"
-                  className="text-[#E8A020] hover:underline"
+                  className="text-[#E8A020] hover:underline font-bold"
                 >
-                  read our privacy policy
+                  leggere la nostra privacy policy
                 </a>
                 .
               </p>
             </div>
 
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto flex-shrink-0">
               <button
                 onClick={() => setShowSettings(true)}
-                className="flex items-center gap-1.5 text-[#8A8880] hover:text-[#F2F0EB] font-ui text-xs uppercase tracking-wider transition-colors whitespace-nowrap"
+                className="flex items-center justify-center gap-2 text-[#8A8880] hover:text-[#F2F0EB] font-ui text-[10px] uppercase tracking-widest transition-all px-4 py-2 border border-[#1C1C1A] rounded-md w-full sm:w-auto"
               >
                 <Settings size={14} />
-                Settings
+                Impostazioni
               </button>
               <button
                 onClick={handleRejectAll}
-                className="bg-[#1C1C1A] hover:bg-[#222220] text-[#F2F0EB] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors whitespace-nowrap"
+                className="bg-[#1C1C1A] hover:bg-[#2A2A28] border border-[#2A2A28] text-[#F2F0EB] font-ui text-[10px] font-bold uppercase tracking-widest px-6 py-3 rounded-md transition-all w-full sm:w-auto"
               >
-                Reject
+                Rifiuta
               </button>
               <button
                 onClick={handleAcceptAll}
-                className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors whitespace-nowrap"
+                className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-bold uppercase tracking-widest px-8 py-3 rounded-md transition-all shadow-lg shadow-[#E8A020]/10 w-full sm:w-auto"
               >
-                Accept All
+                Accetta Tutto
               </button>
             </div>
           </div>
         ) : (
-          <div className="bg-[#1C1C1A] rounded-sm p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-headline text-sm font-700 text-[#F2F0EB]">
-                Cookie Settings
+          <div className="bg-[#1C1C1A] rounded-xl p-6 border border-[#2A2A28]">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-headline text-lg font-700 text-[#F2F0EB] uppercase tracking-tighter">
+                Impostazioni <span className="text-[#E8A020]">Cookie</span>
               </h3>
               <button
                 onClick={() => setShowSettings(false)}
-                className="text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
+                className="text-[#8A8880] hover:text-[#F2F0EB] transition-colors p-2 hover:bg-[#0F0F0E] rounded-full"
               >
-                <X size={18} />
+                <X size={20} />
               </button>
             </div>
 
-            <div className="space-y-4 mb-6">
+            <div className="space-y-6 mb-8">
               {/* Necessary cookies */}
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-4 p-3 rounded-lg hover:bg-[#0F0F0E]/50 transition-colors">
                 <input
                   type="checkbox"
                   id="necessary"
                   checked={true}
                   disabled
-                  className="mt-1 cursor-not-allowed"
+                  className="mt-1.5 h-4 w-4 rounded border-[#2A2A28] bg-[#0F0F0E] text-[#E8A020] cursor-not-allowed opacity-50"
                 />
                 <div className="flex-1">
                   <label
                     htmlFor="necessary"
-                    className="font-ui text-sm font-600 text-[#F2F0EB] block mb-1"
+                    className="font-ui text-xs font-bold text-[#F2F0EB] block mb-1 uppercase tracking-widest"
                   >
-                    Essential Cookies
+                    Cookie Essenziali
                   </label>
-                  <p className="font-ui text-xs text-[#8A8880]">
-                    Required for the website to function properly. Cannot be
-                    disabled.
+                  <p className="font-ui text-[10px] text-[#555550] leading-relaxed">
+                    Necessari per il corretto funzionamento del sito. Non possono essere disabilitati.
                   </p>
                 </div>
               </div>
 
               {/* Analytics cookies */}
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-4 p-3 rounded-lg hover:bg-[#0F0F0E]/50 transition-colors">
                 <input
                   type="checkbox"
                   id="analytics"
@@ -196,24 +194,23 @@ export default function CookieConsent() {
                       analytics: e.target.checked,
                     })
                   }
-                  className="mt-1 cursor-pointer"
+                  className="mt-1.5 h-4 w-4 rounded border-[#2A2A28] bg-[#0F0F0E] text-[#E8A020] cursor-pointer focus:ring-[#E8A020]/20"
                 />
                 <div className="flex-1">
                   <label
                     htmlFor="analytics"
-                    className="font-ui text-sm font-600 text-[#F2F0EB] block mb-1"
+                    className="font-ui text-xs font-bold text-[#F2F0EB] block mb-1 uppercase tracking-widest"
                   >
-                    Analytics Cookies
+                    Cookie Analitici
                   </label>
-                  <p className="font-ui text-xs text-[#8A8880]">
-                    Help us understand how you use our website to improve your
-                    experience.
+                  <p className="font-ui text-[10px] text-[#555550] leading-relaxed">
+                    Ci aiutano a capire come utilizzi il nostro sito per migliorare la tua esperienza.
                   </p>
                 </div>
               </div>
 
               {/* Marketing cookies */}
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-4 p-3 rounded-lg hover:bg-[#0F0F0E]/50 transition-colors">
                 <input
                   type="checkbox"
                   id="marketing"
@@ -224,34 +221,34 @@ export default function CookieConsent() {
                       marketing: e.target.checked,
                     })
                   }
-                  className="mt-1 cursor-pointer"
+                  className="mt-1.5 h-4 w-4 rounded border-[#2A2A28] bg-[#0F0F0E] text-[#E8A020] cursor-pointer focus:ring-[#E8A020]/20"
                 />
                 <div className="flex-1">
                   <label
                     htmlFor="marketing"
-                    className="font-ui text-sm font-600 text-[#F2F0EB] block mb-1"
+                    className="font-ui text-xs font-bold text-[#F2F0EB] block mb-1 uppercase tracking-widest"
                   >
-                    Marketing Cookies
+                    Cookie di Marketing
                   </label>
-                  <p className="font-ui text-xs text-[#8A8880]">
-                    Used to track your activity and show you personalized ads.
+                  <p className="font-ui text-[10px] text-[#555550] leading-relaxed">
+                    Utilizzati per tracciare la tua attività e mostrarti annunci personalizzati.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={handleRejectAll}
-                className="flex-1 bg-[#1C1C1A] hover:bg-[#222220] text-[#F2F0EB] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
+                className="flex-1 bg-[#1C1C1A] hover:bg-[#2A2A28] border border-[#2A2A28] text-[#F2F0EB] font-ui text-[10px] font-bold uppercase tracking-widest px-4 py-3 rounded-md transition-all"
               >
-                Reject All
+                Rifiuta Tutto
               </button>
               <button
                 onClick={handleSaveCustom}
-                className="flex-1 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
+                className="flex-1 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-bold uppercase tracking-widest px-4 py-3 rounded-md transition-all shadow-lg shadow-[#E8A020]/10"
               >
-                Save Settings
+                Salva Preferenze
               </button>
             </div>
           </div>
