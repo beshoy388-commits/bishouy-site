@@ -188,9 +188,12 @@ export const appRouter = router({
         return {
           maintenance: settings.find(s => s.key === "maintenance_mode")?.value === "true",
           siteName: settings.find(s => s.key === "site_name")?.value || "BISHOUY",
+          allowComments: settings.find(s => s.key === "allow_comments")?.value !== "false",
+          adsenseId: settings.find(s => s.key === "google_adsense_id")?.value || null,
+          adsenseAutoAds: settings.find(s => s.key === "adsense_auto_ads")?.value === "true",
         };
       } catch (e) {
-        return { maintenance: false, siteName: "BISHOUY" };
+        return { maintenance: false, siteName: "BISHOUY", allowComments: true, adsenseId: null, adsenseAutoAds: false };
       }
     }),
   }),

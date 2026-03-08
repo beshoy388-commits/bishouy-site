@@ -2,13 +2,13 @@ import { useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 
 export default function GoogleAdSense() {
-    const { data: settings } = trpc.settings.getAll.useQuery();
+    const { data: status } = trpc.system.getStatus.useQuery();
 
     useEffect(() => {
-        if (!settings) return;
+        if (!status) return;
 
-        const adsenseId = settings.find(s => s.key === "google_adsense_id")?.value;
-        const autoAds = settings.find(s => s.key === "adsense_auto_ads")?.value === "true";
+        const adsenseId = status.adsenseId;
+        const autoAds = status.adsenseAutoAds;
 
         if (adsenseId && adsenseId.startsWith("ca-pub-")) {
             // Remove existing script if any
@@ -39,7 +39,7 @@ export default function GoogleAdSense() {
             }
             meta.setAttribute("content", adsenseId);
         }
-    }, [settings]);
+    }, [status]);
 
     return null;
 }

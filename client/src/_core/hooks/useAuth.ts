@@ -66,6 +66,8 @@ export function useAuth(options?: UseAuthOptions) {
     if (meQuery.isLoading || logoutMutation.isPending) return;
     if (state.user) return;
     if (typeof window === "undefined") return;
+
+    // Evitiamo ridirezioni se siamo già sulla pagina di destinazione
     if (window.location.pathname === redirectPath) return;
 
     window.location.href = redirectPath;

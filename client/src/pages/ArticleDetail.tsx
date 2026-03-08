@@ -146,9 +146,9 @@ export default function ArticleDetail() {
     },
   });
 
-  // Query for site settings
-  const { data: settings } = trpc.settings.getAll.useQuery();
-  const allowComments = settings?.find(s => s.key === "allow_comments")?.value !== "false";
+  // Query for site settings (public status)
+  const { data: systemStatus } = trpc.system.getStatus.useQuery();
+  const allowComments = systemStatus?.allowComments ?? true;
 
   // Query for related articles
   const { data: relatedArticles } = trpc.articles.getRelated.useQuery(
