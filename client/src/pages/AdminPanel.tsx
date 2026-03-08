@@ -196,18 +196,36 @@ export default function AdminPanel() {
                 <div className="flex flex-col gap-1.5 items-end">
                   <button
                     onClick={() => {
-                      const promise = triggerAiMutation.mutateAsync();
-                      toast.promise(promise, {
-                        loading: "Generazione Articoli in corso...",
-                        success: "Operazione avviata correttamente.",
-                        error: "Errore nella generazione.",
+                      triggerAiMutation.mutate(undefined, {
+                        onSuccess: (data) => {
+                          if (data.success) {
+                            toast.success(data.message || "Articolo generato correttamente.");
+                            articlesQuery.refetch();
+                          } else {
+                            toast.error(data.message || "Generazione fallita.");
+                          }
+                        },
+                        onError: (error) => {
+                          toast.error("Errore tecnico della AI", {
+                            description: "Il server AI ha impiegato troppo tempo o non ha risposto. Riprova tra 1 minuto."
+                          });
+                        }
                       });
                     }}
-                    className="flex items-center justify-center gap-2 bg-[#1C1C1A] border border-[#2A2A28] hover:border-[#E8A020] text-[#E8A020] font-ui text-[10px] md:text-xs font-bold uppercase tracking-widest px-5 py-3 rounded-sm transition-all hover:scale-105 active:scale-95"
+                    className="flex items-center justify-center gap-2 bg-[#1C1C1A] border border-[#2A2A28] hover:border-[#E8A020] text-[#E8A020] font-ui text-[10px] md:text-xs font-bold uppercase tracking-widest px-5 py-3 rounded-sm transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
                     disabled={triggerAiMutation.isPending}
                   >
-                    <Bot size={16} />
-                    Genera Articoli con AI
+                    {triggerAiMutation.isPending ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        Scrittura in corso (30s)...
+                      </>
+                    ) : (
+                      <>
+                        <Bot size={16} />
+                        Genera Articolo AI
+                      </>
+                    )}
                   </button>
                   <span className="text-[8px] text-[#555550] uppercase tracking-tighter">Avvia la ricerca di notizie e scrivi nuovi articoli automaticamente</span>
                 </div>

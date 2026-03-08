@@ -264,14 +264,25 @@ export async function syncRSSFeeds() {
           // ROBUST DUPLICATION CHECK: 
           // Check by source URL, original title, or rewritten title
           const itemUrl = item.link || item.guid;
-          const alreadyExists = existingArticles.some((a: any) =>
-            (itemUrl && a.sourceUrl === itemUrl) ||
-            (a.sourceTitle === item.title) ||
-            a.title.toLowerCase().includes(item.title!.toLowerCase().substring(0, 20))
-          );
+          let duplicateReason = "";
+          const alreadyExists = existingArticles.some((a: any) => {
+            if (itemUrl && a.sourceUrl === itemUrl) {
+              duplicateReason = "Uniform Resource Locator (URL) già presente";
+              return true;
+            }
+            if (a.sourceTitle === item.title) {
+              duplicateReason = "Titolo originale identico";
+              return true;
+            }
+            if (a.title.toLowerCase().includes(item.title!.toLowerCase().substring(0, 20))) {
+              duplicateReason = "Titolo molto simile già esistente";
+              return true;
+            }
+            return false;
+          });
 
           if (alreadyExists) {
-            log(`[RSS] Skipping already processed article: ${item.title}`);
+            log(`[RSS] Skipping article: "${item.title}" (${duplicateReason})`);
             continue;
           }
 
