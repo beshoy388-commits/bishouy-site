@@ -307,14 +307,16 @@ cron.schedule("0 7 * * *", () => {
   });
 });
 
-// Schedule RSS Sync: Every 2 hours
-// This autonomous cycle will ONLY execute if ai_generation_enabled is "true" in Site Settings
-cron.schedule("0 */2 * * *", () => {
-  console.log("[CRON] Initiating Autonomous Editorial Cycle...");
-  syncRSSFeeds().catch(err => {
-    console.error("[CRON] RSS Sync Error:", err);
-  });
+// CRITICAL: BACKGROUND SYNC DISABLED AS PER USER REQUEST
+// ONLY MANUAL SYNC VIA ADMIN CONSOLE IS ALLOWED
+/*
+cron.schedule("0 */2 * * * ", () => {
+console.log("[CRON] Initiating Autonomous Editorial Cycle...");
+syncRSSFeeds().catch(err => {
+  console.error("[CRON] RSS Sync Error:", err);
 });
+});
+*/
 
 // Production Startup Check: If we deploy/restart between 6 AM and 8:30 AM 
 // and no newsletter was sent today, consider sending it.
