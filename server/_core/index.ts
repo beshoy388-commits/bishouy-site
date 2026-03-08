@@ -196,6 +196,53 @@ async function startServer() {
       createContext,
     })
   );
+  // SEO: Google News RSS Feed
+  app.get("/feed/google-news", async (req, res) => {
+    try {
+      const { getAllArticles } = await import("../db");
+      const articles = await getAllArticles(false, undefined, 20); // Get latest 20 published articles
+      const baseUrl = ENV.appUrl.endsWith("/")
+        ? ENV.appUrl.slice(0, -1)
+        : ENV.appUrl;
+
+      let rss = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Bishouy</title>
+    <link>${baseUrl}</link>
+    <description>Premium AI-Driven Global News &amp; Culture</description>
+    <language>en-us</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>`;
+
+      for (const article of articles) {
+        const articleUrl = `${baseUrl}/article/${article.slug}`;
+        const pubDate = new Date(article.createdAt).toUTCString();
+
+        rss += `
+    <item>
+      <title><![CDATA[${article.title}]]></title>
+      <link>${articleUrl}</link>
+      <guid isPermaLink="true">${articleUrl}</guid>
+      <pubDate>${pubDate}</pubDate>
+      <dc:creator><![CDATA[${article.author}]]></dc:creator>
+      <description><![CDATA[${article.excerpt}]]></description>
+      <content:encoded><![CDATA[${article.content}]]></content:encoded>
+      ${article.image ? `<media:content url="${article.image}" medium="image" />` : ""}
+    </item>`;
+      }
+
+      rss += `
+  </channel>
+</rss>`;
+
+      res.header("Content-Type", "application/xml");
+      res.send(rss);
+    } catch (err) {
+      console.error("[RSS Feed] Generation failed:", err);
+      res.status(500).send("Error generating RSS feed");
+    }
+  });
+
   // SEO: Dynamic Sitemap Generation
   app.get("/sitemap.xml", async (req, res) => {
     try {
