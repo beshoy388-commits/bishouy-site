@@ -113,6 +113,12 @@ async function startServer() {
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
 
+  // SEO: 301 Redirect from old Italian URLs to English
+  app.get("/articolo/:slug", (req, res) => {
+    const { slug } = req.params;
+    res.redirect(301, `/article/${slug}`);
+  });
+
   // One-click newsletter unsubscribe endpoint
   app.get("/api/unsubscribe", async (req, res) => {
     const token = req.query.token as string;
