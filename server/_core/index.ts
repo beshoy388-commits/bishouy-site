@@ -309,14 +309,12 @@ cron.schedule("0 7 * * *", () => {
 
 // CRITICAL: BACKGROUND SYNC DISABLED AS PER USER REQUEST
 // ONLY MANUAL SYNC VIA ADMIN CONSOLE IS ALLOWED
-/*
-cron.schedule("0 */2 * * * ", () => {
-console.log("[CRON] Initiating Autonomous Editorial Cycle...");
-syncRSSFeeds().catch(err => {
-  console.error("[CRON] RSS Sync Error:", err);
-});
-});
-*/
+// cron.schedule("0 */2 * * *", () => {
+//   console.log("[CRON] Initiating Autonomous Editorial Cycle...");
+//   syncRSSFeeds().catch(err => {
+//     console.error("[CRON] RSS Sync Error:", err);
+//   });
+// });
 
 // Production Startup Check: If we deploy/restart between 6 AM and 8:30 AM 
 // and no newsletter was sent today, consider sending it.
