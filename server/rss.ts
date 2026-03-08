@@ -210,7 +210,7 @@ let isSyncRunning = false;
 /**
  * Main function to fetch feeds and save new articles.
  */
-export async function syncRSSFeeds() {
+export async function syncRSSFeeds(isManual: boolean = false) {
   if (isSyncRunning) {
     log("[RSS] Sync already in progress, skipping...");
     return { success: false, message: "Sync already in progress." };
@@ -237,8 +237,11 @@ export async function syncRSSFeeds() {
       log("[RSS] Could not fetch site settings. Defaulting AI Generation to DISABLED.");
     }
 
-    if (!isAiEnabled) {
-      log("[RSS] AI Generation is currently DISABLED in site settings. Skipping sync.");
+    // Manual sync always bypasses the setting, 
+    // strictly automatic sync would honor it
+    if (!isAiEnabled && !isManual) {
+      log("[RSS] AI Generation is currently DISABLED in site settings. Skipping automatic sync.");
+      isSyncRunning = false;
       return { success: false, message: "AI Generation is disabled in settings." };
     }
 

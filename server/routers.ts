@@ -1402,7 +1402,7 @@ export const appRouter = router({
 
     triggerNewsGeneration: adminProcedure.mutation(async () => {
       try {
-        const result = await syncRSSFeeds();
+        const result = await syncRSSFeeds(true); // true = manual sync bypasses setting check
         return {
           success: result.success,
           message: result.message || "Generazione completata.",

@@ -45,6 +45,6 @@ export const systemRouter = router({
   }),
 
   syncRss: adminProcedure.mutation(async () => {
-    return syncRSSFeeds();
+    return syncRSSFeeds(true); // manual trigger through admin panel
   }),
 });

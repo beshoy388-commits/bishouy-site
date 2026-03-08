@@ -2,7 +2,7 @@ import { syncRSSFeeds } from "./server/rss";
 
 async function test() {
     console.log("Starting RSS Sync Test...");
-    const result = await syncRSSFeeds();
+    const result = await syncRSSFeeds(true); // manual trigger
     console.log("Result:", result);
 }
 
