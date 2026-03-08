@@ -596,8 +596,8 @@ export default function ArticleDetail() {
       </section>
 
       {/* Article Content */}
-      <article className="container py-12 md:py-16">
-        <div className="max-w-3xl mx-auto">
+      <article className="container py-12 md:py-16 overflow-hidden">
+        <div className="max-w-3xl mx-auto overflow-hidden break-words">
           {/* Back Button */}
           <Link href="/">
             <button className="flex items-center gap-2 text-[#8A8880] hover:text-[#E8A020] transition-colors mb-6">

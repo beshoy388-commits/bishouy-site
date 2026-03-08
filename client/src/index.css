@@ -425,4 +425,26 @@ html {
     display: block;
     margin: auto;
   }
+
+  /* Responsive fixes for article content */
+  .prose {
+    max-width: 100% !important;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .prose img, 
+  .prose video, 
+  .prose iframe,
+  .prose table {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .prose pre {
+    white-space: pre-wrap !important;
+    word-break: break-all !important;
+    overflow-x: hidden !important;
+  }
 }
