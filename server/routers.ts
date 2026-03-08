@@ -1405,7 +1405,7 @@ export const appRouter = router({
       syncRSSFeeds().catch(err => console.error("[Manual AI Sync Error]", err));
       return {
         success: true,
-        message: "AI news generation started in the background.",
+        message: "Generazione articoli AI avviata con successo.",
       };
     }),
   }),

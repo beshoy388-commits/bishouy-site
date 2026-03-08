@@ -198,18 +198,18 @@ export default function AdminPanel() {
                     onClick={() => {
                       const promise = triggerAiMutation.mutateAsync();
                       toast.promise(promise, {
-                        loading: "Engaging AI Agents...",
-                        success: "AI news cycle triggered successfully.",
-                        error: "Agent failure. Check system logs.",
+                        loading: "Generazione Articoli in corso...",
+                        success: "Operazione avviata correttamente.",
+                        error: "Errore nella generazione.",
                       });
                     }}
                     className="flex items-center justify-center gap-2 bg-[#1C1C1A] border border-[#2A2A28] hover:border-[#E8A020] text-[#E8A020] font-ui text-[10px] md:text-xs font-bold uppercase tracking-widest px-5 py-3 rounded-sm transition-all hover:scale-105 active:scale-95"
                     disabled={triggerAiMutation.isPending}
                   >
                     <Bot size={16} />
-                    Trigger AI Sync
+                    Genera Articoli con AI
                   </button>
-                  <span className="text-[8px] text-[#555550] uppercase tracking-tighter">Manually start automated RSS to AI generation</span>
+                  <span className="text-[8px] text-[#555550] uppercase tracking-tighter">Avvia la ricerca di notizie e scrivi nuovi articoli automaticamente</span>
                 </div>
                 <div className="flex flex-col gap-1.5 items-end">
                   <button
