@@ -283,15 +283,19 @@ export async function syncRSSFeeds() {
 
           log(`[RSS] Editorial team is rewriting: ${item.title}`);
 
-          // Aggressive rate limit protection for Free Tier (70s)
-          await sleep(70000);
-
           const editorialPiece = await rewriteArticle(
             item.title,
             item.content || item.contentSnippet,
             feedConfig.category
           );
-          if (!editorialPiece) continue;
+
+          if (!editorialPiece) {
+            log(`[RSS] Failed to rewrite article: ${item.title}`);
+            continue;
+          }
+
+          // Rate limit protection for Free Tier (Reduced to 5s for better responsiveness)
+          await sleep(5000);
 
           const finalSlug = createSlug(editorialPiece.title);
 
@@ -371,10 +375,10 @@ export async function syncRSSFeeds() {
           existingArticles.push(articleData as any);
 
           newArticlesCount++;
-          log(`[RSS] Premium draft ready for review: ${editorialPiece.title}`);
+          log(`[RSS] Premium draft ready for review (#${newArticlesCount}): ${editorialPiece.title}`);
         }
-      } catch (error) {
-        console.error(`[RSS] Workflow Error (${feedConfig.url}):`, error);
+      } catch (error: any) {
+        log(`[RSS] Workflow Error (${feedConfig.url}): ${error.message || error}`);
       }
     }
 
