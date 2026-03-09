@@ -208,7 +208,7 @@ export default function ArticleDetail() {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -984,7 +984,6 @@ export default function ArticleDetail() {
                                 alt={article.title}
                                 className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
                                 decoding="async"
-                                loading="lazy"
                                 onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                                   const img = e.target as HTMLImageElement;
                                   if (img.dataset.triedFallback === "true") return;

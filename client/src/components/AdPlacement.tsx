@@ -44,7 +44,7 @@ export default function AdPlacement({ position, className = "" }: AdPlacementPro
                     <a
                         href={ad.linkUrl || '#'}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="block w-full h-full group"
                     >
                         <img
