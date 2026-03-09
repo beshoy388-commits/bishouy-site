@@ -29,6 +29,13 @@
       "when": 1772972407031,
       "tag": "0003_yummy_warbound",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1772995238575,
+      "tag": "0004_sparkling_salo",
+      "breakpoints": true
     }
   ]
 }

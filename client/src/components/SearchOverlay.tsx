@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { Search, X, Loader2, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
+import { getSafeImage, getFallbackImage } from "@/lib/image-utils";
 
 interface SearchOverlayProps {
     isOpen: boolean;
@@ -73,7 +74,17 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                                     <div className="group flex gap-4 p-4 rounded-sm hover:bg-[#1C1C1A] transition-all cursor-pointer">
                                         <div className="w-24 h-16 bg-[#2A2A28] rounded-sm overflow-hidden shrink-0">
                                             {article.image && (
-                                                <img src={article.image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                                <img
+                                                    src={getSafeImage(article.image, article.category, article.id, 400)}
+                                                    alt=""
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                                                        const img = e.target as HTMLImageElement;
+                                                        if (img.dataset.triedFallback === "true") return;
+                                                        img.dataset.triedFallback = "true";
+                                                        img.src = getFallbackImage(article.category || "news", article.id, 400);
+                                                    }}
+                                                />
                                             )}
                                         </div>
                                         <div className="flex-1 min-w-0">

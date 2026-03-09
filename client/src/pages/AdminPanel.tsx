@@ -372,8 +372,6 @@ export default function AdminPanel() {
         return <SystemConsole />;
       case "security":
         return <SecurityStatus />;
-      case "pulse":
-        return <PulseModeration />;
       default:
         return <div>Tab not implemented</div>;
     }

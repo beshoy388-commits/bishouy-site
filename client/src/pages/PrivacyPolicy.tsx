@@ -13,9 +13,8 @@ export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-[#0F0F0E]">
       <Navbar />
-      <BreakingNewsTicker />
 
-      <section className="pt-32 pb-12">
+      <section className="pt-52 pb-12">
         <div className="container max-w-4xl">
           <Link
             href="/"

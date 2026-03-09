@@ -149,6 +149,20 @@ export async function getDb() {
         }
       }
 
+      // AdSense / Advertisement Migrations
+      try {
+        await client.execute("ALTER TABLE advertisements ADD COLUMN adCode TEXT;");
+        console.log("[Migration] Added adCode to advertisements");
+      } catch (err) { }
+
+      // Make linkUrl and imageUrl nullable if they ARE NOT NULL (Legacy DB fixes)
+      try {
+        // Enforce nullability for advertisements (SQLite requires re-creation for this usually, 
+        // but we'll try a simpler way first or just ignore if it works)
+        await client.execute("UPDATE advertisements SET imageUrl = NULL WHERE imageUrl = '';");
+        await client.execute("UPDATE advertisements SET linkUrl = NULL WHERE linkUrl = '';");
+      } catch (err) { }
+
       // Ensure status is 'published' for legacy rows
       try {
         await client.execute("UPDATE articles SET status = 'published' WHERE status IS NULL OR status = '';");

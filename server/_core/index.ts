@@ -59,6 +59,8 @@ async function startServer() {
             "https://apis.google.com",
             "https://pagead2.googlesyndication.com",
             "https://adservice.google.com",
+            "https://www.googletagmanager.com",
+            "https://fundingchoicesmessages.google.com",
           ],
           "connect-src": [
             "'self'",
@@ -72,6 +74,7 @@ async function startServer() {
             "https://vitals.vercel-insights.com",
             "https://pagead2.googlesyndication.com",
             "https://googleads.g.doubleclick.net",
+            "https://www.googletagmanager.com",
           ],
           "img-src": [
             "'self'",

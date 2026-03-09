@@ -23,6 +23,7 @@ import {
   Bookmark,
 } from "lucide-react";
 import { Link } from "wouter";
+import { getSafeImage, getFallbackImage } from "@/lib/image-utils";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
@@ -541,14 +542,16 @@ export default function ArticleDetail() {
     });
   };
 
-  const getSafeImage = (img: string | null | undefined, category: string, id: number | string) => {
-    if (!img) return `https://loremflickr.com/1200/800/${encodeURIComponent(category || 'news')}/all?lock=${id}`;
-    if (img.includes('pollinations.ai')) return `https://loremflickr.com/1200/800/${encodeURIComponent(category || 'news')}/all?lock=${id}`;
-    return img;
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const img = e.target as HTMLImageElement;
+    if (img.dataset.triedFallback === "true") return;
+    img.dataset.triedFallback = "true";
+    img.src = getFallbackImage(article?.category || "news", article?.id || 0, 1400);
   };
 
+
   return (
-    <main className="min-h-screen bg-[#0F0F0E] relative pt-24">
+    <main className="min-h-screen bg-[#0F0F0E] relative pt-52">
       <SEO
         title={article?.title}
         description={article?.excerpt}
@@ -566,28 +569,31 @@ export default function ArticleDetail() {
       </div>
 
       {/* Hero Image */}
-      {/* Hero Image */}
-      <section className="relative h-[400px] md:h-[550px] overflow-hidden bg-black">
+      <section className="relative h-[300px] md:h-[450px] overflow-hidden bg-black">
         <div className="img-hero-frame">
           <div
             className="img-hero-blur-bg"
-            style={{ backgroundImage: `url(${getSafeImage(article.image, article.category, article.id)})` }}
+            style={{ backgroundImage: `url(${getSafeImage(article.image, article.category, article.id, 1400)})` }}
           />
           <img
-            src={getSafeImage(article.image, article.category, article.id)}
+            src={getSafeImage(article.image, article.category, article.id, 1400)}
             alt={article.title}
             className="img-hero-main"
             loading="eager"
             fetchPriority="high"
             onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
               const img = e.target as HTMLImageElement;
-              const fallbackUnsplash = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
-              img.src = fallbackUnsplash;
+              if (img.dataset.triedFallback === "true") return;
+              img.dataset.triedFallback = "true";
 
-              const parent = img.parentElement;
+              const fallbackUrl = getFallbackImage(article.category || "news", article.id, 1400);
+
+              img.src = fallbackUrl;
+
+              const parent = img.parentElement?.parentElement; // frame is parent, hero section is grandparent? No, frame contains blur-bg and img
               if (parent) {
                 const blurBg = parent.querySelector('.img-hero-blur-bg') as HTMLElement;
-                if (blurBg) blurBg.style.backgroundImage = `url(${img.src})`;
+                if (blurBg) blurBg.style.backgroundImage = `url(${fallbackUrl})`;
               }
             }}
           />
@@ -972,21 +978,17 @@ export default function ArticleDetail() {
                         <Link key={article.id} href={`/article/${article.slug}`}>
                           <div className="group cursor-pointer">
                             <div className="aspect-[16/9] overflow-hidden rounded-sm mb-4 relative bg-[#1C1C1A]">
-                              {getSafeImage(article.image, article.category, article.id) ? (
-                                <img
-                                  src={getSafeImage(article.image, article.category, article.id)}
-                                  alt={article.title}
-                                  className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
-                                  onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                                    const img = e.target as HTMLImageElement;
-                                    img.src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
-                                  }}
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-[#8A8880]">
-                                  No image
-                                </div>
-                              )}
+                              <img
+                                src={getSafeImage(article.image, article.category, article.id, 800)}
+                                alt={article.title}
+                                className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
+                                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                                  const img = e.target as HTMLImageElement;
+                                  if (img.dataset.triedFallback === "true") return;
+                                  img.dataset.triedFallback = "true";
+                                  img.src = getFallbackImage(article.category || "news", article.id, 800);
+                                }}
+                              />
                               <div className="absolute top-3 left-3 bg-[#E8A020] text-[#0F0F0E] text-[10px] font-ui font-bold uppercase tracking-widest px-2 py-1 rounded-sm">
                                 {article.category}
                               </div>

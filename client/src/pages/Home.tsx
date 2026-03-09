@@ -90,10 +90,9 @@ export default function Home() {
     <main className="min-h-screen bg-[#0F0F0E]">
       <SEO />
       <Navbar />
-      <BreakingNewsTicker />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-12">
+      <section className="pt-52 pb-12">
         <div className="container">
           {mainFeatured && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">

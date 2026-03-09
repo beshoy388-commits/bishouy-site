@@ -117,7 +117,9 @@ function AppContent() {
       <LiveAnalyticsTracker />
       <GoogleAdSense />
       <GoogleAnalytics />
-      <Router />
+      <div className={!isAdminPage ? "pb-24 lg:pb-0" : ""}>
+        <Router />
+      </div>
       <CookieConsent />
       <BackToTop />
       {!isAdminPage && <MobileBottomNav onSearchClick={() => setIsSearchOpen(true)} />}

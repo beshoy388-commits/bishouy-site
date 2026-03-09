@@ -12,6 +12,8 @@ import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 
+import { getSafeImage, getFallbackImage } from "@/lib/image-utils";
+
 interface ArticleCardProps {
   article: Article;
   variant?: "featured" | "medium" | "small" | "horizontal";
@@ -128,24 +130,11 @@ export default function ArticleCard({
     </button>
   );
 
-  const getSafeImage = (img: string | null | undefined, category: string, id: number | string) => {
-    if (!img) return `https://loremflickr.com/1200/800/${encodeURIComponent(category || 'news')}/all?lock=${id}`;
-    if (img.includes('pollinations.ai')) {
-      return `https://loremflickr.com/1200/800/${encodeURIComponent(category || 'news')}/all?lock=${id}`;
-    }
-    return img;
-  };
-
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     const img = e.target as HTMLImageElement;
-    const category = article.category || "news";
-    const lock = article.id || 1;
-
-    // Log the issue if it's an AI generated image failing
-    if (img.src.includes('pollinations.ai') || img.src.includes('loremflickr.com')) {
-      // Final fallback to high-quality Unsplash
-      img.src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
-    }
+    if (img.dataset.triedFallback === "true") return;
+    img.dataset.triedFallback = "true";
+    img.src = getFallbackImage(article.category || "news", article.id);
   };
 
   if (variant === "featured") {

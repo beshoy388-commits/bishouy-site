@@ -50,7 +50,7 @@ export default function AIAssistant() {
     <div className="min-h-screen bg-[#0F0F0E]">
       <Navbar />
 
-      <main className="container pt-32 pb-16">
+      <main className="container pt-52 pb-16">
         <div className="max-w-4xl mx-auto">
           <header className="mb-8 text-center">
             <div className="inline-flex items-center gap-2 bg-[#E8A020]/10 text-[#E8A020] px-3 py-1 rounded-full text-[10px] font-600 uppercase tracking-widest mb-4">

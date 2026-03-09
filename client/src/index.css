@@ -126,11 +126,7 @@ html {
     font-family: "DM Sans", sans-serif;
   }
 
-  @media (max-width: 1023px) {
-    body {
-      padding-bottom: 5rem;
-    }
-  }
+
 
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -434,8 +430,8 @@ html {
     word-break: break-word;
   }
 
-  .prose img, 
-  .prose video, 
+  .prose img,
+  .prose video,
   .prose iframe,
   .prose table {
     max-width: 100% !important;

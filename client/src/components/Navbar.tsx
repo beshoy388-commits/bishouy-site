@@ -28,6 +28,8 @@ import SearchOverlay from "./SearchOverlay";
 import { useUI } from "@/contexts/UIContext";
 import AdPlacement from "./AdPlacement";
 
+import BreakingNewsTicker from "./BreakingNewsTicker";
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -81,7 +83,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || isMenuOpen
         ? "bg-[#0F0F0E]/95 backdrop-blur-md border-b border-[#222220]"
         : "bg-transparent"
         }`}
@@ -282,11 +284,14 @@ export default function Navbar() {
         onClose={() => setIsSearchOpen(false)}
       />
       {!location.startsWith("/admin") && (
-        <div className="bg-[#0A0A09] pt-2 pb-4">
-          <div className="container">
-            <AdPlacement position="banner_top" />
+        <>
+          <div className="bg-[#0A0A09] pt-2 pb-4">
+            <div className="container">
+              <AdPlacement position="banner_top" />
+            </div>
           </div>
-        </div>
+          <BreakingNewsTicker />
+        </>
       )}
     </header>
   );

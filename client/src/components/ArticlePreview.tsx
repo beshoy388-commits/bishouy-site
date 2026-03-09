@@ -6,6 +6,7 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Clock, User, Calendar } from "lucide-react";
+import { getSafeImage, getFallbackImage } from "@/lib/image-utils";
 
 interface ArticlePreviewProps {
   article: {
@@ -176,31 +177,31 @@ export default function ArticlePreview({ article }: ArticlePreviewProps) {
       </div>
 
       {/* Hero Image */}
-      {article.image && (() => {
-        const getSafeImage = (img: string | null | undefined, category: string) => {
-          if (!img) return `https://loremflickr.com/1200/800/${encodeURIComponent(category || 'news')}/all`;
-          if (img.includes('pollinations.ai')) return `https://loremflickr.com/1200/800/${encodeURIComponent(category || 'news')}/all`;
-          return img;
-        };
-        return (
-          <div className="relative h-[300px] md:h-[400px] overflow-hidden">
-            <img
-              src={getSafeImage(article.image, article.category)}
-              alt={article.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80";
-                const parent = (e.target as HTMLElement).parentElement;
-                if (parent) {
-                  const blurBg = parent.querySelector('.img-hero-blur-bg') as HTMLElement;
-                  if (blurBg) blurBg.style.backgroundImage = 'url(https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80)';
-                }
-              }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0E] via-[#0F0F0E]/40 to-transparent" />
-          </div>
-        );
-      })()}
+      {article.image && (
+        <div className="relative h-[300px] md:h-[400px] overflow-hidden">
+          <img
+            src={getSafeImage(article.image, article.category, (article as any).id || article.title, 1200)}
+            alt={article.title}
+            className="w-full h-full object-cover"
+            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+              const img = e.target as HTMLImageElement;
+              if (img.dataset.triedFallback === "true") return;
+              img.dataset.triedFallback = "true";
+
+              const fallbackUrl = getFallbackImage(article.category || "news", (article as any).id || article.title, 1200);
+
+              img.src = fallbackUrl;
+
+              const parent = img.parentElement;
+              if (parent) {
+                const blurBg = parent.querySelector('.img-hero-blur-bg') as HTMLElement;
+                if (blurBg) blurBg.style.backgroundImage = `url(${fallbackUrl})`;
+              }
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0E] via-[#0F0F0E]/40 to-transparent" />
+        </div>
+      )}
 
       {/* Article Content */}
       <div className="px-6 md:px-12 py-8 md:py-12">
