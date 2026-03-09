@@ -27,6 +27,7 @@ import NotificationDrawer from "./NotificationDrawer";
 import SearchOverlay from "./SearchOverlay";
 import { useUI } from "@/contexts/UIContext";
 import AdPlacement from "./AdPlacement";
+import { formatDateString } from "@/lib/time-utils";
 
 import BreakingNewsTicker from "./BreakingNewsTicker";
 
@@ -61,14 +62,7 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     // Set formatted dynamic date
-    const date = new Date();
-    const formattedDate = date.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-    setCurrentDate(formattedDate);
+    setCurrentDate(formatDateString(new Date()));
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);

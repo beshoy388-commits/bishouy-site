@@ -8,7 +8,11 @@ import { BREAKING_NEWS } from "@/lib/articles";
 import { trpc } from "@/lib/trpc";
 
 export default function BreakingNewsTicker() {
-  const { data: breakingArticles } = trpc.articles.list.useQuery({ limit: 10 });
+  const { data: breakingArticles } = trpc.articles.list.useQuery(
+    { limit: 20 },
+    { staleTime: 300000, refetchInterval: 600000 }
+  );
+
   const breakingNews = breakingArticles
     ? breakingArticles.filter(a => a.breaking === 1).map(a => a.title)
     : [];

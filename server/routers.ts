@@ -461,8 +461,8 @@ export const appRouter = router({
     // Public: Get all articles (now with filters)
     getAll: publicProcedure
       .input(z.object({ category: z.string().optional() }).optional())
-      .query(async ({ input }) => {
-        return getAllArticles(false, input?.category);
+      .query(async ({ input, ctx }) => {
+        return getAllArticles(false, input?.category, undefined, undefined, ctx.user?.id);
       }),
 
     // Public: List articles (now with filters)
@@ -476,7 +476,7 @@ export const appRouter = router({
           })
           .optional()
       )
-      .query(async ({ input }) => {
+      .query(async ({ input, ctx }) => {
         try {
           // Robustness: handle null/undefined input and sanitize parameters
           const category = input?.category || undefined;
@@ -488,7 +488,8 @@ export const appRouter = router({
             false,
             category,
             limit,
-            offset
+            offset,
+            ctx.user?.id
           );
         } catch (error) {
           console.error("[tRPC] Error in articles.list:", error);

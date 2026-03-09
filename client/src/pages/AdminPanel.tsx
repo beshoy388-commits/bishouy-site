@@ -344,7 +344,7 @@ export default function AdminPanel() {
                           <a
                             href={`/article/${article.slug}`}
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noopener noreferrer"
                             className="p-3 bg-[#11110F] border border-[#2A2A28] text-[#8A8880] hover:text-[#F2F0EB] rounded-lg transition-all"
                             title="Preview"
                           >

@@ -60,16 +60,16 @@ export default function ArticleDetail() {
       { enabled: !!article?.id }
     );
 
-  // Query for like count
+  // Query for like count (only if not provided in initial batch)
   const likeCountQuery = trpc.likes.getCount.useQuery(
     { articleId: article?.id || 0 },
-    { enabled: !!article?.id }
+    { enabled: !!article?.id && article.likeCount === undefined }
   );
 
-  // Query to check if user has liked
+  // Query to check if user has liked (only if not provided in initial batch)
   const userLikedQuery = trpc.likes.hasUserLiked.useQuery(
     { articleId: article?.id || 0 },
-    { enabled: !!article?.id && !!user }
+    { enabled: !!article?.id && !!user && article.hasLiked === undefined }
   );
 
   const utils = trpc.useUtils();
@@ -212,6 +212,9 @@ export default function ArticleDetail() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const rw = (w: number) => isMobile ? Math.min(w, 480) : w;
+
   // SEO: Dynamic title and Open Graph meta tags per article
   useEffect(() => {
     if (!article) return;
@@ -269,10 +272,12 @@ export default function ArticleDetail() {
 
   // Effect to update like count
   useEffect(() => {
-    if (likeCountQuery.data !== undefined) {
+    if (article?.likeCount !== undefined) {
+      setLikeCount(article.likeCount);
+    } else if (likeCountQuery.data !== undefined) {
       setLikeCount(likeCountQuery.data);
     }
-  }, [likeCountQuery.data]);
+  }, [likeCountQuery.data, article?.likeCount]);
 
   // Effect to update user's like status
   useEffect(() => {
@@ -280,10 +285,12 @@ export default function ArticleDetail() {
       setUserLiked(false);
       return;
     }
-    if (userLikedQuery.data !== undefined) {
+    if (article?.hasLiked !== undefined) {
+      setUserLiked(article.hasLiked);
+    } else if (userLikedQuery.data !== undefined) {
       setUserLiked(userLikedQuery.data);
     }
-  }, [userLikedQuery.data, user]);
+  }, [userLikedQuery.data, user, article?.hasLiked]);
 
   // Effect to update user's bookmark status
   useEffect(() => {
@@ -573,10 +580,10 @@ export default function ArticleDetail() {
         <div className="img-hero-frame">
           <div
             className="img-hero-blur-bg"
-            style={{ backgroundImage: `url(${getSafeImage(article.image, article.category, article.id, 1400)})` }}
+            style={{ backgroundImage: `url(${getSafeImage(article.image, article.category, article.id, rw(1400))})` }}
           />
           <img
-            src={getSafeImage(article.image, article.category, article.id, 1400)}
+            src={getSafeImage(article.image, article.category, article.id, rw(1400))}
             alt={article.title}
             className="img-hero-main"
             loading="eager"
@@ -587,7 +594,7 @@ export default function ArticleDetail() {
               if (img.dataset.triedFallback === "true") return;
               img.dataset.triedFallback = "true";
 
-              const fallbackUrl = getFallbackImage(article.category || "news", article.id, 1400);
+              const fallbackUrl = getFallbackImage(article.category || "news", article.id, rw(1400));
 
               img.src = fallbackUrl;
 

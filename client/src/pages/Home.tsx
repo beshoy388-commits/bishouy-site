@@ -4,7 +4,7 @@
  * Design: Asymmetric layout with featured article on left, medium cards on right
  */
 
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { Link } from "wouter";
 import Navbar from "@/components/Navbar";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
@@ -14,7 +14,7 @@ import { trpc } from "@/lib/trpc";
 import SEO from "@/components/SEO";
 import ArticleCardSkeleton from "@/components/ArticleCardSkeleton";
 import { useAuth } from "@/_core/hooks/useAuth";
-import SocialPulse from "@/components/SocialPulse";
+const SocialPulse = lazy(() => import("@/components/SocialPulse"));
 
 export default function Home() {
   const { isAuthenticated, loading } = useAuth();
@@ -162,7 +162,9 @@ export default function Home() {
                 </h2>
               </div>
               <div className="h-[700px]">
-                <SocialPulse />
+                <Suspense fallback={<div className="h-full bg-[#11110F] animate-pulse rounded-lg border border-[#1C1C1A]" />}>
+                  <SocialPulse />
+                </Suspense>
               </div>
             </aside>
           </div>

@@ -13,7 +13,7 @@ import {
     Clock,
     ShieldCheck
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { formatRelativeTime } from "@/lib/time-utils";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 
@@ -136,7 +136,7 @@ export default function SocialPulse() {
                             <div className="flex items-start gap-3">
                                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#1C1C1A] to-[#0A0A09] border border-[#2A2A28] flex items-center justify-center flex-shrink-0">
                                     {post.authorAvatar ? (
-                                        <img src={post.authorAvatar} alt="" className="w-full h-full rounded-full" />
+                                        <img src={post.authorAvatar} alt="" className="w-full h-full rounded-full" loading="lazy" />
                                     ) : (
                                         <User size={14} className="text-[#555550]" />
                                     )}
@@ -151,7 +151,7 @@ export default function SocialPulse() {
                                         </div>
                                         <span className="text-[9px] font-bold text-[#333330] flex items-center gap-1">
                                             <Clock size={8} />
-                                            {formatDistanceToNow(new Date(post.createdAt))} ago
+                                            {formatRelativeTime(post.createdAt)} ago
                                         </span>
                                     </div>
                                     <p className="text-xs text-[#D4D0C8] leading-relaxed mb-3 whitespace-pre-wrap">

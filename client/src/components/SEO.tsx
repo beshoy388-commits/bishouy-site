@@ -47,6 +47,15 @@ export default function SEO({
         updateMeta("twitter:description", description);
         updateMeta("twitter:image", image);
 
+        // Canonical
+        let canonical = document.querySelector('link[rel="canonical"]');
+        if (!canonical) {
+            canonical = document.createElement("link");
+            canonical.setAttribute("rel", "canonical");
+            document.head.appendChild(canonical);
+        }
+        canonical.setAttribute("href", url);
+
     }, [fullTitle, description, image, url, type]);
 
     return null;

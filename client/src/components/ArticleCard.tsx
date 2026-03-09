@@ -30,13 +30,14 @@ export default function ArticleCard({
   const [userLiked, setUserLiked] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Fetch like count
-  const likeCountQuery = trpc.likes.getCount.useQuery({
-    articleId: article.id,
-  });
+  // Fetch like count only if not provided by parent (server-side optimization)
+  const likeCountQuery = trpc.likes.getCount.useQuery(
+    { articleId: article.id },
+    { enabled: article.likeCount === undefined }
+  );
   const userLikedQuery = trpc.likes.hasUserLiked.useQuery(
     { articleId: article.id },
-    { enabled: !!user }
+    { enabled: !!user && article.hasLiked === undefined }
   );
 
   const utils = trpc.useUtils();
@@ -85,20 +86,31 @@ export default function ArticleCard({
   });
 
   useEffect(() => {
-    if (likeCountQuery.data !== undefined) {
+    // Priority 1: Data from server-side batch (article object)
+    if (article.likeCount !== undefined) {
+      setLikeCount(article.likeCount);
+    }
+    // Priority 2: Data from separate follow-up query if needed
+    else if (likeCountQuery.data !== undefined) {
       setLikeCount(likeCountQuery.data);
     }
-  }, [likeCountQuery.data]);
+  }, [likeCountQuery.data, article.likeCount]);
 
   useEffect(() => {
     if (!user) {
       setUserLiked(false);
       return;
     }
-    if (userLikedQuery.data !== undefined) {
+
+    // Priority 1: Data from server-side batch (article object)
+    if (article.hasLiked !== undefined) {
+      setUserLiked(article.hasLiked);
+    }
+    // Priority 2: Data from separate follow-up query if needed
+    else if (userLikedQuery.data !== undefined) {
       setUserLiked(userLikedQuery.data);
     }
-  }, [userLikedQuery.data, user]);
+  }, [userLikedQuery.data, user, article.hasLiked]);
 
   const handleLikeClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -130,6 +142,9 @@ export default function ArticleCard({
     </button>
   );
 
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const rw = (w: number) => isMobile ? Math.min(w, 480) : w;
+
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     const img = e.target as HTMLImageElement;
     if (img.dataset.triedFallback === "true") return;
@@ -144,7 +159,7 @@ export default function ArticleCard({
           {/* Background image */}
           <div className="img-zoom absolute inset-0">
             <img
-              src={getSafeImage(article.image, article.category, article.id, 1200)}
+              src={getSafeImage(article.image, article.category, article.id, rw(1200))}
               alt={article.title}
               className="img-smart-fit"
               loading="eager"
@@ -230,7 +245,7 @@ export default function ArticleCard({
         <article className="article-card group flex gap-4 cursor-pointer">
           <div className="img-zoom flex-shrink-0 w-24 h-20 rounded-sm overflow-hidden text-[#0F0F0E]">
             <img
-              src={getSafeImage(article.image, article.category, article.id, 400)}
+              src={getSafeImage(article.image, article.category, article.id, rw(400))}
               alt={article.title}
               className="img-smart-fit"
               loading="lazy"
@@ -296,7 +311,7 @@ export default function ArticleCard({
       <article className="article-card group cursor-pointer bg-[#1C1C1A] rounded-sm overflow-hidden h-full flex flex-col">
         <div className="img-zoom aspect-video overflow-hidden relative">
           <img
-            src={getSafeImage(article.image, article.category, article.id, 800)}
+            src={getSafeImage(article.image, article.category, article.id, rw(800))}
             alt={article.title}
             className="w-full h-full object-cover"
             loading="lazy"

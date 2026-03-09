@@ -313,8 +313,9 @@ export async function getAllArticles(
   includeDrafts = false,
   category?: string,
   limit?: number,
-  offset?: number
-): Promise<Article[]> {
+  offset?: number,
+  currentUserId?: number
+): Promise<(Article & { likeCount: number; hasLiked?: boolean })[]> {
   const db = await getDb();
   if (!db) return [];
 
@@ -326,7 +327,17 @@ export async function getAllArticles(
     conditions.push(eq(articles.category, category));
   }
 
-  const query = db.select().from(articles);
+  const query = db
+    .select({
+      article: articles,
+      likeCount: sql<number>`count(${articleLikes.id})`.mapWith(Number),
+      hasLiked: currentUserId
+        ? sql<number>`max(case when ${articleLikes.userId} = ${currentUserId} then 1 else 0 end)`.mapWith(v => v === 1)
+        : sql<boolean>`0`.mapWith(() => false),
+    })
+    .from(articles)
+    .leftJoin(articleLikes, eq(articles.id, articleLikes.articleId))
+    .groupBy(articles.id);
 
   if (conditions.length > 0) {
     query.where(and(...conditions));
@@ -339,20 +350,42 @@ export async function getAllArticles(
     query.offset(offset);
   }
 
-  return query.orderBy(desc(articles.createdAt));
+  const results = await query.orderBy(desc(articles.createdAt));
+
+  return results.map((r: { article: Article; likeCount: number; hasLiked?: boolean }) => ({
+    ...r.article,
+    likeCount: r.likeCount,
+    hasLiked: r.hasLiked
+  }));
 }
 
 export async function getArticleBySlug(
-  slug: string
-): Promise<Article | undefined> {
+  slug: string,
+  currentUserId?: number
+): Promise<(Article & { likeCount: number; hasLiked?: boolean }) | undefined> {
   const db = await getDb();
   if (!db) return undefined;
   const result = await db
-    .select()
+    .select({
+      article: articles,
+      likeCount: sql<number>`count(${articleLikes.id})`.mapWith(Number),
+      hasLiked: currentUserId
+        ? sql<number>`max(case when ${articleLikes.userId} = ${currentUserId} then 1 else 0 end)`.mapWith(v => v === 1)
+        : sql<boolean>`0`.mapWith(() => false),
+    })
     .from(articles)
+    .leftJoin(articleLikes, eq(articles.id, articleLikes.articleId))
     .where(eq(articles.slug, slug))
+    .groupBy(articles.id)
     .limit(1);
-  return result.length > 0 ? result[0] : undefined;
+
+  if (result.length === 0) return undefined;
+
+  return {
+    ...result[0].article,
+    likeCount: result[0].likeCount,
+    hasLiked: result[0].hasLiked
+  };
 }
 
 export async function getArticleById(id: number): Promise<Article | undefined> {
@@ -1321,8 +1354,8 @@ export async function getArticleBySlugWithTracking(
   userId?: number,
   ip?: string,
   ua?: string
-): Promise<Article | undefined> {
-  const article = await getArticleBySlug(slug);
+): Promise<(Article & { likeCount: number; hasLiked?: boolean }) | undefined> {
+  const article = await getArticleBySlug(slug, userId);
   if (article) {
     await trackView(article.id, userId, ip, ua).catch(err =>
       console.error("[Analytics] trackView failed:", err)

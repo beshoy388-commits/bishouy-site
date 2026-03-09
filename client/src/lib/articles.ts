@@ -23,6 +23,8 @@ export interface Article {
   updatedAt?: Date;
   publishedAt?: Date | null;
   authorId?: number | null;
+  likeCount?: number;
+  hasLiked?: boolean;
 }
 
 export const CATEGORIES = [
