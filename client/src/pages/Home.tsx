@@ -24,7 +24,7 @@ export default function Home() {
   }, []);
 
   const { data: articles, isLoading } = trpc.articles.list.useQuery(undefined, {
-    refetchInterval: 30000, // Refresh articles every 30 seconds
+    refetchInterval: 60000, // Refresh articles every 60 seconds
   });
 
   if (isLoading) {

@@ -144,10 +144,11 @@ export default function ArticleCard({
           {/* Background image */}
           <div className="img-zoom absolute inset-0">
             <img
-              src={getSafeImage(article.image, article.category, article.id)}
+              src={getSafeImage(article.image, article.category, article.id, 1200)}
               alt={article.title}
               className="img-smart-fit"
               loading="eager"
+              decoding="async"
               fetchPriority="high"
               onError={handleImageError}
             />
@@ -229,10 +230,11 @@ export default function ArticleCard({
         <article className="article-card group flex gap-4 cursor-pointer">
           <div className="img-zoom flex-shrink-0 w-24 h-20 rounded-sm overflow-hidden text-[#0F0F0E]">
             <img
-              src={getSafeImage(article.image, article.category, article.id)}
+              src={getSafeImage(article.image, article.category, article.id, 400)}
               alt={article.title}
               className="img-smart-fit"
               loading="lazy"
+              decoding="async"
               onError={handleImageError}
             />
           </div>
@@ -294,10 +296,11 @@ export default function ArticleCard({
       <article className="article-card group cursor-pointer bg-[#1C1C1A] rounded-sm overflow-hidden h-full flex flex-col">
         <div className="img-zoom aspect-video overflow-hidden relative">
           <img
-            src={getSafeImage(article.image, article.category, article.id)}
+            src={getSafeImage(article.image, article.category, article.id, 800)}
             alt={article.title}
             className="w-full h-full object-cover"
             loading="lazy"
+            decoding="async"
             onError={handleImageError}
           />
           {showLikes && (

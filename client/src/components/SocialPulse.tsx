@@ -26,7 +26,7 @@ export default function SocialPulse() {
 
     // Query posts
     const { data: posts, isLoading } = trpc.social.list.useQuery({ limit: 10 }, {
-        refetchInterval: 10000, // Refresh every 10 seconds for "Pulse" feel
+        refetchInterval: 30000, // Balanced for performance
     });
 
     // Create post mutation

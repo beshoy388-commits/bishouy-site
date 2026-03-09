@@ -46,16 +46,30 @@ export const getFallbackImage = (category: string, id: number | string, width = 
  * Validates an image URL and returns a safe alternative if needed
  */
 export const getSafeImage = (img: string | null | undefined, category: string, id: number | string, width = 800) => {
-    // Only proactively replace the known generic typewriter placeholder
-    const isGenericPlaceholder = img?.includes('photo-1585829365295-ab7cd400c167');
+  // Only proactively replace the known generic typewriter placeholder
+  const isGenericPlaceholder = img?.includes('photo-1585829365295-ab7cd400c167');
 
-    if (!img || isGenericPlaceholder) {
-        return getFallbackImage(category, id, width);
-    }
+  if (!img || isGenericPlaceholder) {
+    return getFallbackImage(category, id, width);
+  }
 
-    if (img.includes('unsplash.com') && !img.includes('w=')) {
-        return `${img}${img.includes('?') ? '&' : '?'}auto=format&fit=crop&w=${width}&q=80`;
-    }
+  // Optimize Unsplash
+  if (img.includes('unsplash.com')) {
+    const baseUrl = img.split('?')[0];
+    return `${baseUrl}?auto=format&fit=crop&w=${width}&q=80`;
+  }
 
-    return img;
+  // Optimize LoremFlickr (it supports width/height in URL)
+  if (img.includes('loremflickr.com')) {
+    // Replace existing dimensions if found (e.g. /1200/800/)
+    return img.replace(/\/\d+\/\d+\//, `/${width}/${Math.round(width * 0.6)}/`);
+  }
+
+  // Optimize Pollinations AI
+  if (img.includes('pollinations.ai')) {
+    const baseUrl = img.split('?')[0];
+    return `${baseUrl}?width=${width}&height=${Math.round(width * 0.6)}&nologo=true&enhance=true`;
+  }
+
+  return img;
 };

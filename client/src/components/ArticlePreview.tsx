@@ -183,6 +183,8 @@ export default function ArticlePreview({ article }: ArticlePreviewProps) {
             src={getSafeImage(article.image, article.category, (article as any).id || article.title, 1200)}
             alt={article.title}
             className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
             onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
               const img = e.target as HTMLImageElement;
               if (img.dataset.triedFallback === "true") return;
