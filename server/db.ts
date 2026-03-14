@@ -922,6 +922,12 @@ export async function purgeUser(id: number): Promise<void> {
 }
 
 export async function isIpBlacklisted(ip: string): Promise<boolean> {
+  // Security Guard: IPs in the Whitelist are immune to blacklisting
+  if (ENV.adminIpWhitelist) {
+    const allowedIps = ENV.adminIpWhitelist.split(",").map(i => i.trim());
+    if (allowedIps.includes(ip)) return false;
+  }
+
   const db = await getDb();
   if (!db) return false;
   
@@ -934,6 +940,15 @@ export async function isIpBlacklisted(ip: string): Promise<boolean> {
 }
 
 export async function blacklistIp(ip: string, reason?: string): Promise<void> {
+  // Security Guard: Cannot blacklist an IP that is in the Master Whitelist
+  if (ENV.adminIpWhitelist) {
+    const allowedIps = ENV.adminIpWhitelist.split(",").map(i => i.trim());
+    if (allowedIps.includes(ip)) {
+      console.warn(`[Security] Block attempt rejected: IP ${ip} is in the Master Whitelist.`);
+      return; 
+    }
+  }
+
   const db = await getDb();
   if (!db) return;
   
