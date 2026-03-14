@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 
 export default function PublicProfile() {
   const [, params] = useRoute("/u/:username");
@@ -35,6 +36,7 @@ export default function PublicProfile() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#0F0F0E] flex flex-col">
+        <SEO title={`Loading Profile...`} noindex={true} />
         <Navbar />
         <main className="flex-1 flex items-center justify-center">
           <Loader2 className="animate-spin text-[#E8A020]" size={32} />
@@ -46,6 +48,7 @@ export default function PublicProfile() {
   if (error || !profile) {
     return (
       <div className="min-h-screen bg-[#0F0F0E] flex flex-col">
+        <SEO title="User Not Found" noindex={true} />
         <Navbar />
         <main className="flex-1 flex flex-col items-center justify-center text-center px-4">
           <h1 className="font-display text-4xl text-[#E8A020] mb-4">
@@ -67,6 +70,11 @@ export default function PublicProfile() {
 
   return (
     <div className="min-h-screen bg-[#0F0F0E] flex flex-col">
+      <SEO 
+        title={`${profile.name} (@${profile.username})`} 
+        description={profile.bio || `View the reader profile of ${profile.name} on Bishouy.com`}
+        image={profile.avatarUrl || undefined}
+      />
       <Navbar />
 
       <main className="flex-1 container pt-32 pb-16">

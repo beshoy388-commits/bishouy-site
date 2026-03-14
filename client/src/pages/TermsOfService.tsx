@@ -8,10 +8,12 @@ import { ArrowLeft } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 
 export default function TermsOfService() {
   return (
     <div className="min-h-screen bg-[#0F0F0E]">
+      <SEO title="Terms of Service" description="Read our Terms of Service for using Bishouy.com." />
       <Navbar />
 
       <section className="pt-52 pb-12">
