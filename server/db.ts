@@ -352,11 +352,14 @@ export async function getAllArticles(
 
   const results = await query.orderBy(desc(articles.createdAt));
 
-  return results.map((r: { article: Article; likeCount: number; hasLiked?: boolean }) => ({
-    ...r.article,
-    likeCount: r.likeCount,
-    hasLiked: r.hasLiked
-  }));
+  return results.map((r: { article: Article; likeCount: number; hasLiked?: boolean }) => {
+    const { content, ...articleWithoutContent } = r.article;
+    return {
+      ...articleWithoutContent,
+      likeCount: r.likeCount,
+      hasLiked: r.hasLiked
+    } as any;
+  });
 }
 
 export async function getArticleBySlug(

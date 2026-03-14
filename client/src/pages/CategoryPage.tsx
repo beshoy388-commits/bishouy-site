@@ -20,10 +20,21 @@ export default function CategoryPage() {
   const category = CATEGORIES.find(c => c.slug === slug);
 
   // Fetch articles from DB filtered by category
-  const { data: articles, isLoading } = trpc.articles.list.useQuery(
-    { category: category?.name },
-    { enabled: !!category }
+  const { 
+    data, 
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = trpc.articles.listInfinite.useInfiniteQuery(
+    { category: category?.name, limit: 10 },
+    { 
+      enabled: !!category,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
   );
+  
+  const articles = data?.pages.flatMap(page => page.items) || [];
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -125,6 +136,18 @@ export default function CategoryPage() {
                     variant="medium"
                   />
                 ))}
+              </div>
+            )}
+            
+            {hasNextPage && (
+              <div className="mt-12 text-center">
+                <button
+                  onClick={() => fetchNextPage()}
+                  disabled={isFetchingNextPage}
+                  className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-8 py-3 rounded-sm transition-colors mx-auto disabled:opacity-50 inline-block"
+                >
+                  {isFetchingNextPage ? "Loading..." : "Load More"}
+                </button>
               </div>
             )}
           </div>

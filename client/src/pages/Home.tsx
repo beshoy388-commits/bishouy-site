@@ -24,9 +24,20 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, []);
 
-  const { data: articles, isLoading } = trpc.articles.list.useQuery(undefined, {
-    refetchInterval: 60000, // Refresh articles every 60 seconds
-  });
+  const { 
+    data, 
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = trpc.articles.listInfinite.useInfiniteQuery(
+    { limit: 12 },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
+  );
+  
+  const articles = data?.pages.flatMap(page => page.items) || [];
 
   if (isLoading) {
     return (
@@ -85,7 +96,7 @@ export default function Home() {
         a.id !== mainFeatured.id &&
         !secondaryFeatured.some((sf: Article) => sf.id === a.id)
     )
-    .slice(0, 12);
+    // Removed slice so all dynamically loaded articles show up
 
   return (
     <main className="min-h-screen bg-[#0F0F0E] relative pt-36">
@@ -153,6 +164,18 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+              
+              {hasNextPage && (
+                <div className="mt-12 text-center">
+                  <button
+                    onClick={() => fetchNextPage()}
+                    disabled={isFetchingNextPage}
+                    className="border border-[#E8A020] text-[#E8A020] hover:bg-[#E8A020] hover:text-[#0F0F0E] px-8 py-3 rounded-sm font-display tracking-widest uppercase transition-all flex items-center gap-2 mx-auto disabled:opacity-50"
+                  >
+                    {isFetchingNextPage ? "Loading..." : "Load More"}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Social Pulse Sidebar */}

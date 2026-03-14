@@ -537,6 +537,54 @@ export const appRouter = router({
           });
         }
       }),
+      
+    // Public: List articles with infinite loading cursor support
+    listInfinite: publicProcedure
+      .input(
+        z.object({
+          category: z.string().optional(),
+          limit: z.number().min(1).max(50).default(10),
+          cursor: z.number().nullish(), // offset
+        })
+      )
+      .query(async ({ input, ctx }) => {
+        try {
+          const limit = input.limit ?? 10;
+          const offset = input.cursor ?? 0;
+          
+          const cacheKey = `articles_list_inf_${input.category || "all"}_${limit}_${offset}_${ctx.user?.id || "anon"}`;
+          const cached = dbCache.get(cacheKey);
+          if (cached) return cached;
+
+          const items = await getAllArticles(
+            false,
+            input.category,
+            limit + 1, // Fetch one extra to know if there's a next page
+            offset,
+            ctx.user?.id
+          );
+
+          let nextCursor: typeof offset | undefined = undefined;
+          if (items.length > limit) {
+            items.pop();
+            nextCursor = offset + limit;
+          }
+
+          const result = {
+            items,
+            nextCursor,
+          };
+
+          dbCache.set(cacheKey, result, 60000);
+          return result;
+        } catch (error) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Unable to retrieve articles.",
+            cause: error
+          });
+        }
+      }),
 
     // Admin: List ALL articles (including drafts)
     listAdmin: adminProcedure

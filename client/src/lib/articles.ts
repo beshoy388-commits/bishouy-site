@@ -8,7 +8,7 @@ export interface Article {
   slug: string;
   title: string;
   excerpt: string;
-  content: string;
+  content?: string;
   category: string;
   categoryColor: string | null;
   author: string;
