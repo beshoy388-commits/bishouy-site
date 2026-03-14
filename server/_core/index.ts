@@ -20,6 +20,7 @@ import {
 } from "../db";
 import { syncRSSFeeds } from "../rss";
 import { sendDailyNewsletter } from "../newsletter_job";
+import { ipBlacklistMiddleware } from "../security";
 import cron from "node-cron";
 import { ENV } from "./env";
 
@@ -112,6 +113,9 @@ async function startServer() {
 
   // Gzip compression — reduces bandwidth by ~60-80%
   app.use(compression());
+
+  // Global IP Blacklist Protection
+  app.use(ipBlacklistMiddleware);
 
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));

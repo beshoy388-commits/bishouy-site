@@ -15,6 +15,7 @@ export {
   pageViews,
   siteSettings,
   visitorSessions,
+  ipBlacklist,
 } from "../drizzle/schema";
 import {
   InsertUser,
@@ -61,6 +62,7 @@ import {
   visitorSessions,
   VisitorSession,
   InsertVisitorSession,
+  ipBlacklist,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -174,6 +176,19 @@ export async function getDb() {
           "ALTER TABLE users ADD COLUMN status TEXT DEFAULT 'active' NOT NULL;"
         );
         console.log("[Migration] Added status column to users");
+      } catch (err) {}
+
+      // Migration for ip_blacklist table
+      try {
+        await client.execute(`
+          CREATE TABLE IF NOT EXISTS ip_blacklist (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ipAddress TEXT NOT NULL UNIQUE,
+            reason TEXT,
+            createdAt INTEGER NOT NULL
+          );
+        `);
+        console.log("[Migration] Created ip_blacklist table");
       } catch (err) {}
 
       // Finalize database initialization after migrations
@@ -888,6 +903,33 @@ export async function banUser(id: number): Promise<void> {
   await db.update(users)
     .set({ status: 'banned' })
     .where(eq(users.id, id));
+}
+
+export async function isIpBlacklisted(ip: string): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  
+  const result = await db.select()
+    .from(ipBlacklist)
+    .where(eq(ipBlacklist.ipAddress, ip))
+    .limit(1);
+    
+  return result.length > 0;
+}
+
+export async function blacklistIp(ip: string, reason?: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  try {
+    await db.insert(ipBlacklist).values({
+      ipAddress: ip,
+      reason: reason || null,
+      createdAt: new Date(),
+    });
+  } catch (err) {
+    // Likely already exists
+  }
 }
 
 // Article likes queries

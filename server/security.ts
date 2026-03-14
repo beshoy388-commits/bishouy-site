@@ -111,6 +111,24 @@ export function getClientIp(req: any): string {
 }
 
 /**
+ * Express middleware to block blacklisted IPs
+ */
+export async function ipBlacklistMiddleware(req: any, res: any, next: any) {
+  try {
+    const { isIpBlacklisted } = await import("./db");
+    const ip = getClientIp(req);
+    if (await isIpBlacklisted(ip)) {
+      console.warn(`[Security] Blocked request from blacklisted IP: ${ip}`);
+      return res.status(403).send("Access restricted due to security violations.");
+    }
+    next();
+  } catch (err) {
+    console.error("[Security] IP Blacklist check failed:", err);
+    next();
+  }
+}
+
+/**
  * Get user agent from request
  */
 export function getUserAgent(req: any): string {

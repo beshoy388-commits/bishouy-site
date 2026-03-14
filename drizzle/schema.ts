@@ -144,6 +144,18 @@ export const auditLogs = sqliteTable("audit_logs", {
     .notNull(),
 });
 
+export const ipBlacklist = sqliteTable("ip_blacklist", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  ipAddress: text("ipAddress").notNull().unique(),
+  reason: text("reason"),
+  createdAt: integer("createdAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+export type IpBlacklistEntry = typeof ipBlacklist.$inferSelect;
+export type InsertIpBlacklistEntry = typeof ipBlacklist.$inferInsert;
+
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type InsertAuditLog = typeof auditLogs.$inferInsert;
 
