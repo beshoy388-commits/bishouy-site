@@ -1,4 +1,4 @@
-import { eq, desc, and, sql, gt } from "drizzle-orm";
+import { eq, ne, desc, and, sql, gt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
 export {
@@ -168,15 +168,14 @@ export async function getDb() {
         await client.execute("UPDATE articles SET status = 'published' WHERE status IS NULL OR status = '';");
       } catch (e) { /* ignore */ }
 
-      // Migration for unsubscribe token in newsletter subscribers
+      // Migration for user status
       try {
         await client.execute(
-          "ALTER TABLE subscribers ADD COLUMN unsubscribeToken TEXT;"
+          "ALTER TABLE users ADD COLUMN status TEXT DEFAULT 'active' NOT NULL;"
         );
-        console.log("[Migration] Added unsubscribeToken column to subscribers");
-      } catch (err) {
-        // Column already exists — ignore
-      }
+        console.log("[Migration] Added status column to users");
+      } catch (err) {}
+
       // Finalize database initialization after migrations
       _db = drizzle(client);
       return _db;
@@ -242,14 +241,14 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     };
     const updateSet: Record<string, unknown> = {};
 
-    const textFields = ["name", "email", "loginMethod", "password"] as const;
+    const textFields = ["name", "email", "loginMethod", "password", "status"] as const;
     type TextField = (typeof textFields)[number];
 
     const assignNullable = (field: TextField) => {
       const value = user[field];
       if (value === undefined) return;
       const normalized = value ?? null;
-      values[field] = normalized;
+      values[field] = normalized as any;
       updateSet[field] = normalized;
     };
 
@@ -812,7 +811,7 @@ export async function getPublicUserComments(username: string) {
 export async function getAllUsers(): Promise<User[]> {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(users).orderBy(desc(users.createdAt));
+  return db.select().from(users).where(ne(users.status, 'deleted')).orderBy(desc(users.createdAt));
 }
 
 export async function getUserByOpenId(
@@ -876,7 +875,19 @@ export async function deleteUser(id: number): Promise<void> {
     throw new Error("System owner cannot be deleted");
   }
 
-  await db.delete(users).where(eq(users.id, id));
+  // Soft delete to prevent re-creation loops and maintain audit trail
+  await db.update(users)
+    .set({ status: 'deleted' })
+    .where(eq(users.id, id));
+}
+
+export async function banUser(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(users)
+    .set({ status: 'banned' })
+    .where(eq(users.id, id));
 }
 
 // Article likes queries

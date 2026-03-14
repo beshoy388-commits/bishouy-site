@@ -3,6 +3,7 @@ import type { Express, Request, Response } from "express";
 import * as db from "../db";
 import { getSessionCookieOptions } from "./cookies";
 import { sdk } from "./sdk";
+import { ENV } from "./env";
 
 function getQueryParam(req: Request, key: string): string | undefined {
   const value = req.query[key];
@@ -11,48 +12,50 @@ function getQueryParam(req: Request, key: string): string | undefined {
 
 export function registerOAuthRoutes(app: Express) {
   // Fake login portal for local development
-  app.get("/app-auth", (req: Request, res: Response) => {
-    const redirectUri = getQueryParam(req, "redirectUri");
-    const state = getQueryParam(req, "state");
+  if (!ENV.isProduction) {
+    app.get("/app-auth", (req: Request, res: Response) => {
+      const redirectUri = getQueryParam(req, "redirectUri");
+      const state = getQueryParam(req, "state");
 
-    if (!redirectUri || !state) {
-      res.status(400).send("redirectUri and state are required");
-      return;
-    }
+      if (!redirectUri || !state) {
+        res.status(400).send("redirectUri and state are required");
+        return;
+      }
 
-    // Auto-redirect simulating a successful login
-    const code = "local-dev-code-" + Date.now();
-    const finalUrl = new URL(redirectUri);
-    finalUrl.searchParams.set("code", code);
-    finalUrl.searchParams.set("state", state);
+      // Auto-redirect simulating a successful login
+      const code = "local-dev-code-" + Date.now();
+      const finalUrl = new URL(redirectUri);
+      finalUrl.searchParams.set("code", code);
+      finalUrl.searchParams.set("state", state);
 
-    res.send(`
-      <html>
-        <head>
-          <title>Local Dev Auth</title>
-          <style>
-             body { font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #09090b; color: #fafafa; }
-             .card { background: #18181b; border: 1px solid #27272a; padding: 2rem; border-radius: 8px; text-align: center; }
-             button { background: #fafafa; color: #09090b; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 500; cursor: pointer; margin-top: 1rem; }
-             button:hover { opacity: 0.9; }
-          </style>
-        </head>
-        <body>
-          <div class="card">
-            <h2>Local Development Login</h2>
-            <p>Simulating OAuth login process...</p>
-            <button onclick="window.location.href='${finalUrl.toString()}'">Continue as Dev User</button>
-            <script>
-              // Auto-redirect after a short delay
-              setTimeout(() => {
-                window.location.href = '${finalUrl.toString()}';
-              }, 1500);
-            </script>
-          </div>
-        </body>
-      </html>
-    `);
-  });
+      res.send(`
+        <html>
+          <head>
+            <title>Local Dev Auth</title>
+            <style>
+               body { font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #09090b; color: #fafafa; }
+               .card { background: #18181b; border: 1px solid #27272a; padding: 2rem; border-radius: 8px; text-align: center; }
+               button { background: #fafafa; color: #09090b; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 500; cursor: pointer; margin-top: 1rem; }
+               button:hover { opacity: 0.9; }
+            </style>
+          </head>
+          <body>
+            <div class="card">
+              <h2>Local Development Login</h2>
+              <p>Simulating OAuth login process...</p>
+              <button onclick="window.location.href='${finalUrl.toString()}'">Continue as Dev User</button>
+              <script>
+                // Auto-redirect after a short delay
+                setTimeout(() => {
+                  window.location.href = '${finalUrl.toString()}';
+                }, 1500);
+              </script>
+            </div>
+          </body>
+        </html>
+      `);
+    });
+  }
 
   app.get("/api/oauth/callback", async (req: Request, res: Response) => {
     const code = getQueryParam(req, "code");
@@ -77,7 +80,7 @@ export function registerOAuthRoutes(app: Express) {
         name: userInfo.name || null,
         email: userInfo.email ?? null,
         loginMethod: userInfo.loginMethod ?? userInfo.platform ?? null,
-        role: userInfo.openId === "local-dev-user" ? "admin" : "user",
+        role: (userInfo.openId === "local-dev-user" && ENV.oAuthServerUrl) ? "admin" : "user",
         lastSignedIn: new Date(),
       });
 

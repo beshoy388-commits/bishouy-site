@@ -328,6 +328,19 @@ class SDKServer {
       throw ForbiddenError("User not found");
     }
 
+    // Professional Legal Enforcement: Handle terminated or restricted accounts
+    if (user.status === "banned") {
+      throw ForbiddenError(
+        "Account Terminated: This profile has been permanently suspended due to a violation of our Terms of Service (ToS) and Community Guidelines."
+      );
+    }
+
+    if (user.status === "deleted") {
+      throw ForbiddenError(
+        "Account Deactivated: This account has been scheduled for deletion and is no longer accessible."
+      );
+    }
+
     await db.upsertUser({
       openId: user.openId,
       lastSignedIn: signedInAt,

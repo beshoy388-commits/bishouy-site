@@ -75,7 +75,7 @@ import { TRPCError } from "@trpc/server";
 import OpenAI from "openai";
 import { ENV } from "./_core/env";
 import { aiChatCache, dbCache } from "./cache";
-import { logArticleAction } from "./audit";
+import { logArticleAction, logResourceAction } from "./audit";
 import {
   checkRateLimit,
   validateAndCleanArticleData,
@@ -165,12 +165,30 @@ export const appRouter = router({
       const stats = await getAnalyticsSummary();
       return stats;
     }),
-    clearCache: adminProcedure.mutation(async () => {
+    clearCache: adminProcedure.mutation(async ({ ctx }) => {
       aiChatCache.clear();
+      await logResourceAction(
+        ctx.user.id,
+        "clear_cache",
+        "system",
+        undefined,
+        null,
+        getClientIp(ctx.req),
+        getUserAgent(ctx.req)
+      );
       return { success: true, message: "System cache cleared successfully." };
     }),
-    emergencyLockdown: adminProcedure.mutation(async () => {
+    emergencyLockdown: adminProcedure.mutation(async ({ ctx }) => {
       await updateSiteSetting("maintenance_mode", "true");
+      await logResourceAction(
+        ctx.user.id,
+        "emergency_lockdown",
+        "system",
+        undefined,
+        { maintenance_mode: "true" },
+        getClientIp(ctx.req),
+        getUserAgent(ctx.req)
+      );
       return { success: true, message: "Emergency lockdown engaged. Platform is now offline." };
     }),
     getDebugLogs: adminProcedure.query(async () => {
@@ -182,8 +200,18 @@ export const appRouter = router({
         .orderBy(desc(verificationCodes.createdAt))
         .limit(20);
     }),
-    syncRss: adminProcedure.mutation(async () => {
-      return syncRSSFeeds();
+    syncRss: adminProcedure.mutation(async ({ ctx }) => {
+      const result = await syncRSSFeeds();
+      await logResourceAction(
+        ctx.user.id,
+        "sync_rss",
+        "system",
+        undefined,
+        null,
+        getClientIp(ctx.req),
+        getUserAgent(ctx.req)
+      );
+      return result;
     }),
     getStatus: publicProcedure.query(async () => {
       const cacheKey = "system_status";
@@ -207,7 +235,7 @@ export const appRouter = router({
     }),
     testEmail: adminProcedure
       .input(z.object({ email: z.string().email() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const success = await sendBrevoEmail({
           to: input.email,
           subject: "Bishouy System: Email Connection Test",
@@ -218,6 +246,18 @@ export const appRouter = router({
             <p>Timestamp: ${new Date().toISOString()}</p>
           `,
         });
+
+        await logResourceAction(
+          ctx.user.id,
+          "test_email",
+          "system",
+          undefined,
+          { recipient: input.email },
+          getClientIp(ctx.req),
+          getUserAgent(ctx.req),
+          success ? "success" : "failure"
+        );
+
         if (!success) {
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
@@ -1258,8 +1298,20 @@ export const appRouter = router({
     // Admin: Delete user
     delete: adminProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        const user = await getUserById(input.id);
         await deleteUser(input.id);
+        
+        await logResourceAction(
+          ctx.user.id,
+          "delete",
+          "user",
+          input.id,
+          { username: user?.username, email: user?.email },
+          getClientIp(ctx.req),
+          getUserAgent(ctx.req)
+        );
+
         return { success: true };
       }),
 

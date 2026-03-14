@@ -21,6 +21,9 @@ export const users = sqliteTable("users", {
   role: text("role", { enum: ["user", "admin"] })
     .default("user")
     .notNull(),
+  status: text("status", { enum: ["active", "banned", "deleted"] })
+    .default("active")
+    .notNull(),
   createdAt: integer("createdAt", { mode: "timestamp" })
     .$defaultFn(() => new Date())
     .notNull(),

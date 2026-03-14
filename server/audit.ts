@@ -59,3 +59,27 @@ export async function logAuthAction(
     errorMessage: errorMessage || null,
   });
 }
+
+export async function logResourceAction(
+  userId: number,
+  action: string,
+  resource: string,
+  resourceId?: number,
+  changes: Record<string, any> | null = null,
+  ipAddress?: string,
+  userAgent?: string,
+  status: "success" | "failure" = "success",
+  errorMessage?: string
+): Promise<void> {
+  await logAuditAction({
+    userId,
+    action,
+    resource,
+    resourceId: resourceId || undefined,
+    changes: changes ? JSON.stringify(changes) : null,
+    ipAddress: ipAddress || null,
+    userAgent: userAgent || null,
+    status,
+    errorMessage: errorMessage || null,
+  });
+}

@@ -20,4 +20,5 @@ export const ENV = {
       ? "https://bishouy.com"
       : "http://localhost:3000"),
   openRouterApiKey: process.env.OPENROUTER_API_KEY ?? "",
+  adminIpWhitelist: process.env.ADMIN_IP_WHITELIST ?? "",
 };
