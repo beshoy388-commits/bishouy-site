@@ -312,13 +312,15 @@ class SDKServer {
           name: userInfo.name || null,
           email: userInfo.email ?? null,
           loginMethod: userInfo.loginMethod ?? userInfo.platform ?? null,
-          role: userInfo.openId === "local-dev-user" ? "admin" : "user",
+          role: (userInfo.openId === "local-dev-user" && ENV.oAuthServerUrl) ? "admin" : "user",
           lastSignedIn: signedInAt,
         });
         user = await db.getUserByOpenId(userInfo.openId);
       } catch (error) {
         console.error("[Auth] Failed to sync user from OAuth:", error);
-        throw ForbiddenError("Failed to sync user info");
+        // CRITICAL: Clear the invalid session cookie to prevent infinite re-creation of a deleted user
+        req.headers.cookie = undefined; 
+        throw ForbiddenError("Failed to sync user info (User might be deleted)");
       }
     }
 

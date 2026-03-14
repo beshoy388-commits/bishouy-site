@@ -268,8 +268,10 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       values.role = user.role;
       updateSet.role = user.role;
     } else if (
-      user.openId === ENV.ownerOpenId ||
-      (ENV.ownerEmail && user.email === ENV.ownerEmail)
+      ENV.oAuthServerUrl && ( // Only auto-assign admin if we have a real OAuth setup
+        user.openId === ENV.ownerOpenId ||
+        (ENV.ownerEmail && user.email === ENV.ownerEmail)
+      )
     ) {
       values.role = "admin";
       updateSet.role = "admin";
@@ -864,6 +866,16 @@ export async function updateUser(
 export async function deleteUser(id: number): Promise<void> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
+
+  // Security Guard: cannot delete the system owner
+  const userToDelete = await getUserById(id);
+  if (userToDelete && (
+    userToDelete.openId === ENV.ownerOpenId || 
+    (ENV.ownerEmail && userToDelete.email === ENV.ownerEmail)
+  )) {
+    throw new Error("System owner cannot be deleted");
+  }
+
   await db.delete(users).where(eq(users.id, id));
 }
 
