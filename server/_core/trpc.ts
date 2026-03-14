@@ -13,10 +13,18 @@ export const router = t.router;
 export const publicProcedure = t.procedure;
 
 const requireUser = t.middleware(async opts => {
-  const { ctx, next } = opts;
+  const { ctx, next, type } = opts;
 
   if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
+  }
+
+  // Interaction Restriction: Restricted accounts have Read-Only access.
+  if (ctx.user.status === "restricted" && type === "mutation") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Account Restricted: Your profile is currently in Read-Only mode. Interactions such as commenting, liking, and AI features are disabled.",
+    });
   }
 
   return next({

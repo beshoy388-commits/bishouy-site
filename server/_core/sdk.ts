@@ -337,9 +337,11 @@ class SDKServer {
 
     if (user.status === "deleted") {
       throw ForbiddenError(
-        "Account Deactivated: This account has been scheduled for deletion and is no longer accessible."
+        "Account Terminated: This profile is no longer accessible."
       );
     }
+
+    // Note: status === "restricted" is ALLOWED to log in, but interactions are blocked in TRPC middleware.
 
     await db.upsertUser({
       openId: user.openId,

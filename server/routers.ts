@@ -29,6 +29,7 @@ import {
   deleteUser,
   banUser,
   purgeUser,
+  restrictUser,
   isIpBlacklisted,
   blacklistIp,
   toggleArticleLike,
@@ -1336,25 +1337,52 @@ export const appRouter = router({
         }
       }),
 
-    // Admin: Deactivate user (Soft Delete)
-    // Marks account as deleted but keeps record to prevent re-registration with same email/identity.
+    // Admin: Wipe account (Hard Delete) - Permanent data removal, allows re-registration
     delete: adminProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input, ctx }) => {
         const user = await getUserById(input.id);
-        await deleteUser(input.id);
+        if (!user) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+        }
+
+        await purgeUser(input.id);
         
+        await logResourceAction(
+          ctx.user.id,
+          "purge",
+          "user",
+          input.id,
+          { username: user.username, email: user.email, type: "hard_delete" },
+          getClientIp(ctx.req),
+          getUserAgent(ctx.req)
+        );
+
+        return { success: true, message: "Account wiped successfully. Re-registration is now possible." };
+      }),
+
+    // Admin: Deactivate account (Soft Restriction) - Allows login, blocks interaction (read-only)
+    deactivate: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const user = await getUserById(input.id);
+        if (!user) {
+           throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+        }
+        
+        await restrictUser(input.id);
+
         await logResourceAction(
           ctx.user.id,
           "deactivate",
           "user",
           input.id,
-          { username: user?.username, email: user?.email, type: "soft_delete" },
+          { username: user.username, email: user.email, type: "read_only_restriction" },
           getClientIp(ctx.req),
           getUserAgent(ctx.req)
         );
 
-        return { success: true, message: "Account deactivated and scheduled for deletion." };
+        return { success: true, message: "Account deactivated. User now has Read-Only access." };
       }),
 
     // Admin: Wipe user (Hard Delete)

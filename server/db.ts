@@ -878,21 +878,16 @@ export async function updateUser(
 }
 
 export async function deleteUser(id: number): Promise<void> {
+  // Now mapped to 'Purge' logic as requested: hard delete to allow re-registration
+  return purgeUser(id);
+}
+
+export async function restrictUser(id: number): Promise<void> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
-  // Security Guard: cannot delete the system owner
-  const userToDelete = await getUserById(id);
-  if (userToDelete && (
-    userToDelete.openId === ENV.ownerOpenId || 
-    (ENV.ownerEmail && userToDelete.email === ENV.ownerEmail)
-  )) {
-    throw new Error("System owner cannot be deleted");
-  }
-
-  // Soft delete to prevent re-creation loops and maintain audit trail
   await db.update(users)
-    .set({ status: 'deleted' })
+    .set({ status: 'restricted' })
     .where(eq(users.id, id));
 }
 
