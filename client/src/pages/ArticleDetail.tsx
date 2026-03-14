@@ -375,6 +375,7 @@ export default function ArticleDetail() {
   if (!article) {
     return (
       <main className="min-h-screen bg-[#0F0F0E]">
+        <SEO title="Article Not Found" noindex={true} />
         <Navbar />
         <div className="container py-20 text-center">
           <h1 className="text-2xl font-bold text-[#F2F0EB] mb-4">

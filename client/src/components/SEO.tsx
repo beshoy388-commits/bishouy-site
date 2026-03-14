@@ -10,6 +10,7 @@ interface SEOProps {
     publishedDate?: string | Date;
     updatedDate?: string | Date;
     category?: string;
+    noindex?: boolean;
 }
 
 export default function SEO({
@@ -22,6 +23,7 @@ export default function SEO({
     publishedDate,
     updatedDate,
     category,
+    noindex = false,
 }: SEOProps) {
     const siteTitle = "BISHOUY";
     const fullTitle = title ? `${title} | ${siteTitle}` : `${siteTitle} | International News & Analysis`;
@@ -41,6 +43,7 @@ export default function SEO({
         };
 
         updateMeta("description", description);
+        updateMeta("robots", noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
 
         // Open Graph
         updateMeta("og:title", fullTitle, "property");
