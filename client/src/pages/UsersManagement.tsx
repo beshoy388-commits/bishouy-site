@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
-import { Loader2, Edit2, Trash2, Save, X } from "lucide-react";
+import { Loader2, Edit2, Trash2, Save, X, ShieldAlert, ShieldOff, AlertOctagon, Flame } from "lucide-react";
 import { toast } from "sonner";
 
 interface EditingUser {
@@ -27,13 +27,33 @@ export default function UsersManagement() {
     },
   });
 
-  const deleteMutation = trpc.users.delete.useMutation({
-    onSuccess: () => {
-      toast.success("User deleted successfully");
+  const deactivateMutation = trpc.users.deactivate.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message || "User deactivated (Read-Only mode)");
       refetch();
     },
     onError: error => {
-      toast.error(error.message || "Failed to delete user");
+      toast.error(error.message || "Failed to deactivate user");
+    },
+  });
+
+  const banMutation = trpc.users.ban.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message || "User banned permanently");
+      refetch();
+    },
+    onError: error => {
+      toast.error(error.message || "Failed to ban user");
+    },
+  });
+
+  const purgeMutation = trpc.users.delete.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message || "User data purged successfully");
+      refetch();
+    },
+    onError: error => {
+      toast.error(error.message || "Failed to purge user");
     },
   });
 
@@ -58,13 +78,21 @@ export default function UsersManagement() {
     });
   };
 
-  const handleDelete = async (id: number) => {
-    if (
-      confirm(
-        "Are you sure you want to delete this user? This action cannot be undone."
-      )
-    ) {
-      await deleteMutation.mutateAsync({ id });
+  const handleDeactivate = async (id: number) => {
+    if (confirm("Deactivate User: They will be able to login but CANNOT interact (no comments, no likes, no AI). Proceed?")) {
+      await deactivateMutation.mutateAsync({ id });
+    }
+  };
+
+  const handleBan = async (id: number) => {
+    if (confirm("PERMANENT BAN: This user will be blocked from logging in AND their email will be blacklisted. Proceed?")) {
+      await banMutation.mutateAsync({ id });
+    }
+  };
+
+  const handlePurge = async (id: number) => {
+    if (confirm("HARD PURGE: This will physically delete all user data. They will be able to register again with a fresh account. Proceed?")) {
+      await purgeMutation.mutateAsync({ id });
     }
   };
 
@@ -96,6 +124,9 @@ export default function UsersManagement() {
                 </th>
                 <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">
                   Role
+                </th>
+                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm text-center">
+                  Status
                 </th>
                 <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">
                   Joined On
@@ -195,24 +226,57 @@ export default function UsersManagement() {
                           {user.role}
                         </span>
                       </td>
+                      <td className="py-3 px-4 text-center">
+                        <span
+                          className={`text-[9px] px-2 py-0.5 rounded font-600 uppercase tracking-widest ${
+                            user.status === "active"
+                              ? "bg-green-900/30 text-green-400 border border-green-800/50"
+                              : user.status === "restricted"
+                              ? "bg-blue-900/30 text-blue-400 border border-blue-800/50"
+                              : "bg-red-900/30 text-red-400 border border-red-800/50"
+                          }`}
+                        >
+                          {user.status || 'active'}
+                        </span>
+                      </td>
                       <td className="py-3 px-4 text-[#555550] text-sm">
                         {new Date(user.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="py-3 px-4 flex justify-end gap-2">
+                      <td className="py-3 px-4 flex justify-end gap-1">
                         <button
                           onClick={() => handleEdit(user)}
-                          className="p-2 text-[#8A8880] hover:text-[#E8A020] transition-colors"
-                          title="Edit"
+                          className="p-1.5 text-[#8A8880] hover:text-[#E8A020] transition-colors"
+                          title="Edit Basic Info"
                         >
                           <Edit2 size={16} />
                         </button>
+                        
+                        {user.status !== 'restricted' && (
+                          <button
+                            onClick={() => handleDeactivate(user.id)}
+                            className="p-1.5 text-[#8A8880] hover:text-blue-400 transition-colors"
+                            title="Deactivate (Read-Only Mode)"
+                          >
+                            <ShieldOff size={16} />
+                          </button>
+                        )}
+                        
+                        {user.status !== 'banned' && (
+                          <button
+                            onClick={() => handleBan(user.id)}
+                            className="p-1.5 text-[#8A8880] hover:text-orange-500 transition-colors"
+                            title="Permanent Ban (No Login)"
+                          >
+                            <AlertOctagon size={16} />
+                          </button>
+                        )}
+
                         <button
-                          onClick={() => handleDelete(user.id)}
-                          disabled={deleteMutation.isPending}
-                          className="p-2 text-[#8A8880] hover:text-red-500 transition-colors"
-                          title="Delete"
+                          onClick={() => handlePurge(user.id)}
+                          className="p-1.5 text-[#8A8880] hover:text-red-500 transition-colors"
+                          title="Hard Purge (Allow Re-registration)"
                         >
-                          <Trash2 size={16} />
+                          <Flame size={16} />
                         </button>
                       </td>
                     </>
@@ -321,20 +385,35 @@ export default function UsersManagement() {
                     <span className="text-[10px] text-[#555550]">
                       Joined {new Date(user.createdAt).toLocaleDateString()}
                     </span>
-                    <div className="flex gap-1">
-                      <button
-                        onClick={() => handleEdit(user)}
-                        className="p-2 text-[#8A8880] hover:text-[#E8A020]"
-                      >
-                        <Edit2 size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(user.id)}
-                        className="p-2 text-[#8A8880] hover:text-red-500"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
+                      <div className="flex gap-0.5">
+                        <button
+                          onClick={() => handleEdit(user)}
+                          className="p-2 text-[#8A8880] hover:text-[#E8A020]"
+                        >
+                          <Edit2 size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDeactivate(user.id)}
+                          className="p-2 text-[#8A8880] hover:text-blue-400"
+                          title="Restrict"
+                        >
+                          <ShieldOff size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleBan(user.id)}
+                          className="p-2 text-[#8A8880] hover:text-orange-500"
+                          title="Ban"
+                        >
+                          <AlertOctagon size={16} />
+                        </button>
+                        <button
+                          onClick={() => handlePurge(user.id)}
+                          className="p-2 text-[#8A8880] hover:text-red-500"
+                          title="Purge"
+                        >
+                          <Flame size={16} />
+                        </button>
+                      </div>
                   </div>
                 </>
               )}
