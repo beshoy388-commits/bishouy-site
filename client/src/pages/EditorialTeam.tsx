@@ -2,13 +2,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 
+import { AUTHORS } from "@/lib/authors";
+
 export default function EditorialTeam() {
-    const team = [
-        { name: "Julian Vance", role: "Editor-in-Chief", image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&w=400&h=400&fit=crop" },
-        { name: "Elena Rostova", role: "Senior Foreign Correspondent", image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&w=400&h=400&fit=crop" },
-        { name: "Marcus Chen", role: "Tech & Innovation Lead", image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&w=400&h=400&fit=crop" },
-        { name: "Redazione AI", role: "Artificial Intelligence Desk", image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&w=400&h=400&fit=crop" },
-    ];
+    const team = Object.values(AUTHORS);
 
     return (
         <div className="min-h-screen bg-[#0F0F0E] flex flex-col font-serif">
@@ -29,7 +26,7 @@ export default function EditorialTeam() {
                                     <h3 className="font-display text-2xl text-[#F2F0EB]">{member.name}</h3>
                                     <p className="font-ui text-xs text-[#E8A020] tracking-widest uppercase mt-2 mb-4">{member.role}</p>
                                     <p className="text-[#D4D0C8] text-sm leading-relaxed">
-                                        A dedicated professional ensuring accuracy, context, and depth in every publication crossing our desk.
+                                        {member.bio}
                                     </p>
                                 </div>
                             </div>

@@ -29,13 +29,18 @@ export default function LiveAnalyticsTracker() {
             }
         };
 
-        // Send immediate heartbeat on mount or path change
-        sendHeartbeat();
+        // Delay the first heartbeat to avoid resource contention during load
+        const initialTimer = setTimeout(() => {
+            sendHeartbeat();
+        }, 5000);
 
         // Set up interval for background heartbeat
         const interval = setInterval(sendHeartbeat, 30000); // Every 30 seconds
 
-        return () => clearInterval(interval);
+        return () => {
+            clearTimeout(initialTimer);
+            clearInterval(interval);
+        };
     }, [location]);
 
     return null;

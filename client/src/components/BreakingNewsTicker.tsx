@@ -4,17 +4,17 @@
  * Amber accent on dark background
  */
 
-import { BREAKING_NEWS } from "@/lib/articles";
+import { BREAKING_NEWS, type Article } from "@/lib/articles";
 import { trpc } from "@/lib/trpc";
 
 export default function BreakingNewsTicker() {
-  const { data: breakingArticles } = trpc.articles.list.useQuery(
-    { limit: 20 },
-    { staleTime: 300000, refetchInterval: 600000 }
-  );
+  const { data: articles } = trpc.articles.list.useQuery(undefined, {
+    staleTime: 300000,
+    refetchInterval: 60000,
+  });
 
-  const breakingNews = breakingArticles
-    ? breakingArticles.filter(a => a.breaking === 1).map(a => a.title)
+  const breakingNews = articles
+    ? (articles as Article[]).filter(a => a.breaking === 1 || a.breaking === true).map(a => a.title)
     : [];
 
   // Fallback to static if none in DB

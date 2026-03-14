@@ -96,70 +96,9 @@ export default function Footer() {
               Independent, in-depth, and accessible journalism. Since 2024, we
               tell the world's story without filters.
             </p>
-            <div className="flex items-center gap-3 mt-5">
-              <a
-                href="#"
-                onClick={e => {
-                  e.preventDefault();
-                  toast.info("Social Coming Soon");
-                }}
-                className="text-[#555550] hover:text-[#E8A020] transition-colors"
-                aria-label="Follow us on X"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                >
-                  <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.292 19.49h2.039L6.486 3.24H4.298l13.311 17.403z" />
-                </svg>
-              </a>
-              <a
-                href="#"
-                onClick={e => {
-                  e.preventDefault();
-                  toast.info("Social Coming Soon");
-                }}
-                className="text-[#555550] hover:text-[#E8A020] transition-colors"
-                aria-label="Follow us on Instagram"
-              >
-                <Instagram size={16} />
-              </a>
-              <a
-                href="#"
-                onClick={e => {
-                  e.preventDefault();
-                  toast.info("Social Coming Soon");
-                }}
-                className="text-[#555550] hover:text-[#E8A020] transition-colors"
-                aria-label="Follow us on Facebook"
-              >
-                <Facebook size={16} />
-              </a>
-              <a
-                href="#"
-                onClick={e => {
-                  e.preventDefault();
-                  toast.info("Social Coming Soon");
-                }}
-                className="text-[#555550] hover:text-[#E8A020] transition-colors"
-                aria-label="Subscribe to our Youtube channel"
-              >
-                <Youtube size={16} />
-              </a>
-              <a
-                href="#"
-                onClick={e => {
-                  e.preventDefault();
-                  toast.info("RSS Feed Coming Soon");
-                }}
-                className="text-[#555550] hover:text-[#E8A020] transition-colors"
-                aria-label="RSS Feed"
-              >
-                <Rss size={16} />
-              </a>
-            </div>
+            {/* <div className="flex items-center gap-3 mt-5">
+              ... socials ...
+            </div> */}
           </div>
 
           {/* Categories */}
@@ -192,8 +131,8 @@ export default function Footer() {
                 { label: "Editorial Team", href: "/editorial-team" },
                 { label: "Mission & Values", href: "/mission-values" },
                 { label: "Contact", href: "/contact" },
-                { label: "Careers", href: "/careers" },
                 { label: "Code of Ethics", href: "/code-of-ethics" },
+                { label: "Fact-Checking", href: "/fact-checking" },
               ].map(item => (
                 <li key={item.label}>
                   <Link
@@ -216,30 +155,15 @@ export default function Footer() {
               {[
                 { label: "Privacy Policy", href: "/privacy-policy" },
                 { label: "Terms of Service", href: "/terms-of-service" },
-                { label: "Cookie Policy", href: "/privacy-policy" },
-                { label: "Legal Notice", href: "/terms-of-service" },
-                { label: "Advertising", href: "#" },
+                { label: "Advertising", href: "/contact" },
               ].map(item => (
                 <li key={item.label}>
-                  {item.href === "#" ? (
-                    <a
-                      href="#"
-                      onClick={e => {
-                        e.preventDefault();
-                        toast.info("Page Coming Soon");
-                      }}
-                      className="font-ui text-sm text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
-                    >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      className="font-ui text-sm text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  )}
+                  <Link
+                    href={item.href}
+                    className="font-ui text-sm text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
+                  >
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>

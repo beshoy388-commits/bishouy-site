@@ -143,6 +143,60 @@ The other three semifinalists are Real Madrid, who convincingly beat Manchester 
     tags: JSON.stringify(["Champions League", "Football", "Sports", "Benfica"]),
     publishedAt: new Date(),
   },
+  {
+    slug: "silicon-valley-quantum-leap",
+    title: "The Quantum Leap: Silicon Valley's Next Billion-Dollar Bet",
+    excerpt: "Google and IBM reach new milestones in quantum supremacy, promising to solve cryptographic challenges that stump classical supercomputers.",
+    content: `The race for quantum supremacy has entered a blistering new phase. In laboratories across Northern California, researchers are reporting stability durations for qubits that were thought impossible just eighteen months ago. This isn't just about speed; it's about the fundamental way we process information.
+
+"We are moving from the era of simulation to the era of realization," says Dr. Sarah Jenkins, a leading quantum physicist. The implications for drug discovery, material science, and global cybersecurity are profound. However, with this power comes the risk of biological and digital disruption that current legal frameworks are ill-equipped to handle.`,
+    category: "Technology",
+    categoryColor: "#2980B9",
+    author: "Marcus Chen",
+    authorRole: "Tech & Innovation Lead",
+    featured: 0,
+    breaking: 1,
+    readTime: 7,
+    image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&q=80",
+    tags: JSON.stringify(["Quantum", "Tech", "Silicon Valley", "Future"]),
+    publishedAt: new Date(),
+  },
+  {
+    slug: "global-art-market-digital-renaissance",
+    title: "Digital Renaissance: How Generative Art is Redefining Ownership",
+    excerpt: "Sotheby's reports record-breaking sales for AI-collaborative pieces, signaling a permanent shift in the traditional art market's high-end tiers.",
+    content: `The hallowed halls of traditional auction houses are echoing with a new kind of creative energy. Generative art, once dismissed as a mathematical curiosity, has achieved full parity with oil and canvas in the eyes of major institutional collectors.
+
+The recent sale of "Neural Echoes" for $4.2 million highlights a shift in the definition of the 'artist.' Is the creator the one who writes the code, or the one who curates the output? Sofia Romano, our Chief Culture Analyst, argues that we are witnessing the birth of a new medium that transcends the binary of human versus machine.`,
+    category: "Culture",
+    categoryColor: "#8E44AD",
+    author: "Sofia Romano",
+    authorRole: "Chief Culture Analyst",
+    featured: 1,
+    breaking: 0,
+    readTime: 5,
+    image: "https://images.unsplash.com/photo-1547891269-045ad91d039b?w=800&q=80",
+    tags: JSON.stringify(["Art", "Culture", "AI", "Economy"]),
+    publishedAt: new Date(),
+  },
+  {
+    slug: "middle-east-diplomacy-new-corridor",
+    title: "The New Silk Road: Middle East Diplomacy Shifts Eastward",
+    excerpt: "New trade agreements between Riyadh, Abu Dhabi, and Beijing signal a decoupling from traditional Western economic spheres of influence.",
+    content: `A tectonic shift is occurring in the sands of the Middle East. While Western capitals focus on internal divisions, a series of historic trade and infrastructure agreements are cementing a new economic corridor between the Gulf and East Asia.
+
+This alignment goes beyond energy. It encompasses a massive exchange of technology, logistics, and joint defense initiatives. "The center of gravity is moving," notes Elena Rostova. "What we are seeing is the construction of a multipolar world where the dollar is no longer the sole arbiter of trade."`,
+    category: "World",
+    categoryColor: "#E8A020",
+    author: "Elena Rostova",
+    authorRole: "Senior Foreign Correspondent",
+    featured: 0,
+    breaking: 0,
+    readTime: 8,
+    image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80",
+    tags: JSON.stringify(["Geopolitics", "Economy", "Diplomacy", "China"]),
+    publishedAt: new Date(),
+  },
 ];
 
 async function seedDatabase() {

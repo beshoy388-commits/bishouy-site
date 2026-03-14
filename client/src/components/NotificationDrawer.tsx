@@ -106,17 +106,7 @@ export default function NotificationDrawer({ isOpen, onClose }: NotificationDraw
                     )}
                 </div>
 
-                <div className="p-6 border-t border-[#222220] bg-[#111110]">
-                    <div className="p-4 rounded-sm border border-dashed border-[#2A2A28] bg-transparent flex items-center gap-4 group">
-                        <div className="p-2.5 bg-white/5 rounded-full text-[#E8A020]">
-                            <Sparkles size={18} />
-                        </div>
-                        <div>
-                            <p className="text-[#F2F0EB] text-xs font-headline mb-0.5">Custom Alerts Coming Soon</p>
-                            <p className="text-[#8A8880] text-[10px]">Soon you'll be able to follow specific categories and get notified.</p>
-                        </div>
-                    </div>
-                </div>
+                {/* Footer section removed to avoid placeholder perception */}
             </div>
         </>
     );

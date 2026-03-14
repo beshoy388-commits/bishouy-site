@@ -57,5 +57,11 @@ class MemoryCache<T> {
 // Global cache instance for AI responses
 export const aiChatCache = new MemoryCache<string>();
 
-// Prune the cache every 10 minutes
-setInterval(() => aiChatCache.prune(), 600000);
+// Global cache instance for generic DB queries (articles list, etc)
+export const dbCache = new MemoryCache<any>();
+
+// Prune the caches every 10 minutes
+setInterval(() => {
+  aiChatCache.prune();
+  dbCache.prune();
+}, 600000);

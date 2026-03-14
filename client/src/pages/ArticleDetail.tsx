@@ -31,6 +31,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import SEO from "@/components/SEO";
 import AdPlacement from "@/components/AdPlacement";
+import AuthorBio from "@/components/AuthorBio";
 
 export default function ArticleDetail() {
   const [match, params] = useRoute("/article/:slug");
@@ -744,7 +745,7 @@ export default function ArticleDetail() {
 
               {/* Tags */}
               {tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-12 pb-12 border-b border-[#1C1C1A]">
+                <div className="flex flex-wrap gap-2 mb-8">
                   {tags.map((tag: string, i: number) => (
                     <span
                       key={i}
@@ -755,6 +756,9 @@ export default function ArticleDetail() {
                   ))}
                 </div>
               )}
+
+              {/* Author Bio */}
+              <AuthorBio authorName={article.author} />
 
               {/* Comments Section */}
               <div className="max-w-3xl mx-auto">

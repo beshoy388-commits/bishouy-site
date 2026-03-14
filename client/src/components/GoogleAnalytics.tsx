@@ -11,27 +11,26 @@ export default function GoogleAnalytics() {
     const GA_TRACKING_ID = "G-Y4HWX7Y000";
 
     useEffect(() => {
-        // 1. Inietta il primo script (Gtag JS)
-        const script1 = document.createElement("script");
-        script1.async = true;
-        script1.src = `https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`;
-        document.head.appendChild(script1);
+        // Delay GA injection to give priority to main content
+        const timer = setTimeout(() => {
+            // 1. Inietta il primo script (Gtag JS)
+            const script1 = document.createElement("script");
+            script1.async = true;
+            script1.src = `https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`;
+            document.head.appendChild(script1);
 
-        // 2. Configura lo script gtag
-        const script2 = document.createElement("script");
-        script2.innerHTML = `
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+            // 2. Configura lo script gtag
+            const script2 = document.createElement("script");
+            script2.innerHTML = `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_TRACKING_ID}');
+            `;
+            document.head.appendChild(script2);
+        }, 4000); // 4-second delay
 
-      gtag('config', '${GA_TRACKING_ID}');
-    `;
-        document.head.appendChild(script2);
-
-        return () => {
-            // Pulizia opzionale se necessario, ma i tag di analisi solitamente 
-            // rimangono attivi per l'intera durata della sessione head.
-        };
+        return () => clearTimeout(timer);
     }, []);
 
     return null;

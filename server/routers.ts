@@ -74,7 +74,7 @@ import { eq, and, desc } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import OpenAI from "openai";
 import { ENV } from "./_core/env";
-import { aiChatCache } from "./cache";
+import { aiChatCache, dbCache } from "./cache";
 import { logArticleAction } from "./audit";
 import {
   checkRateLimit,
@@ -185,15 +185,21 @@ export const appRouter = router({
       return syncRSSFeeds();
     }),
     getStatus: publicProcedure.query(async () => {
+      const cacheKey = "system_status";
+      const cached = dbCache.get(cacheKey);
+      if (cached) return cached;
+
       try {
         const settings = await getSiteSettings();
-        return {
+        const status = {
           maintenance: settings.find(s => s.key === "maintenance_mode")?.value === "true",
           siteName: settings.find(s => s.key === "site_name")?.value || "BISHOUY",
           allowComments: settings.find(s => s.key === "allow_comments")?.value !== "false",
           adsenseId: settings.find(s => s.key === "google_adsense_id")?.value || null,
           adsenseAutoAds: settings.find(s => s.key === "adsense_auto_ads")?.value === "true",
         };
+        dbCache.set(cacheKey, status, 30000); // Cache for 30s
+        return status;
       } catch (e) {
         return { maintenance: false, siteName: "BISHOUY", allowComments: true, adsenseId: null, adsenseAutoAds: false };
       }
@@ -483,14 +489,23 @@ export const appRouter = router({
           const limit = Math.min(input?.limit || 20, 100);
           const offset = input?.offset || 0;
 
+          // Caching for public list to improve "opening" speed
+          // Cache key includes category/limit/offset and user ID (if logic depends on it)
+          const cacheKey = `articles_list_${category || "all"}_${limit}_${offset}_${ctx.user?.id || "anon"}`;
+          const cached = dbCache.get(cacheKey);
+          if (cached) return cached;
+
           // Public list should focus strictly on published content
-          return await getAllArticles(
+          const result = await getAllArticles(
             false,
             category,
             limit,
             offset,
             ctx.user?.id
           );
+
+          dbCache.set(cacheKey, result, 60000); // Cache for 60s
+          return result;
         } catch (error) {
           console.error("[tRPC] Error in articles.list:", error);
           throw new TRPCError({
@@ -761,6 +776,19 @@ export const appRouter = router({
           Sports: "#E67E22",
         };
 
+        const humanAuthors = [
+          "Julian Vance",
+          "Elena Rostova",
+          "Marcus Chen",
+          "Sofia Romano",
+          "Marco Ferretti",
+          "Giulia Marchetti",
+          "Luca Bianchi",
+          "Antonio Esposito",
+          "Roberto Conti"
+        ];
+        const selectedAuthorName = humanAuthors[Math.floor(Math.random() * humanAuthors.length)];
+
         const articleData: InsertArticle = {
           title: generated.title,
           slug,
@@ -768,8 +796,8 @@ export const appRouter = router({
           content: generated.content,
           category: (generated.category as any) || "World",
           categoryColor: (categoryColors as any)[generated.category] || "#E8A020",
-          author: "Redazione AI",
-          authorRole: "Senior AI Correspondent",
+          author: selectedAuthorName,
+          authorRole: "Editorial Staff",
           image: `https://loremflickr.com/1200/800/${encodeURIComponent(generated.imagePrompt?.split(' ').slice(0, 3).join(',') || (generated.tags || []).slice(0, 2).join(",") || generated.category || 'news')}/all?lock=${Math.floor(Math.random() * 1000)}`,
           seoTitle: generated.seoTitle || generated.title,
           seoDescription: generated.seoDescription || generated.excerpt,
@@ -779,7 +807,7 @@ export const appRouter = router({
           tags: JSON.stringify(generated.tags || []),
           publishedAt: null as any,
           sourceUrl: null,
-          sourceTitle: `AI Generated from topic: ${input.topic}`,
+          sourceTitle: `Bishouy Editorial Research | Assigned to ${selectedAuthorName}`,
         };
 
         const article = await createArticle(articleData);
