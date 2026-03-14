@@ -93,6 +93,7 @@ import {
   sendNewsletterBroadcast,
   sendWelcomeNewsletterEmail,
   sendWelcomeEmailWithBenefits,
+  sendBrevoEmail,
 } from "./_core/mail";
 import { stripHtml, calculateReadTime } from "./utils";
 import crypto from "crypto";
@@ -204,6 +205,27 @@ export const appRouter = router({
         return { maintenance: false, siteName: "BISHOUY", allowComments: true, adsenseId: null, adsenseAutoAds: false };
       }
     }),
+    testEmail: adminProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(async ({ input }) => {
+        const success = await sendBrevoEmail({
+          to: input.email,
+          subject: "Bishouy System: Email Connection Test",
+          htmlContent: `
+            <h1 style="color: #E8A020;">Email Connection Successful</h1>
+            <p>This is a test email sent from the <b>BISHOUY.COM</b> system console to verify your Brevo SMTP configuration.</p>
+            <hr/>
+            <p>Timestamp: ${new Date().toISOString()}</p>
+          `,
+        });
+        if (!success) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Brevo API rejected the request. Please check server logs for specific API error (usually invalid API key or unverified sender).",
+          });
+        }
+        return { success: true, message: "Test email sent successfully! Please check your inbox/spam folder." };
+      }),
   }),
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

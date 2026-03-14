@@ -1,6 +1,6 @@
 import { ENV } from "./env";
 
-async function sendBrevoEmail({
+export async function sendBrevoEmail({
   to,
   subject,
   htmlContent,
@@ -8,14 +8,17 @@ async function sendBrevoEmail({
   to: string | string[];
   subject: string;
   htmlContent: string;
-}) {
+}): Promise<boolean> {
   if (!ENV.brevoApiKey) {
     console.log(`[EMAIL BYPASS] Brevo API Key missing. Subject: ${subject}`);
-    return;
+    return false;
   }
 
   // Verified sender on Brevo — bishouy.com domain authenticated
-  const senderEmail = "no-reply@bishouy.com";
+  // If the user has a different ownerEmail, we use it as the name
+  const senderName = "Bishouy.com Editorial";
+  const senderEmail = "no-reply@bishouy.com"; 
+  
   const recipients = Array.isArray(to)
     ? to.map(email => ({ email }))
     : [{ email: to }];
@@ -29,7 +32,7 @@ async function sendBrevoEmail({
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        sender: { name: "Bishouy.com", email: senderEmail },
+        sender: { name: senderName, email: senderEmail },
         to: recipients,
         subject: subject,
         htmlContent: htmlContent,
@@ -39,14 +42,17 @@ async function sendBrevoEmail({
     const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(`Brevo API error: ${JSON.stringify(result)}`);
+      console.error(`[BREVO ERROR] Status ${response.status}: ${JSON.stringify(result)}`);
+      return false;
     }
 
     console.log(
       `[EMAIL SENT] via Brevo to ${Array.isArray(to) ? to.length + " recipients" : to}. MessageID: ${result.messageId}`
     );
+    return true;
   } catch (error) {
     console.error("[EMAIL ERROR] Failed to send email via Brevo:", error);
+    return false;
   }
 }
 

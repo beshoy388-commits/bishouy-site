@@ -6,6 +6,7 @@ import {
   Mail,
   Shield,
   Zap,
+  Send,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -41,6 +42,8 @@ export default function SystemConsole() {
     setIsSyncing(true);
     syncRssMutation.mutate();
   };
+
+  const testEmailMutation = trpc.system.testEmail.useMutation();
 
   return (
     <div className="space-y-6">
@@ -147,17 +150,42 @@ export default function SystemConsole() {
         <div className="bg-[#1C1C1A] p-6 border border-[#2A2A28] rounded-sm">
           <div className="flex items-start gap-4 mb-4">
             <div className="p-2 bg-[#E8A020]/10 rounded-sm">
-              <Shield size={20} className="text-[#E8A020]" />
+              <Mail size={20} className="text-[#E8A020]" />
             </div>
             <div>
               <h4 className="text-[#F2F0EB] text-sm font-600 mb-1">
-                Security Notice
+                Email Delivery Test
               </h4>
               <p className="text-[#8A8880] text-xs leading-relaxed">
-                This console is restricted to administrators. All system
-                operations are logged for audit purposes.
+                Verify your Brevo SMTP configuration by sending a simple diagnostic email.
               </p>
             </div>
+          </div>
+          
+          <div className="flex gap-2">
+            <input 
+              type="email"
+              placeholder="Test recipient email"
+              id="test-email-input"
+              className="flex-1 bg-[#0F0F0E] border border-[#222220] rounded-sm px-3 py-2 text-xs text-[#F2F0EB] focus:border-[#E8A020] outline-none"
+            />
+            <button
+              onClick={() => {
+                const email = (document.getElementById('test-email-input') as HTMLInputElement)?.value;
+                if (!email) return toast.error("Enter an email");
+                
+                toast.promise(testEmailMutation.mutateAsync({ email }), {
+                  loading: 'Sending test email...',
+                  success: (data) => data.message,
+                  error: (err) => `Mail Error: ${err.message}`
+                });
+              }}
+              disabled={testEmailMutation.isPending}
+              className="px-4 py-2 bg-[#1C1C1A] border border-[#2A2A28] text-[#8A8880] hover:text-[#E8A020] hover:border-[#E8A020] font-ui text-[10px] uppercase tracking-widest rounded-sm transition-all flex items-center gap-2"
+            >
+              {testEmailMutation.isPending ? <RefreshCw size={12} className="animate-spin" /> : <Send size={12} />}
+              Send Test
+            </button>
           </div>
         </div>
       </div>

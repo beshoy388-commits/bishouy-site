@@ -20,7 +20,7 @@ export async function sendDailyNewsletter(testEmail?: string) {
 
   // 1. Get articles from the last 24 hours
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  const recentArticles = await db
+  let recentArticles = await db
     .select()
     .from(articles)
     .where(
@@ -29,9 +29,21 @@ export async function sendDailyNewsletter(testEmail?: string) {
     .orderBy(desc(articles.publishedAt))
     .limit(5);
 
+  // Fallback: If no news in 24h, take the latest 5 published articles anyway
+  // This ensures the morning briefing always has content (Bishouy Editorial choice)
+  if (recentArticles.length === 0) {
+    console.log("[Newsletter] No articles in last 24h. Falling back to latest 5.");
+    recentArticles = await db
+      .select()
+      .from(articles)
+      .where(eq(articles.status, "published"))
+      .orderBy(desc(articles.publishedAt))
+      .limit(5);
+  }
+
   if (recentArticles.length === 0) {
     console.log(
-      "[Newsletter] No new articles in the last 24h. Skipping broadcast."
+      "[Newsletter] No published articles found in database. Skipping broadcast."
     );
     return;
   }
