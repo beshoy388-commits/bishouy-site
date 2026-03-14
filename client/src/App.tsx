@@ -103,6 +103,7 @@ import { trpc } from "./lib/trpc";
 import { useAuth } from "./_core/hooks/useAuth";
 import { useLocation } from "wouter";
 import LiveAnalyticsTracker from "@/components/LiveAnalyticsTracker";
+import UserStatusMonitor from "@/components/UserStatusMonitor";
 
 import GoogleAdSense from "@/components/GoogleAdSense";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
@@ -116,6 +117,7 @@ function AppContent() {
     <MaintenanceGuard>
       <Toaster />
       <LiveAnalyticsTracker />
+      <UserStatusMonitor />
       <GoogleAdSense />
       <GoogleAnalytics />
       <div className={!isAdminPage ? "pb-24 lg:pb-0" : ""}>

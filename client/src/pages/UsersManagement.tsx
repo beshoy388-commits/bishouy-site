@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
-import { Loader2, Edit2, Trash2, Save, X, ShieldAlert, ShieldOff, AlertOctagon, Flame } from "lucide-react";
+import { Loader2, Edit2, Trash2, Save, X, ShieldAlert, ShieldOff, ShieldCheck, AlertOctagon, Flame } from "lucide-react";
 import { toast } from "sonner";
 
 interface EditingUser {
@@ -57,6 +57,16 @@ export default function UsersManagement() {
     },
   });
 
+  const activateMutation = trpc.users.activate.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message || "User account restored.");
+      refetch();
+    },
+    onError: error => {
+      toast.error(error.message || "Failed to restore user");
+    },
+  });
+
   const handleEdit = (user: any) => {
     setEditingId(user.id);
     setEditingData({
@@ -79,14 +89,23 @@ export default function UsersManagement() {
   };
 
   const handleDeactivate = async (id: number) => {
-    if (confirm("Deactivate User: They will be able to login but CANNOT interact (no comments, no likes, no AI). Proceed?")) {
-      await deactivateMutation.mutateAsync({ id });
+    const reason = prompt("Deactivate User: Provide a formal reason for this restriction (optional):");
+    if (reason !== null) {
+      await deactivateMutation.mutateAsync({ id, reason });
     }
   };
 
   const handleBan = async (id: number) => {
-    if (confirm("PERMANENT BAN: This user will be blocked from logging in AND their email will be blacklisted. Proceed?")) {
-      await banMutation.mutateAsync({ id });
+    const reason = prompt("PERMANENT BAN: Provide a formal reason for this ban (optional):");
+    if (reason !== null) {
+      await banMutation.mutateAsync({ id, reason });
+    }
+  };
+
+  const handleActivate = async (id: number) => {
+    const reason = prompt("RESTORE USER: Provide a formal reason or message for the user (optional):");
+    if (reason !== null) {
+      await activateMutation.mutateAsync({ id, reason });
     }
   };
 
@@ -251,6 +270,16 @@ export default function UsersManagement() {
                           <Edit2 size={16} />
                         </button>
                         
+                        {(user.status === 'restricted' || user.status === 'banned') && (
+                          <button
+                            onClick={() => handleActivate(user.id)}
+                            className="p-1.5 text-[#8A8880] hover:text-green-500 transition-colors"
+                            title="Restore Account (Active)"
+                          >
+                            <ShieldCheck size={16} />
+                          </button>
+                        )}
+                        
                         {user.status !== 'restricted' && (
                           <button
                             onClick={() => handleDeactivate(user.id)}
@@ -392,6 +421,15 @@ export default function UsersManagement() {
                         >
                           <Edit2 size={16} />
                         </button>
+                        {(user.status === 'restricted' || user.status === 'banned') && (
+                          <button
+                            onClick={() => handleActivate(user.id)}
+                            className="p-2 text-[#8A8880] hover:text-green-500"
+                            title="Restore"
+                          >
+                            <ShieldCheck size={16} />
+                          </button>
+                        )}
                         <button
                           onClick={() => handleDeactivate(user.id)}
                           className="p-2 text-[#8A8880] hover:text-blue-400"

@@ -175,7 +175,18 @@ export async function getDb() {
         await client.execute(
           "ALTER TABLE users ADD COLUMN status TEXT DEFAULT 'active' NOT NULL;"
         );
-        console.log("[Migration] Added status column to users");
+      } catch (err) {}
+
+      try {
+        await client.execute(
+          "ALTER TABLE users ADD COLUMN statusMessage TEXT;"
+        );
+      } catch (err) {}
+
+      try {
+        await client.execute(
+          "ALTER TABLE users ADD COLUMN statusNotificationRead INTEGER DEFAULT 0 NOT NULL;"
+        );
       } catch (err) {}
 
       // Migration for ip_blacklist table
@@ -882,22 +893,52 @@ export async function deleteUser(id: number): Promise<void> {
   return purgeUser(id);
 }
 
-export async function restrictUser(id: number): Promise<void> {
+export async function restrictUser(id: number, message?: string): Promise<void> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
   await db.update(users)
-    .set({ status: 'restricted' })
+    .set({ 
+      status: 'restricted',
+      statusMessage: message || 'Your account has been restricted. You can still browse but interactions are disabled for safety and legal compliance.',
+      statusNotificationRead: 0
+    })
     .where(eq(users.id, id));
 }
 
-export async function banUser(id: number): Promise<void> {
+export async function banUser(id: number, message?: string): Promise<void> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
 
   await db.update(users)
-    .set({ status: 'banned' })
+    .set({ 
+      status: 'banned',
+      statusMessage: message || 'Your account has been permanently banned due to a violation of our terms of service.',
+      statusNotificationRead: 0
+    })
     .where(eq(users.id, id));
+}
+
+export async function activateUser(id: number, message?: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(users)
+    .set({ 
+      status: 'active',
+      statusMessage: message || 'Good news! Your account status has been restored to Active.',
+      statusNotificationRead: 0
+    })
+    .where(eq(users.id, id));
+}
+
+export async function markStatusNotificationRead(userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(users)
+    .set({ statusNotificationRead: 1 })
+    .where(eq(users.id, userId));
 }
 
 export async function purgeUser(id: number): Promise<void> {

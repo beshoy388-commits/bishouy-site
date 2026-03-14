@@ -24,6 +24,8 @@ export const users = sqliteTable("users", {
   status: text("status", { enum: ["active", "banned", "deleted", "restricted"] })
     .default("active")
     .notNull(),
+  statusMessage: text("statusMessage"),
+  statusNotificationRead: integer("statusNotificationRead", { mode: "number" }).default(0).notNull(),
   createdAt: integer("createdAt", { mode: "timestamp" })
     .$defaultFn(() => new Date())
     .notNull(),

@@ -73,6 +73,8 @@ import {
   hasUserLikedSocialPost,
   deleteSocialPost,
   updateSocialPostStatus,
+  activateUser,
+  markStatusNotificationRead,
   updateVisitorSession,
   getActiveVisitors,
 } from "./db";
@@ -1289,6 +1291,17 @@ export const appRouter = router({
       return getAllUsers();
     }),
 
+    // Protected: Get current user info (for status monitoring)
+    getMe: protectedProcedure.query(async ({ ctx }) => {
+      return getUserById(ctx.user.id);
+    }),
+
+    // Protected: Acknowledge status notification
+    acknowledgeNotification: protectedProcedure.mutation(async ({ ctx }) => {
+      await markStatusNotificationRead(ctx.user.id);
+      return { success: true };
+    }),
+
     // Admin: Get user by ID
     getById: adminProcedure
       .input(z.object({ id: z.number() }))
@@ -1365,26 +1378,50 @@ export const appRouter = router({
 
     // Admin: Deactivate account (Soft Restriction) - Allows login, blocks interaction (read-only)
     deactivate: adminProcedure
-      .input(z.object({ id: z.number() }))
+      .input(z.object({ id: z.number(), reason: z.string().optional() }))
       .mutation(async ({ input, ctx }) => {
         const user = await getUserById(input.id);
         if (!user) {
            throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
         }
         
-        await restrictUser(input.id);
+        await restrictUser(input.id, input.reason);
 
         await logResourceAction(
           ctx.user.id,
           "deactivate",
           "user",
           input.id,
-          { username: user.username, email: user.email, type: "read_only_restriction" },
+          { username: user.username, email: user.email, type: "read_only_restriction", reason: input.reason },
           getClientIp(ctx.req),
           getUserAgent(ctx.req)
         );
 
         return { success: true, message: "Account deactivated. User now has Read-Only access." };
+      }),
+
+    // Admin: Restore account (Back to active)
+    activate: adminProcedure
+      .input(z.object({ id: z.number(), reason: z.string().optional() }))
+      .mutation(async ({ input, ctx }) => {
+        const user = await getUserById(input.id);
+        if (!user) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+        }
+        
+        await activateUser(input.id, input.reason);
+
+        await logResourceAction(
+          ctx.user.id,
+          "activate",
+          "user",
+          input.id,
+          { username: user.username, email: user.email, reason: input.reason },
+          getClientIp(ctx.req),
+          getUserAgent(ctx.req)
+        );
+
+        return { success: true, message: "Account status restored to Active." };
       }),
 
     // Admin: Wipe user (Hard Delete)
@@ -1414,19 +1451,17 @@ export const appRouter = router({
 
     // Admin: Ban user
     ban: adminProcedure
-      .input(z.object({ id: z.number(), blacklistIp: z.boolean().default(false) }))
+      .input(z.object({ id: z.number(), reason: z.string().optional(), blacklistIp: z.boolean().default(false) }))
       .mutation(async ({ input, ctx }) => {
         const user = await getUserById(input.id);
         if (!user) {
           throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
         }
 
-        await banUser(input.id);
+        await banUser(input.id, input.reason);
 
         if (input.blacklistIp) {
-            // We'd need to track IPs per user to do this effectively, 
-            // but we can at least log and audit for now or use the current IP if they are active.
-            // For now, let's just log it.
+            // Logic for IP blacklisting could be added here if we had the last observed IP
         }
         
         await logResourceAction(
@@ -1434,7 +1469,7 @@ export const appRouter = router({
           "ban",
           "user",
           input.id,
-          { username: user.username, email: user.email },
+          { username: user.username, email: user.email, reason: input.reason },
           getClientIp(ctx.req),
           getUserAgent(ctx.req)
         );
