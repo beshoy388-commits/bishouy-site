@@ -29,6 +29,6 @@ export function calculateReadTime(content: string): number {
   // Replace HTML tags with spaces to ensure words in different tags aren't merged
   const text = content.replace(/<[^>]*>/g, " ");
   const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
-  // Average reading speed is 200-250 wpm. We'll use 200 for inclusion.
-  return Math.max(1, Math.ceil(wordCount / 200));
+  // Average reading speed is 200 wpm. We'll use a minimum of 2 minutes for any article realistically.
+  return Math.max(2, Math.ceil(wordCount / 200));
 }
