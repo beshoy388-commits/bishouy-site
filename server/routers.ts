@@ -776,18 +776,8 @@ export const appRouter = router({
           Sports: "#E67E22",
         };
 
-        const humanAuthors = [
-          "Julian Vance",
-          "Elena Rostova",
-          "Marcus Chen",
-          "Sofia Romano",
-          "Marco Ferretti",
-          "Giulia Marchetti",
-          "Luca Bianchi",
-          "Antonio Esposito",
-          "Roberto Conti"
-        ];
-        const selectedAuthorName = humanAuthors[Math.floor(Math.random() * humanAuthors.length)];
+        const authorName = "Bishouy Editorial";
+        const authorRole = "Editorial Desk";
 
         const articleData: InsertArticle = {
           title: generated.title,
