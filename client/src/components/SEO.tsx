@@ -54,7 +54,37 @@ export default function SEO({
             canonical.setAttribute("rel", "canonical");
             document.head.appendChild(canonical);
         }
-        canonical.setAttribute("href", url);
+        // Structured Data (JSON-LD)
+        const schemaData = type === "article" ? {
+            "@context": "https://schema.org",
+            "@type": "NewsArticle",
+            "headline": title,
+            "image": [image],
+            "datePublished": new Date().toISOString(), // Fallback
+            "author": [{
+                "@type": "Organization",
+                "name": "BISHOUY",
+                "url": "https://bishouy.com"
+            }]
+        } : {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "BISHOUY",
+            "url": "https://bishouy.com",
+            "logo": "https://bishouy.com/favicon.png"
+        };
+
+        const scriptId = "seo-json-ld";
+        let script = document.getElementById(scriptId) as HTMLScriptElement;
+        if (script) {
+            script.textContent = JSON.stringify(schemaData);
+        } else {
+            script = document.createElement("script");
+            script.id = scriptId;
+            script.type = "application/ld+json";
+            script.textContent = JSON.stringify(schemaData);
+            document.head.appendChild(script);
+        }
 
     }, [fullTitle, description, image, url, type]);
 

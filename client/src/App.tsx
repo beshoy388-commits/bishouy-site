@@ -79,12 +79,11 @@ function Router() {
 const Maintenance = lazy(() => import("@/pages/Maintenance"));
 
 function MaintenanceGuard({ children }: { children: React.ReactNode }) {
-  const { data: status, isLoading } = trpc.system.getStatus.useQuery(undefined, {
-    refetchInterval: 60000,
+  const { data: status } = trpc.system.getStatus.useQuery(undefined, {
+    staleTime: 300000,
   });
   const { user } = useAuth();
 
-  if (isLoading) return <PageFallback />;
   if (status?.maintenance && user?.role !== "admin") {
     return (
       <Suspense fallback={<PageFallback />}>
