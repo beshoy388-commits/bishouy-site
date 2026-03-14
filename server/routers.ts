@@ -786,8 +786,8 @@ export const appRouter = router({
           content: generated.content,
           category: (generated.category as any) || "World",
           categoryColor: (categoryColors as any)[generated.category] || "#E8A020",
-          author: selectedAuthorName,
-          authorRole: "Editorial Staff",
+          author: authorName,
+          authorRole: authorRole,
           image: `https://loremflickr.com/1200/800/${encodeURIComponent(generated.imagePrompt?.split(' ').slice(0, 3).join(',') || (generated.tags || []).slice(0, 2).join(",") || generated.category || 'news')}/all?lock=${Math.floor(Math.random() * 1000)}`,
           seoTitle: generated.seoTitle || generated.title,
           seoDescription: generated.seoDescription || generated.excerpt,
@@ -797,7 +797,7 @@ export const appRouter = router({
           tags: JSON.stringify(generated.tags || []),
           publishedAt: null as any,
           sourceUrl: null,
-          sourceTitle: `Bishouy Editorial Research | Assigned to ${selectedAuthorName}`,
+          sourceTitle: `Bishouy Editorial Research | Assigned to ${authorName}`,
         };
 
         const article = await createArticle(articleData);
