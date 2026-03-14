@@ -72,9 +72,10 @@ async function startServer() {
             "wss://*.render.com",
             "https://*.render.com",
             "https://vitals.vercel-insights.com",
-            "https://pagead2.googlesyndication.com",
-            "https://googleads.g.doubleclick.net",
             "https://www.googletagmanager.com",
+            "https://*.google-analytics.com",
+            "https://*.analytics.google.com",
+            "https://*.googletagmanager.com",
           ],
           "img-src": [
             "'self'",
@@ -82,6 +83,8 @@ async function startServer() {
             "blob:",
             "https://*",
             "http://*",
+            "https://www.google-analytics.com",
+            "https://www.googletagmanager.com",
           ],
           "style-src": [
             "'self'",
