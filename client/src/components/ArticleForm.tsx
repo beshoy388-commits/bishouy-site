@@ -164,9 +164,13 @@ export default function ArticleForm({
   // Auto-calculate read time from content
   useEffect(() => {
     if (formData.content) {
-      const wordCount = formData.content.split(/\s+/).filter(Boolean).length;
+      const cleanText = formData.content.replace(/<[^>]*>/g, " ").trim();
+      const wordCount = cleanText.split(/\s+/).filter(Boolean).length;
       const readTime = Math.max(1, Math.ceil(wordCount / 200));
-      setFormData(prev => ({ ...prev, readTime }));
+      setFormData(prev => {
+        if (prev.readTime === readTime) return prev;
+        return { ...prev, readTime };
+      });
     }
   }, [formData.content]);
 

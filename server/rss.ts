@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import { ENV } from "./_core/env";
 import { createArticle, getArticleBySlug } from "./db";
 import { InsertArticle } from "../drizzle/schema";
+import { calculateReadTime } from "./utils";
 
 function log(message: string) {
   console.log(`[${new Date().toLocaleTimeString()}] ${message}`);
@@ -378,7 +379,7 @@ export async function syncRSSFeeds(isManual: boolean = false) {
             featured: editorialPiece.isFeatured ? 1 : 0,
             breaking: editorialPiece.isBreaking ? 1 : 0,
             tags: JSON.stringify(editorialPiece.tags),
-            publishedAt: null as any,
+            readTime: calculateReadTime(editorialPiece.content),
             sourceUrl: item.link || item.guid || null,
             sourceTitle: item.title,
           };

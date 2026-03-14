@@ -94,7 +94,7 @@ import {
   sendWelcomeNewsletterEmail,
   sendWelcomeEmailWithBenefits,
 } from "./_core/mail";
-import { stripHtml } from "./utils";
+import { stripHtml, calculateReadTime } from "./utils";
 import crypto from "crypto";
 import { syncRSSFeeds } from "./rss";
 import { generateArticleFromTopic, moderateContent } from "./ai_service";
@@ -610,7 +610,7 @@ export const appRouter = router({
           featured: z.boolean().default(false),
           breaking: z.boolean().default(false),
           status: z.enum(["draft", "published"]).default("published"),
-          readTime: z.number().default(5),
+          readTime: z.number().optional(),
           tags: z.array(z.string()).default([]),
         })
       )
@@ -625,6 +625,7 @@ export const appRouter = router({
             ? JSON.stringify(validatedData.tags)
             : validatedData.tags,
           publishedAt: validatedData.status === "published" ? new Date() : null,
+          readTime: input.readTime || calculateReadTime(input.content),
         };
         const article = await createArticle(dbData);
 
@@ -808,7 +809,7 @@ export const appRouter = router({
         return {
           ...articleData,
           tags: JSON.stringify(generated.tags || []),
-          readTime: Math.max(1, Math.ceil(generated.content.split(/\s+/).length / 200))
+          readTime: calculateReadTime(generated.content)
         };
       }),
   }),
