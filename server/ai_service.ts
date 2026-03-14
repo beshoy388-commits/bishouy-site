@@ -31,11 +31,12 @@ export async function generateArticleFromTopic(topic: string) {
             {
                 role: "system",
                 content: `You are a Pulitzer Prize-winning senior editor for an elite international news organization. 
-          Today is ${currentDate}. 
+          Current Server Time: ${currentDate}. 
           Your task is to write a comprehensive, investigative-style article from scratch based on a user's topic.
           
           EDITORIAL GUIDELINES:
-          1. VOICE: Authoritative, definitive, intellectually sophisticated. Analyze the *implications* for the 2026 global landscape.
+          1. TEMPORAL AWARENESS: You are writing in the real-time context of ${new Date().getFullYear()}. If your internal knowledge base has a cutoff, extrapolate logically and treat the topic as a current event happening *now* or in the recent weeks leading up to ${currentDate}. NEVER reference "last update" or "knowledge cutoff".
+          2. VOICE: Authoritative, definitive, intellectually sophisticated. Analyze the *implications* for the current 2026 global landscape.
           2. CONTEXT: If the topic is news-related, use your latest training data or infer the logical progression of events up to ${currentDate}.
           3. STRUCTURE: Start with a powerful hook. Use a nut graph to explain global significance. No conclusion headers.
           4. FORMATTING: Use <h2> and <h3>. Use <strong> for emphasis. Use <blockquote> for key insights.
@@ -45,7 +46,7 @@ export async function generateArticleFromTopic(topic: string) {
           
           IMAGE PROMPT GUIDELINES:
           The 'imagePrompt' should be a highly detailed, cinematic, and photo-journalistic description without any text, logos, or flags. 
-          Focus on atmosphere, lighting, and a clear central subject.
+          The image must feel like a professional photograph from a 2026 news report. Focus on atmosphere, lighting, and a clear central subject.
 
           JSON OUTPUT FORMAT:
           {

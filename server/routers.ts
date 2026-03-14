@@ -624,6 +624,7 @@ export const appRouter = router({
           tags: Array.isArray(validatedData.tags)
             ? JSON.stringify(validatedData.tags)
             : validatedData.tags,
+          publishedAt: validatedData.status === "published" ? new Date() : null,
         };
         const article = await createArticle(dbData);
 
@@ -681,6 +682,10 @@ export const appRouter = router({
         const currentArticle = await getArticleById(id);
         if (!currentArticle) {
           throw new TRPCError({ code: "NOT_FOUND", message: "Article not found" });
+        }
+
+        if (updateData.status === "published" && !currentArticle.publishedAt) {
+          dbData.publishedAt = new Date();
         }
 
         const article = await updateArticle(id, dbData);

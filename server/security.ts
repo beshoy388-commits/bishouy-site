@@ -137,6 +137,7 @@ export const articleSchema = z.object({
   readTime: z.number().min(1).max(120).optional(),
   tags: z.array(z.string().max(50)).max(10).optional(),
   slug: z.string().min(1).max(255),
+  status: z.enum(["draft", "published"]).optional(),
 });
 
 /**
