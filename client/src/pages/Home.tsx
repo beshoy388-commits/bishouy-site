@@ -9,6 +9,7 @@ import { Link } from "wouter";
 import Navbar from "@/components/Navbar";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import ArticleCard from "@/components/ArticleCard";
+import type { Article } from "@/lib/articles";
 import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
 import SEO from "@/components/SEO";
@@ -68,21 +69,21 @@ export default function Home() {
   }
 
   // Get featured articles (featured = 1)
-  const featuredArticles = articles.filter(a => a.featured === 1);
+  const featuredArticles = articles.filter((a: Article) => a.featured === 1);
   const mainFeatured = featuredArticles[0] || articles[0];
 
   // Editor's Picks: Other featured articles first, then latest non-featured
   const secondaryFeatured = [
-    ...featuredArticles.filter(a => a.id !== mainFeatured.id),
-    ...articles.filter(a => a.id !== mainFeatured.id && a.featured !== 1)
+    ...featuredArticles.filter((a: Article) => a.id !== mainFeatured.id),
+    ...articles.filter((a: Article) => a.id !== mainFeatured.id && a.featured !== 1)
   ].slice(0, 3);
 
   // The rest of the articles for the latest grid
   const gridArticles = articles
     .filter(
-      a =>
+      (a: Article) =>
         a.id !== mainFeatured.id &&
-        !secondaryFeatured.some(sf => sf.id === a.id)
+        !secondaryFeatured.some((sf: Article) => sf.id === a.id)
     )
     .slice(0, 12);
 
@@ -92,7 +93,7 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="pt-52 pb-12">
+      <section className="pt-44 pb-12">
         <div className="container">
           {mainFeatured && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
@@ -140,9 +141,9 @@ export default function Home() {
         <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             {/* Articles Column */}
-            <div className="lg:col-span-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {gridArticles.map((article, idx) => (
+            <div className="lg:col-span-9">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {gridArticles.map((article: Article, idx: number) => (
                   <div
                     key={article.id}
                     className="fade-in-up"
@@ -155,13 +156,13 @@ export default function Home() {
             </div>
 
             {/* Social Pulse Sidebar */}
-            <aside className="lg:col-span-4 lg:sticky lg:top-24 h-fit space-y-8">
+            <aside className="lg:col-span-3 space-y-8 h-fit">
               <div className="border-l-2 border-[#E8A020] pl-4 mb-4">
                 <h2 className="font-display text-sm text-[#F2F0EB] uppercase tracking-widest">
                   COMMUNITY PULSE
                 </h2>
               </div>
-              <div className="h-[700px]">
+              <div className="min-h-[400px] h-auto">
                 <Suspense fallback={<div className="h-full bg-[#11110F] animate-pulse rounded-lg border border-[#1C1C1A]" />}>
                   <SocialPulse />
                 </Suspense>

@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Loader2, ArrowLeft } from "lucide-react";
-import { CATEGORIES } from "@/lib/articles";
+import { CATEGORIES, type Article } from "@/lib/articles";
 import Navbar from "@/components/Navbar";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import ArticleCard from "@/components/ArticleCard";
@@ -64,7 +64,7 @@ export default function CategoryPage() {
       <Navbar />
 
       {/* Category Header */}
-      <section className="pt-44 md:pt-52 pb-12 md:pb-24 relative overflow-hidden bg-[#0A0A09]">
+      <section className="pt-44 pb-12 md:pb-24 relative overflow-hidden bg-[#0A0A09]">
         <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#E8A020]/20 to-transparent" style={{ backgroundColor: category.color + '22' }} />
         </div>
@@ -112,7 +112,7 @@ export default function CategoryPage() {
             {/* Remaining articles */}
             {articles.length > 1 && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {articles.slice(1).map(article => (
+                {articles.slice(1).map((article: Article) => (
                   <ArticleCard
                     key={article.id}
                     article={article}

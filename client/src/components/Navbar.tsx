@@ -100,66 +100,59 @@ export default function Navbar() {
       </div>
 
       {/* Main navbar */}
-      <div className="bg-[#0F0F0E]/95 backdrop-blur-sm">
+      <div className="bg-[#0F0F0E]/95 backdrop-blur-sm relative">
         <div className="container">
-          <div className="flex items-center justify-between h-16 gap-4">
-            {/* Left nav — desktop */}
-            <nav className="hidden lg:flex items-center gap-6 flex-1">
-              {CATEGORIES.slice(0, 3).map(cat => (
-                <Link
-                  key={cat.slug}
-                  href={`/category/${cat.slug}`}
-                  className="font-ui text-xs font-500 text-[#8A8880] hover:text-[#F2F0EB] transition-colors uppercase tracking-wider"
-                >
-                  {cat.name}
-                </Link>
-              ))}
-            </nav>
-
-            {/* Logo — center */}
-            <Link href="/" className="flex-shrink-0 notranslate" aria-label="BISHOUY.COM Home">
-              <span className="font-display text-3xl md:text-4xl text-[#F2F0EB] tracking-wider hover:text-[#E8A020] transition-colors block">
-                <span>BISHOUY</span>
-                <span className="text-[#E8A020]">.</span>
-              </span>
-            </Link>
-
-            {/* Right nav — desktop */}
-            <nav className="hidden lg:flex items-center gap-6 flex-1 justify-end">
-              {CATEGORIES.slice(3).map(cat => (
-                <Link
-                  key={cat.slug}
-                  href={`/category/${cat.slug}`}
-                  className="font-ui text-xs font-500 text-[#8A8880] hover:text-[#F2F0EB] transition-colors uppercase tracking-wider"
-                >
-                  {cat.name}
-                </Link>
-              ))}
+          <div className="flex items-center justify-between h-20 gap-4">
+            {/* Left Utilities — desktop */}
+            <div className="hidden lg:flex items-center gap-6 flex-1">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-[#8A8880] hover:text-[#F2F0EB] transition-colors flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest font-600"
+              >
+                <Menu size={18} />
+                Menu
+              </button>
               <button
                 onClick={handleSearchClick}
                 className="text-[#8A8880] hover:text-[#E8A020] transition-colors"
                 aria-label="Open search"
               >
-                <Search size={16} />
+                <Search size={18} />
               </button>
+            </div>
+
+            {/* Logo — center */}
+            <div className="flex-shrink-0 flex justify-center translate-x-1/2 lg:translate-x-0 absolute left-1/2 -translate-x-1/2 lg:static">
+              <Link href="/" className="notranslate" aria-label="BISHOUY.COM Home">
+                <span className="font-display text-4xl md:text-5xl text-[#F2F0EB] tracking-tighter hover:text-[#E8A020] transition-all block">
+                  <span>BISHOUY</span>
+                  <span className="text-[#E8A020]">.</span>
+                </span>
+              </Link>
+            </div>
+
+            {/* Right Utilities — desktop */}
+            <div className="hidden lg:flex items-center gap-6 flex-1 justify-end">
+              <Link
+                href="/ai"
+                className="text-[#8A8880] hover:text-[#E8A020] transition-colors flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest font-600"
+                title="AI Assistant"
+              >
+                <Sparkles size={16} />
+                AI Assistant
+              </Link>
+
               <button
                 onClick={handleNotifications}
                 className="text-[#8A8880] hover:text-[#E8A020] transition-colors relative"
                 aria-label="Open notifications"
               >
-                <Bell size={16} />
+                <Bell size={18} />
                 {hasUnread && (
                   <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
                 )}
               </button>
-              <Link
-                href="/ai"
-                className="text-[#8A8880] hover:text-[#E8A020] transition-colors flex items-center gap-1.5"
-                title="AI Assistant"
-                aria-label="Go to AI Assistant"
-              >
-                <Sparkles size={16} />
-              </Link>
+
               {user ? (
                 <div className="flex items-center gap-4 pl-4 border-l border-[#2A2A28]">
                   {user.role === "admin" && (
@@ -194,13 +187,13 @@ export default function Navbar() {
               ) : (
                 <Link
                   href="/login"
-                  className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-3 py-2 rounded-sm transition-colors"
+                  className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-700 uppercase tracking-widest px-4 py-2 rounded-sm transition-colors"
                 >
                   <LogIn size={14} />
                   Login
                 </Link>
               )}
-            </nav>
+            </div>
 
             {/* Mobile menu button */}
             <div className="flex lg:hidden items-center gap-3">
@@ -220,6 +213,23 @@ export default function Navbar() {
                 {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* Category bar — perfectly symmetric */}
+        <div className="hidden lg:block border-t border-[#222220] py-4 bg-[#0F0F0E]/50">
+          <div className="container">
+            <nav className="flex items-center justify-center gap-12">
+              {CATEGORIES.map(cat => (
+                <Link
+                  key={cat.slug}
+                  href={`/category/${cat.slug}`}
+                  className="font-ui text-[10px] font-700 text-[#8A8880] hover:text-[#F2F0EB] transition-colors uppercase tracking-[0.2em]"
+                >
+                  {cat.name}
+                </Link>
+              ))}
+            </nav>
           </div>
         </div>
       </div>

@@ -50,7 +50,7 @@ export default function Search() {
   const hasSearched = debouncedQuery.length > 0;
 
   return (
-    <div className="min-h-screen bg-[#0F0F0E] flex flex-col pt-52">
+    <div className="min-h-screen bg-[#0F0F0E] flex flex-col pt-44">
       <Navbar />
 
       {/* Search Bar Section */}
@@ -126,8 +126,8 @@ export default function Search() {
             <Loader2 className="animate-spin text-[#E8A020]" size={40} />
           </div>
         ) : results.length > 0 ? (
-          <div className="max-w-4xl mx-auto">
-            <div className="grid gap-6 md:grid-cols-2">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {results.map(article => (
                 <ArticleCard
                   key={article.id}
