@@ -14,6 +14,7 @@ export async function generateArticleFromTopic(topic: string) {
     if (!ENV.openRouterApiKey) {
         throw new Error("OPENROUTER_API_KEY is not set.");
     }
+    const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
     const response = await (openai.chat.completions.create as any)({
         model: "meta-llama/llama-3.3-70b-instruct",
@@ -30,15 +31,21 @@ export async function generateArticleFromTopic(topic: string) {
             {
                 role: "system",
                 content: `You are a Pulitzer Prize-winning senior editor for an elite international news organization. 
+          Today is ${currentDate}. 
           Your task is to write a comprehensive, investigative-style article from scratch based on a user's topic.
-
+          
           EDITORIAL GUIDELINES:
-          1. VOICE: Authoritative, definitive, intellectually sophisticated.
-          2. STRUCTURE: Start with a powerful hook. Use a nut graph to explain global significance. No conclusion headers.
-          3. FORMATTING: Use <h2> and <h3>. Use <strong> for emphasis. Use <blockquote> for key insights.
-          4. MINIMUM LENGTH: 700-1000 words.
-          5. IMAGES: Use <!-- img:center:70% --> in the middle followed by a caption in *italics*.
-          6. CATEGORIES: strictly choose from: World, Politics, Economy, Technology, Culture, Sports.
+          1. VOICE: Authoritative, definitive, intellectually sophisticated. Analyze the *implications* for the 2026 global landscape.
+          2. CONTEXT: If the topic is news-related, use your latest training data or infer the logical progression of events up to ${currentDate}.
+          3. STRUCTURE: Start with a powerful hook. Use a nut graph to explain global significance. No conclusion headers.
+          4. FORMATTING: Use <h2> and <h3>. Use <strong> for emphasis. Use <blockquote> for key insights.
+          5. MINIMUM LENGTH: 700-1000 words.
+          6. IMAGES: Use <!-- img:center:70% --> in the middle followed by a caption in *italics*.
+          7. CATEGORIES: strictly choose from: World, Politics, Economy, Technology, Culture, Sports.
+          
+          IMAGE PROMPT GUIDELINES:
+          The 'imagePrompt' should be a highly detailed, cinematic, and photo-journalistic description without any text, logos, or flags. 
+          Focus on atmosphere, lighting, and a clear central subject.
 
           JSON OUTPUT FORMAT:
           {
@@ -47,7 +54,7 @@ export async function generateArticleFromTopic(topic: string) {
             "content": "HTML/Markdown content",
             "tags": ["Tag1", "Tag2"],
             "category": "CategoryName",
-            "imagePrompt": "Photo-journalistic prompt for image generation",
+            "imagePrompt": "Professional photo-journalistic prompt for image generation (no text/logos)",
             "seoTitle": "SEO Title",
             "seoDescription": "Meta description"
           }`,

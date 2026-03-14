@@ -779,7 +779,7 @@ export const appRouter = router({
         const authorName = "Bishouy Editorial";
         const authorRole = "Editorial Desk";
 
-        const articleData: InsertArticle = {
+        const articleData = {
           title: generated.title,
           slug,
           excerpt: generated.excerpt,
@@ -788,7 +788,7 @@ export const appRouter = router({
           categoryColor: (categoryColors as any)[generated.category] || "#E8A020",
           author: authorName,
           authorRole: authorRole,
-          image: `https://loremflickr.com/1200/800/${encodeURIComponent(generated.imagePrompt?.split(' ').slice(0, 3).join(',') || (generated.tags || []).slice(0, 2).join(",") || generated.category || 'news')}/all?lock=${Math.floor(Math.random() * 1000)}`,
+          image: `https://image.pollinations.ai/prompt/${encodeURIComponent(generated.imagePrompt || generated.title)}?width=1200&height=800&nologo=true&enhance=true`,
           seoTitle: generated.seoTitle || generated.title,
           seoDescription: generated.seoDescription || generated.excerpt,
           status: "draft",
@@ -800,19 +800,11 @@ export const appRouter = router({
           sourceTitle: `Bishouy Editorial Research | Assigned to ${authorName}`,
         };
 
-        const article = await createArticle(articleData);
-
-        // Log the action
-        await logArticleAction(
-          ctx.user.id,
-          "ai_generate",
-          article.id,
-          { topic: input.topic, title: generated.title },
-          getClientIp(ctx.req),
-          getUserAgent(ctx.req)
-        );
-
-        return article;
+        return {
+          ...articleData,
+          tags: JSON.stringify(generated.tags || []),
+          readTime: Math.max(1, Math.ceil(generated.content.split(/\s+/).length / 200))
+        };
       }),
   }),
 

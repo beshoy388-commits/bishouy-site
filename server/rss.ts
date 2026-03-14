@@ -360,15 +360,15 @@ export async function syncRSSFeeds(isManual: boolean = false) {
 
           const imageUrl =
             originalImage ||
-            `https://loremflickr.com/1200/800/${encodeURIComponent(editorialPiece.imagePrompt?.split(' ').slice(0, 3).join(',') || fallbackKeywords || editorialPiece.title.split(' ').slice(0, 3).join(','))}/all?lock=${Math.floor(Math.random() * 1000)}`;
+            `https://image.pollinations.ai/prompt/${encodeURIComponent(editorialPiece.imagePrompt || editorialPiece.title)}?width=1200&height=800&nologo=true&enhance=true`;
 
           const articleData: InsertArticle = {
             title: editorialPiece.title,
             slug: finalSlug,
             excerpt: editorialPiece.excerpt,
             content: editorialPiece.content,
-            author: "Redazione AI",
-            authorRole: "Senior AI Correspondent",
+            author: "Bishouy Editorial",
+            authorRole: "Editorial Desk",
             category: aiCategory,
             categoryColor: categoryColors[aiCategory] || "#E8A020",
             image: imageUrl,
