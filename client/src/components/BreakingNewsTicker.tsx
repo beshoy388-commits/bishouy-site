@@ -27,7 +27,7 @@ export default function BreakingNewsTicker() {
     <div className="bg-[#E8A020] overflow-hidden">
       <div className="flex items-stretch">
         {/* Label */}
-        <div className="flex-shrink-0 bg-[#0F0F0E] px-4 py-2 flex items-center gap-2 z-10">
+        <div className="flex-shrink-0 bg-[#0F0F0E] px-4 py-2 flex items-center gap-2 z-10 notranslate">
           <span className="w-2 h-2 rounded-full bg-[#E8A020] animate-pulse" />
           <span className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest whitespace-nowrap">
             Breaking
@@ -40,9 +40,9 @@ export default function BreakingNewsTicker() {
             {items.map((news, i) => (
               <div key={i} className="flex-shrink-0 flex items-center">
                 <span className="font-ui text-[11px] font-700 text-[#0F0F0E] uppercase tracking-wider whitespace-nowrap px-8">
-                  {news}
+                  <span>{news}</span>
                 </span>
-                <span className="text-[#0F0F0E]/40 font-bold">·</span>
+                <span className="text-[#0F0F0E]/40 font-bold notranslate">·</span>
               </div>
             ))}
           </div>

@@ -184,10 +184,10 @@ export default function ArticleCard({
               {article.category}
             </span>
             <h2 className="font-headline text-2xl md:text-3xl font-900 text-[#F2F0EB] leading-tight mb-3 title-hover">
-              {article.title}
+              <span>{article.title}</span>
             </h2>
             <p className="font-ui text-sm text-[#8A8880] line-clamp-2 mb-4 hidden md:block">
-              {article.excerpt}
+              <span>{article.excerpt}</span>
             </p>
             <div className="flex items-center gap-4 text-[#8A8880] mb-4">
               <span className="flex items-center gap-1.5 font-ui text-xs">
@@ -261,7 +261,7 @@ export default function ArticleCard({
               {article.category}
             </span>
             <h3 className="font-headline text-sm font-700 text-[#F2F0EB] leading-snug line-clamp-2 title-hover mb-2">
-              {article.title}
+              <span>{article.title}</span>
             </h3>
             <div className="flex items-center justify-between">
               <span className="font-ui text-[11px] text-[#8A8880]">
@@ -335,10 +335,10 @@ export default function ArticleCard({
             {article.category}
           </span>
           <h3 className="font-headline text-base font-700 text-[#F2F0EB] leading-snug line-clamp-2 title-hover mb-2">
-            {article.title}
+            <span>{article.title}</span>
           </h3>
           <p className="font-ui text-xs text-[#8A8880] line-clamp-2 mb-4 flex-1">
-            {article.excerpt}
+            <span>{article.excerpt}</span>
           </p>
           <div className="flex items-center gap-3 text-[#8A8880]">
             <span className="font-ui text-[11px]">{article.author}</span>

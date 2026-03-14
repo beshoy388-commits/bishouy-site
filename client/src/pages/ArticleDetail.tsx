@@ -637,15 +637,15 @@ export default function ArticleDetail() {
             {/* Main Content Column */}
             <div className="lg:col-span-8">
               <h1 className="font-display text-4xl md:text-5xl font-900 text-[#F2F0EB] leading-tight mb-4">
-                {article.title}
+                <span>{article.title}</span>
               </h1>
               <p className="text-[#8A8880] text-xl mb-8 leading-relaxed italic border-l-4 border-[#E8A020] pl-6 uppercase tracking-tight">
-                {article.excerpt}
+                <span>{article.excerpt}</span>
               </p>
 
 
               {/* Quick Actions Mobile */}
-              <div className="md:hidden flex flex-wrap items-center gap-3 mb-6">
+              <div className="md:hidden flex flex-wrap items-center gap-3 mb-6 notranslate">
                 <button
                   onClick={handleLikeClick}
                   className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-300 ${userLiked ? "like-button-active" : "like-button-inactive"
@@ -720,7 +720,7 @@ export default function ArticleDetail() {
               </div>
 
               {/* Meta Info */}
-              <div className="flex flex-wrap items-center gap-6 text-[#8A8880] text-sm border-t border-b border-[#1C1C1A] py-4">
+              <div className="flex flex-wrap items-center gap-6 text-[#8A8880] text-sm border-t border-b border-[#1C1C1A] py-4 notranslate">
                 <div className="flex items-center gap-2">
                   <User size={16} />
                   <span>{article.author}</span>

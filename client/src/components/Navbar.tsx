@@ -83,7 +83,7 @@ export default function Navbar() {
         }`}
     >
       {/* Top bar */}
-      <div className="border-b border-[#222220] bg-[#0F0F0E]">
+      <div className="border-b border-[#222220] bg-[#0F0F0E] notranslate">
         <div className="container">
           <div className="flex items-center justify-between h-8">
             <span className="font-ui text-[10px] text-[#8A8880] uppercase tracking-widest">
@@ -117,9 +117,9 @@ export default function Navbar() {
             </nav>
 
             {/* Logo — center */}
-            <Link href="/" className="flex-shrink-0" aria-label="BISHOUY.COM Home">
+            <Link href="/" className="flex-shrink-0 notranslate" aria-label="BISHOUY.COM Home">
               <span className="font-display text-3xl md:text-4xl text-[#F2F0EB] tracking-wider hover:text-[#E8A020] transition-colors block">
-                BISHOUY
+                <span>BISHOUY</span>
                 <span className="text-[#E8A020]">.</span>
               </span>
             </Link>
