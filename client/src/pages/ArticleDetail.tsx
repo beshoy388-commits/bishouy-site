@@ -565,6 +565,10 @@ export default function ArticleDetail() {
         description={article?.excerpt}
         image={article?.image}
         type="article"
+        authorName={article?.author}
+        publishedDate={article?.publishedAt || article?.createdAt}
+        updatedDate={article?.updatedAt}
+        category={article?.category}
       />
       <Navbar />
 

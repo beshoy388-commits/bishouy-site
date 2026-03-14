@@ -259,9 +259,10 @@ async function startServer() {
         : ENV.appUrl;
 
       let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>${baseUrl}/</loc>
+    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -275,12 +276,18 @@ async function startServer() {
   </url>`;
 
       for (const article of articles) {
+        const lastMod = (article.updatedAt || article.createdAt || new Date()).toISOString().split("T")[0];
         xml += `
   <url>
     <loc>${baseUrl}/article/${article.slug}</loc>
-    <lastmod>${article.updatedAt.toISOString().split("T")[0]}</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>${lastMod}</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    ${article.image ? `
+    <image:image>
+      <image:loc>${article.image.startsWith('http') ? article.image : baseUrl + article.image}</image:loc>
+      <image:title><![CDATA[${article.title}]]></image:title>
+    </image:image>` : ''}
   </url>`;
       }
 

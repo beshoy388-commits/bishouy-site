@@ -6,6 +6,10 @@ interface SEOProps {
     image?: string;
     url?: string;
     type?: "website" | "article";
+    authorName?: string;
+    publishedDate?: string | Date;
+    updatedDate?: string | Date;
+    category?: string;
 }
 
 export default function SEO({
@@ -14,6 +18,10 @@ export default function SEO({
     image = "/og-image.jpg",
     url = window.location.href,
     type = "website",
+    authorName = "Bishouy Editorial",
+    publishedDate,
+    updatedDate,
+    category,
 }: SEOProps) {
     const siteTitle = "BISHOUY";
     const fullTitle = title ? `${title} | ${siteTitle}` : `${siteTitle} | International News & Analysis`;
@@ -40,6 +48,7 @@ export default function SEO({
         updateMeta("og:image", image, "property");
         updateMeta("og:url", url, "property");
         updateMeta("og:type", type, "property");
+        updateMeta("og:site_name", siteTitle, "property");
 
         // Twitter
         updateMeta("twitter:card", "summary_large_image");
@@ -54,25 +63,80 @@ export default function SEO({
             canonical.setAttribute("rel", "canonical");
             document.head.appendChild(canonical);
         }
+        canonical.setAttribute("href", url);
+
         // Structured Data (JSON-LD)
-        const schemaData = type === "article" ? {
+        const schemaData: any[] = [];
+
+        // 1. Breadcrumb Schema
+        const breadcrumbs = [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://bishouy.com" }
+        ];
+        if (category) {
+            breadcrumbs.push({
+                "@type": "ListItem",
+                "position": 2,
+                "name": category,
+                "item": `https://bishouy.com/category/${category.toLowerCase()}`
+            });
+        }
+        if (type === "article" && title) {
+            breadcrumbs.push({
+                "@type": "ListItem",
+                "position": category ? 3 : 2,
+                "name": title,
+                "item": url
+            });
+        }
+
+        schemaData.push({
             "@context": "https://schema.org",
-            "@type": "NewsArticle",
-            "headline": title,
-            "image": [image],
-            "datePublished": new Date().toISOString(), // Fallback
-            "author": [{
+            "@type": "BreadcrumbList",
+            "itemListElement": breadcrumbs
+        });
+
+        // 2. Main Entity Schema
+        if (type === "article") {
+            schemaData.push({
+                "@context": "https://schema.org",
+                "@type": "NewsArticle",
+                "mainEntityOfPage": {
+                    "@type": "WebPage",
+                    "@id": url
+                },
+                "headline": title,
+                "description": description,
+                "articleSection": category,
+                "image": [image],
+                "datePublished": publishedDate ? new Date(publishedDate).toISOString() : new Date().toISOString(),
+                "dateModified": updatedDate ? new Date(updatedDate).toISOString() : (publishedDate ? new Date(publishedDate).toISOString() : new Date().toISOString()),
+                "author": {
+                    "@type": "Person",
+                    "name": authorName,
+                    "url": "https://bishouy.com/editorial-team"
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "BISHOUY",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": "https://bishouy.com/favicon.png"
+                    }
+                }
+            });
+        } else {
+            schemaData.push({
+                "@context": "https://schema.org",
                 "@type": "Organization",
                 "name": "BISHOUY",
-                "url": "https://bishouy.com"
-            }]
-        } : {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "BISHOUY",
-            "url": "https://bishouy.com",
-            "logo": "https://bishouy.com/favicon.png"
-        };
+                "url": "https://bishouy.com",
+                "logo": "https://bishouy.com/favicon.png",
+                "sameAs": [
+                    "https://twitter.com/bishouy",
+                    "https://facebook.com/bishouy"
+                ]
+            });
+        }
 
         const scriptId = "seo-json-ld";
         let script = document.getElementById(scriptId) as HTMLScriptElement;
@@ -86,7 +150,7 @@ export default function SEO({
             document.head.appendChild(script);
         }
 
-    }, [fullTitle, description, image, url, type]);
+    }, [fullTitle, description, image, url, type, authorName, publishedDate, updatedDate, category]);
 
     return null;
 }

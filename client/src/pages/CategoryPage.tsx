@@ -12,6 +12,7 @@ import Navbar from "@/components/Navbar";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import ArticleCard from "@/components/ArticleCard";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 
 export default function CategoryPage() {
   const [match, params] = useRoute("/category/:slug");
@@ -61,6 +62,11 @@ export default function CategoryPage() {
 
   return (
     <main className="min-h-screen bg-[#0F0F0E] relative pt-36">
+      <SEO 
+        title={`${category.name} Archives`} 
+        description={`Explore our full archive of articles in the ${category.name} category. Quality journalism and analysis from Bishouy.com.`}
+        category={category.name}
+      />
       <Navbar />
 
       {/* Category Header */}
