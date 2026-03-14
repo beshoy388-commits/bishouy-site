@@ -28,6 +28,7 @@ import {
   updateUser,
   deleteUser,
   banUser,
+  purgeUser,
   isIpBlacklisted,
   blacklistIp,
   toggleArticleLike,
@@ -1335,7 +1336,8 @@ export const appRouter = router({
         }
       }),
 
-    // Admin: Delete user
+    // Admin: Deactivate user (Soft Delete)
+    // Marks account as deleted but keeps record to prevent re-registration with same email/identity.
     delete: adminProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input, ctx }) => {
@@ -1344,15 +1346,40 @@ export const appRouter = router({
         
         await logResourceAction(
           ctx.user.id,
-          "delete",
+          "deactivate",
           "user",
           input.id,
-          { username: user?.username, email: user?.email },
+          { username: user?.username, email: user?.email, type: "soft_delete" },
           getClientIp(ctx.req),
           getUserAgent(ctx.req)
         );
 
-        return { success: true };
+        return { success: true, message: "Account deactivated and scheduled for deletion." };
+      }),
+
+    // Admin: Wipe user (Hard Delete)
+    // Completely removes the user from the database. They can register again immediately.
+    purge: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const user = await getUserById(input.id);
+        if (!user) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+        }
+        
+        await purgeUser(input.id);
+
+        await logResourceAction(
+          ctx.user.id,
+          "purge",
+          "user",
+          input.id,
+          { username: user.username, email: user.email, type: "hard_delete" },
+          getClientIp(ctx.req),
+          getUserAgent(ctx.req)
+        );
+
+        return { success: true, message: "Account wiped successfully. Data has been physically removed." };
       }),
 
     // Admin: Ban user
@@ -1382,8 +1409,33 @@ export const appRouter = router({
           getUserAgent(ctx.req)
         );
 
-        return { success: true };
+        return { success: true, message: "User has been banned and access restricted." };
       }),
+
+    // Protected: User wipes their own account (Hard Delete)
+    purgeMe: protectedProcedure.mutation(async ({ ctx }) => {
+        const userId = ctx.user.id;
+        const user = await getUserById(userId);
+        
+        // Log before deletion
+        await logResourceAction(
+          userId,
+          "self_purge",
+          "user",
+          userId,
+          { email: user?.email, type: "user_triggered_hard_delete" },
+          getClientIp(ctx.req),
+          getUserAgent(ctx.req)
+        );
+
+        await purgeUser(userId);
+
+        // Clear session cookie automatically
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
+
+        return { success: true };
+    }),
 
     // Public: Get user by username for public profile
     getByUsername: publicProcedure

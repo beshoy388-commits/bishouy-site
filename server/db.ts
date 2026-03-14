@@ -905,6 +905,27 @@ export async function banUser(id: number): Promise<void> {
     .where(eq(users.id, id));
 }
 
+export async function purgeUser(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const userToPurge = await getUserById(id);
+  if (userToPurge && (
+    userToPurge.openId === ENV.ownerOpenId || 
+    (ENV.ownerEmail && userToPurge.email === ENV.ownerEmail)
+  )) {
+    throw new Error("System owner cannot be purged");
+  }
+
+  // 1. Delete verification codes associated with the email
+  if (userToPurge?.email) {
+    await db.delete(verificationCodes).where(eq(verificationCodes.email, userToPurge.email));
+  }
+
+  // 2. Physical deletion from users table
+  await db.delete(users).where(eq(users.id, id));
+}
+
 export async function isIpBlacklisted(ip: string): Promise<boolean> {
   const db = await getDb();
   if (!db) return false;
