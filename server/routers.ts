@@ -76,6 +76,7 @@ import {
   updateSocialPostStatus,
   activateUser,
   markStatusNotificationRead,
+  markForDeletion,
   updateVisitorSession,
   getActiveVisitors,
 } from "./db";
@@ -1353,28 +1354,28 @@ export const appRouter = router({
         }
       }),
 
-    // Admin: Wipe account (Hard Delete) - Permanent data removal, allows re-registration
+    // Admin: Wipe account (Request Hard Delete) - Sets status to 'deleted', user must confirm to wipe
     delete: adminProcedure
-      .input(z.object({ id: z.number() }))
+      .input(z.object({ id: z.number(), reason: z.string().optional() }))
       .mutation(async ({ input, ctx }) => {
         const user = await getUserById(input.id);
         if (!user) {
           throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
         }
 
-        await purgeUser(input.id);
+        await markForDeletion(input.id, input.reason);
         
         await logResourceAction(
           ctx.user.id,
-          "purge",
+          "scheduled_purge",
           "user",
           input.id,
-          { username: user.username, email: user.email, type: "hard_delete" },
+          { username: user.username, email: user.email, reason: input.reason },
           getClientIp(ctx.req),
           getUserAgent(ctx.req)
         );
 
-        return { success: true, message: "Account wiped successfully. Re-registration is now possible." };
+        return { success: true, message: "Account marked for deletion. User will be notified to confirm data wipe." };
       }),
 
     // Admin: Deactivate account (Soft Restriction) - Allows login, blocks interaction (read-only)
@@ -1425,9 +1426,33 @@ export const appRouter = router({
         return { success: true, message: "Account status restored to Active." };
       }),
 
-    // Admin: Wipe user (Hard Delete)
-    // Completely removes the user from the database. They can register again immediately.
+    // Admin: Wipe user (Request Hard Delete)
+    // Marks user as deleted. They see a terminal notification and can trigger the final purge.
     purge: adminProcedure
+      .input(z.object({ id: z.number(), reason: z.string().optional() }))
+      .mutation(async ({ input, ctx }) => {
+        const user = await getUserById(input.id);
+        if (!user) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+        }
+        
+        await markForDeletion(input.id, input.reason);
+
+        await logResourceAction(
+          ctx.user.id,
+          "scheduled_purge",
+          "user",
+          input.id,
+          { username: user.username, email: user.email, reason: input.reason },
+          getClientIp(ctx.req),
+          getUserAgent(ctx.req)
+        );
+
+        return { success: true, message: "Account scheduled for physical removal." };
+      }),
+
+    // Admin: Immediate Physical Wipe (Bypasses notification)
+    finalPurge: adminProcedure
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input, ctx }) => {
         const user = await getUserById(input.id);
@@ -1439,15 +1464,15 @@ export const appRouter = router({
 
         await logResourceAction(
           ctx.user.id,
-          "purge",
+          "final_wipe",
           "user",
           input.id,
-          { username: user.username, email: user.email, type: "hard_delete" },
+          { username: user.username, email: user.email, type: "manual_hard_purge" },
           getClientIp(ctx.req),
           getUserAgent(ctx.req)
         );
 
-        return { success: true, message: "Account wiped successfully. Data has been physically removed." };
+        return { success: true, message: "Account physically removed from database." };
       }),
 
     // Admin: Ban user

@@ -47,13 +47,23 @@ export default function UsersManagement() {
     },
   });
 
-  const purgeMutation = trpc.users.delete.useMutation({
+  const purgeMutation = trpc.users.purge.useMutation({
     onSuccess: (data) => {
-      toast.success(data.message || "User data purged successfully");
+      toast.success(data.message || "User account scheduled for deletion.");
       refetch();
     },
     onError: error => {
-      toast.error(error.message || "Failed to purge user");
+      toast.error(error.message || "Failed to schedule purge.");
+    },
+  });
+
+  const finalPurgeMutation = trpc.users.finalPurge.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message || "User data physically removed.");
+      refetch();
+    },
+    onError: error => {
+      toast.error(error.message || "Failed to finalize purge.");
     },
   });
 
@@ -109,9 +119,16 @@ export default function UsersManagement() {
     }
   };
 
-  const handlePurge = async (id: number) => {
-    if (confirm("HARD PURGE: This will physically delete all user data. They will be able to register again with a fresh account. Proceed?")) {
-      await purgeMutation.mutateAsync({ id });
+  const handlePurge = async (user: any) => {
+    if (user.status === 'deleted') {
+      if (confirm("FINAL WIPE: This user has already been notified. Do you want to physically DELETE all their data now? This cannot be undone.")) {
+        await finalPurgeMutation.mutateAsync({ id: user.id });
+      }
+    } else {
+      const reason = prompt("SCHEDULE PURGE: Provide a final formal reason for account deletion (optional). The user will see this before their session is terminated:");
+      if (reason !== null) {
+        await purgeMutation.mutateAsync({ id: user.id, reason });
+      }
     }
   };
 
@@ -301,9 +318,9 @@ export default function UsersManagement() {
                         )}
 
                         <button
-                          onClick={() => handlePurge(user.id)}
-                          className="p-1.5 text-[#8A8880] hover:text-red-500 transition-colors"
-                          title="Hard Purge (Allow Re-registration)"
+                          onClick={() => handlePurge(user)}
+                          className={`p-1.5 transition-colors ${user.status === 'deleted' ? 'text-red-500 hover:text-red-700 animate-pulse' : 'text-[#8A8880] hover:text-red-500'}`}
+                          title={user.status === 'deleted' ? "Final Physical Wipe (Already Notified)" : "Schedule Purge (Notify User)"}
                         >
                           <Flame size={16} />
                         </button>
@@ -445,9 +462,9 @@ export default function UsersManagement() {
                           <AlertOctagon size={16} />
                         </button>
                         <button
-                          onClick={() => handlePurge(user.id)}
-                          className="p-2 text-[#8A8880] hover:text-red-500"
-                          title="Purge"
+                          onClick={() => handlePurge(user)}
+                          className={`p-2 ${user.status === 'deleted' ? 'text-red-500 animate-pulse' : 'text-[#8A8880]'}`}
+                          title={user.status === 'deleted' ? "Final Wipe" : "Purge"}
                         >
                           <Flame size={16} />
                         </button>

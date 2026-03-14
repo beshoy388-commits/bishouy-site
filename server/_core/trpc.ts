@@ -19,16 +19,25 @@ const requireUser = t.middleware(async opts => {
     throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
   }
 
-  // Interaction Restriction: Restricted accounts have Read-Only access.
-  // Exception: Allowing the user to acknowledge the administrative notification modal.
-  if (
-    ctx.user.status === "restricted" && 
-    type === "mutation" && 
-    opts.path !== "users.acknowledgeNotification"
-  ) {
+  // Professional Legal Enforcement: Handle Restricted, Banned, and Deleted statuses
+  const isBannedOrDeleted = ctx.user.status === "banned" || ctx.user.status === "deleted";
+  const isRestricted = ctx.user.status === "restricted";
+
+  // Exception Paths: Allow specific interactions even for restricted/banned status
+  const allowedPaths = ["users.getMe", "users.acknowledgeNotification", "users.purgeMe"];
+  const isAllowedPath = allowedPaths.includes(opts.path);
+
+  if (isBannedOrDeleted && !isAllowedPath) {
     throw new TRPCError({
       code: "FORBIDDEN",
-      message: "Account Restricted: Your profile is currently in Read-Only mode. Interactions such as commenting, liking, and AI features are disabled.",
+      message: `Account terminated: Your profile status is ${ctx.user.status.toUpperCase()}. Access to site features is disabled.`,
+    });
+  }
+
+  if (isRestricted && type === "mutation" && !isAllowedPath) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Account Restricted: Your profile is currently in Read-Only mode. Interactions are disabled.",
     });
   }
 

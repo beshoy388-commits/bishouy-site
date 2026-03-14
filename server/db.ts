@@ -941,6 +941,19 @@ export async function markStatusNotificationRead(userId: number): Promise<void> 
     .where(eq(users.id, userId));
 }
 
+export async function markForDeletion(id: number, message?: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(users)
+    .set({ 
+      status: 'deleted',
+      statusMessage: message || 'Your account has been scheduled for permanent deletion. All associated data will be physically removed from our systems.',
+      statusNotificationRead: 0
+    })
+    .where(eq(users.id, id));
+}
+
 export async function purgeUser(id: number): Promise<void> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");

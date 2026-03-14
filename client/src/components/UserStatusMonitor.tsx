@@ -22,6 +22,13 @@ export default function UserStatusMonitor() {
         }
     });
 
+    const purgeMeMutation = trpc.users.purgeMe.useMutation({
+        onSuccess: () => {
+            setShowModal(false);
+            window.location.href = "/";
+        }
+    });
+
     useEffect(() => {
         if (me && me.statusMessage && me.statusNotificationRead === 0) {
             setLocalUser(me);
@@ -36,6 +43,8 @@ export default function UserStatusMonitor() {
     const handleAction = () => {
         if (localUser?.status === 'banned') {
             logout();
+        } else if (localUser?.status === 'deleted') {
+            purgeMeMutation.mutate();
         } else {
             handleAcknowledge();
         }
@@ -44,8 +53,11 @@ export default function UserStatusMonitor() {
     if (!showModal || !localUser) return null;
 
     const isBanned = localUser.status === 'banned';
+    const isDeleted = localUser.status === 'deleted';
     const isRestricted = localUser.status === 'restricted';
     const isActive = localUser.status === 'active';
+
+    const isPending = acknowledgeMutation.isPending || purgeMeMutation.isPending;
 
     return (
         <AnimatePresence>
@@ -64,21 +76,21 @@ export default function UserStatusMonitor() {
                     className="relative w-full max-w-xl bg-[#11110F] border border-[#2A2A28] rounded-2xl shadow-2xl overflow-hidden"
                 >
                     {/* Security Banner */}
-                    <div className={`h-2 w-full ${isBanned ? 'bg-red-500' : isRestricted ? 'bg-blue-500' : 'bg-green-500'}`} />
+                    <div className={`h-2 w-full ${isBanned || isDeleted ? 'bg-red-500' : isRestricted ? 'bg-blue-500' : 'bg-green-500'}`} />
                     
                     <div className="p-8 md:p-12 text-center">
                         <div className={`w-20 h-20 rounded-full mx-auto mb-8 flex items-center justify-center border-4 ${
-                            isBanned ? 'border-red-500/20 bg-red-500/10' : 
+                            isBanned || isDeleted ? 'border-red-500/20 bg-red-500/10' : 
                             isRestricted ? 'border-blue-500/20 bg-blue-500/10' : 
                             'border-green-500/20 bg-green-500/10'
                         }`}>
-                            {isBanned ? <Lock className="text-red-500" size={32} /> : 
+                            {isBanned || isDeleted ? <Lock className="text-red-500" size={32} /> : 
                              isRestricted ? <AlertTriangle className="text-blue-500" size={32} /> : 
                              <Shield className="text-green-500" size={32} />}
                         </div>
 
                         <h2 className="font-headline text-3xl text-[#F2F0EB] mb-4 uppercase tracking-tighter">
-                            Official Account Status <span className={isBanned ? 'text-red-500' : isRestricted ? 'text-blue-500' : 'text-green-500'}>Updated</span>
+                            Official Account Status <span className={isBanned || isDeleted ? 'text-red-500' : isRestricted ? 'text-blue-500' : 'text-green-500'}>Updated</span>
                         </h2>
 
                         <div className="bg-[#0A0A09] border border-[#1C1C1A] p-6 rounded-xl mb-8 text-left">
@@ -91,6 +103,8 @@ export default function UserStatusMonitor() {
                         <p className="text-[#8A8880] text-[11px] font-ui uppercase tracking-widest leading-relaxed mb-10 max-w-md mx-auto">
                             {isBanned 
                                 ? "Your access to the platform has been terminated immediately. This decision is final and documented in our security audit logs." 
+                                : isDeleted
+                                ? "Your account and all associated data are scheduled for permanent removal. Confirming will physically wipe your records from our systems."
                                 : isRestricted 
                                 ? "You may continue to browse the site, but your ability to interact, comment, and use AI features has been suspended for the reason stated above."
                                 : "Your account privileges have been restored. You can now resume full interaction with the site features."}
@@ -98,16 +112,16 @@ export default function UserStatusMonitor() {
 
                         <button
                             onClick={handleAction}
-                            disabled={acknowledgeMutation.isPending}
+                            disabled={isPending}
                             className={`w-full py-4 rounded-xl font-headline text-sm uppercase tracking-widest font-bold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-wait ${
-                                isBanned 
+                                isBanned || isDeleted
                                 ? 'bg-red-600 text-white hover:bg-red-500 shadow-lg shadow-red-600/20' 
                                 : isRestricted 
                                 ? 'bg-blue-600 text-white hover:bg-blue-500 shadow-lg shadow-blue-600/20'
                                 : 'bg-[#E8A020] text-[#0F0F0E] hover:bg-[#F0A830] shadow-lg shadow-[#E8A020]/20'
                             }`}
                         >
-                            {acknowledgeMutation.isPending ? "Processing Official Record..." : (isBanned ? "Log Out & Terminate Session" : "Confirm Recognition")}
+                            {isPending ? "Processing Official Record..." : (isBanned ? "Log Out & Terminate Session" : isDeleted ? "Confirm & Wipe All My Data" : "Confirm Recognition")}
                         </button>
                     </div>
                     
