@@ -88,12 +88,12 @@ export default function Home() {
     .slice(0, 12);
 
   return (
-    <main className="min-h-screen bg-[#0F0F0E]">
+    <main className="min-h-screen bg-[#0F0F0E] relative pt-36">
       <SEO />
       <Navbar />
 
       {/* Hero Section */}
-      <section className="pt-44 pb-12">
+      <section className="pb-12">
         <div className="container">
           {mainFeatured && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">

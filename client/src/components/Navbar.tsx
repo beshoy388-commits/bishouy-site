@@ -85,46 +85,65 @@ export default function Navbar() {
       {/* Top bar */}
       <div className="border-b border-[#222220] bg-[#0F0F0E] notranslate">
         <div className="container">
-          <div className="flex items-center justify-between h-8">
-            <span className="font-ui text-[10px] text-[#8A8880] uppercase tracking-widest">
+          <div className="flex items-center justify-between h-7">
+            <span className="font-ui text-[9px] text-[#8A8880] uppercase tracking-[0.2em]">
               {currentDate || "Loading date..."}
             </span>
-            <div className="flex items-center gap-4">
-              <span className="font-ui text-[10px] text-[#8A8880] uppercase tracking-widest hidden sm:block">
-                Live News Updates
+            <div className="flex items-center gap-3">
+              <span className="font-ui text-[9px] text-[#8A8880] uppercase tracking-[0.2em] hidden sm:block">
+                Global Network
               </span>
-              <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] animate-pulse" />
+              <div className="w-1 h-1 rounded-full bg-[#E8A020] animate-pulse" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Main navbar */}
-      <div className="bg-[#0F0F0E]/95 backdrop-blur-sm relative">
+      <div className="bg-[#0F0F0E]/95 backdrop-blur-sm relative border-b border-[#222220]/50">
         <div className="container">
-          <div className="flex items-center justify-between h-20 gap-4">
-            {/* Left Utilities — desktop */}
-            <div className="hidden lg:flex items-center gap-6 flex-1">
+          <div className="flex items-center justify-between h-16 gap-4">
+            {/* Desktop: Left Utilities */}
+            <div className="hidden lg:flex items-center gap-8 flex-1">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-[#8A8880] hover:text-[#F2F0EB] transition-colors flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest font-600"
+                className="text-[#8A8880] hover:text-[#F2F0EB] transition-colors flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest font-700"
               >
-                <Menu size={18} />
+                <Menu size={16} />
                 Menu
               </button>
               <button
                 onClick={handleSearchClick}
-                className="text-[#8A8880] hover:text-[#E8A020] transition-colors"
-                aria-label="Open search"
+                className="text-[#8A8880] hover:text-[#E8A020] transition-colors flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest font-700"
               >
-                <Search size={18} />
+                <Search size={16} />
+                Search
+              </button>
+              <Link
+                href="/ai"
+                className="text-[#8A8880] hover:text-[#E8A020] transition-colors flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest font-700 ml-2"
+                title="AI Assistant"
+              >
+                <Sparkles size={16} />
+                AI Assistant
+              </Link>
+            </div>
+
+            {/* Mobile: Menu Toggle (Left) */}
+            <div className="flex lg:hidden items-center flex-1">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-[#F2F0EB] hover:text-[#E8A020] transition-colors"
+                aria-label={isMenuOpen ? "Close main menu" : "Open main menu"}
+              >
+                {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
             </div>
 
-            {/* Logo — center */}
-            <div className="flex-shrink-0 flex justify-center translate-x-1/2 lg:translate-x-0 absolute left-1/2 -translate-x-1/2 lg:static">
+            {/* Logo — center (Desktop & Mobile) */}
+            <div className="flex-shrink-0 flex justify-center absolute left-1/2 -translate-x-1/2">
               <Link href="/" className="notranslate" aria-label="BISHOUY.COM Home">
-                <span className="font-display text-4xl md:text-5xl text-[#F2F0EB] tracking-tighter hover:text-[#E8A020] transition-all block">
+                <span className="font-display text-2xl md:text-3xl lg:text-4xl text-[#F2F0EB] tracking-tighter hover:text-[#E8A020] transition-all block leading-none">
                   <span>BISHOUY</span>
                   <span className="text-[#E8A020]">.</span>
                 </span>
@@ -133,15 +152,6 @@ export default function Navbar() {
 
             {/* Right Utilities — desktop */}
             <div className="hidden lg:flex items-center gap-6 flex-1 justify-end">
-              <Link
-                href="/ai"
-                className="text-[#8A8880] hover:text-[#E8A020] transition-colors flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest font-600"
-                title="AI Assistant"
-              >
-                <Sparkles size={16} />
-                AI Assistant
-              </Link>
-
               <button
                 onClick={handleNotifications}
                 className="text-[#8A8880] hover:text-[#E8A020] transition-colors relative"
@@ -195,8 +205,15 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Mobile menu button */}
-            <div className="flex lg:hidden items-center gap-3">
+            {/* Mobile: Search (Right) */}
+            <div className="flex lg:hidden items-center justify-end flex-1 gap-4">
+              <button
+                onClick={handleNotifications}
+                className="text-[#8A8880] relative"
+              >
+                <Bell size={18} />
+                {hasUnread && <span className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-red-500 rounded-full" />}
+              </button>
               <button
                 onClick={handleSearchClick}
                 className="text-[#8A8880] hover:text-[#E8A020] transition-colors"
@@ -204,27 +221,19 @@ export default function Navbar() {
               >
                 <Search size={18} />
               </button>
-
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-[#F2F0EB] hover:text-[#E8A020] transition-colors ml-1"
-                aria-label={isMenuOpen ? "Close main menu" : "Open main menu"}
-              >
-                {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
-              </button>
             </div>
           </div>
         </div>
 
-        {/* Category bar — perfectly symmetric */}
-        <div className="hidden lg:block border-t border-[#222220] py-4 bg-[#0F0F0E]/50">
+        {/* Category bar — tight and premium */}
+        <div className="hidden lg:block border-t border-[#222220] py-3 bg-[#0F0F0E]/50">
           <div className="container">
-            <nav className="flex items-center justify-center gap-12">
+            <nav className="flex items-center justify-center gap-10">
               {CATEGORIES.map(cat => (
                 <Link
                   key={cat.slug}
                   href={`/category/${cat.slug}`}
-                  className="font-ui text-[10px] font-700 text-[#8A8880] hover:text-[#F2F0EB] transition-colors uppercase tracking-[0.2em]"
+                  className="font-ui text-[9px] font-800 text-[#8A8880] hover:text-[#F2F0EB] transition-colors uppercase tracking-[0.25em]"
                 >
                   {cat.name}
                 </Link>
@@ -289,11 +298,10 @@ export default function Navbar() {
       />
       {!location.startsWith("/admin") && (
         <>
-          <div className="bg-[#0A0A09] pt-2 pb-4">
-            <div className="container">
-              <AdPlacement position="banner_top" />
-            </div>
-          </div>
+          <AdPlacement
+            position="banner_top"
+            className="bg-[#0A0A09] py-3 border-b border-[#1C1C1A]"
+          />
           <BreakingNewsTicker />
         </>
       )}

@@ -60,11 +60,11 @@ export default function CategoryPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0F0F0E]">
+    <main className="min-h-screen bg-[#0F0F0E] relative pt-36">
       <Navbar />
 
       {/* Category Header */}
-      <section className="pt-44 pb-12 md:pb-24 relative overflow-hidden bg-[#0A0A09]">
+      <section className="pb-12 md:pb-24 relative overflow-hidden bg-[#0A0A09]">
         <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#E8A020]/20 to-transparent" style={{ backgroundColor: category.color + '22' }} />
         </div>

@@ -9,8 +9,8 @@ export default function MobileBottomNav({ onSearchClick }: { onSearchClick: () =
     const isActive = (path: string) => location === path;
 
     return (
-        <div className="lg:hidden fixed bottom-6 left-4 right-4 z-50">
-            <div className="bg-[#0F0F0E]/80 backdrop-blur-2xl border border-[#2A2A28] rounded-2xl h-16 shadow-[0_15px_35px_-5px_rgba(0,0,0,0.8)] px-1">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50">
+            <div className="bg-[#0F0F0E]/95 backdrop-blur-2xl border-t border-[#2A2A28] h-14 shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
                 <div className="grid grid-cols-5 items-center h-full w-full">
                     {/* Home */}
                     <Link href="/">
@@ -33,13 +33,13 @@ export default function MobileBottomNav({ onSearchClick }: { onSearchClick: () =
                     </Link>
 
                     {/* AI - Central Node */}
-                    <div className="flex justify-center relative -top-4">
+                    <div className="flex justify-center relative -top-3">
                         <Link href="/ai">
                             <button className="flex flex-col items-center justify-center">
-                                <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-[0_10px_30px_-5px_rgba(232,160,32,0.4)] transition-all duration-500 transform ${isActive("/ai") ? "bg-[#E8A020] scale-110" : "bg-[#11110F] hover:bg-[#1C1C1A] active:scale-95"} border-[3px] border-[#0F0F0E]`}>
-                                    <Sparkles size={22} className={isActive("/ai") ? "text-[#0F0F0E]" : "text-[#E8A020]"} fill={isActive("/ai") ? "currentColor" : "none"} />
+                                <div className={`w-11 h-11 rounded-full flex items-center justify-center shadow-[0_8px_20px_-5px_rgba(232,160,32,0.3)] transition-all duration-500 transform ${isActive("/ai") ? "bg-[#E8A020] scale-110" : "bg-[#11110F] hover:bg-[#1C1C1A] active:scale-95"} border-2 border-[#0F0F0E]`}>
+                                    <Sparkles size={18} className={isActive("/ai") ? "text-[#0F0F0E]" : "text-[#E8A020]"} fill={isActive("/ai") ? "currentColor" : "none"} />
                                 </div>
-                                <span className={`text-[8px] font-ui font-800 uppercase tracking-[0.2em] mt-1.5 whitespace-nowrap px-2 py-0.5 rounded-sm bg-[#0F0F0E]/40 backdrop-blur-md ${isActive("/ai") ? "text-[#E8A020]" : "text-[#8A8880]"}`}>AI CORE</span>
+                                <span className={`text-[6px] font-ui font-900 uppercase tracking-[0.2em] mt-1 whitespace-nowrap px-1.5 py-0.5 rounded-sm bg-[#0F0F0E]/80 backdrop-blur-md ${isActive("/ai") ? "text-[#E8A020]" : "text-[#8A8880]"}`}>AI CORE</span>
                             </button>
                         </Link>
                     </div>

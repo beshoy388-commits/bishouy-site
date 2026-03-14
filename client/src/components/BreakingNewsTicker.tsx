@@ -27,9 +27,9 @@ export default function BreakingNewsTicker() {
     <div className="bg-[#E8A020] overflow-hidden">
       <div className="flex items-stretch">
         {/* Label */}
-        <div className="flex-shrink-0 bg-[#0F0F0E] px-4 py-2 flex items-center gap-2 z-10 notranslate">
-          <span className="w-2 h-2 rounded-full bg-[#E8A020] animate-pulse" />
-          <span className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest whitespace-nowrap">
+        <div className="flex-shrink-0 bg-[#0F0F0E] pl-4 pr-3 py-2 flex items-center gap-2 z-10 notranslate border-r border-[#2A2A28]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#E8A020] animate-pulse" />
+          <span className="font-ui text-[9px] font-800 text-[#E8A020] uppercase tracking-[0.2em] whitespace-nowrap">
             Breaking
           </span>
         </div>
