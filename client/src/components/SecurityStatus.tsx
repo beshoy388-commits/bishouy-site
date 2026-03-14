@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
-import { Shield, CheckCircle, AlertTriangle, Terminal, Lock, Globe, Zap, Search, Loader2, X, Plus } from "lucide-react";
+import { Shield, CheckCircle, AlertTriangle, Terminal, Lock, Globe, Zap, Search, Loader2, X, Plus, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -10,9 +10,11 @@ export default function SecurityStatus() {
     const [scanProgress, setScanProgress] = useState(0);
     const [newIp, setNewIp] = useState("");
     const [ipReason, setIpReason] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
 
     const { data: auditLogs, isLoading: logsLoading } = trpc.security.getAuditLogs.useQuery({ limit: 20 });
     const { data: blacklistedIps, isLoading: ipsLoading, refetch: refetchIps } = trpc.security.getBlacklistedIps.useQuery();
+    const { data: myIpData } = trpc.security.getIp.useQuery();
 
     const blacklistMutation = trpc.security.blacklistIp.useMutation({
         onSuccess: () => {
@@ -31,6 +33,19 @@ export default function SecurityStatus() {
         },
         onError: (err) => toast.error(err.message)
     });
+
+    const clearBlacklistMutation = trpc.security.clearBlacklist.useMutation({
+        onSuccess: () => {
+            toast.success("IP Blacklist Cleared Successfully");
+            refetchIps();
+        },
+        onError: (err) => toast.error(err.message)
+    });
+
+    const filteredIps = blacklistedIps?.filter((entry: any) => 
+        entry.ipAddress.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (entry.reason && entry.reason.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
 
     const handleRunScan = () => {
         setIsScanning(true);
@@ -99,7 +114,10 @@ export default function SecurityStatus() {
                     </div>
                     <div className="flex items-end justify-between">
                         <span className="text-3xl font-headline text-[#F2F0EB]">Active</span>
-                        <span className="text-[10px] text-[#E8A020] font-bold uppercase tracking-widest">Whitelist Enforced</span>
+                        <div className="text-right">
+                          <span className="block text-[10px] text-[#E8A020] font-bold uppercase tracking-widest leading-none">Whitelist Enforced</span>
+                          {myIpData?.ip && <span className="text-[9px] text-[#555550] font-mono">Your IP: {myIpData.ip}</span>}
+                        </div>
                     </div>
                 </Card>
                 <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6 space-y-4">
@@ -122,6 +140,34 @@ export default function SecurityStatus() {
                             <Globe size={18} className="text-[#E8A020]" />
                             <span className="font-headline text-sm uppercase tracking-widest">IP Blacklist Management</span>
                         </div>
+                        {blacklistedIps && blacklistedIps.length > 0 && (
+                            <button 
+                                onClick={() => {
+                                    if(confirm("DANGER: Are you sure you want to clear the ENTIRE IP blacklist? This will restore access to all currently blocked addresses.")) {
+                                        clearBlacklistMutation.mutate();
+                                    }
+                                }}
+                                disabled={clearBlacklistMutation.isPending}
+                                className="flex items-center gap-1.5 px-3 py-1 bg-red-500/10 text-red-500 border border-red-500/20 rounded text-[9px] font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all"
+                            >
+                                <Trash2 size={12} /> Emergency Reset
+                            </button>
+                        )}
+                    </div>
+                    <div className="px-6 py-4 bg-[#0F0F0E] flex items-center gap-3 border-b border-[#2A2A28]">
+                        <Search size={14} className="text-[#555550]" />
+                        <input 
+                            type="text" 
+                            placeholder="Search blacklisted IPs or reasons..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="bg-transparent border-none text-[#F2F0EB] text-xs w-full focus:outline-none placeholder:text-[#333330]"
+                        />
+                        {searchQuery && (
+                            <button onClick={() => setSearchQuery("")} className="text-[#555550] hover:text-[#E8A020]">
+                                <X size={14} />
+                            </button>
+                        )}
                     </div>
                     <div className="p-6 space-y-4 border-b border-[#2A2A28]">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -151,11 +197,13 @@ export default function SecurityStatus() {
                     <div className="flex-1 overflow-auto max-h-[400px]">
                         {ipsLoading ? (
                              <div className="p-12 flex justify-center"><Loader2 className="animate-spin text-[#E8A020]" /></div>
-                        ) : blacklistedIps?.length === 0 ? (
-                            <div className="p-12 text-center text-[#555550] text-xs uppercase tracking-widest">No active IP blocks</div>
+                        ) : filteredIps?.length === 0 ? (
+                            <div className="p-12 text-center text-[#555550] text-xs uppercase tracking-widest">
+                                {searchQuery ? "No results matching your search" : "No active IP blocks"}
+                            </div>
                         ) : (
                             <div className="divide-y divide-[#2A2A28]/50">
-                                {blacklistedIps?.map((entry: any) => (
+                                {filteredIps?.map((entry: any) => (
                                     <div key={entry.ipAddress} className="p-4 flex items-center justify-between group hover:bg-red-500/[0.02]">
                                         <div className="min-w-0">
                                             <p className="text-sm font-mono text-[#F2F0EB]">{entry.ipAddress}</p>

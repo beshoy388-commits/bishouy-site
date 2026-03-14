@@ -20,7 +20,12 @@ const requireUser = t.middleware(async opts => {
   }
 
   // Interaction Restriction: Restricted accounts have Read-Only access.
-  if (ctx.user.status === "restricted" && type === "mutation") {
+  // Exception: Allowing the user to acknowledge the administrative notification modal.
+  if (
+    ctx.user.status === "restricted" && 
+    type === "mutation" && 
+    opts.path !== "users.acknowledgeNotification"
+  ) {
     throw new TRPCError({
       code: "FORBIDDEN",
       message: "Account Restricted: Your profile is currently in Read-Only mode. Interactions such as commenting, liking, and AI features are disabled.",

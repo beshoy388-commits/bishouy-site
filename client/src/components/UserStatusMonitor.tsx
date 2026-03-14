@@ -98,7 +98,8 @@ export default function UserStatusMonitor() {
 
                         <button
                             onClick={handleAction}
-                            className={`w-full py-4 rounded-xl font-headline text-sm uppercase tracking-widest font-bold transition-all hover:scale-[1.02] active:scale-[0.98] ${
+                            disabled={acknowledgeMutation.isPending}
+                            className={`w-full py-4 rounded-xl font-headline text-sm uppercase tracking-widest font-bold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-wait ${
                                 isBanned 
                                 ? 'bg-red-600 text-white hover:bg-red-500 shadow-lg shadow-red-600/20' 
                                 : isRestricted 
@@ -106,7 +107,7 @@ export default function UserStatusMonitor() {
                                 : 'bg-[#E8A020] text-[#0F0F0E] hover:bg-[#F0A830] shadow-lg shadow-[#E8A020]/20'
                             }`}
                         >
-                            {isBanned ? "Log Out & Terminate Session" : "Confirm Recognition"}
+                            {acknowledgeMutation.isPending ? "Processing Official Record..." : (isBanned ? "Log Out & Terminate Session" : "Confirm Recognition")}
                         </button>
                     </div>
                     

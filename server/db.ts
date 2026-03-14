@@ -1020,6 +1020,13 @@ export async function removeIpFromBlacklist(ip: string): Promise<void> {
   await db.delete(ipBlacklist).where(eq(ipBlacklist.ipAddress, ip));
 }
 
+export async function clearAllBlacklistedIps(): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.delete(ipBlacklist);
+}
+
 // Article likes queries
 export async function toggleArticleLike(
   articleId: number,

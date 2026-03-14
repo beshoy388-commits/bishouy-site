@@ -34,6 +34,7 @@ import {
   blacklistIp,
   getAllBlacklistedIps,
   removeIpFromBlacklist,
+  clearAllBlacklistedIps,
   toggleArticleLike,
   getArticleLikeCount,
   hasUserLikedArticle,
@@ -1905,6 +1906,23 @@ export const appRouter = router({
         );
         return { success: true };
       }),
+    clearBlacklist: adminProcedure.mutation(async ({ ctx }) => {
+      await clearAllBlacklistedIps();
+      await logResourceAction(
+        ctx.user.id,
+        "clear_ip_blacklist",
+        "system",
+        undefined,
+        { action: "purge_all" },
+        getClientIp(ctx.req),
+        getUserAgent(ctx.req)
+      );
+      return { success: true };
+    }),
+
+    getIp: adminProcedure.query(async ({ ctx }) => {
+      return { ip: getClientIp(ctx.req) };
+    }),
   }),
 });
 
