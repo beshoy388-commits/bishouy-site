@@ -1,5 +1,30 @@
-import { auditLogs, InsertAuditLog } from "../drizzle/schema";
+import { auditLogs, InsertAuditLog, users } from "../drizzle/schema";
 import { getDb } from "./db";
+import { desc, eq } from "drizzle-orm";
+
+export async function getAuditLogs(limit: number = 100) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select({
+    id: auditLogs.id,
+    userId: auditLogs.userId,
+    userName: users.name,
+    action: auditLogs.action,
+    resource: auditLogs.resource,
+    resourceId: auditLogs.resourceId,
+    changes: auditLogs.changes,
+    ipAddress: auditLogs.ipAddress,
+    userAgent: auditLogs.userAgent,
+    status: auditLogs.status,
+    errorMessage: auditLogs.errorMessage,
+    createdAt: auditLogs.createdAt,
+  })
+    .from(auditLogs)
+    .leftJoin(users, eq(auditLogs.userId, users.id))
+    .orderBy(desc(auditLogs.createdAt))
+    .limit(limit);
+}
 
 export async function logAuditAction(data: InsertAuditLog): Promise<void> {
   const db = await getDb();

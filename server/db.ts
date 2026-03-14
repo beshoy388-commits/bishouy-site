@@ -963,6 +963,22 @@ export async function blacklistIp(ip: string, reason?: string): Promise<void> {
   }
 }
 
+export async function getAllBlacklistedIps() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select()
+    .from(ipBlacklist)
+    .orderBy(desc(ipBlacklist.createdAt));
+}
+
+export async function removeIpFromBlacklist(ip: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.delete(ipBlacklist).where(eq(ipBlacklist.ipAddress, ip));
+}
+
 // Article likes queries
 export async function toggleArticleLike(
   articleId: number,

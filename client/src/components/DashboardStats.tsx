@@ -39,6 +39,7 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
   const statsQuery = trpc.system.stats.useQuery();
   const analyticsQuery = trpc.analytics.getSummary.useQuery();
   const trendingQuery = trpc.articles.trending.useQuery({ limit: 5 });
+  const { data: recentAudits } = trpc.security.getAuditLogs.useQuery({ limit: 4 });
 
   const clearCacheMutation = trpc.system.clearCache.useMutation({
     onSuccess: (data) => toast.success("System Flush Successful", { description: data.message }),
@@ -372,18 +373,20 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
             </div>
           </div>
           <div className="space-y-6">
-            {[
-              { type: 'AI', msg: 'New article generated: "Global Tech Trends"', time: 'Just now', color: 'text-purple-400' },
-              { type: 'USER', msg: 'New comment on "Economy Today"', time: '4 mins ago', color: 'text-blue-400' },
-              { type: 'SYS', msg: 'Ad campaign "Spring 2026" rotated', time: '12 mins ago', color: 'text-[#E8A020]' },
-              { type: 'SEC', msg: 'Suspicious IP 192.168.0.1 blocked', time: '1 hour ago', color: 'text-red-400' },
-            ].map((ev, i) => (
-              <div key={i} className="flex items-center gap-4 group">
-                <div className={`text-[9px] font-900 px-2 py-0.5 rounded border border-current opacity-70 ${ev.color}`}>{ev.type}</div>
-                <p className="text-xs text-[#F2F0EB] font-ui flex-1">{ev.msg}</p>
-                <span className="text-[10px] text-[#555550] uppercase tracking-widest">{ev.time}</span>
-              </div>
-            ))}
+            {!recentAudits || recentAudits.length === 0 ? (
+              <p className="text-center py-10 text-[#555550] text-xs uppercase tracking-widest">No recent events logged</p>
+            ) : (
+              recentAudits.map((log: any) => (
+                <div key={log.id} className="flex items-center gap-4 group">
+                  <div className={`text-[9px] font-900 px-2 py-0.5 rounded border border-current opacity-70 ${
+                    log.resource === 'auth' ? 'text-blue-400' : 
+                    log.resource === 'article' ? 'text-purple-400' :
+                    log.resource === 'system' ? 'text-orange-400' : 'text-[#E8A020]'
+                  }`}>{log.resource.toUpperCase()}</div>
+                  <p className="text-xs text-[#F2F0EB] font-ui flex-1 truncate">{log.action}: {log.userName || 'System'}</p>
+                </div>
+              ))
+            )}
           </div>
         </Card>
 

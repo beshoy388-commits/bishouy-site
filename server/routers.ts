@@ -32,6 +32,8 @@ import {
   restrictUser,
   isIpBlacklisted,
   blacklistIp,
+  getAllBlacklistedIps,
+  removeIpFromBlacklist,
   toggleArticleLike,
   getArticleLikeCount,
   hasUserLikedArticle,
@@ -80,7 +82,7 @@ import { TRPCError } from "@trpc/server";
 import OpenAI from "openai";
 import { ENV } from "./_core/env";
 import { aiChatCache, dbCache } from "./cache";
-import { logArticleAction, logResourceAction } from "./audit";
+import { getAuditLogs, logArticleAction, logResourceAction } from "./audit";
 import {
   checkRateLimit,
   validateAndCleanArticleData,
@@ -1822,6 +1824,51 @@ export const appRouter = router({
       }))
       .mutation(async ({ input }) => {
         return updateSocialPostStatus(input.id, input.status);
+      }),
+  }),
+
+  // Global Security Management
+  security: router({
+    getAuditLogs: adminProcedure
+      .input(z.object({ limit: z.number().default(100) }))
+      .query(async ({ input }) => {
+        return getAuditLogs(input.limit);
+      }),
+    
+    getBlacklistedIps: adminProcedure.query(async () => {
+      return getAllBlacklistedIps();
+    }),
+
+    blacklistIp: adminProcedure
+      .input(z.object({ ip: z.string(), reason: z.string().optional() }))
+      .mutation(async ({ input, ctx }) => {
+        await blacklistIp(input.ip, input.reason);
+        await logResourceAction(
+          ctx.user.id,
+          "blacklist_ip",
+          "system",
+          undefined,
+          { ip: input.ip, reason: input.reason },
+          getClientIp(ctx.req),
+          getUserAgent(ctx.req)
+        );
+        return { success: true };
+      }),
+
+    unblacklistIp: adminProcedure
+      .input(z.object({ ip: z.string() }))
+      .mutation(async ({ input, ctx }) => {
+        await removeIpFromBlacklist(input.ip);
+        await logResourceAction(
+          ctx.user.id,
+          "unblacklist_ip",
+          "system",
+          undefined,
+          { ip: input.ip },
+          getClientIp(ctx.req),
+          getUserAgent(ctx.req)
+        );
+        return { success: true };
       }),
   }),
 });

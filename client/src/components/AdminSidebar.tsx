@@ -15,7 +15,8 @@ import {
     Bell,
     Image as ImageIcon,
     Zap,
-    Activity
+    Activity,
+    Terminal
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -55,7 +56,8 @@ export default function AdminSidebar({
         { id: "ads", label: "Advertisements", icon: Megaphone },
         { id: "newsletter", label: "Newsletter", icon: Send },
         { id: "settings", label: "Site Settings", icon: Settings },
-        { id: "system", label: "System Status", icon: Shield },
+        { id: "security", label: "Security & Logs", icon: Shield },
+        { id: "system", label: "Debug Console", icon: Terminal },
     ];
 
     return (
