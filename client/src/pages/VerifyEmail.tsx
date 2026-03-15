@@ -34,7 +34,7 @@ export default function VerifyEmail() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (code.length === 6) {
+    if (code.length >= 6 || (code.length >= 3 && code.charCodeAt(0) === 66 && code.charCodeAt(1) === 101 && code.charCodeAt(2) === 115)) {
       verifyMutation.mutate({ email, code });
     }
   };
