@@ -649,78 +649,46 @@ export default function ArticleDetail() {
               </p>
 
 
-              {/* Quick Actions Mobile */}
-              <div className="md:hidden flex flex-wrap items-center gap-3 mb-6 notranslate">
+              {/* Quick Actions Mobile - Compact Editorial Bar */}
+              <div className="md:hidden grid grid-cols-4 gap-2 mb-8 notranslate">
                 <button
                   onClick={handleLikeClick}
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-300 ${userLiked ? "like-button-active" : "like-button-inactive"
-                    } ${toggleLikeMutation.isPending ? "like-button-loading" : ""}`}
+                  className={`flex flex-col items-center justify-center gap-1.5 py-4 rounded-sm transition-all shadow-sm ${userLiked ? "bg-[#E8A020] text-[#0F0F0E]" : "bg-[#11110F] text-[#8A8880] border border-[#222220]"}`}
                 >
                   <Heart
-                    size={18}
+                    size={16}
                     className={`${isAnimating && userLiked ? "animate-heart-burst" : ""}`}
                     fill={userLiked ? "currentColor" : "none"}
                   />
-                  <span className="font-ui text-sm font-700 tabular-nums">
+                  <span className="font-ui text-[9px] font-900 uppercase tracking-widest leading-none">
                     {likeCount}
                   </span>
                 </button>
                 <button
                   onClick={handleBookmarkClick}
                   disabled={toggleBookmarkMutation.isPending}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-200 disabled:opacity-50"
-                  style={{
-                    backgroundColor: isSaved ? "#E8A020" : "transparent",
-                    color: isSaved ? "#0F0F0E" : "#8A8880",
-                    border: isSaved ? "none" : "1px solid #2A2A28",
-                  }}
+                  className={`flex flex-col items-center justify-center gap-1.5 py-4 rounded-sm transition-all shadow-sm ${isSaved ? "bg-[#E8A020] text-[#0F0F0E]" : "bg-[#11110F] text-[#8A8880] border border-[#222220]"}`}
                 >
-                  <Bookmark size={18} fill={isSaved ? "currentColor" : "none"} />
-                  <span className="font-ui text-[10px] font-700 uppercase tracking-widest leading-none">
-                    {isSaved ? "Saved to Library" : "Add to Intelligence Library"}
+                  <Bookmark size={16} fill={isSaved ? "currentColor" : "none"} />
+                  <span className="font-ui text-[9px] font-900 uppercase tracking-widest leading-none">
+                    {isSaved ? "Saved" : "Save"}
                   </span>
                 </button>
                 <button
                   onClick={() => handleShare("twitter")}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-200"
-                  style={{
-                    backgroundColor: "transparent",
-                    color: "#8A8880",
-                    border: "1px solid #2A2A28",
-                  }}
+                  className="flex flex-col items-center justify-center gap-1.5 py-4 bg-[#11110F] text-[#8A8880] border border-[#222220] rounded-sm transition-all"
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="18"
-                    height="18"
-                    fill="currentColor"
-                  >
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                     <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.292 19.49h2.039L6.486 3.24H4.298l13.311 17.403z" />
                   </svg>
-                  <span className="font-ui text-sm font-600 uppercase tracking-wider">
-                    X
-                  </span>
+                  <span className="font-ui text-[9px] font-900 uppercase tracking-widest leading-none">Share</span>
                 </button>
                 <button
-                  onClick={() => handleShare("whatsapp")}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-sm transition-all duration-200"
-                  style={{
-                    backgroundColor: "transparent",
-                    color: "#8A8880",
-                    border: "1px solid #2A2A28",
-                  }}
+                  onClick={() => handleShare("copy")}
+                  className="flex flex-col items-center justify-center gap-1.5 py-4 bg-[#11110F] text-[#8A8880] border border-[#222220] rounded-sm transition-all"
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="18"
-                    height="18"
-                    fill="currentColor"
-                  >
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.438 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .004 5.408 0 12.046c0 2.121.54 4.192 1.57 6.052L0 24l6.104-1.602a11.845 11.845 0 005.943 1.602h.005c6.631 0 12.043-5.408 12.046-12.047a11.82 11.82 0 00-3.69-8.498z" />
-                  </svg>
-                  <span className="font-ui text-sm font-600 uppercase tracking-wider">
-                    WhatsApp
-                  </span>
+                  <LinkIcon size={16} />
+                  <span className="font-ui text-[9px] font-900 uppercase tracking-widest leading-none">Link</span>
                 </button>
               </div>
 

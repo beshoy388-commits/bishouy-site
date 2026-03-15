@@ -242,8 +242,8 @@ export default function ArticleCard({
   if (variant === "horizontal") {
     return (
       <Link href={`/article/${article.slug}`}>
-        <article className="article-card group flex gap-4 cursor-pointer">
-          <div className="img-zoom flex-shrink-0 w-24 h-20 rounded-sm overflow-hidden text-[#0F0F0E]">
+        <article className="article-card group flex gap-4 cursor-pointer p-2 md:p-0 rounded-sm bg-[#11110F] md:bg-transparent border border-[#1C1C1A] md:border-none">
+          <div className="img-zoom flex-shrink-0 w-28 h-24 md:w-24 md:h-20 rounded-sm overflow-hidden text-[#0F0F0E]">
             <img
               src={getSafeImage(article.image, article.category, article.id, rw(400))}
               alt={article.title}
@@ -253,18 +253,20 @@ export default function ArticleCard({
               onError={handleImageError}
             />
           </div>
-          <div className="flex-1 min-w-0">
-            <span
-              className="category-badge mb-1.5 inline-block"
-              style={{ backgroundColor: article.categoryColor || "#E8A020" }}
-            >
-              {article.category}
-            </span>
-            <h3 className="font-headline text-sm font-700 text-[#F2F0EB] leading-snug line-clamp-2 title-hover mb-2">
-              <span>{article.title}</span>
-            </h3>
-            <div className="flex items-center justify-between">
-              <span className="font-ui text-[11px] text-[#8A8880]">
+          <div className="flex-1 min-w-0 pr-2 py-1 flex flex-col justify-between">
+            <div>
+              <span
+                className="category-badge mb-1.5 inline-block text-[8px]"
+                style={{ backgroundColor: article.categoryColor || "#E8A020" }}
+              >
+                {article.category}
+              </span>
+              <h3 className="font-headline text-[13px] md:text-sm font-700 text-[#F2F0EB] leading-tight line-clamp-2 md:line-clamp-2 title-hover">
+                <span>{article.title}</span>
+              </h3>
+            </div>
+            <div className="flex items-center justify-between mt-auto">
+              <span className="font-ui text-[9px] md:text-[11px] text-[#555550] uppercase tracking-tighter">
                 {(article as any).date}
               </span>
               {showLikes && <LikeButton />}

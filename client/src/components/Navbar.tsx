@@ -18,6 +18,7 @@ import {
   Sparkles,
   Shield,
   UserPlus,
+  ArrowRight,
 } from "lucide-react";
 import { CATEGORIES } from "@/lib/articles";
 import { toast } from "sonner";
@@ -143,7 +144,7 @@ export default function Navbar() {
             {/* Logo — center (Desktop & Mobile) */}
             <div className="flex-shrink-0 flex justify-center absolute left-1/2 -translate-x-1/2">
               <Link href="/" className="notranslate" aria-label="BISHOUY.COM Home">
-                <span className="font-display text-2xl md:text-3xl lg:text-4xl text-[#F2F0EB] tracking-tighter hover:text-[#E8A020] transition-all block leading-none">
+                <span className="font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl text-[#F2F0EB] tracking-tighter hover:text-[#E8A020] transition-all block leading-none">
                   <span>BISHOUY</span>
                   <span className="text-[#E8A020]">.</span>
                 </span>
@@ -251,10 +252,22 @@ export default function Navbar() {
               <Link
                 href="/"
                 onClick={() => setIsMenuOpen(false)}
-                className="font-ui text-sm text-[#F2F0EB] py-3 border-b border-[#1C1C1A] hover:text-[#E8A020] transition-colors"
+                className="font-ui text-sm text-[#F2F0EB] py-3 border-b border-[#1C1C1A] hover:text-[#E8A020] transition-colors flex items-center justify-between"
               >
                 Home
+                <ArrowRight size={14} className="text-[#333330]" />
               </Link>
+              <Link
+                href="/ai"
+                onClick={() => setIsMenuOpen(false)}
+                className="font-ui text-sm text-[#E8A020] py-3 border-b border-[#1C1C1A] flex items-center gap-2"
+              >
+                <Sparkles size={16} />
+                Editorial Intelligence (AI)
+              </Link>
+              <div className="py-2 mt-2">
+                <span className="font-ui text-[10px] text-[#555550] uppercase tracking-widest font-700">Categories</span>
+              </div>
               {CATEGORIES.map(cat => (
                 <Link
                   key={cat.slug}
@@ -266,21 +279,41 @@ export default function Navbar() {
                 </Link>
               ))}
               {user && (
-                <div className="flex items-center justify-between py-3 border-t border-[#1C1C1A] mt-3">
-                  <span className="font-ui text-xs text-[#555550] uppercase tracking-widest">
-                    Account
-                  </span>
-                  <button
-                    onClick={async () => {
-                      await logout();
-                      setIsMenuOpen(false);
-                      window.location.href = "/";
-                    }}
-                    className="flex items-center gap-2 text-red-500/70 hover:text-red-500 transition-colors font-ui text-[10px] uppercase tracking-widest"
+                <div className="flex flex-col gap-1 mt-6 pt-6 border-t border-[#1C1C1A]">
+                  <Link
+                    href="/profile"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="font-ui text-sm text-[#8A8880] py-3 border-b border-[#1C1C1A] flex items-center gap-2"
                   >
-                    <LogOut size={12} />
-                    Logout
-                  </button>
+                    <UserIcon size={16} />
+                    Intelligence Library
+                  </Link>
+                  {user.role === "admin" && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="font-ui text-sm text-[#E8A020] py-3 border-b border-[#1C1C1A] flex items-center gap-2"
+                    >
+                      <Shield size={16} />
+                      System Control
+                    </Link>
+                  )}
+                  <div className="flex items-center justify-between py-4">
+                    <span className="font-ui text-xs text-[#555550] uppercase tracking-widest">
+                      Session
+                    </span>
+                    <button
+                      onClick={async () => {
+                        await logout();
+                        setIsMenuOpen(false);
+                        window.location.href = "/";
+                      }}
+                      className="flex items-center gap-2 text-red-500/70 hover:text-red-500 transition-colors font-ui text-[10px] uppercase tracking-widest font-700"
+                    >
+                      <LogOut size={14} />
+                      Terminate Session
+                    </button>
+                  </div>
                 </div>
               )}
             </nav>

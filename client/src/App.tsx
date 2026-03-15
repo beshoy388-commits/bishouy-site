@@ -126,10 +126,10 @@ function AppContent() {
       <GoogleAnalytics />
       {/* 
         Dynamic Layout Container 
-        pt-48 (12rem/192px) on mobile, pt-60 (15rem/240px) on desktop 
-        This ensures content is never hidden behind the fixed header (top bar + nav + ads + ticker)
+        pt-32 (8rem/128px) on mobile, pt-52 (13rem/208px) on desktop 
+        Optimized to show more content above the fold on mobile.
       */}
-      <div className={!isAdminPage ? `min-h-screen pt-48 lg:pt-60 ${!isAdminPage ? "pb-24 lg:pb-0" : ""}` : "min-h-screen"}>
+      <div className={!isAdminPage ? `min-h-screen pt-32 lg:pt-52 ${!isAdminPage ? "pb-24 lg:pb-0" : ""}` : "min-h-screen"}>
         <Router />
       </div>
       <CookieConsent />
