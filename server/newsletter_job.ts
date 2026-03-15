@@ -1,5 +1,5 @@
 import { getDb, createSentNewsletterRecord } from "./db";
-import { articles, subscribers } from "../drizzle/schema";
+import { articles, subscribers, sentNewsletters } from "../drizzle/schema";
 import { count, eq, gt, desc, and } from "drizzle-orm";
 import { sendNewsletterBroadcast } from "./_core/mail";
 import { logArticleAction } from "./audit";
@@ -17,6 +17,23 @@ export async function sendDailyNewsletter(testEmail?: string) {
   console.log(
     `[Newsletter] Starting ${testEmail ? "TEST " : "daily "}broadcast...`
   );
+
+  // 0. Idempotency Check: Prevent duplicate sends on the same day (unless it's a test)
+  if (!testEmail) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const sentToday = await db
+      .select()
+      .from(sentNewsletters)
+      .where(gt(sentNewsletters.createdAt, today))
+      .limit(1);
+
+    if (sentToday.length > 0) {
+      console.log("[Newsletter] A broadcast was already sent today. Skipping to prevent duplicates.");
+      return;
+    }
+  }
 
   // 1. Get articles from the last 24 hours
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);

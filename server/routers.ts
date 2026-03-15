@@ -427,6 +427,15 @@ export const appRouter = router({
           maxAge: 1000 * 60 * 60 * 24 * 365,
         });
 
+        // Automatic Newsletter Subscription on Verification
+        try {
+          if (user.email) {
+            await createSubscriber(user.email);
+          }
+        } catch (error) {
+          console.error("[AUTO-SUBSCRIBE ERROR]", error);
+        }
+
         // Send professional welcome email after successful verification
         try {
           await sendWelcomeEmailWithBenefits(user.email!, user.name || "Nuovo Utente");
