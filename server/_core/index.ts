@@ -253,7 +253,7 @@ async function startServer() {
     }
   });
 
-  // SEO: Dynamic Sitemap Generation
+  // SEO: Dynamic Sitemap Generation (Standard)
   app.get("/sitemap.xml", async (req, res) => {
     try {
       const { getAllArticles } = await import("../db");
@@ -305,6 +305,52 @@ async function startServer() {
     }
   });
 
+  // SEO: Google News Sitemap (Specific format for fast indexing)
+  app.get("/sitemap-news.xml", async (req, res) => {
+    try {
+      const { getAllArticles } = await import("../db");
+      // Google News requires articles from the last 2 days
+      const twoDaysAgo = new Date(Date.now() - 48 * 60 * 60 * 1000);
+      const allArticles = await getAllArticles(false);
+      const newsArticles = allArticles.filter(a => {
+        const pubDate = new Date(a.publishedAt || a.createdAt);
+        return pubDate >= twoDaysAgo;
+      });
+
+      const baseUrl = ENV.appUrl.endsWith("/")
+        ? ENV.appUrl.slice(0, -1)
+        : ENV.appUrl;
+      const siteName = "BISHOUY";
+
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">`;
+
+      for (const article of newsArticles) {
+        const pubDate = (article.publishedAt || article.createdAt || new Date()).toISOString();
+        xml += `
+  <url>
+    <loc>${baseUrl}/article/${article.slug}</loc>
+    <news:news>
+      <news:publication>
+        <news:name>${siteName}</news:name>
+        <news:language>en</news:language>
+      </news:publication>
+      <news:publication_date>${pubDate}</news:publication_date>
+      <news:title><![CDATA[${article.title}]]></news:title>
+    </news:news>
+  </url>`;
+      }
+
+      xml += `\n</urlset>`;
+
+      res.header("Content-Type", "application/xml");
+      res.send(xml);
+    } catch (err) {
+      console.error("[News Sitemap] Generation failed:", err);
+      res.status(500).send("Error generating news sitemap");
+    }
+  });
+
   // SEO: Robots.txt
   app.get("/robots.txt", (req, res) => {
     const baseUrl = ENV.appUrl.endsWith("/")
@@ -312,7 +358,8 @@ async function startServer() {
       : ENV.appUrl;
     const robots = `User-agent: *
 Allow: /
-Sitemap: ${baseUrl}/sitemap.xml`;
+Sitemap: ${baseUrl}/sitemap.xml
+Sitemap: ${baseUrl}/sitemap-news.xml`;
     res.header("Content-Type", "text/plain");
     res.send(robots);
   });
