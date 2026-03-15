@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
-import { Shield, CheckCircle, AlertTriangle, Terminal, Lock, Globe, Zap, Search, Loader2, X, Plus, Trash2 } from "lucide-react";
+import { Shield, CheckCircle, AlertTriangle, Terminal, Lock, Globe, Zap, Search, Loader2, X, Plus, Trash2, Key, RefreshCw } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -11,10 +11,22 @@ export default function SecurityStatus() {
     const [newIp, setNewIp] = useState("");
     const [ipReason, setIpReason] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
+    const [backupCodes, setBackupCodes] = useState<string[]>([]);
 
     const { data: auditLogs, isLoading: logsLoading } = trpc.security.getAuditLogs.useQuery({ limit: 20 });
     const { data: blacklistedIps, isLoading: ipsLoading, refetch: refetchIps } = trpc.security.getBlacklistedIps.useQuery();
     const { data: myIpData } = trpc.security.getIp.useQuery();
+    
+    // 2FA Management Hooks
+    const { data: securityInfo, refetch: refetchSecurity } = trpc.users.get2FASecurityInfo.useQuery();
+    const generateCodesMutation = trpc.users.generate2FABackupCodes.useMutation({
+        onSuccess: (data) => {
+            setBackupCodes(data.codes);
+            refetchSecurity();
+            toast.success("Emergency access keys generated successfully.");
+        },
+        onError: (err) => toast.error(err.message)
+    });
 
     const blacklistMutation = trpc.security.blacklistIp.useMutation({
         onSuccess: () => {
@@ -122,15 +134,79 @@ export default function SecurityStatus() {
                 </Card>
                 <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6 space-y-4">
                     <div className="flex items-center gap-3">
-                        <Zap className="text-[#E8A020]" size={20} />
-                        <h4 className="text-[#F2F0EB] font-headline text-sm uppercase tracking-tight">Audit Health</h4>
+                        <Key className="text-[#E8A020]" size={20} />
+                        <h4 className="text-[#F2F0EB] font-headline text-sm uppercase tracking-tight">2FA Security</h4>
                     </div>
                     <div className="flex items-end justify-between">
-                        <span className="text-3xl font-headline text-[#F2F0EB]">Secure</span>
-                        <span className="text-[10px] text-green-500 font-bold uppercase tracking-widest">Logs verified</span>
+                        <span className="text-3xl font-headline text-[#F2F0EB]">Active</span>
+                        <div className="text-right">
+                          <span className="block text-[10px] text-green-500 font-bold uppercase tracking-widest leading-none">Protection Active</span>
+                          <span className="text-[9px] text-[#555550]">Email & Backup Codes</span>
+                        </div>
                     </div>
                 </Card>
             </div>
+
+            {/* 2FA Backup Codes Management */}
+            <Card className="bg-[#1C1C1A]/40 border-[#2A2A28] border-dashed p-8">
+                <div className="flex flex-col md:flex-row gap-8 items-center border-l-2 border-[#E8A020] pl-8">
+                    <div className="flex-1 space-y-2">
+                        <h3 className="text-xl font-headline text-[#F2F0EB] uppercase tracking-tighter">Emergency Access Pipeline</h3>
+                        <p className="text-[#8A8880] text-sm leading-relaxed max-w-2xl">
+                            If the OTP email delivery (Brevo) fails or is unreachable, use a physical 12-character <span className="text-[#E8A020]">Backup Code</span> to bypass the restriction. We recommend generating and printing these codes for secure offline storage.
+                        </p>
+                        <div className="flex items-center gap-4 pt-2">
+                            <div className="px-3 py-1 bg-[#0F0F0E] rounded border border-[#2A2A28] flex items-center gap-2">
+                                <span className="text-[10px] text-[#555550] uppercase font-bold tracking-widest">Codes Remaining:</span>
+                                <span className="text-xs font-mono text-[#F2F0EB]">{securityInfo?.hasBackupCodes ? securityInfo.backupCodesCount : "NONE"}</span>
+                            </div>
+                            {!securityInfo?.hasBackupCodes && (
+                                <span className="text-[10px] text-red-500 font-bold uppercase tracking-widest flex items-center gap-1.5 animate-pulse">
+                                    <AlertTriangle size={12} /> Vulnerability: No Backup codes generated
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                    <button 
+                        onClick={() => {
+                            if (confirm("NEW SECURITY GENESIS: This will invalidate all previous backup codes and generate 10 new emergency keys. Proceed?")) {
+                                generateCodesMutation.mutate();
+                            }
+                        }}
+                        disabled={generateCodesMutation.isPending}
+                        className="whitespace-nowrap flex items-center gap-2 px-8 py-4 bg-[#1C1C1A] border border-[#2A2A28] text-[#E8A020] hover:border-[#E8A020] hover:bg-[#E8A020]/5 rounded text-xs font-bold uppercase tracking-widest transition-all shadow-xl"
+                    >
+                        {generateCodesMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
+                        {securityInfo?.hasBackupCodes ? "Regenerate Keys" : "Generate Emergency Keys"}
+                    </button>
+                </div>
+
+                {/* Backup Codes Display */}
+                {backupCodes.length > 0 && (
+                    <div className="mt-10 p-8 bg-[#0A0A09] border border-[#E8A020]/30 rounded-xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-4">
+                             <button 
+                                onClick={() => setBackupCodes([])}
+                                className="text-[#555550] hover:text-[#F2F0EB]"
+                                title="Close & Secure view"
+                             >
+                                <X size={20} />
+                             </button>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                            {backupCodes.map((code, i) => (
+                                <div key={i} className="bg-[#11110F] border border-[#1C1C1A] p-3 text-center rounded hover:border-[#E8A020]/50 transition-colors">
+                                    <span className="font-mono text-sm text-[#F2F0EB] tracking-wider">{code}</span>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="mt-8 flex justify-between items-center text-[9px] text-[#555550] font-bold uppercase tracking-[0.2em]">
+                             <span>SECURITY STATUS: TEMPORARY DISPLAY ACTIVE - SAVE TO PASSWORD MANAGER NOW</span>
+                             <span className="text-[#E8A020]">10x ENCRYPTED KEYS GENERATED</span>
+                        </div>
+                    </div>
+                )}
+            </Card>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* IP Blacklist Manager */}

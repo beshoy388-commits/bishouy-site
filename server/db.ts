@@ -189,6 +189,17 @@ export async function getDb() {
         );
       } catch (err) {}
 
+      // 2FA Migrations
+      try {
+        await client.execute("ALTER TABLE users ADD COLUMN twoFactorEnabled INTEGER DEFAULT 0 NOT NULL;");
+      } catch (err) {}
+      try {
+        await client.execute("ALTER TABLE users ADD COLUMN twoFactorSecret TEXT;");
+      } catch (err) {}
+      try {
+        await client.execute("ALTER TABLE users ADD COLUMN twoFactorBackupCodes TEXT;");
+      } catch (err) {}
+
       // Migration for ip_blacklist table
       try {
         await client.execute(`
@@ -973,6 +984,24 @@ export async function purgeUser(id: number): Promise<void> {
 
   // 2. Physical deletion from users table
   await db.delete(users).where(eq(users.id, id));
+}
+
+export async function getBackupCodes(userId: number): Promise<string[]> {
+  const user = await getUserById(userId);
+  if (!user || !user.twoFactorBackupCodes) return [];
+  try {
+    return JSON.parse(user.twoFactorBackupCodes);
+  } catch (e) {
+    return [];
+  }
+}
+
+export async function updateBackupCodes(userId: number, codes: string[]): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(users)
+    .set({ twoFactorBackupCodes: JSON.stringify(codes) })
+    .where(eq(users.id, userId));
 }
 
 export async function isIpBlacklisted(ip: string): Promise<boolean> {

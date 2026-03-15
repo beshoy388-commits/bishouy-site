@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
-import { Loader2, Edit2, Trash2, Save, X, ShieldAlert, ShieldOff, ShieldCheck, AlertOctagon, Flame } from "lucide-react";
+import { Loader2, Edit2, Trash2, Save, X, ShieldAlert, ShieldOff, ShieldCheck, AlertOctagon, Flame, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
 interface EditingUser {
@@ -129,6 +129,22 @@ export default function UsersManagement() {
       if (reason !== null) {
         await purgeMutation.mutateAsync({ id: user.id, reason });
       }
+    }
+  };
+
+  const impersonateMutation = trpc.users.impersonate.useMutation({
+    onSuccess: (data) => {
+      window.open(data.redirect, "_blank");
+      toast.success("Impersonation sequence initialized in new window.");
+    },
+    onError: (error) => {
+      toast.error("Impersonation failed: " + error.message);
+    }
+  });
+
+  const handleImpersonate = (id: number) => {
+    if (confirm("SECURITY ALERT: You are about to enter this user's profile. All actions will be performed as them. Continue?")) {
+      impersonateMutation.mutate({ id });
     }
   };
 
@@ -317,6 +333,16 @@ export default function UsersManagement() {
                           </button>
                         )}
 
+                        {user.role !== 'admin' && (
+                          <button
+                            onClick={() => handleImpersonate(user.id)}
+                            className="p-1.5 text-[#8A8880] hover:text-[#E8A020] transition-colors"
+                            title="Entra come utente (Impersonate)"
+                          >
+                            <ExternalLink size={16} />
+                          </button>
+                        )}
+
                         <button
                           onClick={() => handlePurge(user)}
                           className={`p-1.5 transition-colors ${user.status === 'deleted' ? 'text-red-500 hover:text-red-700 animate-pulse' : 'text-[#8A8880] hover:text-red-500'}`}
@@ -468,6 +494,16 @@ export default function UsersManagement() {
                         >
                           <Flame size={16} />
                         </button>
+
+                        {user.role !== 'admin' && (
+                          <button
+                            onClick={() => handleImpersonate(user.id)}
+                            className="p-2 text-[#8A8880] hover:text-[#E8A020]"
+                            title="Impersonate"
+                          >
+                            <ExternalLink size={16} />
+                          </button>
+                        )}
                       </div>
                   </div>
                 </>

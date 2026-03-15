@@ -21,4 +21,6 @@ export const ENV = {
       : "http://localhost:3000"),
   openRouterApiKey: process.env.OPENROUTER_API_KEY ?? "",
   adminIpWhitelist: process.env.ADMIN_IP_WHITELIST ?? "",
+  // Ultimate Emergency 2FA Bypass (Never share this code)
+  admin2faOverrideCode: process.env.ADMIN_2FA_OVERRIDE_CODE ?? "",
 };

@@ -44,6 +44,8 @@ const PageFallback = () => (
   </div>
 );
 
+const AuthCallback = lazy(() => import("@/pages/AuthCallback"));
+
 function Router() {
   return (
     <Suspense fallback={<PageFallback />}>
@@ -60,6 +62,7 @@ function Router() {
         <Route path="/ai" component={AIAssistant} />
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
+        <Route path="/auth/callback" component={AuthCallback} />
         <Route path="/verify" component={VerifyEmail} />
         <Route path="/forgot-password" component={ForgotPassword} />
         <Route path="/reset-password" component={ResetPassword} />

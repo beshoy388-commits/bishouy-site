@@ -79,6 +79,8 @@ import {
   markForDeletion,
   updateVisitorSession,
   getActiveVisitors,
+  getBackupCodes,
+  updateBackupCodes,
 } from "./db";
 import { comments, InsertArticle, articles, users, verificationCodes } from "../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
@@ -364,6 +366,13 @@ export const appRouter = router({
         return { success: true, message: "Verification code sent to email." };
       }),
 
+    checkEmailAvailability: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .query(async ({ input }) => {
+        const existing = await getUserByEmail(input.email);
+        return { available: !existing };
+      }),
+
     verifyEmail: publicProcedure
       .input(
         z.object({
@@ -449,6 +458,7 @@ export const appRouter = router({
         z.object({
           email: z.string().email(),
           password: z.string(),
+          rememberMe: z.boolean().default(false),
         })
       )
       .mutation(async ({ input, ctx }) => {
@@ -475,15 +485,118 @@ export const appRouter = router({
           });
         }
 
+        // Special logic for Admins: Forced 2FA via Email (for now)
+        if (user.role === "admin") {
+          const code = generateVerificationCode();
+          await createVerificationCode({
+            email: user.email!,
+            code,
+            expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 mins
+          });
+          
+          await sendVerificationEmail(user.email!, code);
+          
+          return { 
+            success: true, 
+            twoFactorRequired: true, 
+            email: user.email,
+            message: "Security Protocol: Admin 2FA verification code sent to your email."
+          };
+        }
+
+        const expiresInMs = input.rememberMe 
+          ? 1000 * 60 * 60 * 24 * 365 // 1 year
+          : 1000 * 60 * 60 * 24;      // 1 day
+
         const sessionToken = await sdk.createSessionToken(user.openId, {
           name: user.name || "",
-          expiresInMs: 1000 * 60 * 60 * 24 * 365,
+          expiresInMs,
         });
 
         const cookieOptions = getSessionCookieOptions(ctx.req);
         ctx.res.cookie(COOKIE_NAME, sessionToken, {
           ...cookieOptions,
-          maxAge: 1000 * 60 * 60 * 24 * 365,
+          maxAge: expiresInMs,
+        });
+
+        return { success: true };
+      }),
+
+    verify2FA: publicProcedure
+      .input(z.object({ 
+        email: z.string().email(),
+        code: z.string().min(6).max(12),
+        rememberMe: z.boolean().default(false)
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const user = await getUserByEmail(input.email);
+        if (!user || user.role !== 'admin') {
+           throw new TRPCError({ code: "FORBIDDEN", message: "Invalid request." });
+        }
+
+        let isVerified = false;
+
+        // Try OTP code first (6 digits)
+        if (input.code.length === 6 && /^\d+$/.test(input.code)) {
+          const latestCode = await getLatestVerificationCode(input.email);
+          if (latestCode && latestCode.code === input.code && latestCode.expiresAt > new Date()) {
+            isVerified = true;
+            await deleteVerificationCodeByEmail(input.email);
+          }
+        }
+
+        // Try Backup Code if not verified
+        if (!isVerified) {
+          const backupCodes = await getBackupCodes(user.id);
+          if (backupCodes.includes(input.code)) {
+            isVerified = true;
+            // Remove the used backup code
+            const remainingCodes = backupCodes.filter((c: string) => c !== input.code);
+            await updateBackupCodes(user.id, remainingCodes);
+            await logResourceAction(user.id, "use_backup_code", "auth", user.id, { remaining: remainingCodes.length }, getClientIp(ctx.req), getUserAgent(ctx.req));
+          }
+        }
+
+        // Ultimate Emergency Override via ENV (Fail-safe)
+        if (!isVerified && ENV.admin2faOverrideCode && input.code === ENV.admin2faOverrideCode) {
+           isVerified = true;
+           await logResourceAction(user.id, "emergency_override_login", "auth", user.id, {}, getClientIp(ctx.req), getUserAgent(ctx.req));
+        }
+
+        if (!isVerified) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid or expired 2FA security code. Please try again or use a backup code." });
+        }
+
+        const expiresInMs = input.rememberMe 
+          ? 1000 * 60 * 60 * 24 * 365 
+          : 1000 * 60 * 60 * 24;
+
+        const sessionToken = await sdk.createSessionToken(user.openId, {
+          name: user.name || "",
+          expiresInMs,
+        });
+
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, sessionToken, {
+          ...cookieOptions,
+          maxAge: expiresInMs,
+        });
+
+        return { success: true };
+      }),
+
+    verifyImpersonation: publicProcedure
+      .input(z.object({ token: z.string() }))
+      .mutation(async ({ input, ctx }) => {
+        const payload = await sdk.verifySession(input.token);
+        if (!payload) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid or expired impersonation session." });
+        }
+
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, input.token, {
+          ...cookieOptions,
+          maxAge: 1000 * 60 * 60, // 1 hour for impersonation
         });
 
         return { success: true };
@@ -1503,6 +1616,46 @@ export const appRouter = router({
         return { success: true, message: "User has been banned and access restricted." };
       }),
 
+    // Admin: Impersonate user (Log in as the user)
+    impersonate: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input, ctx }) => {
+        const user = await getUserById(input.id);
+        if (!user) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+        }
+
+        if (user.role === "admin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Security Protocol: Admin-to-Admin impersonation is prohibited." });
+        }
+
+        // Create session token for the target user
+        const sessionToken = await sdk.createSessionToken(user.openId, {
+          name: user.name || "",
+          expiresInMs: 1000 * 60 * 60, // 1 hour for impersonation
+        });
+
+        // Clear current admin session temporarily or just set the new one
+        // Note: We use a special cookie or just overwrite for the new window?
+        // The user wants it in another window. So we return the token/url.
+        
+        await logResourceAction(
+          ctx.user.id,
+          "impersonate",
+          "user",
+          input.id,
+          { targetUser: user.username, targetEmail: user.email },
+          getClientIp(ctx.req),
+          getUserAgent(ctx.req)
+        );
+
+        return { 
+          success: true, 
+          token: sessionToken,
+          redirect: `/auth/callback?token=${sessionToken}`
+        };
+      }),
+
     // Protected: User wipes their own account (Hard Delete)
     purgeMe: protectedProcedure.mutation(async ({ ctx }) => {
         const userId = ctx.user.id;
@@ -1544,6 +1697,33 @@ export const appRouter = router({
       .input(z.object({ username: z.string() }))
       .query(async ({ input }) => {
         return getPublicUserComments(input.username);
+      }),
+
+    // Admin/Security: Generate 2FA Backup Codes
+    generate2FABackupCodes: adminProcedure
+      .mutation(async ({ ctx }) => {
+        const userId = ctx.user.id;
+        // Generate 10 random 12-char alphanumeric codes
+        const codes = Array.from({ length: 10 }, () => 
+          Math.random().toString(36).substring(2, 14).toUpperCase()
+        );
+        await updateBackupCodes(userId, codes);
+        
+        await logResourceAction(userId, "generate_backup_codes", "user", userId, {}, getClientIp(ctx.req), getUserAgent(ctx.req));
+        
+        return { success: true, codes };
+      }),
+      
+    // Admin/Security: Get current 2FA status and meta info
+    get2FASecurityInfo: adminProcedure
+      .query(async ({ ctx }) => {
+        const user = await getUserById(ctx.user.id);
+        const backupCodes = await getBackupCodes(ctx.user.id);
+        return {
+          twoFactorEnabled: user?.twoFactorEnabled === 1,
+          backupCodesCount: backupCodes.length,
+          hasBackupCodes: backupCodes.length > 0
+        };
       }),
   }),
 
