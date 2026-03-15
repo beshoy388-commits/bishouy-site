@@ -77,7 +77,7 @@ export default function PublicProfile() {
       />
       <Navbar />
 
-      <main className="flex-1 container pt-32 pb-16">
+      <main className="flex-1 container pt-44 lg:pt-52 pb-16">
         <div className="max-w-3xl mx-auto">
           <div className="bg-[#1C1C1A] border border-[#2A2A28] p-8 md:p-12 flex flex-col items-center text-center">
             {profile.avatarUrl ? (

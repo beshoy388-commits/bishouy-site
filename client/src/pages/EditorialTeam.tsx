@@ -11,7 +11,7 @@ export default function EditorialTeam() {
         <div className="min-h-screen bg-[#0F0F0E] flex flex-col font-serif">
             <SEO title="Editorial Team | Bishouy.com" description="Meet the people behind the stories." />
             <Navbar />
-            <main className="flex-1 container pt-32 pb-24">
+            <main className="flex-1 container pt-44 lg:pt-52 pb-24">
                 <div className="max-w-4xl mx-auto">
                     <div className="mb-16">
                         <h1 className="font-display text-4xl md:text-5xl text-[#E8A020] mb-6">Editorial Collective</h1>

@@ -68,7 +68,7 @@ export default function VerifyEmail() {
     <div className="min-h-screen bg-[#0F0F0E]">
       <Navbar />
 
-      <main className="container pt-32 pb-16 flex items-center justify-center">
+      <main className="container pt-44 lg:pt-52 pb-16 flex items-center justify-center">
         <div className="w-full max-w-md bg-[#1C1C1A] border border-[#2A2A28] p-8 rounded-sm">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#E8A020]/10 text-[#E8A020] mb-4">

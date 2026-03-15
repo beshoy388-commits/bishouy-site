@@ -11,7 +11,7 @@ export default function NotFound() {
       <SEO title="404 - Page Not Found" noindex={true} />
       <Navbar />
       
-      <main className="flex-1 flex items-center justify-center pt-24 pb-12">
+      <main className="flex-1 flex items-center justify-center pt-44 lg:pt-52 pb-12">
         <div className="container max-w-2xl px-6">
           <div className="text-center space-y-8">
             <div className="flex justify-center">

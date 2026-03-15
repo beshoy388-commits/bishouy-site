@@ -560,7 +560,7 @@ export default function ArticleDetail() {
 
 
   return (
-    <main className="min-h-screen bg-[#0F0F0E] relative pt-36">
+    <main className="min-h-screen bg-[#0F0F0E] relative pt-44 lg:pt-52">
       <SEO
         title={article?.title}
         description={article?.excerpt}

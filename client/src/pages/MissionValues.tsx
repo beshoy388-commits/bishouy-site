@@ -14,7 +14,7 @@ export default function MissionValues() {
         <div className="min-h-screen bg-[#0F0F0E] flex flex-col font-serif">
             <SEO title="Mission & Values | Bishouy.com" description="The core principles that guide our editorial board." />
             <Navbar />
-            <main className="flex-1 container pt-32 pb-24">
+            <main className="flex-1 container pt-44 lg:pt-52 pb-24">
                 <div className="max-w-3xl mx-auto">
                     <div className="mb-16">
                         <h1 className="font-display text-4xl md:text-5xl text-[#E8A020] mb-6">Mission & Values</h1>
