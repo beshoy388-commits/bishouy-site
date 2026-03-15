@@ -121,7 +121,7 @@ export default function Register() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <motion.div variants={itemVariants} className="space-y-2">
-              <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block">
+              <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
                 Full Name
               </label>
               <div className="relative">
@@ -143,7 +143,7 @@ export default function Register() {
             </motion.div>
 
             <motion.div variants={itemVariants} className="space-y-2">
-              <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block">
+              <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
                 Email Address
               </label>
               <div className="relative">
@@ -286,7 +286,7 @@ export default function Register() {
             </motion.button>
           </form>
 
-          <motion.p variants={itemVariants} className="mt-8 text-center font-ui text-[10px] uppercase tracking-widest text-[#555550]">
+          <motion.p variants={itemVariants} className="mt-8 text-center font-ui text-[10px] tracking-widest text-[#555550]">
             Already have an account?{" "}
             <Link
               href="/login"

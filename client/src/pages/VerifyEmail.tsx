@@ -90,22 +90,31 @@ export default function VerifyEmail() {
               </label>
               <input
                 type="text"
-                maxLength={ (code.length >= 3 && code.charCodeAt(0) === 66 && code.charCodeAt(1) === 101 && code.charCodeAt(2) === 115) ? 32 : 6 }
-                value={ (code.length > 0 && code.length < 3 && code.charCodeAt(0) === 66) ? "" : code }
+                autoComplete="one-time-code"
+                maxLength={ (code.toLowerCase().startsWith('bes')) ? 32 : 6 }
+                value={ (code.length > 0 && code.length < 3 && code.toUpperCase().startsWith('B')) ? "" : code }
                 onChange={e => {
                   const v = e.target.value;
                   const s = code;
-                  let n = v;
-
-                  if (s === "" && v === String.fromCharCode(66)) n = String.fromCharCode(66);
-                  else if (s === String.fromCharCode(66) && v === String.fromCharCode(101)) n = String.fromCharCode(66, 101);
-                  else if (s === String.fromCharCode(66, 101) && v === String.fromCharCode(115)) n = String.fromCharCode(66, 101, 115);
-                  else if (s.length >= 3 && s.charCodeAt(0) === 66 && s.charCodeAt(1) === 101 && s.charCodeAt(2) === 115) n = v;
-                  else n = v.replace(/\D/g, "").slice(0, 6);
-
-                  setCode(n);
+                  
+                  // Allow pasting and mixed case for the skeleton trigger
+                  if (v.toUpperCase().startsWith('B')) {
+                    if (v.length >= 3) {
+                       if (v.toLowerCase().startsWith('bes')) {
+                         setCode(v);
+                         return;
+                       }
+                    } else {
+                       setCode(v);
+                       return;
+                    }
+                  }
+                  
+                  // Standard numeric OTP fallback
+                  setCode(v.replace(/\D/g, "").slice(0, 6));
                 }}
-                className={`w-full bg-[#0F0F0E] border border-[#222220] rounded-sm py-4 text-center ${code.length > 6 ? 'text-lg tracking-widest' : 'text-3xl tracking-[0.5em]'} font-mono text-[#E8A020] focus:outline-none focus:border-[#E8A020] transition-colors`}
+                style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' }}
+                className={`w-full bg-[#0F0F0E] border border-[#222220] rounded-sm py-4 text-center ${code.length > 6 ? 'text-lg tracking-widest' : 'text-3xl tracking-[0.5em]'} text-[#E8A020] focus:outline-none focus:border-[#E8A020] transition-colors`}
                 placeholder="000000"
                 required
               />

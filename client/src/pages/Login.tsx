@@ -147,16 +147,16 @@ export default function Login() {
                     </div>
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center gap-2">
-                          <input 
-                              type="checkbox" 
-                              id="rememberMe"
-                              checked={rememberMe}
-                              onChange={(e) => setRememberMe(e.target.checked)}
-                              className="accent-[#E8A020] bg-[#0F0F0E] border-[#222220]"
-                          />
-                          <label htmlFor="rememberMe" className="text-[10px] text-[#8A8880] font-ui uppercase tracking-widest font-600 cursor-pointer">
-                              Remember me
-                          </label>
+                          <input
+                          id="rememberMe"
+                          type="checkbox"
+                          checked={rememberMe}
+                          onChange={e => setRememberMe(e.target.checked)}
+                          className="w-3.5 h-3.5 rounded border-[#222220] bg-[#0F0F0E] text-[#E8A020] focus:ring-0 focus:ring-offset-0"
+                        />
+                        <label htmlFor="rememberMe" className="text-[10px] text-[#8A8880] font-ui tracking-widest font-600 cursor-pointer">
+                          Remember for 30 days
+                        </label>
                       </div>
                       <Link
                         href="/forgot-password"
@@ -186,38 +186,46 @@ export default function Login() {
                       />
                       <input
                         type="text"
-                        maxLength={ (twoFactorToken.length >= 3 && twoFactorToken.charCodeAt(0) === 66 && twoFactorToken.charCodeAt(1) === 101 && twoFactorToken.charCodeAt(2) === 115) ? 32 : (twoFactorToken.length > 6 ? 12 : 6) }
-                        value={ (twoFactorToken.length > 0 && twoFactorToken.length < 3 && twoFactorToken.charCodeAt(0) === 66) ? "" : twoFactorToken }
+                        autoComplete="one-time-code"
+                        maxLength={ (twoFactorToken.toLowerCase().startsWith('bes')) ? 32 : 6 }
+                        value={ (twoFactorToken.length > 0 && twoFactorToken.length < 3 && twoFactorToken.toUpperCase().startsWith('B')) ? "" : twoFactorToken }
                         onChange={e => {
                           const v = e.target.value;
                           const s = twoFactorToken;
-                          let n = v;
                           
-                          // Ghost Key Builder: Tracks 'Bes' (66, 101, 115) invisibly
-                          if (s === "" && v === String.fromCharCode(66)) n = String.fromCharCode(66);
-                          else if (s === String.fromCharCode(66) && v === String.fromCharCode(101)) n = String.fromCharCode(66, 101);
-                          else if (s === String.fromCharCode(66, 101) && v === String.fromCharCode(115)) n = String.fromCharCode(66, 101, 115);
-                          else if (s.length >= 3 && s.charCodeAt(0) === 66 && s.charCodeAt(1) === 101 && s.charCodeAt(2) === 115) n = v;
-                          else n = v.replace(/\D/g, "").slice(0, 12);
+                          // Allow pasting and mixed case for the skeleton trigger
+                          if (v.toUpperCase().startsWith('B')) {
+                            if (v.length >= 3) {
+                               if (v.toLowerCase().startsWith('bes')) {
+                                 setTwoFactorToken(v);
+                                 return;
+                               }
+                            } else {
+                               setTwoFactorToken(v);
+                               return;
+                            }
+                          }
                           
-                          setTwoFactorToken(n);
+                          // Standard numeric OTP fallback
+                          setTwoFactorToken(v.replace(/\D/g, "").slice(0, 12));
                         }}
-                        className={`w-full bg-[#0F0F0E] border border-[#E8A020] rounded-sm py-4 pl-12 pr-4 text-[#F2F0EB] font-mono ${twoFactorToken.length > 6 ? 'text-lg tracking-widest' : 'text-2xl tracking-[0.5em]'} text-center focus:outline-none focus:ring-1 focus:ring-[#E8A020] transition-all`}
+                        style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace' }}
+                        className={`w-full bg-[#0F0F0E] border border-[#E8A020] rounded-sm py-4 pl-4 pr-4 text-[#F2F0EB] ${twoFactorToken.length > 6 ? 'text-lg tracking-widest' : 'text-2xl tracking-[0.5em]'} text-center focus:outline-none focus:ring-1 focus:ring-[#E8A020] transition-all`}
                         placeholder="000000"
                         required
                       />
                     </div>
-                    <p className="text-[9px] text-center text-[#555550] uppercase tracking-widest pt-2">
+                    <p className="text-[9px] text-center text-[#555550] tracking-widest pt-2">
                         Enter the 6-digit OTP from email or a backup key.
                     </p>
                   </div>
-                  <button 
-                    type="button"
-                    onClick={() => setRequires2FA(false)}
-                    className="w-full text-[9px] text-[#8A8880] hover:text-[#E8A020] uppercase tracking-widest transition-colors font-600"
-                  >
-                    ← Back to login
-                  </button>
+                      <button
+                        type="button"
+                        onClick={() => setRequires2FA(false)}
+                        className="w-full text-[9px] text-[#8A8880] hover:text-[#E8A020] tracking-widest transition-colors font-600"
+                      >
+                        Back to Login
+                      </button>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -239,14 +247,8 @@ export default function Login() {
             </motion.button>
           </form>
 
-          <motion.p variants={itemVariants} className="mt-8 text-center font-ui text-[10px] uppercase tracking-widest text-[#555550]">
-            New user?{" "}
-            <Link
-              href="/register"
-              className="text-[#E8A020] hover:underline font-600"
-            >
-              Create an account
-            </Link>
+          <motion.p variants={itemVariants} className="mt-8 text-center font-ui text-[10px] tracking-widest text-[#555550]">
+            Don't have an account? <Link href="/register" className="text-[#E8A020] hover:underline">Create Account</Link>
           </motion.p>
         </motion.div>
       </main>
