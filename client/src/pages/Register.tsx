@@ -110,11 +110,11 @@ export default function Register() {
           {/* Top progress bar simulation for tech vibe */}
           <div className="absolute top-0 left-0 h-[1px] bg-gradient-to-r from-transparent via-[#E8A020] to-transparent w-full animate-pulse" />
           
-          <motion.div variants={itemVariants} className="text-center mb-8">
-            <h1 className="font-display text-3xl text-[#F2F0EB] mb-2 tracking-widest">
+            <motion.div variants={itemVariants} className="text-center mb-8">
+            <h1 className="font-display text-3xl text-[#F2F0EB] mb-2 tracking-widest uppercase">
               CREATE ACCOUNT
             </h1>
-            <p className="font-ui text-[10px] text-[#8A8880] uppercase tracking-tighter">
+            <p className="font-ui text-[10px] text-[#8A8880] tracking-tighter">
               Create your profile on bishouy.com
             </p>
           </motion.div>
@@ -189,7 +189,7 @@ export default function Register() {
 
             <motion.div variants={itemVariants} className="space-y-4">
               <div className="space-y-2">
-                <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block">
+                <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
                   Password
                 </label>
                 <div className="relative">
@@ -234,7 +234,7 @@ export default function Register() {
               </div>
 
               <div className="space-y-2">
-                <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block">
+                <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
                   Confirm Password
                 </label>
                 <div className="relative">
@@ -264,7 +264,7 @@ export default function Register() {
                     onChange={(e) => setAgreedToTerms(e.target.checked)}
                     className="mt-1 accent-[#E8A020] bg-[#0F0F0E] border-[#222220]"
                 />
-                <label htmlFor="tos" className="text-[10px] text-[#8A8880] font-ui leading-tight uppercase tracking-tighter">
+                <label htmlFor="tos" className="text-[10px] text-[#8A8880] font-ui leading-tight tracking-tighter">
                     I agree to the <Link href="/terms-of-service" className="text-[#E8A020] hover:underline">Terms of Service</Link> and <Link href="/privacy-policy" className="text-[#E8A020] hover:underline">Privacy Policy</Link>.
                 </label>
             </motion.div>

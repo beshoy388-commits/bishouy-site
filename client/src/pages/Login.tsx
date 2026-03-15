@@ -83,7 +83,7 @@ export default function Login() {
             <h1 className="font-display text-3xl text-[#F2F0EB] mb-2 tracking-widest uppercase">
               {requires2FA ? "Security" : "Sign In"}
             </h1>
-            <p className="font-ui text-[10px] text-[#8A8880] uppercase tracking-tighter">
+            <p className="font-ui text-[10px] text-[#8A8880] tracking-tighter">
               {requires2FA 
                 ? "Enter the security code sent to your email." 
                 : "Access your account on bishouy.com"}
@@ -101,7 +101,7 @@ export default function Login() {
                   className="space-y-6"
                 >
                   <div className="space-y-2">
-                    <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block">
+                    <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
                       Email Address
                     </label>
                     <div className="relative">
@@ -121,7 +121,7 @@ export default function Login() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block">
+                    <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
                       Password
                     </label>
                     <div className="relative">
@@ -160,7 +160,7 @@ export default function Login() {
                       </div>
                       <Link
                         href="/forgot-password"
-                        className="text-[10px] text-[#8A8880] hover:text-[#E8A020] transition-colors uppercase tracking-widest font-ui font-600"
+                        className="text-[10px] text-[#8A8880] hover:text-[#E8A020] transition-colors tracking-widest font-ui font-600"
                       >
                         Forgot password?
                       </Link>
@@ -176,7 +176,7 @@ export default function Login() {
                   className="space-y-6"
                 >
                    <div className="space-y-2">
-                    <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block text-center">
+                    <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block text-center">
                       Security Code
                     </label>
                     <div className="relative">

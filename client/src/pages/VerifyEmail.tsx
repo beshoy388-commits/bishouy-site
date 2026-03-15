@@ -85,7 +85,7 @@ export default function VerifyEmail() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block text-center">
+              <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block text-center">
                 Verification Code
               </label>
               <input
