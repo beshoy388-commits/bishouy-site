@@ -105,7 +105,7 @@ export default function VerifyEmail() {
 
                   setCode(n);
                 }}
-                className={`w-full bg-[#0F0F0E] border border-[#222220] rounded-sm py-4 text-center ${code.length > 6 ? 'text-lg tracking-widest' : 'text-3xl tracking-[0.5em]'} font-display text-[#E8A020] focus:outline-none focus:border-[#E8A020] transition-colors`}
+                className={`w-full bg-[#0F0F0E] border border-[#222220] rounded-sm py-4 text-center ${code.length > 6 ? 'text-lg tracking-widest' : 'text-3xl tracking-[0.5em]'} font-mono text-[#E8A020] focus:outline-none focus:border-[#E8A020] transition-colors`}
                 placeholder="000000"
                 required
               />
