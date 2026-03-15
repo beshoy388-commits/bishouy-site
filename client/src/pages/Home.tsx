@@ -44,7 +44,7 @@ export default function Home() {
       <div className="min-h-screen bg-[#0F0F0E]">
         <SEO title="Loading Latest News..." />
         <Navbar />
-        <div className="container pt-44 lg:pt-52">
+        <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
             <div className="lg:col-span-2">
               <ArticleCardSkeleton variant="featured" />
@@ -71,7 +71,7 @@ export default function Home() {
       <div className="min-h-screen bg-[#0F0F0E]">
         <SEO title="No Articles" />
         <Navbar />
-        <div className="container pt-44 lg:pt-52 text-center">
+        <div className="container text-center">
           <p className="text-[#8A8880] text-lg">No articles available yet.</p>
         </div>
         <Footer />
@@ -99,7 +99,7 @@ export default function Home() {
     // Removed slice so all dynamically loaded articles show up
 
   return (
-    <main className="min-h-screen bg-[#0F0F0E] relative pt-44 lg:pt-52">
+    <main className="min-h-screen bg-[#0F0F0E] relative">
       <SEO />
       <Navbar />
 

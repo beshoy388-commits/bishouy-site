@@ -72,7 +72,7 @@ export default function CategoryPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0F0F0E] relative pt-44 lg:pt-52">
+    <main className="min-h-screen bg-[#0F0F0E] relative">
       <SEO 
         title={`${category.name} Archives`} 
         description={`Explore our full archive of articles in the ${category.name} category. Quality journalism and analysis from Bishouy.com.`}

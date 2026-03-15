@@ -115,6 +115,7 @@ function AppContent() {
   const { setIsSearchOpen } = useUI();
   const [location] = useLocation();
   const isAdminPage = location.startsWith("/admin");
+  const isAuthPage = location.startsWith("/login") || location.startsWith("/register") || location.startsWith("/verify");
 
   return (
     <MaintenanceGuard>
@@ -123,7 +124,12 @@ function AppContent() {
       <UserStatusMonitor />
       <GoogleAdSense />
       <GoogleAnalytics />
-      <div className={!isAdminPage ? "pb-24 lg:pb-0" : ""}>
+      {/* 
+        Dynamic Layout Container 
+        pt-48 (12rem/192px) on mobile, pt-60 (15rem/240px) on desktop 
+        This ensures content is never hidden behind the fixed header (top bar + nav + ads + ticker)
+      */}
+      <div className={!isAdminPage ? `min-h-screen pt-48 lg:pt-60 ${!isAdminPage ? "pb-24 lg:pb-0" : ""}` : "min-h-screen"}>
         <Router />
       </div>
       <CookieConsent />

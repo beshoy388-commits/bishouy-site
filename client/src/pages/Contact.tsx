@@ -8,7 +8,7 @@ export default function Contact() {
         <div className="min-h-screen bg-[#0F0F0E] flex flex-col font-serif">
             <SEO title="Contact Us | Bishouy.com" description="Get in touch with the Bishouy editorial team." />
             <Navbar />
-            <main className="flex-1 container pt-44 lg:pt-52 pb-24">
+            <main className="flex-1 container pb-24">
                 <div className="max-w-4xl mx-auto">
                     <div className="mb-16">
                         <h1 className="font-display text-4xl md:text-5xl text-[#E8A020] mb-6">Contact Us</h1>

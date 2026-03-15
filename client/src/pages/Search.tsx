@@ -50,7 +50,7 @@ export default function Search() {
   const hasSearched = debouncedQuery.length > 0;
 
   return (
-    <div className="min-h-screen bg-[#0F0F0E] flex flex-col pt-44 lg:pt-52">
+    <div className="min-h-screen bg-[#0F0F0E] flex flex-col">
       <Navbar />
 
       {/* Search Bar Section */}

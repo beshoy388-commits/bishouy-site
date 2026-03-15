@@ -62,7 +62,7 @@ export default function Unsubscribe() {
     <div className="min-h-screen bg-[#0F0F0E]">
       <Navbar />
 
-      <main className="container pt-44 lg:pt-52 pb-24 flex items-center justify-center">
+      <main className="container pb-24 flex items-center justify-center">
         <div className="max-w-lg w-full text-center">
           {/* Accent top bar */}
           <div className="w-12 h-0.5 bg-[#E8A020] mx-auto mb-10" />

@@ -100,7 +100,7 @@ export default function Register() {
     <div className="min-h-screen bg-[#0F0F0E]">
       <Navbar />
 
-      <main className="container pt-44 lg:pt-52 pb-16 flex items-center justify-center">
+      <main className="container pb-16 flex items-center justify-center">
         <motion.div 
           variants={containerVariants}
           initial="hidden"

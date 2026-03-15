@@ -92,7 +92,7 @@ export default function UserProfile() {
     return (
       <div className="min-h-screen bg-[#0F0F0E]">
         <Navbar />
-        <div className="container pt-44 lg:pt-52 text-center">
+        <div className="container text-center">
           <p className="text-[#8A8880] mb-4">
             Please login to view your profile
           </p>
@@ -111,7 +111,7 @@ export default function UserProfile() {
     <div className="min-h-screen bg-[#0F0F0E]">
       <Navbar />
 
-      <section className="container pt-44 lg:pt-52 pb-16 md:py-24">
+      <section className="container pb-16 md:py-24">
         <div className="max-w-2xl mx-auto">
           {/* Profile Header */}
           <div className="bg-[#1C1C1A] rounded-sm p-8 md:p-12 mb-8">
