@@ -200,6 +200,12 @@ export async function getDb() {
         await client.execute("ALTER TABLE users ADD COLUMN twoFactorBackupCodes TEXT;");
       } catch (err) {}
 
+      try {
+        await client.execute(
+          "ALTER TABLE users ADD COLUMN subscribeToNewsletter INTEGER DEFAULT 0 NOT NULL;"
+        );
+      } catch (err) {}
+
       // Migration for ip_blacklist table
       try {
         await client.execute(`

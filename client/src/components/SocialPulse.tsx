@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { toast } from "sonner";
@@ -112,9 +113,13 @@ export default function SocialPulse() {
                     </div>
                 </form>
             ) : (
-                <div className="p-4 border-b border-[#1C1C1A] text-center bg-[#11110F]/50">
-                    <p className="text-[10px] font-bold text-[#555550] uppercase tracking-widest mb-1">Join the conversation</p>
-                    <p className="text-[8px] text-[#333330]">Authentication required for interaction.</p>
+                <div className="p-6 border-b border-[#1C1C1A] text-center bg-[#11110F]/80 backdrop-blur-sm relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#E8A020]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <p className="text-[10px] font-900 text-[#F2F0EB] uppercase tracking-[0.2em] mb-2 relative z-10">Sync with the Pulse</p>
+                    <p className="text-[9px] text-[#8A8880] mb-4 max-w-[200px] mx-auto leading-relaxed relative z-10">Authentication required for real-time node interaction and data broadcast.</p>
+                    <Link href="/login" className="inline-block bg-[#E8A020] text-[#0F0F0E] text-[9px] font-900 uppercase tracking-widest px-6 py-2 rounded-sm hover:scale-105 active:scale-95 transition-all relative z-10">
+                        Join Community
+                    </Link>
                 </div>
             )}
 
@@ -146,7 +151,10 @@ export default function SocialPulse() {
                                         <div className="flex items-center gap-2">
                                             <span className="text-[11px] font-bold text-[#F2F0EB]">{post.authorName}</span>
                                             {post.authorRole === 'admin' && (
-                                                <Badge variant="outline" className="h-4 border-[#E8A020]/30 text-[#E8A020] text-[8px] font-900 px-1.5 uppercase tracking-tighter">ROOT</Badge>
+                                                <Badge variant="outline" className="h-4 border-[#E8A020]/30 text-[#E8A020] text-[8px] font-900 px-1.5 uppercase tracking-tighter shadow-[0_0_10px_rgba(232,160,32,0.1)]">ROOT</Badge>
+                                            )}
+                                            {post.authorId && post.authorId < 100 && (
+                                                <Badge variant="outline" className="h-4 border-[#8A8880]/30 text-[#8A8880] text-[7px] font-800 px-1.5 uppercase tracking-tighter opacity-70">Founding</Badge>
                                             )}
                                         </div>
                                         <span className="text-[9px] font-bold text-[#333330] flex items-center gap-1">

@@ -1,5 +1,7 @@
 // src/pages/AIAssistant.tsx
 import { useState, useEffect } from "react";
+import { Link } from "wouter";
+import { useAuth } from "@/_core/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { AIChatBox, Message } from "@/components/AIChatBox";
@@ -63,6 +65,14 @@ export default function AIAssistant() {
             <p className="font-ui text-sm text-[#8A8880]">
               Ask anything about our latest stories or get news summaries.
             </p>
+            {!useAuth().user && (
+              <div className="mt-6 p-4 bg-[#E8A020]/5 border border-[#E8A020]/20 rounded-sm inline-block max-w-md mx-auto">
+                <p className="text-[10px] text-[#E8A020] font-900 uppercase tracking-[0.2em] mb-1">Guest Mode Active</p>
+                <p className="text-[9px] text-[#8A8880] leading-tight">
+                  You have basic access. <Link href="/register" className="text-[#E8A020] underline font-bold">Register</Link> to unlock Premium Neural Processing and faster response times.
+                </p>
+              </div>
+            )}
           </header>
 
           <div className="bg-[#1C1C1A] border border-[#2A2A28] rounded-sm overflow-hidden shadow-2xl">

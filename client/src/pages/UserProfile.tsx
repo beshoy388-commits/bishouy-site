@@ -129,8 +129,13 @@ export default function UserProfile() {
                   )}
                 </div>
                 <div>
-                  <h1 className="font-display text-2xl md:text-3xl font-900 text-[#F2F0EB]">
+                  <h1 className="font-display text-2xl md:text-3xl font-900 text-[#F2F0EB] flex items-center gap-3">
                     {formData.name || "User"}
+                    {user.id < 100 && (
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-[2px] bg-[#E8A020]/10 border border-[#E8A020]/30 text-[#E8A020] text-[8px] font-900 uppercase tracking-widest leading-none">
+                        Founding Member
+                      </span>
+                    )}
                   </h1>
                   {formData.username && (
                     <p className="text-[#E8A020] text-sm font-medium">
@@ -320,9 +325,13 @@ export default function UserProfile() {
                 )}
 
                 <div className="border-b border-[#222220] pb-4">
-                  <p className="text-[#8A8880] text-sm mb-1">Account Type</p>
-                  <p className="text-[#F2F0EB] font-medium capitalize">
-                    {user.role === "admin" ? "Administrator" : "Reader"}
+                  <p className="text-[#8A8880] text-sm mb-1">Access Level</p>
+                  <p className="text-[#F2F0EB] font-medium uppercase tracking-widest text-xs">
+                    {user.role === "admin" ? (
+                      <span className="text-[#E8A020]">System Administrator</span>
+                    ) : (
+                      "Editorial Reader"
+                    )}
                   </p>
                 </div>
 
@@ -370,11 +379,10 @@ export default function UserProfile() {
             </div>
           )}
 
-          {/* Saved Articles Section */}
-          <div className="bg-[#1C1C1A] rounded-sm p-8 mt-8">
+          <div className="bg-[#1C1C1A] rounded-sm p-8 mt-8 border-t-2 border-[#E8A020]">
             <h2 className="font-display text-xl text-[#F2F0EB] mb-6 flex items-center gap-2">
               <Bookmark size={20} className="text-[#E8A020]" />
-              Saved Articles
+              Your Intelligence Library
             </h2>
 
             {isLoadingBookmarks ? (
@@ -417,13 +425,14 @@ export default function UserProfile() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8">
-                <p className="text-[#8A8880] mb-4">
-                  You haven't saved any articles yet.
+              <div className="text-center py-12">
+                <Bookmark size={32} className="mx-auto mb-4 text-[#2A2A28]" />
+                <p className="text-[#8A8880] text-sm mb-6 max-w-xs mx-auto">
+                  Your private intelligence collection is empty. Save analytical reports to access them here.
                 </p>
                 <Link href="/">
-                  <button className="text-[#E8A020] hover:text-[#D4911C] font-ui text-xs uppercase tracking-wider font-bold">
-                    Discover Articles
+                  <button className="text-[#E8A020] hover:text-[#D4911C] font-ui text-[10px] uppercase tracking-widest font-900 border border-[#E8A020]/30 px-6 py-2 rounded-sm hover:bg-[#E8A020]/5 transition-all">
+                    Browse Reports
                   </button>
                 </Link>
               </div>

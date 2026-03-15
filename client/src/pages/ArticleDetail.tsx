@@ -676,8 +676,8 @@ export default function ArticleDetail() {
                   }}
                 >
                   <Bookmark size={18} fill={isSaved ? "currentColor" : "none"} />
-                  <span className="font-ui text-sm font-600 uppercase tracking-wider">
-                    Save
+                  <span className="font-ui text-[10px] font-700 uppercase tracking-widest leading-none">
+                    {isSaved ? "Saved to Library" : "Add to Intelligence Library"}
                   </span>
                 </button>
                 <button
@@ -822,9 +822,14 @@ export default function ArticleDetail() {
                                 )}
                                 <div>
                                   <p
-                                    className={`font-medium text-sm ${c.userUsername ? "text-[#E8A020]" : "text-[#F2F0EB]"}`}
+                                    className={`font-medium text-sm flex items-center gap-2 ${c.userUsername ? "text-[#E8A020]" : "text-[#F2F0EB]"}`}
                                   >
                                     {displayName}
+                                    {c.userId && c.userId < 100 && (
+                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-[2px] bg-[#E8A020]/10 border border-[#E8A020]/30 text-[#E8A020] text-[8px] font-900 uppercase tracking-widest leading-none">
+                                        Founding Member
+                                      </span>
+                                    )}
                                   </p>
                                   <p className="text-xs text-[#8A8880] flex items-center gap-1.5">
                                     {new Date(c.createdAt).toLocaleDateString(
@@ -958,16 +963,18 @@ export default function ArticleDetail() {
                       </button>
                     </div>
                   ) : (
-                    <div className="bg-[#1C1C1A] rounded-sm p-6 text-center">
-                      <p className="text-[#8A8880] mb-4">
-                        Sign in to leave a comment
+                    <div className="bg-[#1C1C1A] rounded-sm p-8 text-center border border-[#E8A020]/20 relative overflow-hidden group">
+                      <div className="absolute inset-0 bg-gradient-to-b from-[#E8A020]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <h4 className="font-display text-xl text-[#F2F0EB] mb-3 relative z-10">JOING THE INNER CIRCLE</h4>
+                      <p className="text-[#8A8880] text-sm mb-6 max-w-md mx-auto relative z-10">
+                        Sign in to share your analysis, build your personal <strong className="text-[#E8A020]">Intelligence Library</strong>, and unlock exclusive AI-powered features.
                       </p>
-                      <a
+                      <Link
                         href={getLoginUrl()}
-                        className="inline-flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
+                        className="inline-flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] hover:scale-105 active:scale-95 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-widest px-8 py-3 rounded-sm transition-all shadow-lg shadow-[#E8A020]/10"
                       >
-                        Sign in to Comment
-                      </a>
+                        Join the Conversation
+                      </Link>
                     </div>
                   )
                 ) : (
@@ -1065,8 +1072,8 @@ export default function ArticleDetail() {
                     }}
                   >
                     <Bookmark size={20} fill={isSaved ? "currentColor" : "none"} />
-                    <span className="font-ui text-sm font-600 uppercase tracking-wider">
-                      {isSaved ? "Saved to Library" : "Save for Later"}
+                    <span className="font-ui text-[11px] font-700 uppercase tracking-widest text-center leading-tight">
+                      {isSaved ? "In Your Library" : "Intelligence Library"}
                     </span>
                   </button>
 
