@@ -18,6 +18,7 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
+    subscribeToNewsletter: true,
   });
 
   useEffect(() => {
@@ -256,7 +257,20 @@ export default function Register() {
               </div>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="flex items-start gap-3 py-2">
+            <motion.div variants={itemVariants} className="flex items-start gap-3 py-1">
+                <input 
+                    type="checkbox"
+                    id="newsletter"
+                    checked={formData.subscribeToNewsletter}
+                    onChange={(e) => setFormData(prev => ({ ...prev, subscribeToNewsletter: e.target.checked }))}
+                    className="mt-1 accent-[#E8A020] bg-[#0F0F0E] border-[#222220]"
+                />
+                <label htmlFor="newsletter" className="text-[10px] text-[#8A8880] font-ui leading-tight tracking-tighter">
+                    I want to receive the daily editorial briefing and breaking news alerts.
+                </label>
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="flex items-start gap-3 py-1">
                 <input 
                     type="checkbox"
                     id="tos"

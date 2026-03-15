@@ -317,6 +317,7 @@ export const appRouter = router({
           email: z.string().email(),
           password: z.string().min(8),
           name: z.string().min(2),
+          subscribeToNewsletter: z.number().optional(),
         })
       )
       .mutation(async ({ input, ctx }) => {
@@ -359,6 +360,7 @@ export const appRouter = router({
           name: input.name,
           role: "user",
           isVerified: 0,
+          subscribeToNewsletter: input.subscribeToNewsletter ?? 0,
         });
 
         const code = generateVerificationCode();
@@ -427,13 +429,13 @@ export const appRouter = router({
           maxAge: 1000 * 60 * 60 * 24 * 365,
         });
 
-        // Automatic Newsletter Subscription on Verification
-        try {
-          if (user.email) {
-            await createSubscriber(user.email);
+        // Subscribe to newsletter if user opted-in during registration
+        if (user.subscribeToNewsletter === 1) {
+          try {
+            await createSubscriber(user.email!);
+          } catch (error) {
+            console.error("[VERIFY-SUBSCRIBE ERROR]", error);
           }
-        } catch (error) {
-          console.error("[AUTO-SUBSCRIBE ERROR]", error);
         }
 
         // Send professional welcome email after successful verification

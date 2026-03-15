@@ -29,6 +29,7 @@ export const users = sqliteTable("users", {
   twoFactorEnabled: integer("twoFactorEnabled", { mode: "number" }).default(0).notNull(),
   twoFactorSecret: text("twoFactorSecret"),
   twoFactorBackupCodes: text("twoFactorBackupCodes"), // JSON string of encrypted backup codes
+  subscribeToNewsletter: integer("subscribeToNewsletter", { mode: "number" }).default(0).notNull(),
   createdAt: integer("createdAt", { mode: "timestamp" })
     .$defaultFn(() => new Date())
     .notNull(),

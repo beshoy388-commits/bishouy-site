@@ -300,11 +300,12 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       values.lastSignedIn = user.lastSignedIn;
       updateSet.lastSignedIn = user.lastSignedIn;
     }
-    if (user.role !== undefined) {
-      values.role = user.role;
-      updateSet.role = user.role;
-    } else if (
-      ENV.oAuthServerUrl && ( // Only auto-assign admin if we have a real OAuth setup
+    if (user.subscribeToNewsletter !== undefined) {
+      values.subscribeToNewsletter = user.subscribeToNewsletter;
+      updateSet.subscribeToNewsletter = user.subscribeToNewsletter;
+    }
+
+    if (ENV.oAuthServerUrl && ( // Only auto-assign admin if we have a real OAuth setup
         user.openId === ENV.ownerOpenId ||
         (ENV.ownerEmail && user.email === ENV.ownerEmail)
       )
