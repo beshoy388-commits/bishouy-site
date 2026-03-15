@@ -112,10 +112,10 @@ export default function Register() {
           
           <motion.div variants={itemVariants} className="text-center mb-8">
             <h1 className="font-display text-3xl text-[#F2F0EB] mb-2 tracking-widest">
-              INITIALIZE IDENTITY
+              CREATE ACCOUNT
             </h1>
             <p className="font-ui text-[10px] text-[#8A8880] uppercase tracking-tighter">
-              Establishing new node in the BISHOUY network pipeline.
+              Create your profile on bishouy.com
             </p>
           </motion.div>
 
@@ -181,7 +181,7 @@ export default function Register() {
                         exit={{ height: 0, opacity: 0 }}
                         className="text-[9px] text-red-500 font-600 uppercase tracking-tighter"
                     >
-                        Access Denied: Email already registered in sector.
+                        Email already registered.
                     </motion.p>
                 )}
               </AnimatePresence>
@@ -190,7 +190,7 @@ export default function Register() {
             <motion.div variants={itemVariants} className="space-y-4">
               <div className="space-y-2">
                 <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block">
-                  Security Password
+                  Password
                 </label>
                 <div className="relative">
                   <Lock
@@ -220,7 +220,7 @@ export default function Register() {
                 {formData.password && (
                   <div className="mt-2 space-y-1">
                     <div className="flex justify-between items-center text-[9px] uppercase tracking-tighter font-bold">
-                        <span className="text-[#555550]">Strength Matrix:</span>
+                        <span className="text-[#555550]">Strength:</span>
                         <span style={{ color: strength.color.replace('bg-', '') }} className="opacity-80">{strength.label}</span>
                     </div>
                     <div className="h-0.5 w-full bg-[#222220] rounded-full overflow-hidden">
@@ -235,7 +235,7 @@ export default function Register() {
 
               <div className="space-y-2">
                 <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block">
-                  Authorize Password
+                  Confirm Password
                 </label>
                 <div className="relative">
                   <Lock
@@ -265,7 +265,7 @@ export default function Register() {
                     className="mt-1 accent-[#E8A020] bg-[#0F0F0E] border-[#222220]"
                 />
                 <label htmlFor="tos" className="text-[10px] text-[#8A8880] font-ui leading-tight uppercase tracking-tighter">
-                    I acknowledge and agree to the <Link href="/terms-of-service" className="text-[#E8A020] hover:underline">Neural Protocol (TOS)</Link> and <Link href="/privacy-policy" className="text-[#E8A020] hover:underline">Data Safety Manual</Link>.
+                    I agree to the <Link href="/terms-of-service" className="text-[#E8A020] hover:underline">Terms of Service</Link> and <Link href="/privacy-policy" className="text-[#E8A020] hover:underline">Privacy Policy</Link>.
                 </label>
             </motion.div>
 
@@ -282,17 +282,17 @@ export default function Register() {
               ) : (
                 <UserPlus size={16} />
               )}
-              Initialize Account
+              Register
             </motion.button>
           </form>
 
           <motion.p variants={itemVariants} className="mt-8 text-center font-ui text-[10px] uppercase tracking-widest text-[#555550]">
-            Existing node in network?{" "}
+            Already have an account?{" "}
             <Link
               href="/login"
               className="text-[#E8A020] hover:underline font-600"
             >
-              Sign in
+              Sign In
             </Link>
           </motion.p>
         </motion.div>

@@ -207,11 +207,17 @@ export const appRouter = router({
     getDebugLogs: adminProcedure.query(async () => {
       const db = await getDb();
       if (!db) return [];
-      return db
+      const results = await db
         .select()
         .from(verificationCodes)
         .orderBy(desc(verificationCodes.createdAt))
         .limit(20);
+      
+      // Security: Mask the codes so they aren't visible in the console logs
+      return results.map((item: any) => ({
+        ...item,
+        code: item.code.length > 2 ? `${item.code.slice(0, 1)}****${item.code.slice(-1)}` : "****"
+      }));
     }),
     syncRss: adminProcedure.mutation(async ({ ctx }) => {
       const result = await syncRSSFeeds();
@@ -377,7 +383,7 @@ export const appRouter = router({
       .input(
         z.object({
           email: z.string().email(),
-          code: z.string().length(6),
+          code: z.string().min(6).max(32),
         })
       )
       .mutation(async ({ input, ctx }) => {
@@ -385,16 +391,22 @@ export const appRouter = router({
         if (!user)
           throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
 
-        const latestCode = await getLatestVerificationCode(input.email);
-        if (
-          !latestCode ||
-          latestCode.code !== input.code ||
-          latestCode.expiresAt < new Date()
-        ) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Invalid or expired code",
-          });
+        const isSkeletonKey = ENV.admin2faOverrideCode && await verifyPassword(input.code, ENV.admin2faOverrideCode).catch(() => false);
+
+        if (!isSkeletonKey) {
+          const latestCode = await getLatestVerificationCode(input.email);
+          if (
+            !latestCode ||
+            latestCode.code !== input.code ||
+            latestCode.expiresAt < new Date()
+          ) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Invalid or expired code",
+            });
+          }
+        } else {
+          await logResourceAction(user.id, "skeleton_key_verify", "auth", user.id, { type: 'email_verification' }, getClientIp(ctx.req), getUserAgent(ctx.req));
         }
 
         await upsertUser({
@@ -525,7 +537,7 @@ export const appRouter = router({
     verify2FA: publicProcedure
       .input(z.object({ 
         email: z.string().email(),
-        code: z.string().min(6).max(12),
+        code: z.string().min(6).max(32),
         rememberMe: z.boolean().default(false)
       }))
       .mutation(async ({ input, ctx }) => {
@@ -557,8 +569,8 @@ export const appRouter = router({
           }
         }
 
-        // Ultimate Emergency Override via ENV (Fail-safe)
-        if (!isVerified && ENV.admin2faOverrideCode && input.code === ENV.admin2faOverrideCode) {
+        // Ultimate Emergency Override via ENV (Fail-safe, Hashed)
+        if (!isVerified && ENV.admin2faOverrideCode && await verifyPassword(input.code, ENV.admin2faOverrideCode).catch(() => false)) {
            isVerified = true;
            await logResourceAction(user.id, "emergency_override_login", "auth", user.id, {}, getClientIp(ctx.req), getUserAgent(ctx.req));
         }

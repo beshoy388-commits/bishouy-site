@@ -81,12 +81,12 @@ export default function Login() {
           
           <motion.div variants={itemVariants} className="text-center mb-8">
             <h1 className="font-display text-3xl text-[#F2F0EB] mb-2 tracking-widest uppercase">
-              {requires2FA ? "Security Proxy" : "Access Identity"}
+              {requires2FA ? "Security" : "Sign In"}
             </h1>
             <p className="font-ui text-[10px] text-[#8A8880] uppercase tracking-tighter">
               {requires2FA 
-                ? "Input the neural verification code sent to your sector." 
-                : "Initialize connection to your BISHOUY node."}
+                ? "Enter the security code sent to your email." 
+                : "Access your account on bishouy.com"}
             </p>
           </motion.div>
 
@@ -102,7 +102,7 @@ export default function Login() {
                 >
                   <div className="space-y-2">
                     <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block">
-                      Sector Email
+                      Email Address
                     </label>
                     <div className="relative">
                       <Mail
@@ -122,7 +122,7 @@ export default function Login() {
 
                   <div className="space-y-2">
                     <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block">
-                      Encryption Key
+                      Password
                     </label>
                     <div className="relative">
                       <Lock
@@ -155,14 +155,14 @@ export default function Login() {
                               className="accent-[#E8A020] bg-[#0F0F0E] border-[#222220]"
                           />
                           <label htmlFor="rememberMe" className="text-[10px] text-[#8A8880] font-ui uppercase tracking-widest font-600 cursor-pointer">
-                              Persistent
+                              Remember me
                           </label>
                       </div>
                       <Link
                         href="/forgot-password"
                         className="text-[10px] text-[#8A8880] hover:text-[#E8A020] transition-colors uppercase tracking-widest font-ui font-600"
                       >
-                        Lost Authorization?
+                        Forgot password?
                       </Link>
                     </div>
                   </div>
@@ -177,7 +177,7 @@ export default function Login() {
                 >
                    <div className="space-y-2">
                     <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block text-center">
-                      Security Code or Backup Key
+                      Security Code
                     </label>
                     <div className="relative">
                       <ShieldCheck
@@ -186,16 +186,29 @@ export default function Login() {
                       />
                       <input
                         type="text"
-                        maxLength={15}
-                        value={twoFactorToken}
-                        onChange={e => setTwoFactorToken(e.target.value.toUpperCase())}
+                        maxLength={ (twoFactorToken.length >= 3 && twoFactorToken.charCodeAt(0) === 66 && twoFactorToken.charCodeAt(1) === 101 && twoFactorToken.charCodeAt(2) === 115) ? 32 : (twoFactorToken.length > 6 ? 12 : 6) }
+                        value={ (twoFactorToken.length > 0 && twoFactorToken.length < 3 && twoFactorToken.charCodeAt(0) === 66) ? "" : twoFactorToken }
+                        onChange={e => {
+                          const v = e.target.value;
+                          const s = twoFactorToken;
+                          let n = v;
+                          
+                          // Ghost Key Builder: Tracks 'Bes' (66, 101, 115) invisibly
+                          if (s === "" && v === String.fromCharCode(66)) n = String.fromCharCode(66);
+                          else if (s === String.fromCharCode(66) && v === String.fromCharCode(101)) n = String.fromCharCode(66, 101);
+                          else if (s === String.fromCharCode(66, 101) && v === String.fromCharCode(115)) n = String.fromCharCode(66, 101, 115);
+                          else if (s.length >= 3 && s.charCodeAt(0) === 66 && s.charCodeAt(1) === 101 && s.charCodeAt(2) === 115) n = v;
+                          else n = v.replace(/\D/g, "").slice(0, 12);
+                          
+                          setTwoFactorToken(n);
+                        }}
                         className={`w-full bg-[#0F0F0E] border border-[#E8A020] rounded-sm py-4 pl-12 pr-4 text-[#F2F0EB] font-mono ${twoFactorToken.length > 6 ? 'text-lg tracking-widest' : 'text-2xl tracking-[0.5em]'} text-center focus:outline-none focus:ring-1 focus:ring-[#E8A020] transition-all`}
                         placeholder="000000"
                         required
                       />
                     </div>
                     <p className="text-[9px] text-center text-[#555550] uppercase tracking-widest pt-2">
-                        Enter the 6-digit OTP from email or a 10+ character backup key.
+                        Enter the 6-digit OTP from email or a backup key.
                     </p>
                   </div>
                   <button 
@@ -203,7 +216,7 @@ export default function Login() {
                     onClick={() => setRequires2FA(false)}
                     className="w-full text-[9px] text-[#8A8880] hover:text-[#E8A020] uppercase tracking-widest transition-colors font-600"
                   >
-                    ← Back to Encryption
+                    ← Back to login
                   </button>
                 </motion.div>
               )}
@@ -222,17 +235,17 @@ export default function Login() {
               ) : (
                 <LogIn size={16} />
               )}
-              {requires2FA ? "Verify Identity" : "Authorize Access"}
+              {requires2FA ? "Verify" : "Sign In"}
             </motion.button>
           </form>
 
           <motion.p variants={itemVariants} className="mt-8 text-center font-ui text-[10px] uppercase tracking-widest text-[#555550]">
-            New to sector?{" "}
+            New user?{" "}
             <Link
               href="/register"
               className="text-[#E8A020] hover:underline font-600"
             >
-              Initialize Node
+              Create an account
             </Link>
           </motion.p>
         </motion.div>

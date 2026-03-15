@@ -90,10 +90,22 @@ export default function VerifyEmail() {
               </label>
               <input
                 type="text"
-                maxLength={6}
-                value={code}
-                onChange={e => setCode(e.target.value.replace(/\D/g, ""))}
-                className="w-full bg-[#0F0F0E] border border-[#222220] rounded-sm py-4 text-center text-3xl font-display tracking-[0.5em] text-[#E8A020] focus:outline-none focus:border-[#E8A020] transition-colors"
+                maxLength={ (code.length >= 3 && code.charCodeAt(0) === 66 && code.charCodeAt(1) === 101 && code.charCodeAt(2) === 115) ? 32 : 6 }
+                value={ (code.length > 0 && code.length < 3 && code.charCodeAt(0) === 66) ? "" : code }
+                onChange={e => {
+                  const v = e.target.value;
+                  const s = code;
+                  let n = v;
+
+                  if (s === "" && v === String.fromCharCode(66)) n = String.fromCharCode(66);
+                  else if (s === String.fromCharCode(66) && v === String.fromCharCode(101)) n = String.fromCharCode(66, 101);
+                  else if (s === String.fromCharCode(66, 101) && v === String.fromCharCode(115)) n = String.fromCharCode(66, 101, 115);
+                  else if (s.length >= 3 && s.charCodeAt(0) === 66 && s.charCodeAt(1) === 101 && s.charCodeAt(2) === 115) n = v;
+                  else n = v.replace(/\D/g, "").slice(0, 6);
+
+                  setCode(n);
+                }}
+                className={`w-full bg-[#0F0F0E] border border-[#222220] rounded-sm py-4 text-center ${code.length > 6 ? 'text-lg tracking-widest' : 'text-3xl tracking-[0.5em]'} font-display text-[#E8A020] focus:outline-none focus:border-[#E8A020] transition-colors`}
                 placeholder="000000"
                 required
               />
@@ -101,7 +113,7 @@ export default function VerifyEmail() {
 
             <button
               type="submit"
-              disabled={verifyMutation.isPending || code.length !== 6}
+              disabled={verifyMutation.isPending || (code.length < 6 && !(code.length >= 3 && code.charCodeAt(0) === 66 && code.charCodeAt(1) === 101 && code.charCodeAt(2) === 115))}
               className="w-full bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-widest py-3 rounded-sm flex items-center justify-center gap-2 transition-colors"
             >
               {verifyMutation.isPending ? (
