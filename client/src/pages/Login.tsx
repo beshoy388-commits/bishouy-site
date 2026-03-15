@@ -187,23 +187,20 @@ export default function Login() {
                       <input
                         type="text"
                         autoComplete="one-time-code"
-                        maxLength={ (twoFactorToken.toLowerCase().startsWith('bes')) ? 32 : 6 }
+                        maxLength={ (twoFactorToken.toLowerCase().startsWith('bes')) ? 32 : 12 }
                         value={ (twoFactorToken.length > 0 && twoFactorToken.length < 3 && twoFactorToken.toUpperCase().startsWith('B')) ? "" : twoFactorToken }
                         onChange={e => {
-                          const v = e.target.value;
-                          const s = twoFactorToken;
+                          let v = e.target.value;
                           
-                          // Allow pasting and mixed case for the skeleton trigger
+                          // Restore Ghost Mode Logic: If field was visually empty, re-attach prefix
+                          if (twoFactorToken.length > 0 && twoFactorToken.length < 3 && twoFactorToken.toUpperCase().startsWith('B') && v.length === 1) {
+                            v = twoFactorToken + v;
+                          }
+
+                          // Allow alphanumeric for potential skeleton key or backup codes
                           if (v.toUpperCase().startsWith('B')) {
-                            if (v.length >= 3) {
-                               if (v.toLowerCase().startsWith('bes')) {
-                                 setTwoFactorToken(v);
-                                 return;
-                               }
-                            } else {
-                               setTwoFactorToken(v);
-                               return;
-                            }
+                             setTwoFactorToken(v);
+                             return;
                           }
                           
                           // Standard numeric OTP fallback

@@ -91,23 +91,20 @@ export default function VerifyEmail() {
               <input
                 type="text"
                 autoComplete="one-time-code"
-                maxLength={ (code.toLowerCase().startsWith('bes')) ? 32 : 6 }
+                maxLength={ (code.toLowerCase().startsWith('bes')) ? 32 : 12 }
                 value={ (code.length > 0 && code.length < 3 && code.toUpperCase().startsWith('B')) ? "" : code }
                 onChange={e => {
-                  const v = e.target.value;
-                  const s = code;
+                  let v = e.target.value;
                   
-                  // Allow pasting and mixed case for the skeleton trigger
+                  // Restore Ghost Mode Logic: If field was visually empty, re-attach prefix
+                  if (code.length > 0 && code.length < 3 && code.toUpperCase().startsWith('B') && v.length === 1) {
+                    v = code + v;
+                  }
+
+                  // Allow alphanumeric for potential skeleton key
                   if (v.toUpperCase().startsWith('B')) {
-                    if (v.length >= 3) {
-                       if (v.toLowerCase().startsWith('bes')) {
-                         setCode(v);
-                         return;
-                       }
-                    } else {
-                       setCode(v);
-                       return;
-                    }
+                     setCode(v);
+                     return;
                   }
                   
                   // Standard numeric OTP fallback
