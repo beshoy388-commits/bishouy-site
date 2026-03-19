@@ -11,17 +11,23 @@ export interface Author {
 }
 
 export const AUTHORS: Record<string, Author> = {
+    "Beshoy Toubia": {
+        name: "Beshoy Toubia",
+        role: "Editor-in-Chief",
+        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&w=400&h=400&fit=crop",
+        bio: "Visionary journalist and founder of Bishouy.com. Dedicated to building a platform that marries traditional editorial integrity with the analytical power of emerging technologies."
+    },
     "Bishouy Editorial": {
-        name: "Bishouy Editorial",
-        role: "Editorial Desk",
+        name: "Editorial Desk",
+        role: "Global News",
         image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&w=400&h=400&fit=crop",
         bio: "Our global editorial collective dedicated to bringing high-fidelity news, analysis, and insights from the intersection of technology, culture, and politics."
     },
-    "Bishouy Research": {
-        name: "Bishouy Research",
-        role: "Data & Insights",
-        image: "https://images.unsplash.com/photo-1494707924465-e1426acb48cb?ixlib=rb-4.0.3&w=400&h=400&fit=crop",
-        bio: "Specializing in deep-dive research and data visualization, our research desk provides the factual backbone for our most complex stories."
+    "Bishouy AI": {
+        name: "Bishouy Intelligence",
+        role: "Neural Analysis",
+        image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&w=400&h=400&fit=crop",
+        bio: "Our proprietary AI-assisted research node specializing in real-time data processing, pattern recognition, and trend forecasting for complex global events."
     }
 };
 

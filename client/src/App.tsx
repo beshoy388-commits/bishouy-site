@@ -37,6 +37,7 @@ const Contact = lazy(() => import("@/pages/Contact"));
 const Careers = lazy(() => import("@/pages/Careers"));
 const CodeOfEthics = lazy(() => import("@/pages/CodeOfEthics"));
 const FactCheckingPolicy = lazy(() => import("@/pages/FactCheckingPolicy"));
+const AIEthics = lazy(() => import("@/pages/AIEthics"));
 
 const PageFallback = () => (
   <div className="min-h-screen bg-[#0F0F0E] flex items-center justify-center">
@@ -74,6 +75,7 @@ function Router() {
         <Route path="/careers" component={Careers} />
         <Route path="/code-of-ethics" component={CodeOfEthics} />
         <Route path="/fact-checking" component={FactCheckingPolicy} />
+        <Route path="/ai-ethics" component={AIEthics} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>

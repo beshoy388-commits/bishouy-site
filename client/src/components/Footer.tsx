@@ -96,9 +96,20 @@ export default function Footer() {
               Independent, in-depth, and accessible journalism. Since 2024, we
               tell the world's story without filters.
             </p>
-            {/* <div className="flex items-center gap-3 mt-5">
-              ... socials ...
-            </div> */}
+            <div className="flex items-center gap-4 mt-6">
+              <a href="#" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="X (Twitter)">
+                <Twitter size={14} />
+              </a>
+              <a href="#" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="Instagram">
+                <Instagram size={14} />
+              </a>
+              <a href="#" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="YouTube">
+                <Youtube size={14} />
+              </a>
+              <a href="/api/rss" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="RSS Feed">
+                <Rss size={14} />
+              </a>
+            </div>
           </div>
 
           {/* Categories */}
@@ -127,12 +138,12 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5">
               {[
-                { label: "About Us", href: "/about" },
+                { label: "Our Story", href: "/about" },
                 { label: "Editorial Team", href: "/editorial-team" },
+                { label: "AI Ethics Protocol", href: "/ai-ethics" },
+                { label: "Contact Intelligence", href: "/contact" },
                 { label: "Mission & Values", href: "/mission-values" },
-                { label: "Contact", href: "/contact" },
-                { label: "Code of Ethics", href: "/code-of-ethics" },
-                { label: "Fact-Checking", href: "/fact-checking" },
+                { label: "Careers", href: "/careers" },
               ].map(item => (
                 <li key={item.label}>
                   <Link
@@ -149,13 +160,14 @@ export default function Footer() {
           {/* Legal */}
           <div>
             <h4 className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest mb-4">
-              Legal
+              Legal & Fact
             </h4>
             <ul className="space-y-2.5">
               {[
                 { label: "Privacy Policy", href: "/privacy-policy" },
                 { label: "Terms of Service", href: "/terms-of-service" },
-                { label: "Advertising", href: "/contact" },
+                { label: "Fact-Checking Policy", href: "/fact-checking" },
+                { label: "Code of Ethics", href: "/code-of-ethics" },
               ].map(item => (
                 <li key={item.label}>
                   <Link
@@ -174,14 +186,19 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-[#1C1C1A]">
         <div className="container py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="font-ui text-[11px] text-[#555550]">
               © 2026 Bishouy.com — All rights reserved
             </p>
-            <p className="font-ui text-[11px] text-[#555550]">
-              Registered News Publication · Editor-in-Chief: Bishouy Editorial
-              Team
-            </p>
+            <div className="flex items-center gap-6">
+                <p className="font-ui text-[11px] text-[#555550]">
+                  Editor-in-Chief: <span className="text-[#8A8880] font-bold">Beshoy Toubia</span>
+                </p>
+                <div className="h-3 w-[1px] bg-[#1C1C1A]" />
+                <p className="font-ui text-[11px] text-[#555550]">
+                  Reg. News Pub ID: <span className="text-[#8A8880]">BSY-2024-AI</span>
+                </p>
+            </div>
           </div>
         </div>
       </div>
