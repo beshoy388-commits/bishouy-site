@@ -490,14 +490,14 @@ font {
   }
 
   /* Premium Editorial Typography */
+  .drop-cap {
+    contain: content;
+  }
+
   .drop-cap::first-letter {
-    font-family: "Merriweather", serif;
-    float: left;
-    font-size: 4.5rem;
+    @apply font-900 border border-[#E8A020]/30 mr-3 px-2 py-0.5 mt-1 float-left text-5xl md:text-6xl text-[#E8A020];
+    font-family: "Bebas Neue", sans-serif;
     line-height: 1;
-    margin: 0.5rem 0.75rem 0 0;
-    color: oklch(0.72, 0.16, 70);
-    font-weight: 900;
   }
 
   .premium-blockquote {
@@ -613,5 +613,48 @@ font {
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #E8A020;
+  }
+
+  /* Dossier System */
+  .dossier-card {
+    @apply bg-[#11110F] border border-[#1C1C1A] relative overflow-hidden;
+    background-image: 
+      radial-gradient(circle at 2px 2px, rgba(232, 160, 32, 0.03) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+
+  .dossier-header {
+    @apply border-b border-[#1C1C1A] pb-8 mb-8 relative;
+  }
+
+  .agent-status-tag {
+    @apply px-2 py-0.5 text-[8px] font-900 uppercase tracking-widest rounded-sm border;
+  }
+
+  .status-active { @apply text-[#22c55e] border-[#22c55e]/20 bg-[#22c55e]/5; }
+  .status-admin  { @apply text-[#E8A020] border-[#E8A020]/20 bg-[#E8A020]/5; }
+
+  /* Neural Effects */
+  .neural-scan-line {
+    @apply absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 overflow-hidden;
+  }
+
+  .neural-scan-line::after {
+    content: "";
+    @apply absolute w-full h-[150%] left-0 -top-full;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(232, 160, 32, 0.05) 50%,
+      rgba(232, 160, 32, 0.2) 51%,
+      rgba(232, 160, 32, 0.05) 52%,
+      transparent 100%
+    );
+    animation: scan-move 4s linear infinite;
+  }
+
+  @keyframes scan-move {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(150%); }
   }
 }

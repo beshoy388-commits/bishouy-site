@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useRoute } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useAudio } from "@/contexts/AudioContext";
 import ArticleDetailSkeleton from "@/components/ArticleDetailSkeleton";
 import { trpc } from "@/lib/trpc";
 import {
@@ -50,35 +51,7 @@ export default function ArticleDetail() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isSaved, setIsSaved] = useState(false);
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
-  const [speechSynthesis, setSpeechSynthesis] = useState<SpeechSynthesisUtterance | null>(null);
-
-  const handleAudioToggle = () => {
-    if (isAudioPlaying) {
-      window.speechSynthesis.cancel();
-      setIsAudioPlaying(false);
-    } else {
-      if (!article?.excerpt) return;
-      const utterance = new SpeechSynthesisUtterance(article.excerpt);
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-      utterance.onend = () => setIsAudioPlaying(false);
-      
-      const voices = window.speechSynthesis.getVoices();
-      const newsVoice = voices.find(v => v.lang.startsWith("it") || v.lang.startsWith("en"));
-      if (newsVoice) utterance.voice = newsVoice;
-
-      window.speechSynthesis.speak(utterance);
-      setSpeechSynthesis(utterance);
-      setIsAudioPlaying(true);
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      window.speechSynthesis.cancel();
-    };
-  }, []);
+  const { isPlaying, currentArticleId, togglePlay, stop } = useAudio();
 
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState("");
@@ -88,6 +61,13 @@ export default function ArticleDetail() {
     { slug: slug || "" },
     { enabled: !!slug }
   );
+
+  const isAudioPlaying = isPlaying && currentArticleId === article?.id;
+
+  const handleAudioToggle = () => {
+    if (!article) return;
+    togglePlay(article.id, article.title, article.excerpt);
+  };
 
   // Query for comments
   const { data: comments, refetch: refetchComments } =

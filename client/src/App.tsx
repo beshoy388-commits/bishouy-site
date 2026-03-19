@@ -127,6 +127,9 @@ import GoogleAdSense from "@/components/GoogleAdSense";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import NewsletterModal from "@/components/NewsletterModal";
 import CommandPalette from "@/components/CommandPalette";
+import ScrollToTop from "@/components/ScrollToTop";
+import { AudioProvider } from "@/contexts/AudioContext";
+import GlobalAudioPlayer from "@/components/GlobalAudioPlayer";
 
 function AppContent() {
   const { setIsSearchOpen } = useUI();
@@ -136,7 +139,9 @@ function AppContent() {
 
   return (
     <MaintenanceGuard>
+      <ScrollToTop />
       <Toaster />
+      <GlobalAudioPlayer />
       <LiveAnalyticsTracker />
       <UserStatusMonitor />
       <GoogleAdSense />
@@ -163,9 +168,11 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">
         <UIProvider>
-          <TooltipProvider>
-            <AppContent />
-          </TooltipProvider>
+          <AudioProvider>
+            <TooltipProvider>
+              <AppContent />
+            </TooltipProvider>
+          </AudioProvider>
         </UIProvider>
       </ThemeProvider>
     </ErrorBoundary>

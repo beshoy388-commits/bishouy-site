@@ -167,6 +167,7 @@ export default function ArticleCard({
               fetchPriority="high"
               onError={handleImageError}
             />
+            <div className="neural-scan-line" />
           </div>
           {/* ... (rest of the featured content remains the same) */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0E] via-[#0F0F0E]/60 to-transparent" />
@@ -252,6 +253,7 @@ export default function ArticleCard({
               decoding="async"
               onError={handleImageError}
             />
+            <div className="neural-scan-line" />
           </div>
           <div className="flex-1 min-w-0 pr-2 py-1 flex flex-col justify-between">
             <div>
@@ -320,6 +322,7 @@ export default function ArticleCard({
             decoding="async"
             onError={handleImageError}
           />
+          <div className="neural-scan-line" />
           {showLikes && (
             <div
               className="absolute top-2 right-2 z-20"
