@@ -86,7 +86,7 @@ export default function Unsubscribe() {
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/">
-              <button className="px-8 py-3 bg-[#E8A020] text-[#0F0F0E] font-ui text-sm font-700 uppercase tracking-widest rounded-sm hover:bg-[#D4911C] transition-colors">
+              <button className="px-8 py-3 bg-[#E8A020] text-[#0F0F0E] font-ui text-sm font-bold uppercase tracking-widest rounded-sm hover:bg-[#D4911C] transition-colors">
                 Back to Home
               </button>
             </Link>

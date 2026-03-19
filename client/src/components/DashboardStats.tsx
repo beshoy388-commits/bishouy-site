@@ -374,7 +374,7 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
                         </div>
                     </div>
                     
-                    <h4 className="text-sm font-headline font-700 text-[#F2F0EB] mb-4 line-clamp-2 leading-snug h-10 group-hover:text-[#E8A020] transition-colors uppercase tracking-tight">
+                    <h4 className="text-sm font-headline font-bold text-[#F2F0EB] mb-4 line-clamp-2 leading-snug h-10 group-hover:text-[#E8A020] transition-colors uppercase tracking-tight">
                         {article.title}
                     </h4>
                     

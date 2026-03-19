@@ -136,7 +136,7 @@ export default function ArticleCard({
         className={`${isAnimating && userLiked ? "animate-heart-burst" : ""}`}
         fill={userLiked ? "currentColor" : "none"}
       />
-      <span className="font-ui text-[11px] font-700 tabular-nums">
+      <span className="font-ui text-[11px] font-bold tabular-nums">
         {likeCount}
       </span>
     </button>
@@ -296,7 +296,7 @@ export default function ArticleCard({
               >
                 {article.category}
               </span>
-              <h3 className="font-headline text-[13px] md:text-sm font-700 text-[#F2F0EB] leading-tight line-clamp-2 md:line-clamp-2 title-hover">
+              <h3 className="font-headline text-[13px] md:text-sm font-bold text-[#F2F0EB] leading-tight line-clamp-2 md:line-clamp-2 title-hover">
                 <span>{article.title}</span>
               </h3>
             </div>
@@ -332,7 +332,7 @@ export default function ArticleCard({
           >
             {article.category}
           </span>
-          <h3 className="font-headline text-sm font-700 text-[#F2F0EB] leading-snug line-clamp-2 title-hover mb-2">
+          <h3 className="font-headline text-sm font-bold text-[#F2F0EB] leading-snug line-clamp-2 title-hover mb-2">
             {article.title}
           </h3>
           <div className="flex items-center gap-3 text-[#8A8880]">
@@ -392,7 +392,7 @@ export default function ArticleCard({
           >
             {article.category}
           </span>
-          <h3 className="font-headline text-base font-700 text-[#F2F0EB] leading-snug line-clamp-2 title-hover mb-2">
+          <h3 className="font-headline text-base font-bold text-[#F2F0EB] leading-snug line-clamp-2 title-hover mb-2">
             <span>{article.title}</span>
           </h3>
           <p className="font-ui text-xs text-[#8A8880] line-clamp-2 mb-4 flex-1">

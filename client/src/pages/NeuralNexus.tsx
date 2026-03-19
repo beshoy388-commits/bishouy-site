@@ -136,7 +136,7 @@ export default function NeuralNexus() {
                                         <span className="opacity-30">/</span>
                                         <span>Node ID: {article.id}</span>
                                     </div>
-                                    <h4 className="text-xl font-headline font-700 text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors mb-2">
+                                    <h4 className="text-xl font-headline font-bold text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors mb-2">
                                         {article.title}
                                     </h4>
                                     <p className="text-xs text-[#8A8880] line-clamp-1 italic">"{article.excerpt}"</p>

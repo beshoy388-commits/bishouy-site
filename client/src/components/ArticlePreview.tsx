@@ -212,7 +212,7 @@ export default function ArticlePreview({ article }: ArticlePreviewProps) {
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
               <span
-                className="font-ui text-[10px] font-700 uppercase tracking-widest px-2.5 py-1 rounded-sm text-white"
+                className="font-ui text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-sm text-white"
                 style={{ backgroundColor: article.categoryColor || "#E8A020" }}
               >
                 {article.category}

@@ -125,21 +125,21 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-8 flex-1">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-[#8A8880] hover:text-[#F2F0EB] transition-colors flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest font-700"
+                className="text-[#8A8880] hover:text-[#F2F0EB] transition-colors flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest font-bold"
               >
                 <Menu size={16} />
                 Menu
               </button>
               <button
                 onClick={handleSearchClick}
-                className="text-[#8A8880] hover:text-[#E8A020] transition-colors flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest font-700"
+                className="text-[#8A8880] hover:text-[#E8A020] transition-colors flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest font-bold"
               >
                 <Search size={16} />
                 Search
               </button>
               <Link
                 href="/ai"
-                className="text-[#8A8880] hover:text-[#E8A020] transition-colors flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest font-700 ml-2"
+                className="text-[#8A8880] hover:text-[#E8A020] transition-colors flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest font-bold ml-2"
                 title="AI Assistant"
               >
                 <Sparkles size={16} />
@@ -215,7 +215,7 @@ export default function Navbar() {
               ) : (
                 <Link
                   href="/login"
-                  className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-700 uppercase tracking-widest px-4 py-2 rounded-sm transition-colors"
+                  className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-sm transition-colors"
                 >
                   <LogIn size={14} />
                   Login
@@ -299,7 +299,7 @@ export default function Navbar() {
                 Editorial Intelligence (AI)
               </Link>
               <div className="py-2 mt-2">
-                <span className="font-ui text-[10px] text-[#555550] uppercase tracking-widest font-700">Categories</span>
+                <span className="font-ui text-[10px] text-[#555550] uppercase tracking-widest font-bold">Categories</span>
               </div>
               {CATEGORIES.map(cat => (
                 <Link
@@ -341,7 +341,7 @@ export default function Navbar() {
                         setIsMenuOpen(false);
                         window.location.href = "/";
                       }}
-                      className="flex items-center gap-2 text-red-500/70 hover:text-red-500 transition-colors font-ui text-[10px] uppercase tracking-widest font-700"
+                      className="flex items-center gap-2 text-red-500/70 hover:text-red-500 transition-colors font-ui text-[10px] uppercase tracking-widest font-bold"
                     >
                       <LogOut size={14} />
                       Terminate Session

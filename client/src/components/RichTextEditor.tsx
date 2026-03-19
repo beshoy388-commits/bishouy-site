@@ -382,7 +382,7 @@ export default function RichTextEditor({
               setEditMode("visual");
               setShowPreview(false);
             }}
-            className={`px-3 py-1 flex items-center gap-1.5 text-[10px] font-700 uppercase tracking-widest rounded-sm transition-all ${editMode === "visual" ? "bg-[#E8A020] text-[#0F0F0E]" : "text-[#8A8880] hover:text-[#F2F0EB]"}`}
+            className={`px-3 py-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest rounded-sm transition-all ${editMode === "visual" ? "bg-[#E8A020] text-[#0F0F0E]" : "text-[#8A8880] hover:text-[#F2F0EB]"}`}
           >
             <Layout size={12} /> Visual
           </button>
@@ -392,7 +392,7 @@ export default function RichTextEditor({
               setEditMode("raw");
               setShowPreview(false);
             }}
-            className={`px-3 py-1 flex items-center gap-1.5 text-[10px] font-700 uppercase tracking-widest rounded-sm transition-all ${editMode === "raw" ? "bg-[#E8A020] text-[#0F0F0E]" : "text-[#8A8880] hover:text-[#F2F0EB]"}`}
+            className={`px-3 py-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest rounded-sm transition-all ${editMode === "raw" ? "bg-[#E8A020] text-[#0F0F0E]" : "text-[#8A8880] hover:text-[#F2F0EB]"}`}
           >
             <Code2 size={12} /> Raw HTML
           </button>

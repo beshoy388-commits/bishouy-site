@@ -35,7 +35,7 @@ export default function PrivacyPolicy() {
 
           <div className="font-body text-[#F2F0EB] leading-relaxed space-y-6">
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 1. Introduction
               </h2>
               <p>
@@ -54,7 +54,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 2. Data Controller
               </h2>
               <div className="bg-[#1C1C1A] rounded-sm p-4">
@@ -81,7 +81,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 3. Information We Collect
               </h2>
 
@@ -158,7 +158,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 4. Legal Basis for Processing (GDPR – Art. 6)
               </h2>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -183,7 +183,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 5. How We Use Your Information
               </h2>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -205,7 +205,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 6. Public Data and Social Features
               </h2>
               <p className="mb-2">
@@ -237,7 +237,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 7. Third-Party Services
               </h2>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -267,7 +267,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 8. Data Retention
               </h2>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -303,7 +303,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 9. Your Rights Under GDPR
               </h2>
               <p className="mb-2">
@@ -360,7 +360,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 10. Cookies and Tracking
               </h2>
               <p className="mb-2">We use the following types of cookies:</p>
@@ -381,7 +381,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 11. Data Security
               </h2>
               <ul className="list-disc list-inside space-y-2 ml-4">
@@ -405,7 +405,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 12. International Data Transfers
               </h2>
               <p>
@@ -416,7 +416,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 13. Minors
               </h2>
               <p>
@@ -434,7 +434,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 14. Changes to This Policy
               </h2>
               <p>
@@ -446,7 +446,7 @@ export default function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 15. Contact
               </h2>
               <div className="bg-[#1C1C1A] rounded-sm p-4 mt-3">

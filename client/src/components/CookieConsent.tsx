@@ -106,7 +106,7 @@ export default function CookieConsent() {
         {!showSettings ? (
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex-1">
-              <h3 className="font-headline text-lg font-700 text-[#F2F0EB] mb-1 uppercase tracking-tighter">
+              <h3 className="font-headline text-lg font-bold text-[#F2F0EB] mb-1 uppercase tracking-tighter">
                 Cookie <span className="text-[#E8A020]">Preferences</span>
               </h3>
               <p className="font-ui text-xs text-[#8A8880] leading-relaxed max-w-2xl">
@@ -148,7 +148,7 @@ export default function CookieConsent() {
         ) : (
           <div className="bg-[#1C1C1A] rounded-xl p-6 border border-[#2A2A28]">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-headline text-lg font-700 text-[#F2F0EB] uppercase tracking-tighter">
+              <h3 className="font-headline text-lg font-bold text-[#F2F0EB] uppercase tracking-tighter">
                 Cookie <span className="text-[#E8A020]">Settings</span>
               </h3>
               <button

@@ -35,7 +35,7 @@ export default function GlobalAudioPlayer() {
                     <span className="text-[8px] font-black text-[#E8A020] uppercase tracking-[0.3em] font-ui">Neural Link Active</span>
                     <Headphones size={8} className="text-[#8A8880]" />
                  </div>
-                 <h4 className="text-[11px] font-headline font-700 text-[#F2F0EB] truncate pr-4">
+                 <h4 className="text-[11px] font-headline font-bold text-[#F2F0EB] truncate pr-4">
                     {currentTitle}
                  </h4>
                  <div className="flex items-center gap-1 mt-1 text-[8px] text-[#555550] uppercase tracking-widest font-extrabold">

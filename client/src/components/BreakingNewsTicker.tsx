@@ -39,7 +39,7 @@ export default function BreakingNewsTicker() {
           <div className="ticker-track flex flex-nowrap items-center py-2">
             {items.map((news, i) => (
               <div key={i} className="flex-shrink-0 flex items-center">
-                <span className="font-ui text-[11px] font-700 text-[#0F0F0E] uppercase tracking-wider whitespace-nowrap px-8">
+                <span className="font-ui text-[11px] font-bold text-[#0F0F0E] uppercase tracking-wider whitespace-nowrap px-8">
                   <span>{news}</span>
                 </span>
                 <span className="text-[#0F0F0E]/40 font-bold notranslate">·</span>

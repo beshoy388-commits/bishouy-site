@@ -828,7 +828,7 @@ export default function ArticleDetail() {
 
               {/* Comments Section */}
               <div className="max-w-3xl mx-auto">
-                <h3 className="font-headline text-xl font-700 text-[#F2F0EB] mb-6">
+                <h3 className="font-headline text-xl font-bold text-[#F2F0EB] mb-6">
                   Comments
                 </h3>
 
@@ -1050,7 +1050,7 @@ export default function ArticleDetail() {
               {/* Related Articles Section */}
               {relatedArticles && relatedArticles.length > 0 && (
                 <div className="mt-16 pt-12 border-t border-[#1C1C1A]">
-                  <h3 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-8">
+                  <h3 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-8">
                     Read Next
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -1117,7 +1117,7 @@ export default function ArticleDetail() {
                       className={`${isAnimating && userLiked ? "animate-heart-burst" : ""}`}
                       fill={userLiked ? "currentColor" : "none"}
                     />
-                    <span className="font-ui text-sm font-700 tabular-nums">
+                    <span className="font-ui text-sm font-bold tabular-nums">
                       {likeCount} Likes
                     </span>
                   </button>
@@ -1133,7 +1133,7 @@ export default function ArticleDetail() {
                     }}
                   >
                     <Bookmark size={20} fill={isSaved ? "currentColor" : "none"} />
-                    <span className="font-ui text-[11px] font-700 uppercase tracking-widest text-center leading-tight">
+                    <span className="font-ui text-[11px] font-bold uppercase tracking-widest text-center leading-tight">
                       {isSaved ? "In Your Library" : "Intelligence Library"}
                     </span>
                   </button>

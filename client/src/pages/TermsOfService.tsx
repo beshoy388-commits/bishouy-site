@@ -35,7 +35,7 @@ export default function TermsOfService() {
 
           <div className="font-body text-[#F2F0EB] leading-relaxed space-y-6">
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 1. Agreement to Terms
               </h2>
               <p>
@@ -51,7 +51,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 2. The Platform
               </h2>
               <p>Bishouy.com is a news and community platform that offers:</p>
@@ -66,7 +66,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 3. User Accounts
               </h2>
               <h3 className="font-headline text-lg font-semibold text-[#E8A020] mb-2">
@@ -115,7 +115,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 4. Public Profile
               </h2>
               <p>
@@ -138,7 +138,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 5. User-Generated Content
               </h2>
               <h3 className="font-headline text-lg font-semibold text-[#E8A020] mb-2">
@@ -181,7 +181,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 6. Intellectual Property
               </h2>
               <p>
@@ -198,7 +198,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 7. Newsletter
               </h2>
               <p>
@@ -211,7 +211,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 8. Prohibited Conduct
               </h2>
               <p>You agree not to:</p>
@@ -234,7 +234,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 9. Disclaimer of Warranties
               </h2>
               <p>
@@ -248,7 +248,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 10. Limitation of Liability
               </h2>
               <p>
@@ -261,7 +261,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 11. Links to External Sites
               </h2>
               <p>
@@ -272,7 +272,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 12. Accessibility
               </h2>
               <p>
@@ -290,7 +290,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 13. Modifications to the Terms
               </h2>
               <p>
@@ -302,7 +302,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 14. Governing Law and Disputes
               </h2>
               <p>
@@ -323,7 +323,7 @@ export default function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="font-headline text-2xl font-700 text-[#F2F0EB] mb-3">
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 15. Contact
               </h2>
               <div className="bg-[#1C1C1A] rounded-sm p-4 mt-3">
