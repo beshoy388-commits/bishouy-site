@@ -20,9 +20,9 @@ export default function MarketTicker() {
           <div className="flex-1 overflow-hidden relative">
             <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#0A0A09] to-transparent z-10 pointer-events-none" />
             <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#0A0A09] to-transparent z-10 pointer-events-none" />
-            <div className="flex items-center gap-10 animate-marquee whitespace-nowrap">
-                {MARKETS.concat(MARKETS).map((m, i) => (
-                    <div key={i} className="flex items-center gap-2.5">
+            <div className="flex items-center gap-12 animate-marquee whitespace-nowrap px-4">
+                {MARKETS.concat(MARKETS).concat(MARKETS).map((m, i) => (
+                    <div key={i} className="flex items-center gap-3 shrink-0 py-1">
                         <span className="text-[9px] text-[#555550] font-ui uppercase font-900 tracking-widest">{m.name}</span>
                         <span className="text-[10px] text-[#F2F0EB] font-serif font-bold">{m.value}</span>
                         <span className={`flex items-center gap-0.5 text-[8px] font-900 px-1 rounded-[2px] ${m.change.startsWith('+') ? 'text-[#22c55e] bg-[#22c55e]/10' : 'text-[#ef4444] bg-[#ef4444]/10'}`}>

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function NewsletterModal() {
+    const { data: user } = trpc.auth.me.useQuery();
     const [isOpen, setIsOpen] = useState(false);
     const [email, setEmail] = useState("");
     const [isSubscribed, setIsSubscribed] = useState(false);
@@ -24,16 +25,17 @@ export default function NewsletterModal() {
     });
 
     useEffect(() => {
-        const hasSubscribed = localStorage.getItem("newsletter_subscribed");
+        const isAlreadySubscribedInDB = user?.subscribeToNewsletter === 1;
+        const hasSubscribedLocally = localStorage.getItem("newsletter_subscribed");
         const hasDismissed = sessionStorage.getItem("newsletter_dismissed");
 
-        if (!hasSubscribed && !hasDismissed) {
+        if (!hasSubscribedLocally && !hasDismissed && !isAlreadySubscribedInDB) {
             const timer = setTimeout(() => {
                 setIsOpen(true);
-            }, 15000); // Show after 15 seconds
+            }, 10000); // Show after 10 seconds
             return () => clearTimeout(timer);
         }
-    }, []);
+    }, [user]);
 
     const handleClose = () => {
         setIsOpen(false);
@@ -120,7 +122,7 @@ export default function NewsletterModal() {
                                                     <Loader2 className="animate-spin" size={18} />
                                                 ) : (
                                                     <>
-                                                        Initialize Subscription
+                                                        Join Newsletter
                                                         <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                                                     </>
                                                 )}

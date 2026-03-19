@@ -142,25 +142,25 @@ export default function Home() {
           <div className="max-w-4xl mx-auto glass-editorial-card p-12 md:p-20 relative overflow-hidden text-center">
              <div className="absolute top-0 left-0 w-full h-1 bg-[#E8A020]" />
              <div className="relative z-10">
-                <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-6 block font-ui">The Editorial Directive</span>
+                <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-6 block font-ui">Our Journalistic Mission</span>
                 <h2 className="font-display text-4xl md:text-6xl text-[#F2F0EB] mb-8 leading-[0.9] uppercase tracking-tighter">
-                   Sovereign news <br/> <span className="text-[#E8A020]">Architecture.</span>
+                   Global News, <br/> <span className="text-[#E8A020]">Verified.</span>
                 </h2>
                 <p className="font-ui text-md md:text-lg text-[#8A8880] leading-relaxed mb-10 max-w-2xl mx-auto italic font-serif">
-                   "We dismantle complexity. Our neural algorithms synthesize thousands of global inputs into a single, high-fidelity intelligence stream, ensuring that you witness history before it is curated."
+                   "We deliver pure, verified information from around the world. Every story is curated to bring you the most important events directly, keeping you informed without the noise."
                 </p>
                 <div className="flex flex-col md:flex-row items-center justify-center gap-8 border-t border-[#222220] pt-10">
                    <div className="text-left">
                       <p className="text-[9px] font-900 text-[#555550] uppercase tracking-[0.2em] mb-1">Status</p>
                       <div className="flex items-center gap-2">
                          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                         <span className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">Nexus Live</span>
+                         <span className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">System Online</span>
                       </div>
                    </div>
                    <div className="h-10 w-px bg-[#222220] hidden md:block" />
                    <div className="text-left">
                       <p className="text-[9px] font-900 text-[#555550] uppercase tracking-[0.2em] mb-1">Archives</p>
-                      <p className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">{articles.length} Reports Logged</p>
+                      <p className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">{articles.length} Articles Published</p>
                    </div>
                 </div>
              </div>

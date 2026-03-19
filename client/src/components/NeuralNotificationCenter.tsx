@@ -24,8 +24,8 @@ export default function NeuralNotificationCenter() {
         addNotification({
             id: 'init-link',
             type: 'SYSTEM',
-            title: 'Neural Link Established',
-            message: 'Sovereign News Node 01 active. Monitoring global streams.'
+            title: 'Connection Active',
+            message: 'Global news stream initialized and receiving updates.'
         });
     }, 2000);
     
@@ -42,7 +42,7 @@ export default function NeuralNotificationCenter() {
   };
 
   return (
-    <div className="fixed top-24 right-4 z-[200] flex flex-col gap-4 pointer-events-none w-80 md:w-96">
+    <div className="fixed top-[180px] right-4 z-[200] flex flex-col gap-4 pointer-events-none w-80 md:w-96">
       <AnimatePresence>
         {notifications.map((n) => (
           <motion.div
@@ -68,7 +68,7 @@ export default function NeuralNotificationCenter() {
                     
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="text-[8px] font-900 text-[#E8A020] uppercase tracking-[0.3em] font-ui">Intel Cache Recv</span>
+                            <span className="text-[8px] font-900 text-[#E8A020] uppercase tracking-[0.3em] font-ui">Live Update</span>
                             <div className="flex gap-[1px] items-center">
                                 <div className="w-1 h-1 bg-[#22c55e] rounded-full animate-pulse" />
                                 <span className="text-[7px] text-[#22c55e] font-800 uppercase tracking-widest">Live</span>
