@@ -178,12 +178,11 @@ async function rewriteArticle(
                - PULL QUOTES: Use <blockquote> for the most impactful statements. Must be clearly separated from body text.
                - PARAGRAPHS: Concise (3-4 sentences max) for mobile readability.
                - EMPHASIS: Use <strong> for names, dates, or fiscal figures.
-               - IMAGES: You MUST integrate at least two cinematic images within the body. Use this EXACT syntax:
+               - IMAGES: You MUST embed at least two professional photographs inside the article body. Use ONLY this exact syntax:
                  <!-- img:center:80% -->
-                 ![Professional Photo: Subject of the image](https://image.pollinations.ai/prompt/{URL_SAFE_PROMPT}?width=1200&height=800&nologo=true&enhance=true)
-                 *Caption for the image in italics*
-                 
-                 Replace {URL_SAFE_PROMPT} with a URL-safe version of your 'imagePrompt'.
+                 ![Photo description](https://loremflickr.com/1200/800/KEYWORD)
+                 *Short caption in italics*
+                 Replace KEYWORD with a single relevant English word (e.g. finance, politics, war, economy, technology).
 
             4. ANALYTICAL DEPTH:
                - Don't just report the "What." Analyze the "Why" (Geopolitical, Economic context).
@@ -203,7 +202,7 @@ async function rewriteArticle(
               "content": "Professional Markdown content. START DIRECTLY with text (no # title). NO ALL CAPS.",
               "tags": ["Tag1", "Tag2", "Tag3"],
               "category": "Pick strictly one of: World, Politics, Economy, Technology, Culture, Sports.",
-              "imagePrompt": "A highly detailed, professional photo-journalistic image generation prompt (max 180 chars).",
+              "imagePrompt": "A single relevant English keyword for the hero photo (e.g. finance, politics, war, economy, technology).",
               "seoTitle": "SEO optimized title (max 60 chars)",
               "seoDescription": "Compelling meta-description (max 155 chars)",
               "isFeatured": boolean,
@@ -371,9 +370,16 @@ export async function syncRSSFeeds(isManual: boolean = false) {
           const aiTags = editorialPiece.tags || [];
           const fallbackKeywords = aiTags.slice(0, 3).join(",") || aiCategory;
 
+          // Use real photo from LoremFlickr as fallback (keyword from imagePrompt or category)
+          const photoKeyword = encodeURIComponent(
+            (editorialPiece.imagePrompt || aiCategory || 'news')
+              .split(' ')[0]  // only first word as keyword
+              .toLowerCase()
+              .replace(/[^a-z]/g, '')
+          );
           const imageUrl =
             originalImage ||
-            `https://image.pollinations.ai/prompt/${encodeURIComponent(editorialPiece.imagePrompt || editorialPiece.title)}?width=1200&height=800&nologo=true&enhance=true`;
+            `https://loremflickr.com/1200/800/${photoKeyword}`;
 
           const articleData: InsertArticle = {
             title: editorialPiece.title,
