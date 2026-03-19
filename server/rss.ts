@@ -375,7 +375,7 @@ export async function syncRSSFeeds(isManual: boolean = false) {
             image: imageUrl,
             seoTitle: editorialPiece.seoTitle,
             seoDescription: editorialPiece.seoDescription,
-            status: "draft",
+            status: "published", // Auto-publish as requested
             featured: editorialPiece.isFeatured ? 1 : 0,
             breaking: editorialPiece.isBreaking ? 1 : 0,
             tags: JSON.stringify(editorialPiece.tags),
@@ -390,19 +390,15 @@ export async function syncRSSFeeds(isManual: boolean = false) {
           existingArticles.push(articleData as any);
 
           newArticlesCount++;
-          log(`[RSS] Premium draft ready for review: ${editorialPiece.title}`);
-
-          // CRITICAL: Stop after generating exactly ONE article as per user request
-          isSyncRunning = false;
-          return { success: true, count: 1, message: "Un articolo è stato generato con successo." };
+          log(`[RSS] Autonomous Article Published: ${editorialPiece.title}`);
         }
       } catch (error: any) {
         log(`[RSS] Workflow Error (${feedConfig.url}): ${error.message || error}`);
       }
     }
 
-    log(`[RSS] Editorial Sync complete. No new articles found to rewrite.`);
-    return { success: true, count: 0, message: "Nessuna nuova notizia trovata da elaborare." };
+    log(`[RSS] Editorial Sync complete. Generati ${newArticlesCount} articoli.`);
+    return { success: true, count: newArticlesCount, message: `Generati ${newArticlesCount} articoli.` };
   } catch (err) {
     console.error(`[RSS] Fatal Error:`, err);
     return { success: false, message: "Errore durante la generazione." };
