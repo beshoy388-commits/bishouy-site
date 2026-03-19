@@ -103,37 +103,69 @@ export default function Home() {
       <SEO />
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="pb-12">
-        <div className="container">
-          {mainFeatured && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-              {/* Main featured article — 2 columns */}
-              <div className="lg:col-span-2">
-                <h1 className="font-display text-2xl text-[#F2F0EB] uppercase tracking-[0.2em] mb-8 flex items-center gap-4">
-                  Today's Featured
-                  <div className="flex-1 h-px bg-gradient-to-r from-[#2A2A28] to-transparent" />
-                </h1>
-                <ArticleCard article={mainFeatured} variant="featured" />
-              </div>
-
-              {/* Secondary column — 3 horizontal cards */}
-              <div className="space-y-6">
-                <div className="border-l-2 border-[#E8A020] pl-4 mb-4">
-                  <h2 className="font-display text-sm text-[#F2F0EB] uppercase tracking-widest">
-                    Editor's Picks
-                  </h2>
-                </div>
-                {secondaryFeatured.map(article => (
-                  <ArticleCard
-                    key={article.id}
-                    article={article}
-                    variant="horizontal"
-                  />
-                ))}
-              </div>
+      {/* Hero Section with Neural Pulse */}
+      <section className="neural-pulse-container py-12 md:py-20 lg:py-24 bg-[#0A0A09]">
+        <div className="neural-grid-overlay" />
+        <div className="neural-node-glow top-[10%] left-[20%]" />
+        <div className="neural-node-glow bottom-[10%] right-[10%] animation-delay-2000" />
+        
+        <div className="container relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
+            <div className="lg:col-span-2 space-y-8">
+               <div className="flex items-center gap-3">
+                  <div className="h-[2px] w-12 bg-[#E8A020]" />
+                  <span className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em]">Primary Intelligence Node</span>
+               </div>
+               <ArticleCard article={mainFeatured} variant="featured" />
             </div>
-          )}
+            <div className="space-y-8">
+               <div className="flex items-center justify-between">
+                  <h3 className="font-display text-2xl text-[#F2F0EB] uppercase tracking-tighter">Editor's Picks</h3>
+                  <Link href="/category/world" className="text-[10px] font-900 text-[#8A8880] hover:text-[#E8A020] uppercase tracking-widest transition-colors font-ui">See All</Link>
+               </div>
+               <div className="space-y-8 mt-4">
+                  {secondaryFeatured.map((article: any) => (
+                    <ArticleCard
+                      key={article.id}
+                      article={article}
+                      variant="horizontal"
+                    />
+                  ))}
+               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* The Bishouy Mission - Editorial Authority Card */}
+      <section className="py-20 bg-[#0F0F0E] border-y border-[#1C1C1A]">
+        <div className="container">
+          <div className="max-w-4xl mx-auto glass-editorial-card p-12 md:p-20 relative overflow-hidden text-center">
+             <div className="absolute top-0 left-0 w-full h-1 bg-[#E8A020]" />
+             <div className="relative z-10">
+                <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-6 block font-ui">The Editorial Directive</span>
+                <h2 className="font-display text-4xl md:text-6xl text-[#F2F0EB] mb-8 leading-[0.9] uppercase tracking-tighter">
+                   Sovereign news <br/> <span className="text-[#E8A020]">Architecture.</span>
+                </h2>
+                <p className="font-ui text-md md:text-lg text-[#8A8880] leading-relaxed mb-10 max-w-2xl mx-auto italic font-serif">
+                   "We dismantle complexity. Our neural algorithms synthesize thousands of global inputs into a single, high-fidelity intelligence stream, ensuring that you witness history before it is curated."
+                </p>
+                <div className="flex flex-col md:flex-row items-center justify-center gap-8 border-t border-[#222220] pt-10">
+                   <div className="text-left">
+                      <p className="text-[9px] font-900 text-[#555550] uppercase tracking-[0.2em] mb-1">Status</p>
+                      <div className="flex items-center gap-2">
+                         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                         <span className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">Nexus Live</span>
+                      </div>
+                   </div>
+                   <div className="h-10 w-px bg-[#222220] hidden md:block" />
+                   <div className="text-left">
+                      <p className="text-[9px] font-900 text-[#555550] uppercase tracking-[0.2em] mb-1">Archives</p>
+                      <p className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">{articles.length} Reports Logged</p>
+                   </div>
+                </div>
+             </div>
+          </div>
         </div>
       </section>
 
