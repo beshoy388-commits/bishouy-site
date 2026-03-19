@@ -51,30 +51,25 @@ export default function AdminSidebar({
 
     const groups = [
         {
-            label: "Intelligence",
+            label: "Intelligence Hub",
             items: [
-                { id: "dashboard", label: "Mission Control", icon: LayoutDashboard },
-                { id: "live", label: "Signal Pulse", icon: Activity },
-                { id: "articles", label: "Content Nodes", icon: FileText },
-                { id: "media", label: "Asset Lab", icon: ImageIcon },
+                { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+                { id: "articles", label: "Articles", icon: FileText },
             ]
         },
         {
-            label: "Comms & Social",
+            label: "Editorial Ops",
             items: [
-                { id: "pulse", label: "Social Scrutiny", icon: Zap, badge: flaggedCount > 0 ? flaggedCount : undefined },
-                { id: "comments", label: "Nexus Feed", icon: MessageSquare, badge: pendingCount > 0 ? pendingCount : undefined },
-                { id: "newsletter", label: "Intel Broadcast", icon: Send },
-                { id: "ads", label: "Ad Protocol", icon: Megaphone },
+                { id: "comments", label: "Comments", icon: MessageSquare, badge: pendingCount > 0 ? pendingCount : undefined },
+                { id: "newsletter", label: "Newsletter", icon: Send },
             ]
         },
         {
-            label: "Systems Core",
+            label: "System Control",
             items: [
-                { id: "users", label: "Agent Directory", icon: User },
-                { id: "security", label: "Security Logs", icon: Shield },
-                { id: "system", label: "Kernel Console", icon: Terminal },
-                { id: "settings", label: "Core Config", icon: Settings },
+                { id: "users", label: "Users", icon: User },
+                { id: "security", label: "Terminal", icon: Terminal },
+                { id: "settings", label: "Settings", icon: Settings },
             ]
         }
     ];

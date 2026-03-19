@@ -12,17 +12,12 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import ArticleForm from "@/components/ArticleForm";
 import UsersManagement from "./UsersManagement";
-import SystemConsole from "@/components/SystemConsole";
 import DashboardStats from "@/components/DashboardStats";
 import NewsletterManager from "@/components/NewsletterManager";
-import AdsManager from "@/components/AdsManager";
 import GlobalComments from "@/components/GlobalComments";
 import AdminSidebar from "@/components/AdminSidebar";
 import SiteSettings from "@/components/SiteSettings";
-import SecurityStatus from "@/components/SecurityStatus";
-import MediaLibrary from "@/components/MediaLibrary";
-import PulseModeration from "@/components/PulseModeration";
-import LiveAnalytics from "@/components/LiveAnalytics";
+import SystemTerminal from "@/components/SystemTerminal";
 import {
   Loader2,
   Plus,
@@ -51,16 +46,9 @@ export default function AdminPanel() {
     | "articles"
     | "users"
     | "comments"
-    | "ads"
     | "newsletter"
-    | "system"
     | "settings"
     | "security"
-    | "media"
-    | "pulse"
-    | "live"
-    | "moderation"
-    | "analytics"
   >("dashboard");
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -383,16 +371,12 @@ export default function AdminPanel() {
         return <UsersManagement />;
       case "comments":
         return <GlobalComments />;
-      case "ads":
-        return <AdsManager />;
       case "newsletter":
         return <NewsletterManager />;
       case "settings":
         return <SiteSettings />;
-      case "system":
-        return <SystemConsole />;
       case "security":
-        return <SecurityStatus />;
+        return <SystemTerminal />;
       default:
         return <div>Tab not implemented</div>;
     }
