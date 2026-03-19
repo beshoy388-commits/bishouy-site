@@ -1984,6 +1984,10 @@ export const appRouter = router({
       .input(z.object({ key: z.string(), value: z.string() }))
       .mutation(async ({ input }) => {
         try {
+          if (input.key === "maintenance_mode") {
+             dbCache.delete("system_status");
+             maintenanceCache = null; // Clear local cache too
+          }
           return await updateSiteSetting(input.key, input.value);
         } catch (e) {
           throw new TRPCError({

@@ -59,6 +59,8 @@ export default function AdminPanel() {
     | "media"
     | "pulse"
     | "live"
+    | "moderation"
+    | "analytics"
   >("dashboard");
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -204,15 +206,15 @@ export default function AdminPanel() {
                       triggerAiMutation.mutate(undefined, {
                         onSuccess: (data) => {
                           if (data.success) {
-                            toast.success(data.message || "Articolo generato correttamente.");
+                            toast.success(data.message || "Article generated successfully.");
                             articlesQuery.refetch();
                           } else {
-                            toast.error(data.message || "Generazione fallita.");
+                            toast.error(data.message || "Generation failed.");
                           }
                         },
                         onError: (error) => {
-                          toast.error("Errore tecnico della AI", {
-                            description: "Il server AI ha impiegato troppo tempo o non ha risposto. Riprova tra 1 minuto."
+                          toast.error("AI Technical Error", {
+                            description: "The AI server timed out or did not respond. Please try again in 1 minute."
                           });
                         }
                       });
@@ -223,16 +225,16 @@ export default function AdminPanel() {
                     {triggerAiMutation.isPending ? (
                       <>
                         <Loader2 size={16} className="animate-spin" />
-                        Scrittura in corso (30s)...
+                        Generating Intelligence (30s)...
                       </>
                     ) : (
                       <>
                         <Bot size={16} />
-                        Genera Articolo AI
+                        Trigger Neural Synthesis (AI)
                       </>
                     )}
                   </button>
-                  <span className="text-[8px] text-[#555550] uppercase tracking-tighter">Avvia la ricerca di notizie e scrivi nuovi articoli automaticamente</span>
+                  <span className="text-[8px] text-[#555550] uppercase tracking-tighter">Initiate news synthesis and automated content generation</span>
                 </div>
                 <div className="flex flex-col gap-1.5 items-end">
                   <button

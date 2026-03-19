@@ -67,7 +67,7 @@ export function useAuth(options?: UseAuthOptions) {
     if (state.user) return;
     if (typeof window === "undefined") return;
 
-    // Evitiamo ridirezioni se siamo già sulla pagina di destinazione
+    // Avoid redirects if we are already on the destination page
     if (window.location.pathname === redirectPath) return;
 
     window.location.href = redirectPath;

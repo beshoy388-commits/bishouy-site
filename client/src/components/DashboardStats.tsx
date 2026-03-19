@@ -36,7 +36,7 @@ import {
 } from "recharts";
 import { motion } from "framer-motion";
 
-type AdminTab = "dashboard" | "articles" | "system" | "users" | "analytics" | "ads" | "newsletter" | "media" | "moderation" | "settings" | "security";
+type AdminTab = "dashboard" | "articles" | "users" | "comments" | "ads" | "newsletter" | "system" | "settings" | "security" | "media" | "pulse" | "live" | "moderation" | "analytics";
 
 interface TrendingArticle {
   id: number;
@@ -161,12 +161,12 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
                     ? "bg-red-500/5 border-red-500/30 text-red-500" 
                     : "bg-[#11110F] border-[#1C1C1A] text-[#F2F0EB] hover:border-[#E8A020]/20"}`}
             >
-                <p className="text-[9px] font-900 opacity-50 uppercase tracking-widest mb-4 font-ui">Platform State</p>
+                <p className="text-[9px] font-900 opacity-50 uppercase tracking-widest mb-4 font-ui">Maintenance Mode</p>
                 <div className="flex items-center justify-between">
                     <span className="text-lg font-display uppercase tracking-tighter">
-                        {maintenanceQuery.data?.maintenance ? "Lockdown Active" : "Grid Online"}
+                        {maintenanceQuery.data?.maintenance ? "STATUS: ON" : "STATUS: OFF"}
                     </span>
-                    <Activity size={18} className={maintenanceQuery.data?.maintenance ? "animate-pulse" : "opacity-30"} />
+                    <Activity size={18} className={maintenanceQuery.data?.maintenance ? "text-red-500 animate-pulse" : "opacity-30"} />
                 </div>
                 {updateSettingMutation.isPending && (
                     <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#E8A020] animate-[shimmer_1s_infinite]" />

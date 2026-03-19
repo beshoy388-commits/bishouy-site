@@ -101,7 +101,7 @@ const Maintenance = lazy(() => import("@/pages/Maintenance"));
 
 function MaintenanceGuard({ children }: { children: React.ReactNode }) {
   const { data: status } = trpc.system.getStatus.useQuery(undefined, {
-    staleTime: 300000,
+    staleTime: 30000, // 30 seconds for faster state updates
   });
   const { user } = useAuth();
 
@@ -161,10 +161,10 @@ function AppContent() {
       <GoogleAnalytics />
       {/* 
         Dynamic Layout Container 
-        pt-32 (8rem/128px) on mobile, pt-52 (13rem/208px) on desktop 
-        Optimized to show more content above the fold on mobile.
+        pt-[160px] (10rem) on mobile, pt-[220px] on desktop 
+        Optimized to show more content above the fold while preventing header overlap.
       */}
-      <div className={!isAdminPage ? `min-h-screen pt-32 lg:pt-52 ${!isAdminPage ? "pb-24 lg:pb-0" : ""}` : "min-h-screen"}>
+      <div className={!isAdminPage ? `min-h-screen pt-[180px] lg:pt-[220px] ${!isAdminPage ? "pb-24 lg:pb-0" : ""}` : "min-h-screen"}>
         <Router />
       </div>
       <NewsletterModal />

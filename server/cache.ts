@@ -35,6 +35,14 @@ class MemoryCache<T> {
   }
 
   /**
+   * Remove an item from cache
+   * @param key Unique key
+   */
+  delete(key: string): void {
+    this.cache.delete(key);
+  }
+
+  /**
    * Clear all expired entries to save memory
    */
   prune(): void {

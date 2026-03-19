@@ -11,13 +11,15 @@ const MARKETS = [
 
 export default function MarketTicker() {
   return (
-    <div className="bg-[#0A0A09] border-b border-[#1C1C1A] py-1.5 overflow-hidden notranslate select-none">
+    <div className="bg-[#0A0A09] border-b border-[#1C1C1A] py-2.5 overflow-hidden notranslate select-none relative z-50">
        <div className="container flex items-center justify-between gap-12">
           <div className="flex items-center gap-2 text-[#555550] shrink-0">
               <Activity size={10} className="text-[#E8A020]" />
-              <span className="text-[8px] font-900 uppercase tracking-[0.3em] font-ui">Neural Link Active</span>
+              <span className="text-[8px] font-900 uppercase tracking-[0.4em] font-ui">Global Intelligence Feed</span>
           </div>
           <div className="flex-1 overflow-hidden relative">
+            <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#0A0A09] to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#0A0A09] to-transparent z-10 pointer-events-none" />
             <div className="flex items-center gap-10 animate-marquee whitespace-nowrap">
                 {MARKETS.concat(MARKETS).map((m, i) => (
                     <div key={i} className="flex items-center gap-2.5">
