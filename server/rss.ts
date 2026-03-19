@@ -75,6 +75,17 @@ function extractImageUrl(item: any): string | undefined {
   if (item["media:content"]?.$?.url) {
     return item["media:content"].$.url;
   }
+  
+  // Regex to find <img> tags in content or description
+  const content = item.content || item.description || "";
+  const imgRegex = /<img[^>]+src="([^">]+)"/i;
+  const match = content.match(imgRegex);
+  if (match && match[1]) {
+    let url = match[1];
+    if (url.startsWith("//")) url = "https:" + url;
+    return url;
+  }
+  
   return undefined;
 }
 
@@ -161,9 +172,10 @@ async function rewriteArticle(
                - THE NUT GRAPH: Within the first 2-3 paragraphs, explicitly state *why* this story matters globally and what the stakes are.
                - THEMATIC SUBHEADINGS: Use <h2> and <h3> that are informative and punchy (e.g., "The Riyadh Pivot" instead of "Recent Background").
                - NO SUMMARY: Never use "In conclusion" or "To summarize." End with a forward-looking observation or a poignant closing thought.
+               - TYPOGRAPHY: DO NOT use ALL CAPS for paragraphs or long sentences. Use standard Title Case for headers and Sentence Case for content.
 
             3. FORMATTING (MARCH 2026 STANDARDS):
-               - PULL QUOTES: Use <blockquote> for the most impactful statements.
+               - PULL QUOTES: Use <blockquote> for the most impactful statements. Must be clearly separated from body text.
                - PARAGRAPHS: Concise (3-4 sentences max) for mobile readability.
                - EMPHASIS: Use <strong> for names, dates, or fiscal figures.
                - IMAGES: You MUST integrate at least two cinematic images within the body. Use this EXACT syntax:
