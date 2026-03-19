@@ -260,7 +260,7 @@ export default function UsersManagement() {
                         </div>
                       </td>
                       <td className="py-4 px-6 text-[10px] font-900 text-[#555550] uppercase tracking-tighter font-ui">
-                        {user.email.replace(/(.{3}).+@(.+)/, "$1***@$2")}
+                        {(user.email ?? "").replace(/(.{3}).+@(.+)/, "$1***@$2")}
                       </td>
                       <td className="py-4 px-6 text-center">
                         <span className={`text-[9px] font-900 uppercase tracking-widest px-3 py-1 border ${user.role === 'admin' ? 'text-[#E8A020] border-[#E8A020]/20 bg-[#E8A020]/5' : 'text-[#333330] border-[#1C1C1A]'}`}>

@@ -383,7 +383,7 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
                             <Eye size={12} />
                             <span className="text-[10px] font-900 font-ui tracking-tighter">{article.viewCount?.toLocaleString() || 0}</span>
                         </div>
-                        <a href={`/article/${article.slug}`} target="_blank" className="text-[#555550] hover:text-[#E8A020] transition-colors"><ExternalLink size={12} /></a>
+                        <a href={`/article/${article.slug}`} target="_blank" rel="noopener noreferrer" className="text-[#555550] hover:text-[#E8A020] transition-colors"><ExternalLink size={12} /></a>
                     </div>
                 </motion.div>
             ))}
