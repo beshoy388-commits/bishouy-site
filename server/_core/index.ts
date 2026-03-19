@@ -262,34 +262,64 @@ async function startServer() {
         ? ENV.appUrl.slice(0, -1)
         : ENV.appUrl;
 
-      let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-  <url>
-    <loc>${baseUrl}/</loc>
-    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/privacy-policy</loc>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/terms-of-service</loc>
-    <priority>0.3</priority>
-  </url>`;
+      // Helper to generate a valid, non-data URI image URL for SEO
+      const getSitemapImageUrl = (img: string | null | undefined) => {
+        if (!img || img.startsWith('data:')) return null;
+        if (img.startsWith('http')) return img;
+        const cleanPath = img.startsWith('/') ? img : `/${img}`;
+        return `${baseUrl}${cleanPath}`;
+      };
 
-      for (const article of articles) {
-        const lastMod = (article.updatedAt || article.createdAt || new Date()).toISOString().split("T")[0];
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
+
+      // 1. Static Pages
+      const staticPages = [
+        { path: '/', priority: '1.0', changefreq: 'daily' },
+        { path: '/about', priority: '0.5', changefreq: 'monthly' },
+        { path: '/editorial-team', priority: '0.4', changefreq: 'monthly' },
+        { path: '/mission-values', priority: '0.4', changefreq: 'monthly' },
+        { path: '/code-of-ethics', priority: '0.4', changefreq: 'monthly' },
+        { path: '/fact-checking', priority: '0.4', changefreq: 'monthly' },
+        { path: '/contact', priority: '0.4', changefreq: 'monthly' },
+        { path: '/privacy-policy', priority: '0.3', changefreq: 'yearly' },
+        { path: '/terms-of-service', priority: '0.3', changefreq: 'yearly' },
+      ];
+
+      for (const page of staticPages) {
         xml += `
   <url>
-    <loc>${baseUrl}/article/${article.slug}</loc>
+    <loc>${baseUrl}${page.path === '/' ? '' : page.path}/</loc>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>`;
+      }
+
+      // 2. Categories
+      const categories = ["world", "politics", "economy", "technology", "culture", "sports"];
+      for (const cat of categories) {
+        xml += `
+  <url>
+    <loc>${baseUrl}/category/${cat}/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>`;
+      }
+
+      // 3. Articles
+      for (const article of articles) {
+        const lastMod = (article.updatedAt || article.createdAt || new Date()).toISOString().split("T")[0];
+        const imageUrl = getSitemapImageUrl(article.image);
+        
+        xml += `
+  <url>
+    <loc>${baseUrl}/article/${article.slug}/</loc>
     <lastmod>${lastMod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    ${article.image ? `
+    ${imageUrl ? `
     <image:image>
-      <image:loc>${article.image.startsWith('http') ? article.image : baseUrl + article.image}</image:loc>
+      <image:loc>${imageUrl}</image:loc>
       <image:title><![CDATA[${article.title}]]></image:title>
     </image:image>` : ''}
   </url>`;
