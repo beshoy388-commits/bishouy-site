@@ -105,7 +105,7 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="py-12 md:py-16 lg:py-20 bg-[#0A0A09]">
+      <section className="py-6 md:py-8 lg:py-8 bg-[#0A0A09]">
         <div className="container relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
             <div className="lg:col-span-2 space-y-8">

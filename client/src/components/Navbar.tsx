@@ -161,7 +161,7 @@ export default function Navbar() {
             {/* Logo — center (Desktop & Mobile) */}
             <div className="flex-shrink-0 flex justify-center absolute left-1/2 -translate-x-1/2">
               <Link href="/" className="notranslate" aria-label="BISHOUY.COM Home">
-                <span className="font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl text-[#F2F0EB] tracking-tighter hover:text-[#E8A020] transition-all block leading-none">
+                <span className="font-display text-xl sm:text-2xl md:text-2xl lg:text-3xl text-[#F2F0EB] tracking-tighter hover:text-[#E8A020] transition-all block leading-none">
                   <span>BISHOUY</span>
                   <span className="text-[#E8A020]">.</span>
                 </span>

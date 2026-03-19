@@ -171,7 +171,7 @@ const ArticleCard = memo(function ArticleCard({
       <Link href={`/article/${article.slug}`}>
         <article 
           onClick={handlePulse}
-          className="article-card group relative h-full min-h-[480px] overflow-hidden rounded-sm cursor-pointer"
+          className="article-card group relative h-full min-h-[420px] overflow-hidden rounded-sm cursor-pointer"
         >
           {pulses.map(p => (
             <div 
