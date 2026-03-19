@@ -60,7 +60,7 @@ export default function ArticleDetail() {
 
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState("");
-  const [isBrevityMode, setIsBrevityMode] = useState(false);
+  // Consolidating all editorial power into a single view (no more Brevity Mode duplication)
   const [isAudioLoading, setIsAudioLoading] = useState(false);
 
   // Query for article data
@@ -551,28 +551,6 @@ export default function ArticleDetail() {
         />
       </div>
 
-      {/* Smart Brevity Toggle - Floating Action Button */}
-      <div 
-        className="fixed bottom-40 right-4 z-[60] md:bottom-8 md:right-8 transition-opacity duration-300"
-        style={{ opacity: scrollProgress > 5 ? 0.8 : 1 }}
-      >
-        <button
-          onClick={() => {
-             setIsBrevityMode(!isBrevityMode);
-             window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          className={`flex items-center gap-3 px-6 py-3 rounded-full border shadow-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 ${
-            isBrevityMode 
-            ? "bg-[#E8A020] border-[#E8A020] text-[#0F0F0E]" 
-            : "bg-[#11110F] border-[#1C1C1A] text-[#8A8880] hover:text-[#F2F0EB]"
-          }`}
-        >
-          {isBrevityMode ? <FileText size={18} /> : <Zap size={18} className="text-[#E8A020]" />}
-          <span className="font-ui text-[10px] font-900 uppercase tracking-widest whitespace-nowrap">
-            {isBrevityMode ? "Full Investigation" : "Smart Brevity"}
-          </span>
-        </button>
-      </div>
 
       {/* Hero Image */}
       <section className="relative h-[300px] md:h-[450px] overflow-hidden bg-black">
@@ -808,49 +786,13 @@ export default function ArticleDetail() {
                 </div>
               </div>
 
-              {/* Conditionally Render Article Body */}
-              <AnimatePresence mode="wait">
-                {!isBrevityMode ? (
-                  <motion.div 
-                    key="full-content"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="prose prose-invert max-w-none mb-12 article-body-content"
-                  >
-                    <div className="font-serif text-[#D4D0C8] leading-relaxed">
-                      {renderArticleContent(article.content)}
-                      <div className="clear-both" />
-                    </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="brevity-content"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -30 }}
-                    className="py-12 border-t border-[#1C1C1A] text-center"
-                  >
-                    <div className="mb-6 inline-flex p-5 rounded-full bg-[#E8A020]/10 text-[#E8A020] shadow-[0_0_20px_rgba(232,160,32,0.1)]">
-                       <Zap size={40} className="animate-pulse" />
-                    </div>
-                    <h3 className="font-display text-3xl text-[#F2F0EB] mb-4">AI Summary Active</h3>
-                    <p className="text-[#8A8880] max-w-md mx-auto mb-10 font-ui leading-relaxed">
-                      This article has been condensed for quick reading. 
-                      Access the full report for all details.
-                    </p>
-                    <button 
-                      onClick={() => {
-                        setIsBrevityMode(false);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                      className="bg-[#1C1C1A] border border-[#2A2A28] px-8 py-4 rounded-sm font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] hover:bg-[#E8A020] hover:text-[#0F0F0E] transition-all"
-                    >
-                      Return to Full Report
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {/* Article Body */}
+              <div className="prose prose-invert max-w-none mb-12 article-body-content">
+                <div className="font-serif text-[#D4D0C8] leading-relaxed">
+                  {renderArticleContent(article.content)}
+                  <div className="clear-both" />
+                </div>
+              </div>
 
               {/* Tags */}
               {tags.length > 0 && (

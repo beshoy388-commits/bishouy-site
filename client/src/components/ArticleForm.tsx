@@ -24,12 +24,12 @@ import ArticlePreview from "./ArticlePreview";
 import ImageUploader from "./ImageUploader";
 
 const CATEGORIES = [
-  { name: "World", color: "#3B82F6" },
-  { name: "Politics", color: "#EF4444" },
-  { name: "Economy", color: "#10B981" },
-  { name: "Technology", color: "#8B5CF6" },
-  { name: "Culture", color: "#F59E0B" },
-  { name: "Sports", color: "#EC4899" },
+  { name: "World", color: "#E8A020" },
+  { name: "Politics", color: "#C0392B" },
+  { name: "Economy", color: "#27AE60" },
+  { name: "Technology", color: "#2980B9" },
+  { name: "Culture", color: "#8E44AD" },
+  { name: "Sports", color: "#E67E22" },
 ];
 
 interface ArticleFormProps {

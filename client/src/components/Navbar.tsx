@@ -32,8 +32,7 @@ import { useUI } from "@/contexts/UIContext";
 import AdPlacement from "./AdPlacement";
 import { formatDateString } from "@/lib/time-utils";
 
-import BreakingNewsTicker from "./BreakingNewsTicker";
-import MarketTicker from "./MarketTicker";
+import GlobalTicker from "./GlobalTicker";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -99,7 +98,7 @@ export default function Navbar() {
         : "bg-transparent"
         }`}
     >
-      <MarketTicker />
+      <GlobalTicker />
       {/* Top bar */}
       <div className="border-b border-[#222220] bg-[#0F0F0E] notranslate">
         <div className="container">
@@ -368,7 +367,6 @@ export default function Navbar() {
             position="banner_top"
             className="bg-[#0A0A09] py-3 border-b border-[#1C1C1A]"
           />
-          <BreakingNewsTicker />
         </>
       )}
     </header>

@@ -104,10 +104,8 @@ export default function Home() {
       <SEO />
       <Navbar />
 
-      {/* Hero Section with Neural Pulse */}
-      <section className="neural-pulse-container py-12 md:py-20 lg:py-24 bg-[#0A0A09]">
-        <NeuralMouseBackground />
-        
+      {/* Hero Section */}
+      <section className="py-12 md:py-16 lg:py-20 bg-[#0A0A09]">
         <div className="container relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
             <div className="lg:col-span-2 space-y-8">
@@ -136,38 +134,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* The Bishouy Mission - Editorial Authority Card */}
-      <section className="py-20 bg-[#0F0F0E] border-y border-[#1C1C1A]">
-        <div className="container">
-          <div className="max-w-4xl mx-auto glass-editorial-card p-12 md:p-20 relative overflow-hidden text-center">
-             <div className="absolute top-0 left-0 w-full h-1 bg-[#E8A020]" />
-             <div className="relative z-10">
-                <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-6 block font-ui">Our Journalistic Mission</span>
-                <h2 className="font-display text-4xl md:text-6xl text-[#F2F0EB] mb-8 leading-[0.9] uppercase tracking-tighter">
-                   Global News, <br/> <span className="text-[#E8A020]">Verified.</span>
-                </h2>
-                <p className="font-ui text-md md:text-lg text-[#8A8880] leading-relaxed mb-10 max-w-2xl mx-auto italic font-serif">
-                   "We deliver pure, verified information from around the world. Every story is curated to bring you the most important events directly, keeping you informed without the noise."
-                </p>
-                <div className="flex flex-col md:flex-row items-center justify-center gap-8 border-t border-[#222220] pt-10">
-                   <div className="text-left">
-                      <p className="text-[9px] font-900 text-[#555550] uppercase tracking-[0.2em] mb-1">Status</p>
-                      <div className="flex items-center gap-2">
-                         <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                         <span className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">Verified News</span>
-                      </div>
-                   </div>
-                   <div className="h-10 w-px bg-[#222220] hidden md:block" />
-                   <div className="text-left">
-                      <p className="text-[9px] font-900 text-[#555550] uppercase tracking-[0.2em] mb-1">Archives</p>
-                      <p className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">{articles.length} Articles Published</p>
-                   </div>
-                </div>
-             </div>
-          </div>
-        </div>
-      </section>
-
       {/* Section Divider */}
       <div className="container py-4">
         <div className="flex items-center gap-4">
@@ -178,63 +144,44 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Latest Articles + Social Pulse */}
+      {/* Latest Articles Grid — Expanded to full width for maximum clarity */}
       <section className="py-8">
         <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            {/* Articles Column */}
-            <div className="lg:col-span-9">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                {gridArticles.map((article: Article, idx: number) => (
-                  <div
-                    key={article.id}
-                    className="fade-in-up"
-                    style={{ animationDelay: `${idx * 50}ms` }}
-                    ref={idx === gridArticles.length - 1 ? (node) => {
-                      if (!node || !hasNextPage || isFetchingNextPage) return;
-                      const observer = new IntersectionObserver(
-                        (entries) => {
-                          if (entries[0].isIntersecting) {
-                            fetchNextPage();
-                            observer.disconnect();
-                          }
-                        },
-                        { threshold: 0.1 }
-                      );
-                      observer.observe(node);
-                    } : undefined}
-                  >
-                    <ArticleCard article={article} variant="medium" />
-                  </div>
-                ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {gridArticles.map((article: Article, idx: number) => (
+              <div
+                key={article.id}
+                className="fade-in-up"
+                style={{ animationDelay: `${idx * 50}ms` }}
+                ref={idx === gridArticles.length - 1 ? (node) => {
+                  if (!node || !hasNextPage || isFetchingNextPage) return;
+                  const observer = new IntersectionObserver(
+                    (entries) => {
+                      if (entries[0].isIntersecting) {
+                        fetchNextPage();
+                        observer.disconnect();
+                      }
+                    },
+                    { threshold: 0.1 }
+                  );
+                  observer.observe(node);
+                } : undefined}
+              >
+                <ArticleCard article={article} variant="medium" />
               </div>
-              
-              {(hasNextPage || isFetchingNextPage) && (
-                <div className="mt-12 text-center py-10">
-                  <div className="inline-flex items-center gap-3 px-6 py-3 border border-[#2A2A28] rounded-full bg-[#11110F]">
-                    <div className="w-1.5 h-1.5 bg-[#E8A020] rounded-full animate-ping" />
-                    <span className="font-ui text-[10px] font-900 text-[#8A8880] uppercase tracking-[0.3em]">
-                      {isFetchingNextPage ? "Loading Stories..." : "Scroll for more stories"}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Social Pulse Sidebar */}
-            <aside className="lg:col-span-3 space-y-8 h-fit">
-              <div className="border-l-2 border-[#E8A020] pl-4 mb-4">
-                <h2 className="font-display text-sm text-[#F2F0EB] uppercase tracking-widest">
-                  COMMUNITY PULSE
-                </h2>
-              </div>
-              <div className="min-h-[400px] h-auto">
-                <Suspense fallback={<div className="h-full bg-[#11110F] animate-pulse rounded-lg border border-[#1C1C1A]" />}>
-                  <SocialPulse />
-                </Suspense>
-              </div>
-            </aside>
+            ))}
           </div>
+          
+          {(hasNextPage || isFetchingNextPage) && (
+            <div className="mt-12 text-center py-10">
+              <div className="inline-flex items-center gap-3 px-6 py-3 border border-[#2A2A28] rounded-full bg-[#11110F]">
+                <div className="w-1.5 h-1.5 bg-[#E8A020] rounded-full animate-ping" />
+                <span className="font-ui text-[10px] font-900 text-[#8A8880] uppercase tracking-[0.3em]">
+                  {isFetchingNextPage ? "Loading Stories..." : "Scroll for more stories"}
+                </span>
+              </div>
+            </div>
+          )}
 
           <div className="mt-16 text-center">
             <div className="inline-block p-[1px] bg-gradient-to-r from-transparent via-[#E8A020] to-transparent w-full max-w-2xl" />
