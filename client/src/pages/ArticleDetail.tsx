@@ -27,7 +27,11 @@ import {
   Headphones,
   Zap,
   Activity,
+  Maximize2,
+  Minimize2,
+  FileText,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
 import { getSafeImage, getFallbackImage } from "@/lib/image-utils";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -55,19 +59,14 @@ export default function ArticleDetail() {
 
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState("");
+  const [isBrevityMode, setIsBrevityMode] = useState(false);
+  const [isAudioLoading, setIsAudioLoading] = useState(false);
 
   // Query for article data
   const { data: article, isLoading } = trpc.articles.getBySlug.useQuery(
     { slug: slug || "" },
     { enabled: !!slug }
   );
-
-  const isAudioPlaying = isPlaying && currentArticleId === article?.id;
-
-  const handleAudioToggle = () => {
-    if (!article) return;
-    togglePlay(article.id, article.title, article.excerpt);
-  };
 
   // Query for comments
   const { data: comments, refetch: refetchComments } =
@@ -573,18 +572,27 @@ export default function ArticleDetail() {
     img.src = getFallbackImage(article?.category || "news", article?.id || 0, 1400);
   };
 
+  if (isLoading) return <ArticleDetailSkeleton />;
+  if (!article) return <ArticleDetailSkeleton />;
+
+  const isAudioPlaying = isPlaying && currentArticleId === article?.id;
+
+  const handleAudioToggle = () => {
+    if (!article) return;
+    togglePlay(article.id, article.title, article.excerpt);
+  };
 
   return (
-    <main className="min-h-screen bg-[#0F0F0E] relative">
+    <main className="min-h-screen bg-[#0F0F0E] selection:bg-[#E8A020]/30 selection:text-[#E8A020] relative">
       <SEO
-        title={article?.title}
-        description={article?.excerpt}
-        image={article?.image}
+        title={article.title}
+        description={article.excerpt}
+        image={article.image}
         type="article"
-        authorName={article?.author}
-        publishedDate={article?.publishedAt || article?.createdAt}
-        updatedDate={article?.updatedAt}
-        category={article?.category}
+        authorName={article.author}
+        publishedDate={article.publishedAt || article.createdAt}
+        updatedDate={article.updatedAt}
+        category={article.category}
       />
       <Navbar />
 
@@ -594,6 +602,26 @@ export default function ArticleDetail() {
           className="h-full bg-[#E8A020] transition-all duration-150 ease-out"
           style={{ width: `${scrollProgress}%` }}
         />
+      </div>
+
+      {/* Smart Brevity Toggle - Floating Action Button */}
+      <div className="fixed bottom-24 right-6 z-[100] md:bottom-8 md:right-8">
+        <button
+          onClick={() => {
+             setIsBrevityMode(!isBrevityMode);
+             window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`flex items-center gap-3 px-6 py-3 rounded-full border shadow-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 ${
+            isBrevityMode 
+            ? "bg-[#E8A020] border-[#E8A020] text-[#0F0F0E]" 
+            : "bg-[#11110F] border-[#1C1C1A] text-[#8A8880] hover:text-[#F2F0EB]"
+          }`}
+        >
+          {isBrevityMode ? <FileText size={18} /> : <Zap size={18} className="text-[#E8A020]" />}
+          <span className="font-ui text-[10px] font-900 uppercase tracking-widest whitespace-nowrap">
+            {isBrevityMode ? "Full Investigation" : "Smart Brevity"}
+          </span>
+        </button>
       </div>
 
       {/* Hero Image */}
@@ -643,11 +671,17 @@ export default function ArticleDetail() {
 
           {/* Category and Breaking Badge */}
           <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-2 bg-[#E8A020]/5 px-2 py-1 rounded-sm border border-[#E8A020]/20">
+              <Zap size={10} className="text-[#E8A020]" />
+              <span className="font-ui text-[9px] font-900 text-[#E8A020] uppercase tracking-widest">
+                Verified Intel
+              </span>
+            </div>
             {article.breaking === 1 && (
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#E8A020] animate-pulse" />
                 <span className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest">
-                  Breaking News
+                  Breaking
                 </span>
               </div>
             )}
@@ -712,7 +746,7 @@ export default function ArticleDetail() {
                 <div className="relative z-10">
                   <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.3em] block mb-2 font-ui">Neural Link Active</span>
                   <h4 className="font-display text-lg text-[#F2F0EB]">Intelligence Audio Briefing</h4>
-                  <p className="text-[10px] text-[#8A8880] mt-1 font-ui uppercase tracking-widest">Sintesi neurale in tempo reale</p>
+                  <p className="text-[10px] text-[#8A8880] mt-1 font-ui uppercase tracking-widest">Real-time Neural Synthesis</p>
                 </div>
                 <button 
                   onClick={handleAudioToggle}
@@ -741,20 +775,43 @@ export default function ArticleDetail() {
                     <Zap size={80} className="text-[#E8A020]" />
                   </div>
                   <h3 className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-4">The Intelligence Nexus</h3>
-                  <p className="font-display text-xl text-[#F2F0EB] leading-tight mb-4">
-                    Strategic synthesis of the current intelligence node.
-                  </p>
                   <div className="space-y-4">
-                    <div className="flex gap-4 items-start">
+                    {/* Render AI summary if present */}
+                    {article.summary ? (
+                       (() => {
+                         try {
+                           const points = JSON.parse(article.summary);
+                           if (!Array.isArray(points)) throw new Error("Not array");
+                           return points.map((point: string, idx: number) => (
+                             <div key={idx} className="flex gap-4 items-start">
+                               <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0 shadow-[0_0_8px_rgba(232,160,32,0.6)]" />
+                               <p className="text-[#D4D0C8] text-sm leading-relaxed">{point}</p>
+                             </div>
+                           ));
+                         } catch (e) {
+                           return (
+                             <div className="flex gap-4 items-start">
+                               <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0" />
+                               <p className="text-[#D4D0C8] text-sm leading-relaxed italic opacity-80">{article.excerpt}</p>
+                             </div>
+                           )
+                         }
+                       })()
+                    ) : (
+                      <div className="flex gap-4 items-start">
                         <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0" />
-                        <p className="text-[#D4D0C8] text-sm leading-relaxed italic opacity-80 decoration-[#E8A020]/30 underline-offset-4 underline">{article.excerpt}</p>
-                    </div>
-                    {/* Dynamic Bullet Generation - Smart Brevity */}
-                    <div className="flex gap-4 items-start">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0" />
+                        <p className="text-[#D4D0C8] text-sm leading-relaxed italic opacity-80">{article.excerpt}</p>
+                      </div>
+                    )}
+                    
+                    {/* Why it Matters (Contextual) */}
+                    <div className="flex gap-4 items-start pt-2 border-t border-[#E8A020]/10">
+                        <div className="w-4 h-4 rounded-full bg-[#E8A020]/20 flex items-center justify-center flex-shrink-0">
+                           <Zap size={10} className="text-[#E8A020]" />
+                        </div>
                         <p className="text-[#D4D0C8] text-sm leading-relaxed">
                             <strong className="text-[#E8A020] uppercase text-[10px] tracking-widest mr-2">Why it matters:</strong>
-                            Global strategic implications for {article.category} architecture require immediate oversight.
+                            Strategic synthesis for {article.category} indicates evolving global patterns.
                         </p>
                     </div>
                   </div>
@@ -770,7 +827,7 @@ export default function ArticleDetail() {
                             </div>
                             <div className="flex justify-between items-center border-b border-[#1C1C1A] pb-2">
                                 <span className="text-[10px] text-[#555550] uppercase tracking-widest">Reliability</span>
-                                <span className="text-[10px] text-[#E8A020] font-bold">98.4%</span>
+                                <span className="text-[10px] text-[#E8A020] font-bold">{article.factCheck || "98.4%"}</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-[10px] text-[#555550] uppercase tracking-widest">Urgency</span>
@@ -801,13 +858,49 @@ export default function ArticleDetail() {
                 </div>
               </div>
 
-              {/* Article Body */}
-              <div className="prose prose-invert max-w-none mb-12 article-body-content">
-                <div className="font-serif text-[#D4D0C8] leading-relaxed">
-                  {renderArticleContent(article.content)}
-                  <div className="clear-both" />
-                </div>
-              </div>
+              {/* Conditionally Render Article Body */}
+              <AnimatePresence mode="wait">
+                {!isBrevityMode ? (
+                  <motion.div 
+                    key="full-content"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="prose prose-invert max-w-none mb-12 article-body-content"
+                  >
+                    <div className="font-serif text-[#D4D0C8] leading-relaxed">
+                      {renderArticleContent(article.content)}
+                      <div className="clear-both" />
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="brevity-content"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -30 }}
+                    className="py-12 border-t border-[#1C1C1A] text-center"
+                  >
+                    <div className="mb-6 inline-flex p-5 rounded-full bg-[#E8A020]/10 text-[#E8A020] shadow-[0_0_20px_rgba(232,160,32,0.1)]">
+                       <Zap size={40} className="animate-pulse" />
+                    </div>
+                    <h3 className="font-display text-3xl text-[#F2F0EB] mb-4">Neural Synthesis Active</h3>
+                    <p className="text-[#8A8880] max-w-md mx-auto mb-10 font-ui leading-relaxed">
+                      This investigation has been condensed for high-speed intelligence consumption. 
+                      Access the full cinematic report for deep context.
+                    </p>
+                    <button 
+                      onClick={() => {
+                        setIsBrevityMode(false);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className="bg-[#1C1C1A] border border-[#2A2A28] px-8 py-4 rounded-sm font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] hover:bg-[#E8A020] hover:text-[#0F0F0E] transition-all"
+                    >
+                      Return to Full Report
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* Tags */}
               {tags.length > 0 && (

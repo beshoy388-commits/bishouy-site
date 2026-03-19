@@ -57,7 +57,9 @@ export async function generateArticleFromTopic(topic: string) {
             "category": "CategoryName",
             "imagePrompt": "Professional photo-journalistic prompt for image generation (no text/logos)",
             "seoTitle": "SEO Title",
-            "seoDescription": "Meta description"
+            "seoDescription": "Meta description",
+            "summary": ["Point 1", "Point 2", "Point 3"],
+            "factCheck": "98.4% Neural Integrity"
           }`,
             },
             {

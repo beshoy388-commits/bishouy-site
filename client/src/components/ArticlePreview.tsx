@@ -22,6 +22,8 @@ interface ArticlePreviewProps {
     breaking: boolean;
     readTime: number;
     tags: string[];
+    summary?: string;
+    factCheck?: string;
   };
 }
 
@@ -258,7 +260,40 @@ export default function ArticlePreview({ article }: ArticlePreviewProps) {
                 <span>{article.readTime} min read</span>
               </div>
             </div>
-          </div>
+            </div>
+            
+            {/* Summary / Nexus Preview */}
+            {(article.summary || article.factCheck) && (
+              <div className="mb-12 bg-[#11110F] border-l-2 border-[#E8A020] p-8 rounded-sm shadow-xl mt-8">
+                <h3 className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-6">Article Synthesis</h3>
+                
+                {article.summary && (
+                  <div className="space-y-4 mb-6">
+                    {(() => {
+                      try {
+                        const points = JSON.parse(article.summary || "[]");
+                        if (!Array.isArray(points)) return null;
+                        return points.map((p, i) => (
+                          <div key={i} className="flex gap-4 items-start">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0" />
+                            <p className="text-[#D4D0C8] text-sm leading-relaxed">{p}</p>
+                          </div>
+                        ));
+                      } catch {
+                        return <p className="text-[#8A8880] italic text-sm">Summary data format invalid (Check JSON)</p>;
+                      }
+                    })()}
+                  </div>
+                )}
+                
+                {article.factCheck && (
+                  <div className="pt-4 border-t border-[#1C1C1A] flex justify-between items-center">
+                    <span className="text-[10px] text-[#555550] uppercase tracking-widest">Neural Integrity</span>
+                    <span className="text-[10px] text-[#E8A020] font-bold">{article.factCheck}</span>
+                  </div>
+                )}
+              </div>
+            )}
 
           {/* Article Body */}
           <div className="prose prose-invert max-w-none mb-12">

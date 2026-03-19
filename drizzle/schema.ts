@@ -78,6 +78,8 @@ export const articles = sqliteTable("articles", {
   // Tracking
   sourceUrl: text("sourceUrl"),
   sourceTitle: text("sourceTitle"),
+  summary: text("summary"), // AI generated bullet points (JSON string)
+  factCheck: text("factCheck"), // Trust score or verification status
 });
 
 export type Article = typeof articles.$inferSelect;

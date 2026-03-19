@@ -1098,6 +1098,8 @@ export const appRouter = router({
           publishedAt: null as any,
           sourceUrl: null,
           sourceTitle: `Bishouy Editorial Research | Assigned to ${authorName}`,
+          summary: JSON.stringify(generated.summary || []),
+          factCheck: generated.factCheck || "98% Neural Integrity",
         };
 
         return {

@@ -56,6 +56,8 @@ export default function ArticleForm({
     tags: [] as string[],
     slug: "",
     status: "published" as "draft" | "published",
+    summary: "",
+    factCheck: "",
   });
 
   const [tagInput, setTagInput] = useState("");
@@ -107,6 +109,8 @@ export default function ArticleForm({
         tags: generatedArticle.tags ? JSON.parse(generatedArticle.tags) : [],
         slug: generatedArticle.slug,
         status: "draft",
+        summary: generatedArticle.summary || "",
+        factCheck: generatedArticle.factCheck || "98% Neural Integrity",
       });
       setAiTopic("");
       setIsGenerating(false);
@@ -145,6 +149,8 @@ export default function ArticleForm({
         tags: article.tags ? JSON.parse(article.tags) : [],
         slug: article.slug,
         status: article.status as "draft" | "published",
+        summary: article.summary || "",
+        factCheck: article.factCheck || "",
       });
     }
   }, [getArticleQuery.data]);
@@ -545,6 +551,47 @@ export default function ArticleForm({
                   ))}
                 </div>
               </Card>
+
+              {/* Intelligence Metadata */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
+                  <label className="block mb-4">
+                    <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
+                      AI Summary Points (JSON)
+                    </span>
+                  </label>
+                  <textarea
+                    name="summary"
+                    value={formData.summary}
+                    onChange={handleInputChange}
+                    rows={4}
+                    className="w-full bg-[#0F0F0E] border border-[#2A2A28] text-[#D4D0C8] font-ui text-xs px-4 py-3 rounded-sm focus:outline-none focus:border-[#E8A020] transition-colors"
+                    placeholder='["Point 1", "Point 2", "Point 3"]'
+                  />
+                  <p className="font-ui text-[10px] text-[#555550] mt-2">
+                    Enter as a JSON array of strings for the Intelligence Nexus.
+                  </p>
+                </Card>
+
+                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
+                  <label className="block mb-4">
+                    <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
+                      Neural Credibility Score
+                    </span>
+                  </label>
+                  <input
+                    type="text"
+                    name="factCheck"
+                    value={formData.factCheck}
+                    onChange={handleInputChange}
+                    className="w-full bg-[#0F0F0E] border border-[#2A2A28] text-[#F2F0EB] font-ui text-sm px-4 py-3 rounded-sm focus:outline-none focus:border-[#E8A020] transition-colors"
+                    placeholder="e.g., 98.4% Neural Integrity"
+                  />
+                  <p className="font-ui text-[10px] text-[#555550] mt-2">
+                    Visible in the Node Metrics section.
+                  </p>
+                </Card>
+              </div>
 
               {/* Flags & Read Time */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
