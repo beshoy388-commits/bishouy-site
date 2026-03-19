@@ -36,7 +36,7 @@ export default function BreakingNewsTicker() {
 
         {/* Scrolling content */}
         <div className="overflow-hidden flex-1 relative flex items-center">
-          <div className="ticker-track flex flex-nowrap items-center py-2">
+          <div className="ticker-track flex flex-nowrap items-center py-2 pl-[10vw]">
             {items.map((news, i) => (
               <div key={i} className="flex-shrink-0 flex items-center">
                 <span className="font-ui text-[11px] font-bold text-[#0F0F0E] uppercase tracking-wider whitespace-nowrap px-8">

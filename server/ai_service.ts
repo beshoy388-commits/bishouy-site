@@ -39,28 +39,33 @@ export async function generateArticleFromTopic(topic: string) {
           2. VOICE: Authoritative, definitive, intellectually sophisticated. Analyze the *implications* for the current 2026 global landscape.
           2. CONTEXT: If the topic is news-related, use your latest training data or infer the logical progression of events up to ${currentDate}.
           3. STRUCTURE: Start with a powerful hook. Use a nut graph to explain global significance. No conclusion headers.
-          4. FORMATTING: Use <h2> and <h3>. Use <strong> for emphasis. Use <blockquote> for key insights.
-          5. MINIMUM LENGTH: 700-1000 words.
-          6. IMAGES: Use <!-- img:center:70% --> in the middle followed by a caption in *italics*.
+          4. FORMATTING: Use <h2> and <h3> for sections. Use <strong> for naming key entities. Use <blockquote> for high-impact insights.
+          5. MINIMUM LENGTH: 900-1200 words.
+          6. IMAGES: You MUST integrate at least two cinematic images within the article body. Use this EXACT syntax:
+             <!-- img:center:80% -->
+             ![Professional Photo: Subject of the image](https://image.pollinations.ai/prompt/{URL_SAFE_PROMPT}?width=1200&height=800&nologo=true&enhance=true)
+             *Caption for the image in italics*
+             
+             Replace {URL_SAFE_PROMPT} with a URL-safe version of your 'imagePrompt'.
           7. CATEGORIES: strictly choose from: World, Politics, Economy, Technology, Culture, Sports.
           
           IMAGE PROMPT GUIDELINES:
-          The 'imagePrompt' should be a highly detailed, cinematic, and photo-journalistic description without any text, logos, or flags. 
-          The image must feel like a professional photograph from a 2026 news report. Focus on atmosphere, lighting, and a clear central subject.
+          The 'imagePrompt' should be a highly detailed, cinematic, and photo-journalistic description (max 200 chars). Focus on dramatic lighting, composition, and a clear central subject. No text or logos.
 
           JSON OUTPUT FORMAT:
           {
             "title": "Headline",
-            "excerpt": "Executive summary (2 sentences)",
-            "content": "HTML/Markdown content",
-            "tags": ["Tag1", "Tag2"],
+            "excerpt": "Executive summary (2 deep sentences)",
+            "content": "Professional Markdown content with embedded image directives and pollinations.ai links as specified.",
+            "tags": ["Tag1", "Tag2", "Tag3"],
             "category": "CategoryName",
-            "imagePrompt": "Professional photo-journalistic prompt for image generation (no text/logos)",
-            "seoTitle": "SEO Title",
-            "seoDescription": "Meta description",
-            "summary": ["Point 1", "Point 2", "Point 3"],
+            "imagePrompt": "Cinematic prompt for the main Hero image",
+            "seoTitle": "SEO Optimized Title",
+            "seoDescription": "Meta description (max 155 chars)",
+            "summary": ["Point 1", "Point 2", "Point 3", "Point 4"],
             "factCheck": "98.4% Neural Integrity"
-          }`,
+          }
+`,
             },
             {
                 role: "user",

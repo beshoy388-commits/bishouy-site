@@ -5,6 +5,7 @@
  */
 
 import { useState, useEffect } from "react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { Link } from "wouter";
 import { Clock, User, Heart } from "lucide-react";
 import type { Article } from "@/lib/articles";
@@ -142,7 +143,7 @@ export default function ArticleCard({
     </button>
   );
 
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const isMobile = useIsMobile();
   const rw = (w: number) => isMobile ? Math.min(w, 480) : w;
 
   const [pulses, setPulses] = useState<{ x: number; y: number; id: number }[]>([]);

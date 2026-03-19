@@ -161,32 +161,37 @@ async function rewriteArticle(
                - THEMATIC SUBHEADINGS: Use <h2> and <h3> that are informative and punchy (e.g., "The Riyadh Pivot" instead of "Recent Background").
                - NO SUMMARY: Never use "In conclusion" or "To summarize." End with a forward-looking observation or a poignant closing thought.
 
-            3. FORMATTING (MARCH 2024 STANDARDS):
-               - PULL QUOTES: Use <blockquote> for the most impactful or provocative statements.
-               - PARAGRAPHS: Keep them concise (3-4 sentences max) to ensure high readability on mobile.
-               - EMPHASIS: Use <strong> sparingly for names, dates, or critical fiscal figures.
-               - IMAGE PLACEMENT: Insert at least one image directive in the middle of the article using: <!-- img:left:35% -->
-                 Followed immediately by a caption in *italics* like: *The shadow of the crisis looms over authoritarian regimes.*
+            3. FORMATTING (MARCH 2026 STANDARDS):
+               - PULL QUOTES: Use <blockquote> for the most impactful statements.
+               - PARAGRAPHS: Concise (3-4 sentences max) for mobile readability.
+               - EMPHASIS: Use <strong> for names, dates, or fiscal figures.
+               - IMAGES: You MUST integrate at least two cinematic images within the body. Use this EXACT syntax:
+                 <!-- img:center:80% -->
+                 ![Professional Photo: Subject of the image](https://image.pollinations.ai/prompt/{URL_SAFE_PROMPT}?width=1200&height=800&nologo=true&enhance=true)
+                 *Caption for the image in italics*
+                 
+                 Replace {URL_SAFE_PROMPT} with a URL-safe version of your 'imagePrompt'.
 
             4. ANALYTICAL DEPTH:
-               - Don't just report the "What." Analyze the "Why" (Geopolitical, Economic, or Socio-historical context).
-               - Avoid passive voice. Be definitive. No rhetorical questions.
+               - Don't just report the "What." Analyze the "Why" (Geopolitical, Economic context).
+               - Use a nut graph within the first 3 paragraphs.
+               - Avoid passive voice. End with a forward-looking thought.
 
             5. CATEGORY CONTEXT:
-               The source feed category is: "${feedCategory}". Align the tone (e.g., financial for Economy, strategic for International Affairs).
+               The source feed category is: "${feedCategory}". Align the tone accordingly.
 
-            6. LENGTH: Minimum 600-900 words. We are building a high-end editorial platform, not a tabloid.
+            6. LENGTH: Minimum 800-1100 words.
 
             JSON OUTPUT FORMAT (MANDATORY):
             {
               "title": "A sophisticated, broad-reach headline without clickbait",
               "excerpt": "A deep, 2-sentence executive summary",
-              "content": "Perfectly formatted HTML content...",
+              "content": "Formatted Markdown content with embedded image directives and pollinations.ai links as specified.",
               "tags": ["Tag1", "Tag2", "Tag3"],
-              "category": "Pick strictly one of: World, Politics, Economy, Technology, Culture, Sports. Use the context provided to decide correctly.",
-              "imagePrompt": "A highly detailed, professional photo-journalistic image generation prompt (max 150 chars). DO NOT use generic terms, be specific about the subject of this article.",
-              "seoTitle": "A search-engine optimized title (max 60 chars)",
-              "seoDescription": "A compelling meta-description for search results (max 155 chars)",
+              "category": "Pick strictly one of: World, Politics, Economy, Technology, Culture, Sports.",
+              "imagePrompt": "A highly detailed, professional photo-journalistic image generation prompt (max 180 chars).",
+              "seoTitle": "SEO optimized title (max 60 chars)",
+              "seoDescription": "Compelling meta-description (max 155 chars)",
               "isFeatured": boolean,
               "isBreaking": boolean
             }`,

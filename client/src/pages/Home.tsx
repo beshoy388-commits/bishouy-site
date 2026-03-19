@@ -113,7 +113,7 @@ export default function Home() {
             <div className="lg:col-span-2 space-y-8">
                <div className="flex items-center gap-3">
                   <div className="h-[2px] w-12 bg-[#E8A020]" />
-                  <span className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em]">Primary Intelligence Node</span>
+                  <span className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em]">Featured Story</span>
                </div>
                <ArticleCard article={mainFeatured} variant="featured" />
             </div>
@@ -154,7 +154,7 @@ export default function Home() {
                       <p className="text-[9px] font-900 text-[#555550] uppercase tracking-[0.2em] mb-1">Status</p>
                       <div className="flex items-center gap-2">
                          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                         <span className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">System Online</span>
+                         <span className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">Verified News</span>
                       </div>
                    </div>
                    <div className="h-10 w-px bg-[#222220] hidden md:block" />
@@ -214,7 +214,7 @@ export default function Home() {
                   <div className="inline-flex items-center gap-3 px-6 py-3 border border-[#2A2A28] rounded-full bg-[#11110F]">
                     <div className="w-1.5 h-1.5 bg-[#E8A020] rounded-full animate-ping" />
                     <span className="font-ui text-[10px] font-900 text-[#8A8880] uppercase tracking-[0.3em]">
-                      {isFetchingNextPage ? "Syncing Nodes..." : "Scroll for more intelligence"}
+                      {isFetchingNextPage ? "Loading Stories..." : "Scroll for more stories"}
                     </span>
                   </div>
                 </div>

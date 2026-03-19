@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, Bell, ShieldAlert, Cpu, Terminal } from "lucide-react";
+import { Zap, Bell, ShieldAlert, Cpu, Terminal, X } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 
 type IntelType = "BREAKER" | "SYSTEM" | "NEURAL";
@@ -20,16 +20,7 @@ export default function NeuralNotificationCenter() {
   // We'll simulate a "Cold Start" intel alert.
   
   useEffect(() => {
-    const timer = setTimeout(() => {
-        addNotification({
-            id: 'init-link',
-            type: 'SYSTEM',
-            title: 'Connection Active',
-            message: 'Global news stream initialized and receiving updates.'
-        });
-    }, 2000);
-    
-    return () => clearTimeout(timer);
+    // Real-time listener placeholder
   }, []);
 
   const addNotification = (n: IntelNotification) => {
@@ -100,4 +91,3 @@ export default function NeuralNotificationCenter() {
   );
 }
 
-import { X } from "lucide-react";

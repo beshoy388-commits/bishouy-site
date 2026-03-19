@@ -27,7 +27,7 @@ export default function NewsletterModal() {
     useEffect(() => {
         const isAlreadySubscribedInDB = user?.subscribeToNewsletter === 1;
         const hasSubscribedLocally = localStorage.getItem("newsletter_subscribed");
-        const hasDismissed = sessionStorage.getItem("newsletter_dismissed");
+        const hasDismissed = localStorage.getItem("newsletter_dismissed");
 
         if (!hasSubscribedLocally && !hasDismissed && !isAlreadySubscribedInDB) {
             const timer = setTimeout(() => {
@@ -39,7 +39,7 @@ export default function NewsletterModal() {
 
     const handleClose = () => {
         setIsOpen(false);
-        sessionStorage.setItem("newsletter_dismissed", "true");
+        localStorage.setItem("newsletter_dismissed", "true");
     };
 
     const handleSubmit = (e: React.FormEvent) => {

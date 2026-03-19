@@ -29,7 +29,7 @@ export default function NeuralSidebarWidget({ category = "Intelligence" }: { cat
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-[#E8A020] animate-pulse" />
-            <span className="text-[10px] font-900 text-[#F2F0EB] uppercase tracking-[0.3em] font-ui">Neural Monitor</span>
+            <span className="text-[10px] font-900 text-[#F2F0EB] uppercase tracking-[0.3em] font-ui">Content Analysis</span>
           </div>
           <Zap size={12} className="text-[#E8A020]" />
         </div>
@@ -38,7 +38,7 @@ export default function NeuralSidebarWidget({ category = "Intelligence" }: { cat
           {/* Main Metric */}
           <div>
             <div className="flex justify-between items-end mb-1">
-              <span className="text-[9px] text-[#555550] uppercase tracking-widest font-ui">Integrity Index</span>
+              <span className="text-[9px] text-[#555550] uppercase tracking-widest font-ui">Confidence Score</span>
               <span className="text-xl font-serif text-[#F2F0EB] font-900">{pulse}%</span>
             </div>
             <div className="h-1 w-full bg-[#1C1C1A] rounded-full overflow-hidden">
@@ -55,16 +55,16 @@ export default function NeuralSidebarWidget({ category = "Intelligence" }: { cat
             <div className="space-y-1">
               <div className="flex items-center gap-1.5 text-[#8A8880]">
                 <ShieldCheck size={10} />
-                <span className="text-[8px] uppercase tracking-widest font-ui">Verified</span>
+                <span className="text-[8px] uppercase tracking-widest font-ui">Source Status</span>
               </div>
-              <p className="text-[10px] text-[#F2F0EB] font-bold uppercase tracking-tighter">Canonical Source</p>
+              <p className="text-[10px] text-[#F2F0EB] font-bold uppercase tracking-tighter">Verified Source</p>
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-1.5 text-[#8A8880]">
                 <BarChart3 size={10} />
-                <span className="text-[8px] uppercase tracking-widest font-ui">Sentiment</span>
+                <span className="text-[8px] uppercase tracking-widest font-ui">Tone</span>
               </div>
-              <p className="text-[10px] text-[#E8A020] font-bold uppercase tracking-tighter">Equilibrium</p>
+              <p className="text-[10px] text-[#E8A020] font-bold uppercase tracking-tighter">Balanced</p>
             </div>
           </div>
 
@@ -72,10 +72,10 @@ export default function NeuralSidebarWidget({ category = "Intelligence" }: { cat
           <div className="bg-[#0A0A09] p-4 border border-[#1C1C1A] rounded-sm">
             <div className="flex items-center gap-2 mb-2">
                 <Globe size={10} className="text-[#8A8880]" />
-                <span className="text-[9px] text-[#8A8880] uppercase tracking-widest font-ui">Global Impact</span>
+                <span className="text-[9px] text-[#8A8880] uppercase tracking-widest font-ui">AI Assessment</span>
             </div>
             <p className="text-[10px] text-[#D4D0C8] leading-relaxed italic opacity-70">
-              "System analysis indicates high strategic value for {category} architecture. Neural synthesis complete."
+              "This {category} report has been analyzed for accuracy and objectivity. Verification complete."
             </p>
           </div>
         </div>
@@ -83,9 +83,9 @@ export default function NeuralSidebarWidget({ category = "Intelligence" }: { cat
         <div className="mt-8 pt-4 border-t border-[#1C1C1A] flex items-center justify-between">
            <div className="flex items-center gap-2">
              <Activity size={10} className="text-[#E8A020] animate-pulse" />
-             <span className="text-[8px] text-[#555550] uppercase tracking-widest font-800">Neural Link Stable</span>
+             <span className="text-[8px] text-[#555550] uppercase tracking-widest font-800">System Active</span>
            </div>
-           <span className="text-[8px] text-[#333330] font-mono">NODE_ID: {Math.floor(Math.random() * 10000)}</span>
+           <span className="text-[8px] text-[#333330] font-mono whitespace-nowrap overflow-hidden">ID: {Math.floor(Math.random() * 10000)}</span>
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { useRoute } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -227,63 +228,9 @@ export default function ArticleDetail() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const isMobile = useIsMobile();
   const rw = (w: number) => isMobile ? Math.min(w, 480) : w;
 
-  // SEO: Dynamic title and Open Graph meta tags per article
-  useEffect(() => {
-    if (!article) return;
-
-    const siteTitle = "Bishouy.com";
-    const pageTitle = article.seoTitle
-      ? `${article.seoTitle} | ${siteTitle}`
-      : `${article.title} | ${siteTitle}`;
-    const description =
-      article.seoDescription ||
-      article.excerpt ||
-      `Read the latest news on ${siteTitle}`;
-    const image = article.image || "";
-    const url = window.location.href;
-
-    // Page title
-    document.title = pageTitle;
-
-    // Helper to upsert meta tags
-    const setMeta = (attr: string, value: string, content: string) => {
-      let el = document.querySelector(`meta[${attr}="${value}"]`);
-      if (!el) {
-        el = document.createElement("meta");
-        el.setAttribute(attr, value);
-        document.head.appendChild(el);
-      }
-      el.setAttribute("content", content);
-    };
-
-    setMeta("name", "description", description);
-    setMeta("property", "og:type", "article");
-    setMeta("property", "og:title", pageTitle);
-    setMeta("property", "og:description", description);
-    setMeta("property", "og:image", image);
-    setMeta("property", "og:url", url);
-    setMeta("name", "twitter:card", "summary_large_image");
-    setMeta("name", "twitter:title", pageTitle);
-    setMeta("name", "twitter:description", description);
-    setMeta("name", "twitter:image", image);
-
-    // Canonical link tag
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement("link");
-      canonical.setAttribute("rel", "canonical");
-      document.head.appendChild(canonical);
-    }
-    canonical.setAttribute("href", url);
-
-    // Cleanup: restore on unmount
-    return () => {
-      document.title = siteTitle;
-    };
-  }, [article]);
 
   // Effect to update like count
   useEffect(() => {
@@ -605,7 +552,10 @@ export default function ArticleDetail() {
       </div>
 
       {/* Smart Brevity Toggle - Floating Action Button */}
-      <div className="fixed bottom-24 right-6 z-[100] md:bottom-8 md:right-8">
+      <div 
+        className="fixed bottom-40 right-4 z-[60] md:bottom-8 md:right-8 transition-opacity duration-300"
+        style={{ opacity: scrollProgress > 5 ? 0.8 : 1 }}
+      >
         <button
           onClick={() => {
              setIsBrevityMode(!isBrevityMode);
@@ -690,7 +640,7 @@ export default function ArticleDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             {/* Main Content Column */}
             <div className="lg:col-span-8">
-              <h1 className="font-display text-4xl md:text-5xl font-900 text-[#F2F0EB] leading-tight mb-4">
+              <h1 className="font-display text-3xl md:text-5xl font-900 text-[#F2F0EB] leading-tight mb-4">
                 <span>{article.title}</span>
               </h1>
               <p className="text-[#8A8880] text-xl mb-8 leading-relaxed italic border-l-4 border-[#E8A020] pl-6 uppercase tracking-tight">
@@ -744,9 +694,9 @@ export default function ArticleDetail() {
               {/* Neural Audio Briefing */}
               <div className="mb-8 flex items-center justify-between p-6 bg-[#11110F] border border-[#1C1C1A] rounded-sm group overflow-hidden relative shadow-lg">
                 <div className="relative z-10">
-                  <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.3em] block mb-2 font-ui">Neural Link Active</span>
-                  <h4 className="font-display text-lg text-[#F2F0EB]">Intelligence Audio Briefing</h4>
-                  <p className="text-[10px] text-[#8A8880] mt-1 font-ui uppercase tracking-widest">Real-time Neural Synthesis</p>
+                  <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.3em] block mb-2 font-ui">AI Audio Briefing Active</span>
+                  <h4 className="font-display text-lg text-[#F2F0EB]">Listen to this story</h4>
+                  <p className="text-[10px] text-[#8A8880] mt-1 font-ui uppercase tracking-widest">Powered by AI voice</p>
                 </div>
                 <button 
                   onClick={handleAudioToggle}
@@ -774,7 +724,7 @@ export default function ArticleDetail() {
                   <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                     <Zap size={80} className="text-[#E8A020]" />
                   </div>
-                  <h3 className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-4">The Intelligence Nexus</h3>
+                  <h3 className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-4">Key Takeaways</h3>
                   <div className="space-y-4">
                     {/* Render AI summary if present */}
                     {article.summary ? (
@@ -817,27 +767,27 @@ export default function ArticleDetail() {
                   </div>
                 </div>
                 
-                <div className="bg-[#0F0F0E] border border-[#1C1C1A] p-8 rounded-sm flex flex-col justify-between group hover:border-[#E8A020]/30 transition-colors">
+                <div className="bg-[#11110F] border border-[#1C1C1A] p-8 rounded-sm flex flex-col justify-between group hover:border-[#E8A020]/30 transition-colors shadow-xl">
                     <div>
-                        <h4 className="font-ui text-[9px] font-900 text-[#8A8880] uppercase tracking-[0.3em] mb-4">Node Metrics</h4>
+                        <h4 className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.3em] mb-6">Story Insights</h4>
                         <div className="space-y-4">
-                            <div className="flex justify-between items-center border-b border-[#1C1C1A] pb-2">
-                                <span className="text-[10px] text-[#555550] uppercase tracking-widest">Sentiment</span>
-                                <span className="text-[10px] text-[#E8A020] font-bold">NEUTRAL</span>
+                            <div className="flex justify-between items-center border-b border-[#1C1C1A] pb-3">
+                                <span className="text-[10px] text-[#8A8880] uppercase tracking-widest font-ui">Tone</span>
+                                <span className="text-[10px] text-[#F2F0EB] font-bold">NEUTRAL</span>
                             </div>
-                            <div className="flex justify-between items-center border-b border-[#1C1C1A] pb-2">
-                                <span className="text-[10px] text-[#555550] uppercase tracking-widest">Reliability</span>
-                                <span className="text-[10px] text-[#E8A020] font-bold">{article.factCheck || "98.4%"}</span>
+                            <div className="flex justify-between items-center border-b border-[#1C1C1A] pb-3">
+                                <span className="text-[10px] text-[#8A8880] uppercase tracking-widest font-ui">Trust Score</span>
+                                <span className="text-[10px] text-[#F2F0EB] font-bold">{article.factCheck || "98.4%"}</span>
                             </div>
-                            <div className="flex justify-between items-center">
-                                <span className="text-[10px] text-[#555550] uppercase tracking-widest">Urgency</span>
-                                <span className="text-[10px] text-[#E8A020] font-bold">MODERATE</span>
+                            <div className="flex justify-between items-center pb-1">
+                                <span className="text-[10px] text-[#8A8880] uppercase tracking-widest font-ui">Importance</span>
+                                <span className="text-[10px] text-[#F2F0EB] font-bold">MODERATE</span>
                             </div>
                         </div>
                     </div>
                     <div className="mt-8 pt-4 border-t border-[#1C1C1A] flex items-center gap-2">
                         <Activity size={12} className="text-[#E8A020] animate-pulse" />
-                        <span className="text-[9px] text-[#8A8880] uppercase tracking-widest font-800">Neural Link Stable</span>
+                        <span className="text-[9px] text-[#8A8880] uppercase tracking-widest font-900 whitespace-nowrap">Analysis Active</span>
                     </div>
                 </div>
               </div>
@@ -884,10 +834,10 @@ export default function ArticleDetail() {
                     <div className="mb-6 inline-flex p-5 rounded-full bg-[#E8A020]/10 text-[#E8A020] shadow-[0_0_20px_rgba(232,160,32,0.1)]">
                        <Zap size={40} className="animate-pulse" />
                     </div>
-                    <h3 className="font-display text-3xl text-[#F2F0EB] mb-4">Neural Synthesis Active</h3>
+                    <h3 className="font-display text-3xl text-[#F2F0EB] mb-4">AI Summary Active</h3>
                     <p className="text-[#8A8880] max-w-md mx-auto mb-10 font-ui leading-relaxed">
-                      This investigation has been condensed for high-speed intelligence consumption. 
-                      Access the full cinematic report for deep context.
+                      This article has been condensed for quick reading. 
+                      Access the full report for all details.
                     </p>
                     <button 
                       onClick={() => {
@@ -1119,7 +1069,7 @@ export default function ArticleDetail() {
                   ) : (
                     <div className="bg-[#1C1C1A] rounded-sm p-8 text-center border border-[#E8A020]/20 relative overflow-hidden group">
                       <div className="absolute inset-0 bg-gradient-to-b from-[#E8A020]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <h4 className="font-display text-xl text-[#F2F0EB] mb-3 relative z-10">JOING THE INNER CIRCLE</h4>
+                      <h4 className="font-display text-xl text-[#F2F0EB] mb-3 relative z-10">BECOME A MEMBER</h4>
                       <p className="text-[#8A8880] text-sm mb-6 max-w-md mx-auto relative z-10">
                         Sign in to share your analysis, build your personal <strong className="text-[#E8A020]">Intelligence Library</strong>, and unlock exclusive AI-powered features.
                       </p>

@@ -388,14 +388,16 @@ export async function getAllArticles(
     query.where(and(...conditions));
   }
 
+  let finalQuery = query.orderBy(desc(articles.createdAt));
+
   if (limit) {
-    query.limit(limit);
+    finalQuery = finalQuery.limit(limit);
   }
   if (offset) {
-    query.offset(offset);
+    finalQuery = finalQuery.offset(offset);
   }
 
-  const results = await query.orderBy(desc(articles.createdAt));
+  const results = await finalQuery;
 
   return results.map((r: { article: Article; likeCount: number; hasLiked?: boolean }) => {
     const { content, ...articleWithoutContent } = r.article;
