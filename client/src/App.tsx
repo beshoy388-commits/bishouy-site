@@ -112,6 +112,7 @@ import UserStatusMonitor from "@/components/UserStatusMonitor";
 
 import GoogleAdSense from "@/components/GoogleAdSense";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import NewsletterModal from "@/components/NewsletterModal";
 
 function AppContent() {
   const { setIsSearchOpen } = useUI();
@@ -134,6 +135,7 @@ function AppContent() {
       <div className={!isAdminPage ? `min-h-screen pt-32 lg:pt-52 ${!isAdminPage ? "pb-24 lg:pb-0" : ""}` : "min-h-screen"}>
         <Router />
       </div>
+      <NewsletterModal />
       <CookieConsent />
       <BackToTop />
       {!isAdminPage && <MobileBottomNav onSearchClick={() => setIsSearchOpen(true)} />}

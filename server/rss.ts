@@ -144,6 +144,8 @@ async function rewriteArticle(
         {
           role: "system",
           content: `You are a Pulitzer Prize-winning senior foreign correspondent for an elite international news organization (akin to The Economist, NYT, or WSJ). 
+            Writing Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}.
+            Your task is to rewrite the provided news with a futuristic-analytical perspective for our 2026 audience.
             Your writing is characterized by intellectual depth, precise vocabulary, and a definitive, investigative tone.
 
             STRICT EDITORIAL STYLE GUIDE:
@@ -256,37 +258,20 @@ export async function syncRSSFeeds(isManual: boolean = false) {
         const feed = await parser.parseURL(feedConfig.url);
         log(`[RSS] Analysis: ${feed.items.length} items from ${feedConfig.url}`);
 
-        // Focus on the top 3 most relevant items
-        const itemsToProcess = feed.items.slice(0, 3);
+        // Focus on the top 2 most relevant items per feed to avoid flooding
+        const itemsToProcess = feed.items.slice(0, 2);
 
-        // Load all articles once per feed to check for duplicates efficiently
-        const existingArticles = await getAllArticles(true);
+        const { getArticleBySourceUrlorTitle } = await import("./db");
 
         for (const item of itemsToProcess) {
           if (!item.title) continue;
 
-          // ROBUST DUPLICATION CHECK: 
-          // Check by source URL, original title, or rewritten title
+          // ROBUST DUPLICATION CHECK: Query DB directly for this item
           const itemUrl = item.link || item.guid;
-          let duplicateReason = "";
-          const alreadyExists = existingArticles.some((a: any) => {
-            if (itemUrl && a.sourceUrl === itemUrl) {
-              duplicateReason = "Uniform Resource Locator (URL) già presente";
-              return true;
-            }
-            if (a.sourceTitle === item.title) {
-              duplicateReason = "Titolo originale identico";
-              return true;
-            }
-            if (a.title.toLowerCase().includes(item.title!.toLowerCase().substring(0, 20))) {
-              duplicateReason = "Titolo molto simile già esistente";
-              return true;
-            }
-            return false;
-          });
+          const existing = await getArticleBySourceUrlorTitle(itemUrl, item.title);
 
-          if (alreadyExists) {
-            log(`[RSS] Skipping article: "${item.title}" (${duplicateReason})`);
+          if (existing) {
+            log(`[RSS] Skipping article: "${item.title}" (Già presente nel database)`);
             continue;
           }
 
@@ -306,6 +291,14 @@ export async function syncRSSFeeds(isManual: boolean = false) {
 
           if (!editorialPiece) {
             log(`[RSS] Failed to rewrite article: ${item.title}`);
+            continue;
+          }
+
+          // CONTENT SAFETY CHECK (Moderation)
+          const { moderateContent } = await import("./ai_service");
+          const moderation = await moderateContent(editorialPiece.content);
+          if (moderation.action === "rejected") {
+            log(`[RSS] Article REJECTED by AI Sentinel: ${editorialPiece.title} - Reason: ${moderation.reason}`);
             continue;
           }
 
@@ -385,9 +378,6 @@ export async function syncRSSFeeds(isManual: boolean = false) {
           };
 
           await createArticle(articleData);
-
-          // Add to local list to prevent duplicates within the same run
-          existingArticles.push(articleData as any);
 
           newArticlesCount++;
           log(`[RSS] Autonomous Article Published: ${editorialPiece.title}`);

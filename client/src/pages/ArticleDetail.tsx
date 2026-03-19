@@ -21,6 +21,9 @@ import {
   Facebook,
   Link as LinkIcon,
   Bookmark,
+  Play,
+  Square,
+  Headphones,
 } from "lucide-react";
 import { Link } from "wouter";
 import { getSafeImage, getFallbackImage } from "@/lib/image-utils";
@@ -44,6 +47,35 @@ export default function ArticleDetail() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isSaved, setIsSaved] = useState(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [speechSynthesis, setSpeechSynthesis] = useState<SpeechSynthesisUtterance | null>(null);
+
+  const handleAudioToggle = () => {
+    if (isAudioPlaying) {
+      window.speechSynthesis.cancel();
+      setIsAudioPlaying(false);
+    } else {
+      if (!article?.excerpt) return;
+      const utterance = new SpeechSynthesisUtterance(article.excerpt);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.onend = () => setIsAudioPlaying(false);
+      
+      const voices = window.speechSynthesis.getVoices();
+      const newsVoice = voices.find(v => v.lang.startsWith("it") || v.lang.startsWith("en"));
+      if (newsVoice) utterance.voice = newsVoice;
+
+      window.speechSynthesis.speak(utterance);
+      setSpeechSynthesis(utterance);
+      setIsAudioPlaying(true);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      window.speechSynthesis.cancel();
+    };
+  }, []);
 
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState("");
@@ -690,6 +722,33 @@ export default function ArticleDetail() {
                   <LinkIcon size={16} />
                   <span className="font-ui text-[9px] font-900 uppercase tracking-widest leading-none">Link</span>
                 </button>
+              </div>
+
+              {/* Neural Audio Briefing */}
+              <div className="mb-8 flex items-center justify-between p-6 bg-[#11110F] border border-[#1C1C1A] rounded-sm group overflow-hidden relative shadow-lg">
+                <div className="relative z-10">
+                  <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.3em] block mb-2 font-ui">Neural Link Active</span>
+                  <h4 className="font-display text-lg text-[#F2F0EB]">Intelligence Audio Briefing</h4>
+                  <p className="text-[10px] text-[#8A8880] mt-1 font-ui uppercase tracking-widest">Sintesi neurale in tempo reale</p>
+                </div>
+                <button 
+                  onClick={handleAudioToggle}
+                  className="relative z-10 flex items-center gap-3 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] px-6 py-3 rounded-full font-ui text-[11px] font-900 uppercase tracking-widest transition-all shadow-xl hover:scale-105 active:scale-95 group/btn"
+                >
+                  {isAudioPlaying ? (
+                    <div className="flex gap-[2px] items-end h-3">
+                         <div className="w-1.5 bg-[#0F0F0E] animate-[bounce_0.6s_infinite] h-full" />
+                         <div className="w-1.5 bg-[#0F0F0E] animate-[bounce_0.8s_infinite] h-2" />
+                         <div className="w-1.5 bg-[#0F0F0E] animate-[bounce_0.5s_infinite] h-3" />
+                         <div className="w-1.5 bg-[#0F0F0E] animate-[bounce_0.7s_infinite] h-1" />
+                    </div>
+                  ) : <Play size={14} fill="currentColor" />}
+                  {isAudioPlaying ? "Stop Briefing" : "Play Briefing"}
+                </button>
+                {/* Abstract Visual Feedback */}
+                <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+                    <div className="w-full h-full neural-grid" />
+                </div>
               </div>
 
               {/* Meta Info */}

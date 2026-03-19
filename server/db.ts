@@ -1842,3 +1842,16 @@ export async function getActiveVisitors(minutes: number = 5) {
     .where(gt(visitorSessions.lastActiveAt, cutoff))
     .orderBy(desc(visitorSessions.lastActiveAt));
 }
+
+export async function getArticleBySourceUrlorTitle(url: string | null = null, title: string | null = null): Promise<Article | null> {
+  const db = await getDb();
+  if (!db || (!url && !title)) return null;
+
+  const result = await db
+    .select()
+    .from(articles)
+    .where(url ? eq(articles.sourceUrl, url) : eq(articles.sourceTitle, title as string))
+    .limit(1);
+
+  return result[0] || null;
+}
