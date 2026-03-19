@@ -36,7 +36,12 @@ import {
   ChevronRight,
   ShieldAlert,
   Terminal,
+  User,
+  TrendingUp,
+  Send,
 } from "lucide-react";
+import { motion } from "framer-motion";
+
 
 export default function AdminPanel() {
   const { user, isAuthenticated, loading, logout } = useAuth();
@@ -245,116 +250,130 @@ export default function AdminPanel() {
               </div>
             </div>
 
-            {/* Status Filter Tabs */}
-            <div className="flex flex-wrap gap-2 mb-8 bg-[#11110F] p-1.5 rounded-lg border border-[#1C1C1A] w-fit">
-              <button
-                onClick={() => setStatusFilter("all")}
-                className={`px-5 py-2 rounded-md font-ui text-[10px] font-bold uppercase tracking-widest transition-all ${statusFilter === "all" ? "bg-[#E8A020] text-[#0F0F0E] shadow-sm" : "text-[#8A8880] hover:text-[#F2F0EB]"}`}
-              >
-                All
-              </button>
-              <button
-                onClick={() => setStatusFilter("published")}
-                className={`px-5 py-2 rounded-md font-ui text-[10px] font-bold uppercase tracking-widest transition-all ${statusFilter === "published" ? "bg-[#1C1C1A] text-green-400 border border-green-400/20" : "text-[#8A8880] hover:text-[#F2F0EB]"}`}
-              >
-                Published
-              </button>
-              <button
-                onClick={() => setStatusFilter("draft")}
-                className={`px-5 py-2 rounded-md font-ui text-[10px] font-bold uppercase tracking-widest transition-all ${statusFilter === "draft" ? "bg-[#1C1C1A] text-blue-400 border border-blue-400/20" : "text-[#8A8880] hover:text-[#F2F0EB]"}`}
-              >
-                Drafts
-              </button>
+            {/* Hardware-inspired Status Toggle */}
+            <div className="flex items-center gap-1 mb-10 bg-[#0F0F0E] p-1 border border-[#1C1C1A] w-fit relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#E8A020]/10 to-transparent" />
+              {[
+                { id: "all", label: "Global Index", color: "text-[#F2F0EB]" },
+                { id: "published", label: "Broadcast Active", color: "text-green-500" },
+                { id: "draft", label: "Pending Intel", color: "text-blue-500" }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setStatusFilter(tab.id as any)}
+                  className={`px-6 py-2.5 relative transition-all duration-300 font-ui text-[9px] font-900 uppercase tracking-[0.2em] ${statusFilter === tab.id ? "text-[#0F0F0E]" : "text-[#555550] hover:text-[#8A8880]"}`}
+                >
+                  <span className="relative z-10">{tab.label}</span>
+                  {statusFilter === tab.id && (
+                    <motion.div 
+                      layoutId="tab-bg"
+                      className="absolute inset-0 bg-[#E8A020]"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                </button>
+              ))}
             </div>
+
 
             {articlesQuery.isLoading ? (
               <div className="flex items-center justify-center py-20">
                 <Loader2 className="animate-spin text-[#E8A020]" size={32} />
               </div>
             ) : (
-              <div className="grid gap-4">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                 {articlesQuery.data
                   ?.filter(a =>
                     statusFilter === "all" ? true : a.status === statusFilter
                   )
                   .map(article => (
-                    <Card
+                    <div 
                       key={article.id}
-                      className={`group bg-[#1C1C1A] border-[#2A2A28] p-5 hover:border-[#E8A020]/20 transition-all ${article.status === "draft" ? "border-l-4 border-l-blue-500" : ""}`}
+                      className={`group bg-[#11110F] border border-[#1C1C1A] p-6 hover:border-[#E8A020]/30 transition-all relative overflow-hidden ${article.status === 'draft' ? "border-l-2 border-l-blue-500/50" : "border-l-2 border-l-[#E8A020]/50"}`}
                     >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-3 flex-wrap">
-                            <span
-                              className="font-ui text-[9px] font-900 text-[#0F0F0E] uppercase tracking-[0.2em] px-2 py-0.5 rounded-sm"
-                              style={{ backgroundColor: article.categoryColor || "#E8A020" }}
-                            >
-                              {article.category}
-                            </span>
-                            {article.status === "draft" && (
-                              <span className="font-ui text-[9px] font-800 bg-blue-500/10 text-blue-400 border border-blue-500/20 uppercase tracking-widest px-2 py-0.5 rounded-sm">
-                                DRAFT
-                              </span>
-                            )}
-                            {article.author === "Redazione AI" && (
-                              <span className="font-ui text-[9px] font-800 bg-purple-500/10 text-purple-400 border border-purple-500/20 uppercase tracking-widest px-2 py-0.5 rounded-sm flex items-center gap-1">
-                                <Bot size={10} /> AI
-                              </span>
-                            )}
-                          </div>
-                          <h3 className="font-headline text-lg text-[#F2F0EB] mb-2 group-hover:text-[#E8A020] transition-colors line-clamp-1">
-                            {article.title}
-                          </h3>
-                          <div className="flex flex-wrap items-center gap-y-2 gap-x-6 text-[10px] text-[#555550] uppercase tracking-widest font-bold">
-                            <span className="flex items-center gap-1.5"><FileText size={10} /> {article.author}</span>
-                            <span className="flex items-center gap-1.5"><Eye size={10} /> {article.viewCount || 0} Views</span>
-                            <span className="flex items-center gap-1.5">
-                              {new Date(article.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: 'short' })}
-                            </span>
-                          </div>
+                      <div className="flex flex-col h-full">
+                        <div className="flex items-center justify-between mb-4">
+                           <div className="flex items-center gap-2">
+                             <span className="text-[8px] font-900 px-2 py-0.5 border border-[#1C1C1A] text-[#8A8880] uppercase tracking-widest">
+                                ID: {article.id.toString().padStart(4, '0')}
+                             </span>
+                             {article.author === "Redazione AI" ? (
+                               <span className="flex items-center gap-1.5 text-[8px] font-900 px-2 py-0.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 uppercase tracking-widest">
+                                 <Bot size={10} /> Neural Auth
+                               </span>
+                             ) : (
+                               <span className="flex items-center gap-1.5 text-[8px] font-900 px-2 py-0.5 bg-[#E8A020]/10 text-[#E8A020] border border-[#E8A020]/20 uppercase tracking-widest">
+                                 <User size={10} /> Human Auth
+                               </span>
+                             )}
+                           </div>
+                           <div className="flex items-center gap-4">
+                             <div className="flex items-center gap-2">
+                                <TrendingUp size={10} className="text-green-500/50" />
+                                <span className="text-[10px] font-900 text-[#555550] uppercase tracking-widest font-ui">{article.viewCount || 0} IMPULSE</span>
+                             </div>
+                           </div>
                         </div>
-                        <div className="flex items-center gap-2 self-end sm:self-center">
-                          {article.status === "draft" && (
-                            <button
-                              onClick={() => handlePublish(article.id)}
-                              disabled={publishArticleMutation.isPending}
-                              className="p-3 bg-[#E8A020] text-[#0F0F0E] hover:scale-105 active:scale-95 rounded-lg transition-all shadow-lg shadow-[#E8A020]/10"
-                              title="Publish Now"
-                            >
-                              <CheckCircle size={18} />
-                            </button>
-                          )}
-                          <button
-                            onClick={() => {
-                              setEditingId(article.id);
-                              setShowForm(true);
-                            }}
-                            className="p-3 bg-[#11110F] border border-[#2A2A28] text-[#8A8880] hover:text-[#E8A020] hover:border-[#E8A020] rounded-lg transition-all"
-                            title="Edit"
-                          >
-                            <Edit size={18} />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(article.id)}
-                            className="p-3 bg-[#11110F] border border-[#2A2A28] text-[#8A8880] hover:text-red-500 hover:border-red-500/50 rounded-lg transition-all"
-                            title="Delete"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                          <a
-                            href={`/article/${article.slug}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-3 bg-[#11110F] border border-[#2A2A28] text-[#8A8880] hover:text-[#F2F0EB] rounded-lg transition-all"
-                            title="Preview"
-                          >
-                            <ChevronRight size={18} />
-                          </a>
+
+                        <div className="flex-1 mb-6">
+                           <div className="flex items-center gap-2 mb-2">
+                              <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: article.categoryColor || '#E8A020' }} />
+                              <span className="text-[9px] font-900 text-[#555550] uppercase tracking-widest font-ui">{article.category}</span>
+                           </div>
+                           <h3 className="font-headline text-xl text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 leading-tight uppercase tracking-tight">
+                              {article.title}
+                           </h3>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-6 border-t border-[#1C1C1A] mt-auto">
+                           <div className="text-[9px] font-900 text-[#333330] uppercase tracking-widest font-ui">
+                              Deployed: {new Date(article.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
+                           </div>
+                           
+                           <div className="flex items-center gap-1">
+                              {article.status === "draft" && (
+                                <button
+                                  onClick={() => handlePublish(article.id)}
+                                  disabled={publishArticleMutation.isPending}
+                                  className="w-10 h-10 flex items-center justify-center bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-[#0F0F0E] border border-green-500/20 transition-all rounded-sm"
+                                  title="Deploy to Broadcast"
+                                >
+                                  <CheckCircle size={16} />
+                                </button>
+                              )}
+                              <button
+                                onClick={() => {
+                                  setEditingId(article.id);
+                                  setShowForm(true);
+                                }}
+                                className="w-10 h-10 flex items-center justify-center bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] border border-[#1C1C1A] hover:border-[#E8A020]/30 transition-all rounded-sm"
+                                title="Modify Node"
+                              >
+                                <Edit size={16} />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(article.id)}
+                                className="w-10 h-10 flex items-center justify-center bg-[#1C1C1A] text-[#8A8880] hover:text-red-500 border border-[#1C1C1A] hover:border-red-500/30 transition-all rounded-sm"
+                                title="Terminate Asset"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                              <a
+                                href={`/article/${article.slug}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-10 h-10 flex items-center justify-center bg-[#1C1C1A] text-[#8A8880] hover:text-[#F2F0EB] border border-[#1C1C1A] transition-all rounded-sm"
+                                title="Preview Uplink"
+                              >
+                                <ChevronRight size={16} />
+                              </a>
+                           </div>
                         </div>
                       </div>
-                    </Card>
+                    </div>
                   ))}
               </div>
+
             )}
           </div>
         );
@@ -399,37 +418,60 @@ export default function AdminPanel() {
         className={`transition-all duration-300 min-h-screen flex flex-col ${isSidebarCollapsed ? "lg:pl-20" : "lg:pl-64"
           }`}
       >
-        {/* Top Header Barra */}
-        <header className="h-16 lg:h-20 border-b border-[#1C1C1A] bg-[#0A0A09]/80 backdrop-blur-xl sticky top-0 z-[90] flex items-center justify-between px-4 lg:px-10">
-          <div className="flex items-center gap-4">
+        {/* Top Header Barra — Tactical HUD */}
+        <header className="h-20 lg:h-24 border-b border-[#1C1C1A] bg-[#0A0A09]/80 backdrop-blur-2xl sticky top-0 z-[110] flex items-center justify-between px-6 lg:px-12">
+          <div className="flex items-center gap-8">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-[#8A8880] hover:text-[#F2F0EB]"
+              className="lg:hidden p-3 text-[#555550] hover:text-[#E8A020] transition-colors"
             >
-              <Menu size={24} />
+              <Menu size={20} />
             </button>
-            <h2 className="font-ui text-[10px] font-900 uppercase tracking-[0.4em] text-[#E8A020] hidden sm:block">
-              COMMAND CENTER // {activeTab}
-            </h2>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3 mb-1">
+                 <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] animate-pulse" />
+                 <h2 className="font-ui text-[10px] font-900 uppercase tracking-[0.5em] text-[#F2F0EB]">
+                    Core Command Terminal
+                 </h2>
+              </div>
+              <div className="flex items-center gap-2">
+                 <span className="text-[8px] font-800 text-[#555550] uppercase tracking-widest font-ui">Nodal Path:</span>
+                 <span className="text-[9px] font-900 text-[#E8A020] uppercase tracking-[0.2em] font-ui flex items-center gap-2">
+                    {activeTab} <ChevronRight size={10} strokeWidth={3} /> {showForm ? (editingId ? "Edit" : "Create") : "Index"}
+                 </span>
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center gap-3 pr-6 border-r border-[#1C1C1A]">
-              <div className="flex flex-col items-end">
-                <span className="text-[10px] font-ui font-800 text-[#F2F0EB] uppercase tracking-widest">{user?.name}</span>
-                <span className="text-[9px] font-ui text-[#8A8880] uppercase tracking-tighter">Root Administrator</span>
-              </div>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#E8A020] to-[#D4911C] border border-[#0A0A09]" />
+          <div className="flex items-center gap-10">
+            {/* System Telemetry — Desktop only */}
+            <div className="hidden xl:flex items-center gap-10 pr-10 border-r border-[#1C1C1A]/50">
+                <div className="text-right">
+                    <p className="text-[8px] font-900 text-[#555550] uppercase tracking-widest mb-1">Signal Integrity</p>
+                    <span className="text-[10px] font-900 text-[#22c55e] uppercase tracking-tighter">99.9% LOCKED</span>
+                </div>
+                <div className="text-right">
+                    <p className="text-[8px] font-900 text-[#555550] uppercase tracking-widest mb-1">Neural Latency</p>
+                    <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-tighter">42ms RESPONSE</span>
+                </div>
             </div>
-            <button
-              onClick={() => setActiveTab("security")}
-              className={`relative p-2 rounded-full transition-all hover:bg-[#1C1C1A] ${activeTab === 'security' ? 'text-[#E8A020] bg-[#E8A020]/10' : 'text-[#8A8880] hover:text-[#E8A020]'}`}
-              title="Security Protocols"
-            >
-              <ShieldAlert size={20} />
-            </button>
+
+            <div className="flex items-center gap-6">
+                <div className="flex flex-col items-end mr-4">
+                    <span className="text-[10px] font-ui font-900 text-[#F2F0EB] uppercase tracking-[0.2em]">{user?.name}</span>
+                    <span className="text-[9px] font-ui text-[#E8A020] uppercase tracking-[0.1em] font-800">Clearance: Root</span>
+                </div>
+                <button
+                onClick={() => setActiveTab("security")}
+                className={`relative p-3 rounded-sm border border-transparent transition-all ${activeTab === 'security' ? 'text-[#E8A020] bg-[#E8A020]/5 border-[#E8A020]/20' : 'text-[#333330] hover:text-[#8A8880] hover:bg-[#1C1C1A]'}`}
+                title="Security Protocol Layer"
+                >
+                <ShieldAlert size={18} />
+                </button>
+            </div>
           </div>
         </header>
+
 
         {/* Dynamic Content Surface */}
         <main className="flex-1 p-4 lg:p-12 max-w-7xl mx-auto w-full">

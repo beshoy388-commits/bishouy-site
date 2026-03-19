@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
-import { Loader2, Edit2, Trash2, Save, X, ShieldAlert, ShieldOff, ShieldCheck, AlertOctagon, Flame, ExternalLink } from "lucide-react";
+import { Loader2, Edit2, Trash2, Save, X, ShieldAlert, ShieldOff, ShieldCheck, AlertOctagon, Flame, ExternalLink, User, Fingerprint, Activity, Clock } from "lucide-react";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 interface EditingUser {
   id: number;
@@ -150,374 +151,193 @@ export default function UsersManagement() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="animate-spin text-[#E8A020]" size={48} />
+      <div className="flex flex-col items-center justify-center py-40 gap-4 opacity-30">
+        <Fingerprint size={48} className="animate-pulse text-[#E8A020]" />
+        <p className="text-[10px] font-900 uppercase tracking-[0.4em] font-ui">Scanning Registry...</p>
       </div>
     );
   }
 
   return (
-    <div>
-      <h2 className="font-display text-2xl text-[#F2F0EB] mb-6">
-        User Management
-      </h2>
+    <div className="space-y-10 animate-fade-in relative pb-10">
+      {/* Tactical Header */}
+      <div className="flex flex-col md:flex-row items-start justify-between gap-6 border-b border-[#1C1C1A] pb-8">
+        <div className="space-y-2">
+            <div className="flex items-center gap-3">
+                 <div className="px-2 py-0.5 bg-[#E8A020]/10 border border-[#E8A020]/20 rounded-sm">
+                    <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-widest font-ui">Registry: Personnel</span>
+                 </div>
+            </div>
+            <h2 className="text-4xl font-display text-[#F2F0EB] tracking-tighter uppercase leading-[0.8] mt-4">Node <span className="text-[#E8A020]">Registry</span></h2>
+            <p className="text-[#555550] text-[10px] font-900 uppercase tracking-[0.3em] font-ui">Overseeing agent identities and access clearance across the global matrix</p>
+        </div>
+        
+        <div className="p-6 bg-[#11110F] border border-[#1C1C1A] relative overflow-hidden flex flex-col items-end">
+            <div className="flex items-center gap-3 mb-2">
+                 <Activity size={18} className="text-[#22c55e]" />
+                 <span className="text-2xl font-display text-[#F2F0EB]">{users?.length || 0}</span>
+            </div>
+            <p className="text-[9px] font-900 text-[#555550] uppercase tracking-widest font-ui">Active Node Identifiers</p>
+        </div>
+      </div>
 
-      <div className="bg-[#1C1C1A] border border-[#222220] rounded-sm overflow-hidden">
-        {/* Table - Desktop only */}
-        <div className="hidden md:block overflow-x-auto">
+      <div className="bg-[#11110F] border border-[#1C1C1A] overflow-hidden relative shadow-2xl">
+        <div className="hidden md:block overflow-x-auto relative">
+          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#E8A020]/20 to-transparent" />
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#222220]">
-                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">
-                  Name
-                </th>
-                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">
-                  Email
-                </th>
-                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">
-                  Role
-                </th>
-                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm text-center">
-                  Status
-                </th>
-                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm">
-                  Joined On
-                </th>
-                <th className="text-left py-3 px-4 font-medium text-[#8A8880] text-sm text-right">
-                  Actions
-                </th>
+              <tr className="border-b border-[#1C1C1A] bg-[#141412]">
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Identifier</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Email Hash</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui text-center">Clearance</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui text-center">Protocol</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Creation Date</th>
+                <th className="text-right py-4 px-6 font-900 text-[#E8A020] text-[10px] uppercase tracking-widest font-ui">Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {users?.map(user => (
-                <tr
+            <tbody className="divide-y divide-[#1C1C1A]">
+              {users?.map((user, idx) => (
+                <motion.tr
                   key={user.id}
-                  className="border-b border-[#1C1C1A] hover:bg-[#0F0F0E]/50 transition-colors"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  className="group hover:bg-[#F2F0EB]/[0.02] transition-colors"
                 >
                   {editingId === user.id && editingData ? (
                     <>
-                      <td className="py-3 px-4">
+                      <td className="py-4 px-6">
                         <input
                           type="text"
                           value={editingData.name}
-                          onChange={e =>
-                            setEditingData({
-                              ...editingData,
-                              name: e.target.value,
-                            })
-                          }
-                          className="w-full bg-[#0F0F0E] border border-[#222220] rounded px-2 py-1 text-[#F2F0EB] text-sm"
+                          onChange={e => setEditingData({ ...editingData, name: e.target.value })}
+                          className="w-full bg-[#0A0A09] border border-[#1C1C1A] text-[#E8A020] text-xs font-900 uppercase tracking-widest px-3 py-2 outline-none focus:border-[#E8A020]/40"
                         />
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-4 px-6">
                         <input
                           type="email"
                           value={editingData.email}
-                          onChange={e =>
-                            setEditingData({
-                              ...editingData,
-                              email: e.target.value,
-                            })
-                          }
-                          className="w-full bg-[#0F0F0E] border border-[#222220] rounded px-2 py-1 text-[#F2F0EB] text-sm"
+                          onChange={e => setEditingData({ ...editingData, email: e.target.value })}
+                          className="w-full bg-[#0A0A09] border border-[#1C1C1A] text-[#8A8880] text-xs font-900 uppercase tracking-widest px-3 py-2 outline-none"
                         />
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-4 px-6 text-center">
                         <select
                           value={editingData.role}
-                          onChange={e =>
-                            setEditingData({
-                              ...editingData,
-                              role: e.target.value as "user" | "admin",
-                            })
-                          }
-                          className="bg-[#0F0F0E] border border-[#222220] rounded px-2 py-1 text-[#F2F0EB] text-sm"
+                          onChange={e => setEditingData({ ...editingData, role: e.target.value as "user" | "admin" })}
+                          className="bg-[#0A0A09] border border-[#1C1C1A] text-[#F2F0EB] text-[10px] font-900 uppercase tracking-widest px-3 py-2 outline-none"
                         >
                           <option value="user">User</option>
                           <option value="admin">Admin</option>
                         </select>
                       </td>
-                      <td className="py-3 px-4 text-[#8A8880] text-sm">
-                        {new Date(user.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="py-3 px-4 flex justify-end gap-2">
+                      <td className="py-4 px-6" />
+                      <td className="py-4 px-6" />
+                      <td className="py-4 px-6 flex justify-end gap-2">
                         <button
                           onClick={handleSave}
-                          disabled={updateMutation.isPending}
-                          className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white text-[10px] font-600 uppercase tracking-widest px-3 py-1.5 rounded-sm transition-colors disabled:opacity-50"
+                          className="flex items-center gap-2 bg-green-500/10 text-green-500 border border-green-500/20 px-4 py-2 text-[9px] font-900 uppercase tracking-widest hover:bg-green-500 hover:text-[#0F0F0E] transition-all"
                         >
-                          <Save size={12} /> Save
+                          <Save size={12} /> Sync
                         </button>
                         <button
-                          onClick={() => {
-                            setEditingId(null);
-                            setEditingData(null);
-                          }}
-                          className="flex items-center gap-1 bg-[#2A2A28] hover:bg-[#333330] text-[#8A8880] text-[10px] font-600 uppercase tracking-widest px-3 py-1.5 rounded-sm transition-colors border border-[#333330]"
+                          onClick={() => { setEditingId(null); setEditingData(null); }}
+                          className="flex items-center gap-2 bg-[#1C1C1A] text-[#555550] border border-[#1C1C1A] px-4 py-2 text-[9px] font-900 uppercase tracking-widest hover:text-[#F2F0EB] transition-all"
                         >
-                          <X size={12} /> Cancel
+                          <X size={12} /> Abort
                         </button>
                       </td>
                     </>
                   ) : (
                     <>
-                      <td className="py-3 px-4 text-[#F2F0EB] text-sm font-medium">
-                        {user.name || "-"}
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-[#1C1C1A] text-[#8A8880] flex items-center justify-center text-[10px] font-900 border border-[#222220] uppercase font-display">
+                                {user.name?.[0] || 'X'}
+                            </div>
+                            <span className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">{user.name || "SECURE_NODE"}</span>
+                        </div>
                       </td>
-                      <td className="py-3 px-4 text-[#8A8880] text-sm">
-                        {user.email}
+                      <td className="py-4 px-6 text-[10px] font-900 text-[#555550] uppercase tracking-tighter font-ui">
+                        {user.email.replace(/(.{3}).+@(.+)/, "$1***@$2")}
                       </td>
-                      <td className="py-3 px-4">
-                        <span
-                          className={`text-[9px] px-2 py-0.5 rounded font-600 uppercase tracking-widest ${
-                            user.role === "admin"
-                              ? "bg-[#E8A020] text-[#0F0F0E]"
-                              : "bg-[#2A2A28] text-[#8A8880]"
-                          }`}
-                        >
+                      <td className="py-4 px-6 text-center">
+                        <span className={`text-[9px] font-900 uppercase tracking-widest px-3 py-1 border ${user.role === 'admin' ? 'text-[#E8A020] border-[#E8A020]/20 bg-[#E8A020]/5' : 'text-[#333330] border-[#1C1C1A]'}`}>
                           {user.role}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-center">
-                        <span
-                          className={`text-[9px] px-2 py-0.5 rounded font-600 uppercase tracking-widest ${
-                            user.status === "active"
-                              ? "bg-green-900/30 text-green-400 border border-green-800/50"
-                              : user.status === "restricted"
-                              ? "bg-blue-900/30 text-blue-400 border border-blue-800/50"
-                              : "bg-red-900/30 text-red-400 border border-red-800/50"
-                          }`}
-                        >
-                          {user.status || 'active'}
-                        </span>
+                      <td className="py-4 px-6 text-center">
+                         <div className="flex items-center justify-center gap-2">
+                           <div className={`w-1.5 h-1.5 rounded-full ${user.status === 'active' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]' : user.status === 'restricted' ? 'bg-blue-500' : 'bg-red-500 animate-pulse'} `} />
+                           <span className={`text-[9px] font-900 uppercase tracking-widest ${user.status === 'active' ? 'text-green-500' : user.status === 'restricted' ? 'text-blue-500' : 'text-red-500'}`}>
+                              {user.status || 'active'}
+                           </span>
+                         </div>
                       </td>
-                      <td className="py-3 px-4 text-[#555550] text-sm">
-                        {new Date(user.createdAt).toLocaleDateString()}
+                      <td className="py-4 px-6 text-[10px] font-900 text-[#555550] uppercase tracking-widest font-ui">
+                         {new Date(user.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
                       </td>
-                      <td className="py-3 px-4 flex justify-end gap-1">
-                        <button
-                          onClick={() => handleEdit(user)}
-                          className="p-1.5 text-[#8A8880] hover:text-[#E8A020] transition-colors"
-                          title="Edit Basic Info"
-                        >
-                          <Edit2 size={16} />
-                        </button>
-                        
-                        {(user.status === 'restricted' || user.status === 'banned') && (
-                          <button
-                            onClick={() => handleActivate(user.id)}
-                            className="p-1.5 text-[#8A8880] hover:text-green-500 transition-colors"
-                            title="Restore Account (Active)"
-                          >
-                            <ShieldCheck size={16} />
-                          </button>
-                        )}
-                        
-                        {user.status !== 'restricted' && (
-                          <button
-                            onClick={() => handleDeactivate(user.id)}
-                            className="p-1.5 text-[#8A8880] hover:text-blue-400 transition-colors"
-                            title="Deactivate (Read-Only Mode)"
-                          >
-                            <ShieldOff size={16} />
-                          </button>
-                        )}
-                        
-                        {user.status !== 'banned' && (
-                          <button
-                            onClick={() => handleBan(user.id)}
-                            className="p-1.5 text-[#8A8880] hover:text-orange-500 transition-colors"
-                            title="Permanent Ban (No Login)"
-                          >
-                            <AlertOctagon size={16} />
-                          </button>
-                        )}
-
-                        {user.role !== 'admin' && (
-                          <button
-                            onClick={() => handleImpersonate(user.id)}
-                            className="p-1.5 text-[#8A8880] hover:text-[#E8A020] transition-colors"
-                            title="Entra come utente (Impersonate)"
-                          >
-                            <ExternalLink size={16} />
-                          </button>
-                        )}
-
-                        <button
-                          onClick={() => handlePurge(user)}
-                          className={`p-1.5 transition-colors ${user.status === 'deleted' ? 'text-red-500 hover:text-red-700 animate-pulse' : 'text-[#8A8880] hover:text-red-500'}`}
-                          title={user.status === 'deleted' ? "Final Physical Wipe (Already Notified)" : "Schedule Purge (Notify User)"}
-                        >
-                          <Flame size={16} />
-                        </button>
+                      <td className="py-4 px-6 flex justify-end items-center gap-1 group/actions">
+                        <div className="flex items-center gap-1 opacity-40 group-hover/actions:opacity-100 transition-opacity">
+                            <button onClick={() => handleEdit(user)} className="p-2 text-[#555550] hover:text-[#E8A020] transition-colors"><Edit2 size={16} /></button>
+                            {(user.status === 'restricted' || user.status === 'banned') && (
+                              <button onClick={() => handleActivate(user.id)} className="p-2 text-green-500/50 hover:text-green-500 transition-colors"><ShieldCheck size={16} /></button>
+                            )}
+                            {user.status !== 'restricted' && (
+                              <button onClick={() => handleDeactivate(user.id)} className="p-2 text-blue-500/50 hover:text-blue-500 transition-colors"><ShieldOff size={16} /></button>
+                            )}
+                            {user.status !== 'banned' && (
+                              <button onClick={() => handleBan(user.id)} className="p-2 text-red-500/50 hover:text-red-500 transition-colors"><AlertOctagon size={16} /></button>
+                            )}
+                            {user.role !== 'admin' && (
+                              <button onClick={() => handleImpersonate(user.id)} className="p-2 text-[#E8A020]/50 hover:text-[#E8A020] transition-colors"><ExternalLink size={16} /></button>
+                            )}
+                            <button onClick={() => handlePurge(user)} className={`p-2 transition-colors ${user.status === 'deleted' ? 'text-red-500 animate-pulse' : 'text-[#333330] hover:text-white'}`}><Flame size={16} /></button>
+                        </div>
                       </td>
                     </>
                   )}
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* Card Layout - Mobile only */}
-        <div className="md:hidden divide-y divide-[#222220]">
-          {users?.map(user => (
-            <div key={user.id} className="p-4 space-y-3">
-              {editingId === user.id && editingData ? (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1">
-                      <label className="text-[9px] text-[#E8A020] uppercase font-600 tracking-wider">
-                        Name
-                      </label>
-                      <input
-                        type="text"
-                        value={editingData.name}
-                        onChange={e =>
-                          setEditingData({
-                            ...editingData,
-                            name: e.target.value,
-                          })
-                        }
-                        className="w-full bg-[#0F0F0E] border border-[#222220] rounded px-2 py-1.5 text-[#F2F0EB] text-xs"
-                      />
+        {/* Mobile View with Tactical Cards */}
+        <div className="md:hidden divide-y divide-[#1C1C1A]">
+            {users?.map(user => (
+                <div key={user.id} className="p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-[#1C1C1A] text-[#8A8880] flex items-center justify-center text-[10px] font-900 border border-[#222220] uppercase font-display">
+                                {user.name?.[0] || 'X'}
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-xs font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">{user.name || "SECURE_NODE"}</span>
+                                <span className="text-[9px] uppercase font-900 text-[#555550] tracking-tighter">ID: {user.id.toString().padStart(4, '0')}</span>
+                            </div>
+                        </div>
+                        <span className={`text-[8px] font-900 uppercase tracking-widest px-2 py-0.5 border ${user.role === 'admin' ? 'text-[#E8A020] border-[#E8A020]/20 bg-[#E8A020]/5' : 'text-[#333330] border-[#1C1C1A]'}`}>
+                          {user.role}
+                        </span>
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-[9px] text-[#E8A020] uppercase font-600 tracking-wider">
-                        Role
-                      </label>
-                      <select
-                        value={editingData.role}
-                        onChange={e =>
-                          setEditingData({
-                            ...editingData,
-                            role: e.target.value as "user" | "admin",
-                          })
-                        }
-                        className="w-full bg-[#0F0F0E] border border-[#222220] rounded px-2 py-1.5 text-[#F2F0EB] text-xs"
-                      >
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                      </select>
+                    
+                    <div className="flex items-center justify-between pt-2">
+                        <div className="flex items-center gap-2">
+                            <div className={`w-1 h-1 rounded-full ${user.status === 'active' ? 'bg-green-500' : 'bg-red-500'} `} />
+                            <span className="text-[9px] font-900 text-[#555550] uppercase tracking-widest font-ui">{user.status || 'ACTIVE'}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                             <button onClick={() => handleEdit(user)} className="p-2 text-[#333330]"><Edit2 size={14} /></button>
+                             <button onClick={() => handleImpersonate(user.id)} className="p-2 text-[#333330]"><ExternalLink size={14} /></button>
+                             <button onClick={() => handlePurge(user)} className="p-2 text-[#333330]"><Flame size={14} /></button>
+                        </div>
                     </div>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] text-[#E8A020] uppercase font-600 tracking-wider">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      value={editingData.email}
-                      onChange={e =>
-                        setEditingData({
-                          ...editingData,
-                          email: e.target.value,
-                        })
-                      }
-                      className="w-full bg-[#0F0F0E] border border-[#222220] rounded px-2 py-1.5 text-[#F2F0EB] text-xs"
-                    />
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <button
-                      onClick={handleSave}
-                      className="flex-1 bg-green-600 py-2 rounded-sm text-white text-[10px] font-600 uppercase tracking-widest"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => setEditingId(null)}
-                      className="flex-1 bg-[#2A2A28] py-2 rounded-sm text-[#8A8880] text-[10px] font-600 uppercase tracking-widest"
-                    >
-                      Cancel
-                    </button>
-                  </div>
                 </div>
-              ) : (
-                <>
-                  <div className="flex justify-between items-start">
-                    <div className="min-w-0 flex-1 mr-3">
-                      <p className="text-[#F2F0EB] font-600 text-sm truncate">
-                        {user.name || "Unnamed User"}
-                      </p>
-                      <p className="text-[#8A8880] text-xs truncate">
-                        {user.email}
-                      </p>
-                    </div>
-                    <span
-                      className={`text-[9px] px-2 py-0.5 rounded font-600 uppercase tracking-widest flex-shrink-0 ${
-                        user.role === "admin"
-                          ? "bg-[#E8A020] text-[#0F0F0E]"
-                          : "bg-[#2A2A28] text-[#8A8880]"
-                      }`}
-                    >
-                      {user.role}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between pt-2">
-                    <span className="text-[10px] text-[#555550]">
-                      Joined {new Date(user.createdAt).toLocaleDateString()}
-                    </span>
-                      <div className="flex gap-0.5">
-                        <button
-                          onClick={() => handleEdit(user)}
-                          className="p-2 text-[#8A8880] hover:text-[#E8A020]"
-                        >
-                          <Edit2 size={16} />
-                        </button>
-                        {(user.status === 'restricted' || user.status === 'banned') && (
-                          <button
-                            onClick={() => handleActivate(user.id)}
-                            className="p-2 text-[#8A8880] hover:text-green-500"
-                            title="Restore"
-                          >
-                            <ShieldCheck size={16} />
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleDeactivate(user.id)}
-                          className="p-2 text-[#8A8880] hover:text-blue-400"
-                          title="Restrict"
-                        >
-                          <ShieldOff size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleBan(user.id)}
-                          className="p-2 text-[#8A8880] hover:text-orange-500"
-                          title="Ban"
-                        >
-                          <AlertOctagon size={16} />
-                        </button>
-                        <button
-                          onClick={() => handlePurge(user)}
-                          className={`p-2 ${user.status === 'deleted' ? 'text-red-500 animate-pulse' : 'text-[#8A8880]'}`}
-                          title={user.status === 'deleted' ? "Final Wipe" : "Purge"}
-                        >
-                          <Flame size={16} />
-                        </button>
-
-                        {user.role !== 'admin' && (
-                          <button
-                            onClick={() => handleImpersonate(user.id)}
-                            className="p-2 text-[#8A8880] hover:text-[#E8A020]"
-                            title="Impersonate"
-                          >
-                            <ExternalLink size={16} />
-                          </button>
-                        )}
-                      </div>
-                  </div>
-                </>
-              )}
-            </div>
-          ))}
+            ))}
         </div>
       </div>
-
-      {users?.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-[#8A8880]">No users found</p>
-        </div>
-      )}
     </div>
   );
 }
