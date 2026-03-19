@@ -501,10 +501,10 @@ export default function ArticleDetail() {
               </h3>
             ),
             p: ({ children }) => (
-              <p className="text-[#D4D0C8] leading-relaxed mb-4">{children}</p>
+              <p className="text-[#D4D0C8] font-body text-lg md:text-xl leading-relaxed mb-8">{children}</p>
             ),
             blockquote: ({ children }) => (
-              <blockquote className="border-l-4 border-[#E8A020] pl-4 my-4 italic text-[#8A8880]">
+              <blockquote className="premium-blockquote">
                 {children}
               </blockquote>
             ),
@@ -709,7 +709,7 @@ export default function ArticleDetail() {
               </div>
 
               {/* Article Body */}
-              <div className="prose prose-invert max-w-none mb-12">
+              <div className="prose prose-invert max-w-none mb-12 article-body-content">
                 <div className="font-serif text-[#D4D0C8] leading-relaxed">
                   {renderArticleContent(article.content)}
                   <div className="clear-both" />

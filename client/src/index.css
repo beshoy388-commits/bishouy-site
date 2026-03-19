@@ -461,4 +461,38 @@ font {
     word-break: break-all !important;
     overflow-x: hidden !important;
   }
+
+  /* Premium Editorial Typography */
+  .drop-cap::first-letter {
+    font-family: "Merriweather", serif;
+    float: left;
+    font-size: 4.5rem;
+    line-height: 1;
+    margin: 0.5rem 0.75rem 0 0;
+    color: oklch(0.72 0.16 70);
+    font-weight: 900;
+  }
+
+  .premium-blockquote {
+    @apply border-l-4 border-[#E8A020] pl-6 my-10 italic text-xl md:text-2xl text-[#F2F0EB]/90;
+    font-family: "Lora", serif;
+    position: relative;
+  }
+
+  .premium-blockquote::before {
+    content: "“";
+    @apply absolute -left-4 -top-6 text-6xl text-[#E8A020]/20 font-serif;
+  }
+
+  .article-divider {
+    @apply flex items-center justify-center my-12 gap-4;
+  }
+
+  .article-divider span {
+    @apply w-1.5 h-1.5 rounded-full bg-[#2A2A28];
+  }
+
+  .article-divider span:nth-child(2) {
+    @apply bg-[#E8A020] scale-125;
+  }
 }

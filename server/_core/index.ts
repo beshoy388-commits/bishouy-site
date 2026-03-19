@@ -226,7 +226,13 @@ async function startServer() {
 
       for (const article of articles) {
         const articleUrl = `${baseUrl}/article/${article.slug}`;
-        const pubDate = new Date(article.createdAt).toUTCString();
+        const pubDate = new Date(article.createdAt || new Date()).toUTCString();
+        
+        // Ensure image URL is absolute and not a data URI
+        let imageUrl = "";
+        if (article.image && !article.image.startsWith('data:')) {
+          imageUrl = article.image.startsWith('http') ? article.image : `${baseUrl}${article.image.startsWith('/') ? '' : '/'}${article.image}`;
+        }
 
         rss += `
     <item>
@@ -237,7 +243,7 @@ async function startServer() {
       <dc:creator><![CDATA[${article.author}]]></dc:creator>
       <description><![CDATA[${article.excerpt}]]></description>
       <content:encoded><![CDATA[${article.content}]]></content:encoded>
-      ${article.image ? `<media:content url="${article.image}" medium="image" />` : ""}
+      ${imageUrl ? `<media:content url="${imageUrl}" medium="image" />` : ""}
     </item>`;
       }
 
