@@ -120,6 +120,7 @@ async function rewriteArticle(
   seoDescription: string;
   isFeatured: boolean;
   isBreaking: boolean;
+  summaryPoints?: string[];
 } | null> {
   if (!ENV.openRouterApiKey) {
     log("[RSS] Cannot rewrite article: OPENROUTER_API_KEY is not set.");
@@ -186,6 +187,7 @@ async function rewriteArticle(
             {
               "title": "A sophisticated, broad-reach headline without clickbait",
               "excerpt": "A deep, 2-sentence executive summary",
+              "summaryPoints": ["Point 1", "Point 2", "Point 3"],
               "content": "Formatted Markdown content with embedded image directives and pollinations.ai links as specified.",
               "tags": ["Tag1", "Tag2", "Tag3"],
               "category": "Pick strictly one of: World, Politics, Economy, Technology, Culture, Sports.",
@@ -380,6 +382,7 @@ export async function syncRSSFeeds(isManual: boolean = false) {
             readTime: calculateReadTime(editorialPiece.content),
             sourceUrl: item.link || item.guid || null,
             sourceTitle: item.title,
+            summary: editorialPiece.summaryPoints ? JSON.stringify(editorialPiece.summaryPoints) : null,
           };
 
           await createArticle(articleData);

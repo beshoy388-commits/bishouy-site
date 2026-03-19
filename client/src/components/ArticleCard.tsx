@@ -4,7 +4,7 @@
  * Variants: featured (large), medium, small
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Link } from "wouter";
 import { Clock, User, Heart } from "lucide-react";
@@ -21,7 +21,7 @@ interface ArticleCardProps {
   showLikes?: boolean;
 }
 
-export default function ArticleCard({
+const ArticleCard = memo(function ArticleCard({
   article,
   variant = "medium",
   showLikes = true,
@@ -410,4 +410,6 @@ export default function ArticleCard({
       </article>
     </Link>
   );
-}
+});
+
+export default ArticleCard;

@@ -16,7 +16,7 @@ import { trpc } from "@/lib/trpc";
 import SEO from "@/components/SEO";
 import ArticleCardSkeleton from "@/components/ArticleCardSkeleton";
 import { useAuth } from "@/_core/hooks/useAuth";
-const SocialPulse = lazy(() => import("@/components/SocialPulse"));
+// Removed SocialPulse import to enhance home page performance
 
 export default function Home() {
   const { isAuthenticated, loading } = useAuth();

@@ -33,6 +33,7 @@ import AdPlacement from "./AdPlacement";
 import { formatDateString } from "@/lib/time-utils";
 
 import GlobalTicker from "./GlobalTicker";
+import BreakingNewsTicker from "./BreakingNewsTicker";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

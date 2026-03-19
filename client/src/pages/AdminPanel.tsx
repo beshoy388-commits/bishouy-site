@@ -4,20 +4,23 @@
  * Only accessible to admin users
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import ArticleForm from "@/components/ArticleForm";
-import UsersManagement from "./UsersManagement";
-import DashboardStats from "@/components/DashboardStats";
-import NewsletterManager from "@/components/NewsletterManager";
-import GlobalComments from "@/components/GlobalComments";
+
+// Lazy loading the heavy admin modules
+const ArticleForm = lazy(() => import("@/components/ArticleForm"));
+const UsersManagement = lazy(() => import("./UsersManagement"));
+const DashboardStats = lazy(() => import("@/components/DashboardStats"));
+const NewsletterManager = lazy(() => import("@/components/NewsletterManager"));
+const GlobalComments = lazy(() => import("@/components/GlobalComments"));
+const SiteSettings = lazy(() => import("@/components/SiteSettings"));
+const SystemTerminal = lazy(() => import("@/components/SystemTerminal"));
+
 import AdminSidebar from "@/components/AdminSidebar";
-import SiteSettings from "@/components/SiteSettings";
-import SystemTerminal from "@/components/SystemTerminal";
 import {
   Loader2,
   Plus,
@@ -461,7 +464,14 @@ export default function AdminPanel() {
 
         {/* Dynamic Content Surface */}
         <main className="flex-1 p-4 lg:p-12 max-w-7xl mx-auto w-full">
-          {renderContent()}
+          <Suspense fallback={
+            <div className="flex flex-col items-center justify-center py-40 gap-4 opacity-50">
+              <Loader2 size={32} className="animate-spin text-[#E8A020]" />
+              <p className="text-[10px] font-900 uppercase tracking-[0.4em] font-ui">Loading Hub Core...</p>
+            </div>
+          }>
+            {renderContent()}
+          </Suspense>
         </main>
 
         <footer className="py-6 px-10 border-t border-[#1C1C1A] flex flex-col sm:flex-row justify-between items-center gap-4 text-[9px] font-ui text-[#333330] uppercase tracking-[0.2em]">
