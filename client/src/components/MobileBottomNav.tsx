@@ -61,7 +61,7 @@ export default function MobileBottomNav({ onSearchClick }: { onSearchClick: () =
                             <button className={`w-full flex flex-col items-center justify-center gap-1 transition-all duration-300 ${isActive("/profile") ? "text-[#E8A020]" : "text-[#8A8880]"}`}>
                                 {user.avatarUrl ? (
                                     <div className={`w-5 h-5 rounded-full border-2 overflow-hidden ${isActive("/profile") ? "border-[#E8A020]" : "border-[#8A8880]"}`}>
-                                        <img src={user.avatarUrl} className="w-full h-full object-cover" alt="" />
+                                        <img src={user.avatarUrl} className="w-full h-full object-cover" alt={`${user.name || "User"} avatar`} />
                                     </div>
                                 ) : (
                                     <div className={`p-1.5 rounded-full transition-colors ${isActive("/profile") ? "bg-[#E8A020]/10" : "bg-transparent"}`}>

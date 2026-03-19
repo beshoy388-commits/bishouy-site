@@ -96,7 +96,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                                             {article.image && (
                                                 <img
                                                     src={getSafeImage(article.image, article.category, article.id, 400)}
-                                                    alt=""
+                                                    alt={article.title || "Article thumbnail"}
                                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                     onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                                                         const img = e.target as HTMLImageElement;

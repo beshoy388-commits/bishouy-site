@@ -144,7 +144,7 @@ export default function SocialPulse() {
                             <div className="flex items-start gap-3">
                                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#1C1C1A] to-[#0A0A09] border border-[#2A2A28] flex items-center justify-center flex-shrink-0">
                                     {post.authorAvatar ? (
-                                        <img src={post.authorAvatar} alt="" className="w-full h-full rounded-full" loading="lazy" />
+                                        <img src={post.authorAvatar} alt={`${post.authorName || "User"} avatar`} className="w-full h-full rounded-full" loading="lazy" />
                                     ) : (
                                         <User size={14} className="text-[#555550]" />
                                     )}

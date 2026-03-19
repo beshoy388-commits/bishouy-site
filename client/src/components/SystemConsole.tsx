@@ -17,7 +17,7 @@ export default function SystemConsole() {
     refetch,
     isLoading,
   } = trpc.system.getDebugLogs.useQuery(undefined, {
-    refetchInterval: 5000, // Auto-refresh every 5s
+    refetchInterval: 15000, // Kernel logs — refresh every 15s to reduce server load
   });
   const [isSyncing, setIsSyncing] = useState(false);
 

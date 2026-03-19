@@ -36,8 +36,19 @@ import {
 } from "recharts";
 import { motion } from "framer-motion";
 
+type AdminTab = "dashboard" | "articles" | "system" | "users" | "analytics" | "ads" | "newsletter" | "media" | "moderation" | "settings" | "security";
+
+interface TrendingArticle {
+  id: number;
+  title: string;
+  slug: string;
+  category: string;
+  categoryColor?: string | null;
+  viewCount?: number | null;
+}
+
 interface DashboardStatsProps {
-  onTabChange: (tab: any) => void;
+  onTabChange: (tab: AdminTab) => void;
   onNewArticle: () => void;
 }
 
@@ -356,7 +367,7 @@ export default function DashboardStats({ onTabChange, onNewArticle }: DashboardS
         </div>
 
         <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {trendingQuery.data?.map((article: any, idx: number) => (
+            {trendingQuery.data?.map((article: TrendingArticle, idx: number) => (
                 <motion.div 
                     key={article.id}
                     whileHover={{ y: -5 }}
