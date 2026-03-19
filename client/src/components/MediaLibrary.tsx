@@ -30,14 +30,14 @@ export default function MediaLibrary() {
 
     // Extract all unique images
     const mediaItems = Array.from(new Set([
-        ...articles.map(a => a.image).filter(Boolean),
-        ...ads.map(ad => ad.imageUrl).filter(Boolean)
+        ...articles.map((a: any) => a.image).filter(Boolean),
+        ...ads.map((ad: any) => ad.imageUrl).filter(Boolean)
     ])).filter((url): url is string => !!url)
         .map((url, index) => ({
             id: index,
             url,
-            source: (articles.some(a => a.image === url) ? 'Article' : 'Ad') as 'Article' | 'Ad',
-            title: articles.find(a => a.image === url)?.title || ads.find(ad => ad.imageUrl === url)?.title || 'Untitled Asset'
+            source: (articles.some((a: any) => a.image === url) ? 'Article' : 'Ad') as 'Article' | 'Ad',
+            title: articles.find((a: any) => a.image === url)?.title || ads.find((ad: any) => ad.imageUrl === url)?.title || 'Untitled Asset'
         })).filter(item => item.title.toLowerCase().includes(search.toLowerCase()) || item.url.toLowerCase().includes(search.toLowerCase()));
 
     const copyToClipboard = (url: string) => {

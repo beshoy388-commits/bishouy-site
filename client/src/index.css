@@ -469,7 +469,7 @@ font {
     font-size: 4.5rem;
     line-height: 1;
     margin: 0.5rem 0.75rem 0 0;
-    color: oklch(0.72 0.16 70);
+    color: oklch(0.72, 0.16, 70);
     font-weight: 900;
   }
 
@@ -494,5 +494,10 @@ font {
 
   .article-divider span:nth-child(2) {
     @apply bg-[#E8A020] scale-125;
+  }
+
+  /* Connection between Article Body and Drop Cap */
+  .article-body-content p:first-of-type {
+    @apply drop-cap;
   }
 }
