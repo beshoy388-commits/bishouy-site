@@ -28,12 +28,12 @@ export interface Article {
 }
 
 export const CATEGORIES = [
-  { name: "World", slug: "world", color: "#E8A020" },
-  { name: "Politics", slug: "politics", color: "#C0392B" },
-  { name: "Economy", slug: "economy", color: "#27AE60" },
-  { name: "Technology", slug: "technology", color: "#2980B9" },
-  { name: "Culture", slug: "culture", color: "#8E44AD" },
-  { name: "Sports", slug: "sports", color: "#E67E22" },
+  { name: "World", slug: "world", color: "#E8A020", description: "Strategic analysis of global geopolitical shifts, international diplomacy, and cross-border conflicts in the emergent world order." },
+  { name: "Politics", slug: "politics", color: "#C0392B", description: "Granular reporting on legislative frameworks, institutional governance, and the evolving dynamics of state power." },
+  { name: "Economy", slug: "economy", color: "#27AE60", description: "Real-time market intelligence, fiscal policy analysis, and the macroeconomic trends reshaping global trade and finance." },
+  { name: "Technology", slug: "technology", color: "#2980B9", description: "In-depth exploration of emergent neural networks, quantum computing, and the ethical boundaries of the digital frontier." },
+  { name: "Culture", slug: "culture", color: "#8E44AD", description: "A synthesis of artistic movements, philosophical discourse, and the shifting societal archetypes in modern civilizations." },
+  { name: "Sports", slug: "sports", color: "#E67E22", description: "High-performance analysis of international athletic diplomacy, team strategies, and the business of global sports." },
 ];
 
 export const ARTICLES: Article[] = [

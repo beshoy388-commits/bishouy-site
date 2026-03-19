@@ -13,6 +13,7 @@ import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import ArticleCard from "@/components/ArticleCard";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import { Sparkles } from "lucide-react";
 
 export default function CategoryPage() {
   const [match, params] = useRoute("/category/:slug");
@@ -116,15 +117,31 @@ export default function CategoryPage() {
       </section>
 
       {/* Articles Grid */}
-      {articles && articles.length > 0 ? (
-        <section className="py-12 md:py-16">
-          <div className="container">
-            {/* Featured article from this category */}
-            {articles[0] && (
-              <div className="mb-12">
-                <ArticleCard article={articles[0]} variant="featured" />
-              </div>
-            )}
+      <section className="py-12 md:py-16">
+        <div className="container">
+          {/* AI Category Insight */}
+          <div className="bg-[#11110F] border border-[#E8A020]/20 p-8 rounded-sm mb-16 flex flex-col md:flex-row gap-8 items-center md:items-start group transition-all hover:border-[#E8A020]/40 shadow-2xl relative overflow-hidden">
+             <div className="p-4 bg-[#E8A020]/10 rounded-full text-[#E8A020] shrink-0 border border-[#E8A020]/20 group-hover:scale-110 transition-transform relative z-10">
+                <Sparkles size={32} />
+             </div>
+             <div className="relative z-10 text-center md:text-left">
+                <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] block mb-3 font-ui">Neural Synthesis: {category.name}</span>
+                <h3 className="font-display text-2xl text-[#F2F0EB] mb-4">The Editorial Directive</h3>
+                <p className="text-md text-[#8A8880] leading-relaxed italic font-serif">
+                    “{category.description || `Our strategic focus for the ${category.name} intelligence node prioritizes emergent cross-border shifts and high-fidelity reporting on established power structures.`}”
+                </p>
+             </div>
+             <div className="absolute top-0 right-0 w-64 h-64 bg-[#E8A020]/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+          </div>
+
+          {articles && articles.length > 0 ? (
+            <>
+              {/* Featured article from this category */}
+              {articles[0] && (
+                <div className="mb-12">
+                  <ArticleCard article={articles[0]} variant="featured" />
+                </div>
+              )}
 
             {/* Remaining articles */}
             {articles.length > 1 && (
@@ -150,23 +167,22 @@ export default function CategoryPage() {
                 </button>
               </div>
             )}
-          </div>
-        </section>
-      ) : (
-        <section className="py-16">
-          <div className="container text-center">
-            <p className="font-ui text-[#8A8880] mb-6">
-              No articles found in this category yet.
-            </p>
-            <Link
-              href="/"
-              className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors inline-block"
-            >
-              Browse All News
-            </Link>
-          </div>
-        </section>
-      )}
+            </>
+          ) : (
+            <div className="py-16 text-center">
+              <p className="font-ui text-[#8A8880] mb-6">
+                No articles found in this category yet.
+              </p>
+              <Link
+                href="/"
+                className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors inline-block"
+              >
+                Browse All News
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
 
       <Footer />
     </main>

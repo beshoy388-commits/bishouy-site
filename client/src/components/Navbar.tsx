@@ -31,6 +31,7 @@ import AdPlacement from "./AdPlacement";
 import { formatDateString } from "@/lib/time-utils";
 
 import BreakingNewsTicker from "./BreakingNewsTicker";
+import MarketTicker from "./MarketTicker";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -96,6 +97,7 @@ export default function Navbar() {
         : "bg-transparent"
         }`}
     >
+      <MarketTicker />
       {/* Top bar */}
       <div className="border-b border-[#222220] bg-[#0F0F0E] notranslate">
         <div className="container">
