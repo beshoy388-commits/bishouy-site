@@ -199,7 +199,7 @@ export default function ArticleCard({
             {article.breaking === 1 && (
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-2 h-2 rounded-full bg-[#E8A020] animate-pulse" />
-                <span className="font-ui text-[10px] font-semibold text-[#E8A020] uppercase tracking-widest">
+                <span className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest">
                   Breaking News
                 </span>
               </div>
@@ -207,7 +207,7 @@ export default function ArticleCard({
             <span className="category-badge mb-3 inline-block">
               {article.category}
             </span>
-            <h2 className="font-headline text-2xl md:text-3xl font-black text-[#F2F0EB] leading-tight mb-3 title-hover">
+            <h2 className="font-headline text-2xl md:text-3xl font-900 text-[#F2F0EB] leading-tight mb-3 title-hover">
               <span>{article.title}</span>
             </h2>
             <p className="font-ui text-sm text-[#8A8880] line-clamp-2 mb-4 hidden md:block">

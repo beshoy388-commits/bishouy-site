@@ -55,7 +55,7 @@ export default function AIAssistant() {
       <main className="container pt-52 pb-16">
         <div className="max-w-4xl mx-auto">
           <header className="mb-8 text-center">
-            <div className="inline-flex items-center gap-2 bg-[#E8A020]/10 text-[#E8A020] px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-widest mb-4">
+            <div className="inline-flex items-center gap-2 bg-[#E8A020]/10 text-[#E8A020] px-3 py-1 rounded-full text-[10px] font-600 uppercase tracking-widest mb-4">
               <Sparkles size={12} />
               Editorial Intelligence
             </div>
@@ -67,7 +67,7 @@ export default function AIAssistant() {
             </p>
             {!useAuth().user && (
               <div className="mt-6 p-4 bg-[#E8A020]/5 border border-[#E8A020]/20 rounded-sm inline-block max-w-md mx-auto">
-                <p className="text-[10px] text-[#E8A020] font-black uppercase tracking-[0.2em] mb-1">Guest Mode Active</p>
+                <p className="text-[10px] text-[#E8A020] font-900 uppercase tracking-[0.2em] mb-1">Guest Mode Active</p>
                 <p className="text-[9px] text-[#8A8880] leading-tight">
                   You have basic access. <Link href="/register" className="text-[#E8A020] underline font-bold">Register</Link> to unlock Premium Neural Processing and faster response times.
                 </p>

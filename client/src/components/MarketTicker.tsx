@@ -15,15 +15,15 @@ export default function MarketTicker() {
        <div className="container flex items-center justify-between gap-12">
           <div className="flex items-center gap-2 text-[#555550] shrink-0">
               <Activity size={10} className="text-[#E8A020]" />
-              <span className="text-[8px] font-black uppercase tracking-[0.3em] font-ui">Neural Link Active</span>
+              <span className="text-[8px] font-900 uppercase tracking-[0.3em] font-ui">Neural Link Active</span>
           </div>
           <div className="flex-1 overflow-hidden relative">
             <div className="flex items-center gap-10 animate-marquee whitespace-nowrap">
                 {MARKETS.concat(MARKETS).map((m, i) => (
                     <div key={i} className="flex items-center gap-2.5">
-                        <span className="text-[9px] text-[#555550] font-ui uppercase font-black tracking-widest">{m.name}</span>
+                        <span className="text-[9px] text-[#555550] font-ui uppercase font-900 tracking-widest">{m.name}</span>
                         <span className="text-[10px] text-[#F2F0EB] font-serif font-bold">{m.value}</span>
-                        <span className={`flex items-center gap-0.5 text-[8px] font-black px-1 rounded-[2px] ${m.change.startsWith('+') ? 'text-[#22c55e] bg-[#22c55e]/10' : 'text-[#ef4444] bg-[#ef4444]/10'}`}>
+                        <span className={`flex items-center gap-0.5 text-[8px] font-900 px-1 rounded-[2px] ${m.change.startsWith('+') ? 'text-[#22c55e] bg-[#22c55e]/10' : 'text-[#ef4444] bg-[#ef4444]/10'}`}>
                             {m.change.startsWith('+') ? <TrendingUp size={8} /> : <TrendingDown size={8} />}
                             {m.change}
                         </span>

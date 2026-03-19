@@ -172,7 +172,7 @@ export default function ArticlePreview({ article }: ArticlePreviewProps) {
   return (
     <div className="bg-[#0F0F0E] rounded-sm border border-[#2A2A28] overflow-hidden">
       {/* Preview Banner */}
-      <div className="bg-[#E8A020] text-[#0F0F0E] text-center py-2 font-ui text-xs font-semibold uppercase tracking-widest">
+      <div className="bg-[#E8A020] text-[#0F0F0E] text-center py-2 font-ui text-xs font-600 uppercase tracking-widest">
         Article Preview — This is how the article will appear to readers
       </div>
 
@@ -220,19 +220,19 @@ export default function ArticlePreview({ article }: ArticlePreviewProps) {
               {article.breaking && (
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#E8A020] animate-pulse" />
-                  <span className="font-ui text-[10px] font-semibold text-[#E8A020] uppercase tracking-widest">
+                  <span className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest">
                     Breaking
                   </span>
                 </div>
               )}
               {article.featured && (
-                <span className="font-ui text-[10px] font-semibold text-[#E8A020] uppercase tracking-widest border border-[#E8A020] px-2 py-0.5 rounded-sm">
+                <span className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest border border-[#E8A020] px-2 py-0.5 rounded-sm">
                   Featured
                 </span>
               )}
             </div>
 
-            <h1 className="font-display text-3xl md:text-4xl font-black text-[#F2F0EB] leading-tight mb-4">
+            <h1 className="font-display text-3xl md:text-4xl font-900 text-[#F2F0EB] leading-tight mb-4">
               {article.title || "Untitled Article"}
             </h1>
 

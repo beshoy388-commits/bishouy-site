@@ -41,12 +41,12 @@ export default function NeuralNexus() {
             {/* Header Terminal */}
             <div className="mb-12 border-b border-[#1C1C1A] pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <span className="text-[10px] font-black text-[#E8A020] uppercase tracking-[0.5em] mb-4 block font-ui">System Oversight</span>
+                    <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.5em] mb-4 block font-ui">System Oversight</span>
                     <h1 className="font-display text-5xl md:text-7xl text-[#F2F0EB] uppercase tracking-tighter leading-none">
                         Neural <span className="text-[#E8A020]">Nexus</span>
                     </h1>
                 </div>
-                <div className="flex items-center gap-8 text-[#555550] font-ui text-[10px] uppercase tracking-widest font-extrabold">
+                <div className="flex items-center gap-8 text-[#555550] font-ui text-[10px] uppercase tracking-widest font-800">
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
                         <span>Core Stable</span>
@@ -65,26 +65,26 @@ export default function NeuralNexus() {
                     <div className="absolute top-0 right-0 p-4 opacity-5">
                         <Globe size={64} className="text-[#E8A020]" />
                     </div>
-                    <h3 className="text-[10px] font-black text-[#555550] uppercase tracking-widest mb-6 border-b border-[#1C1C1A] pb-3 flex items-center gap-2">
+                    <h3 className="text-[10px] font-900 text-[#555550] uppercase tracking-widest mb-6 border-b border-[#1C1C1A] pb-3 flex items-center gap-2">
                         <Activity size={12} className="text-[#E8A020]" />
                         Traffic Pulse
                     </h3>
                     <div className="flex items-end gap-3 mb-2">
                         <span className="text-6xl font-display text-[#F2F0EB]">{visitors.data || "???"}</span>
-                        <span className="text-[10px] text-[#22c55e] mb-3 font-extrabold">Active Nodes</span>
+                        <span className="text-[10px] text-[#22c55e] mb-3 font-800">Active Nodes</span>
                     </div>
                     <p className="text-[10px] text-[#8A8880] uppercase tracking-tighter">Real-time engagement telemetry.</p>
                 </div>
 
                 {/* Synth Terminal */}
                 <div className="bg-[#11110F] border border-[#1C1C1A] p-8 relative overflow-hidden group">
-                    <h3 className="text-[10px] font-black text-[#555550] uppercase tracking-widest mb-6 border-b border-[#1C1C1A] pb-3 flex items-center gap-2">
+                    <h3 className="text-[10px] font-900 text-[#555550] uppercase tracking-widest mb-6 border-b border-[#1C1C1A] pb-3 flex items-center gap-2">
                         <Cpu size={12} className="text-[#E8A020]" />
                         Neural Load
                     </h3>
                     <div className="flex items-end gap-3 mb-2">
                         <span className="text-6xl font-display text-[#F2F0EB]">{simulatedLoad}%</span>
-                        <span className="text-[10px] text-[#E8A020] mb-3 font-extrabold">System Pressure</span>
+                        <span className="text-[10px] text-[#E8A020] mb-3 font-800">System Pressure</span>
                     </div>
                     <div className="w-full h-1 bg-[#1C1C1A] mt-4 relative">
                         <motion.div 
@@ -96,13 +96,13 @@ export default function NeuralNexus() {
 
                 {/* Database Terminal */}
                 <div className="bg-[#11110F] border border-[#1C1C1A] p-8 relative overflow-hidden group">
-                    <h3 className="text-[10px] font-black text-[#555550] uppercase tracking-widest mb-6 border-b border-[#1C1C1A] pb-3 flex items-center gap-2">
+                    <h3 className="text-[10px] font-900 text-[#555550] uppercase tracking-widest mb-6 border-b border-[#1C1C1A] pb-3 flex items-center gap-2">
                         <Server size={12} className="text-[#E8A020]" />
                         Archive Grid
                     </h3>
                     <div className="flex items-end gap-3 mb-2">
                         <span className="text-6xl font-display text-[#F2F0EB]">CORE</span>
-                        <span className="text-[10px] text-[#8A8880] mb-3 font-extrabold">Alpha Status</span>
+                        <span className="text-[10px] text-[#8A8880] mb-3 font-800">Alpha Status</span>
                     </div>
                     <p className="text-[10px] text-[#8A8880] uppercase tracking-tighter italic">Relational schema locked and encrypted.</p>
                 </div>
@@ -112,13 +112,13 @@ export default function NeuralNexus() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 <div className="lg:col-span-3 bg-[#11110F] border border-[#1C1C1A] p-0 overflow-hidden shadow-2xl">
                     <div className="p-6 border-b border-[#1C1C1A] flex items-center justify-between bg-[#141412]">
-                        <h3 className="text-[10px] font-black text-[#F2F0EB] uppercase tracking-[0.3em] flex items-center gap-3 font-ui">
+                        <h3 className="text-[10px] font-900 text-[#F2F0EB] uppercase tracking-[0.3em] flex items-center gap-3 font-ui">
                             <Layers size={14} className="text-[#E8A020]" />
                             Intelligence Stream — Level 01
                         </h3>
                         <div className="flex items-center gap-2">
                             <div className="w-1 h-1 rounded-full bg-[#E8A020] animate-pulse" />
-                            <span className="text-[8px] text-[#555550] uppercase font-extrabold tracking-widest">Live Monitoring</span>
+                            <span className="text-[8px] text-[#555550] uppercase font-800 tracking-widest">Live Monitoring</span>
                         </div>
                     </div>
                     <div className="divide-y divide-[#1C1C1A]">
@@ -131,7 +131,7 @@ export default function NeuralNexus() {
                                 className="p-8 hover:bg-[#1C1C1A]/30 transition-colors flex flex-col md:flex-row items-start md:items-center justify-between gap-6 overflow-hidden"
                             >
                                 <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-3 mb-2 text-[9px] text-[#555550] uppercase font-black tracking-widest font-ui">
+                                    <div className="flex items-center gap-3 mb-2 text-[9px] text-[#555550] uppercase font-900 tracking-widest font-ui">
                                         <span className="text-[#E8A020]">{article.category}</span>
                                         <span className="opacity-30">/</span>
                                         <span>Node ID: {article.id}</span>
@@ -143,8 +143,8 @@ export default function NeuralNexus() {
                                 </div>
                                 <div className="flex items-center gap-6 shrink-0">
                                     <div className="text-right">
-                                        <p className="text-[9px] text-[#555550] uppercase font-black mb-1">Integrity</p>
-                                        <span className="text-[10px] text-[#22c55e] font-extrabold">VERIFIED</span>
+                                        <p className="text-[9px] text-[#555550] uppercase font-900 mb-1">Integrity</p>
+                                        <span className="text-[10px] text-[#22c55e] font-800">VERIFIED</span>
                                     </div>
                                     <a 
                                       href={`/article/${article.slug}`}
@@ -160,7 +160,7 @@ export default function NeuralNexus() {
 
                 <div className="space-y-8">
                     <div className="bg-[#11110F] border border-[#1C1C1A] p-8">
-                        <h3 className="text-[10px] font-black text-[#555550] uppercase tracking-widest mb-6 border-b border-[#1C1C1A] pb-3">Global Sentiment</h3>
+                        <h3 className="text-[10px] font-900 text-[#555550] uppercase tracking-widest mb-6 border-b border-[#1C1C1A] pb-3">Global Sentiment</h3>
                         <div className="space-y-6">
                             {[
                                 { label: "Tech Optimism", value: 89, color: "bg-[#22c55e]" },
@@ -168,7 +168,7 @@ export default function NeuralNexus() {
                                 { label: "Geopolitical Tension", value: 67, color: "bg-red-500" }
                             ].map((item, i) => (
                                 <div key={i} className="space-y-2">
-                                    <div className="flex justify-between items-center text-[10px] font-extrabold uppercase tracking-tighter">
+                                    <div className="flex justify-between items-center text-[10px] font-800 uppercase tracking-tighter">
                                         <span className="text-[#8A8880]">{item.label}</span>
                                         <span className={item.value > 80 ? "text-[#22c55e]" : item.value > 50 ? "text-[#E8A020]" : "text-red-500"}>{item.value}%</span>
                                     </div>
@@ -184,9 +184,9 @@ export default function NeuralNexus() {
                         <div className="absolute top-0 right-0 p-4 opacity-10">
                             <ShieldCheck size={100} />
                         </div>
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] mb-4 font-ui">Tactical Access</h3>
+                        <h3 className="text-[10px] font-900 uppercase tracking-[0.2em] mb-4 font-ui">Tactical Access</h3>
                         <p className="text-lg font-display uppercase tracking-tight leading-none mb-6">Elevate your node <br/> clearance.</p>
-                        <button className="w-full bg-[#0F0F0E] text-[#F2F0EB] font-ui text-[10px] font-extrabold uppercase tracking-widest py-3 hover:scale-105 transition-all">Enable Dossier Mode</button>
+                        <button className="w-full bg-[#0F0F0E] text-[#F2F0EB] font-ui text-[10px] font-800 uppercase tracking-widest py-3 hover:scale-105 transition-all">Enable Dossier Mode</button>
                     </div>
                 </div>
             </div>

@@ -153,7 +153,7 @@ export default function UsersManagement() {
     return (
       <div className="flex flex-col items-center justify-center py-40 gap-4 opacity-30">
         <Fingerprint size={48} className="animate-pulse text-[#E8A020]" />
-        <p className="text-[10px] font-black uppercase tracking-[0.4em] font-ui">Scanning Registry...</p>
+        <p className="text-[10px] font-900 uppercase tracking-[0.4em] font-ui">Scanning Registry...</p>
       </div>
     );
   }
@@ -165,11 +165,11 @@ export default function UsersManagement() {
         <div className="space-y-2">
             <div className="flex items-center gap-3">
                  <div className="px-2 py-0.5 bg-[#E8A020]/10 border border-[#E8A020]/20 rounded-sm">
-                    <span className="text-[10px] font-black text-[#E8A020] uppercase tracking-widest font-ui">Registry: Personnel</span>
+                    <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-widest font-ui">Registry: Personnel</span>
                  </div>
             </div>
             <h2 className="text-4xl font-display text-[#F2F0EB] tracking-tighter uppercase leading-[0.8] mt-4">Node <span className="text-[#E8A020]">Registry</span></h2>
-            <p className="text-[#555550] text-[10px] font-black uppercase tracking-[0.3em] font-ui">Overseeing agent identities and access clearance across the global matrix</p>
+            <p className="text-[#555550] text-[10px] font-900 uppercase tracking-[0.3em] font-ui">Overseeing agent identities and access clearance across the global matrix</p>
         </div>
         
         <div className="p-6 bg-[#11110F] border border-[#1C1C1A] relative overflow-hidden flex flex-col items-end">
@@ -177,7 +177,7 @@ export default function UsersManagement() {
                  <Activity size={18} className="text-[#22c55e]" />
                  <span className="text-2xl font-display text-[#F2F0EB]">{users?.length || 0}</span>
             </div>
-            <p className="text-[9px] font-black text-[#555550] uppercase tracking-widest font-ui">Active Node Identifiers</p>
+            <p className="text-[9px] font-900 text-[#555550] uppercase tracking-widest font-ui">Active Node Identifiers</p>
         </div>
       </div>
 
@@ -187,12 +187,12 @@ export default function UsersManagement() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-[#1C1C1A] bg-[#141412]">
-                <th className="text-left py-4 px-6 font-black text-[#555550] text-[10px] uppercase tracking-widest font-ui">Identifier</th>
-                <th className="text-left py-4 px-6 font-black text-[#555550] text-[10px] uppercase tracking-widest font-ui">Email Hash</th>
-                <th className="text-left py-4 px-6 font-black text-[#555550] text-[10px] uppercase tracking-widest font-ui text-center">Clearance</th>
-                <th className="text-left py-4 px-6 font-black text-[#555550] text-[10px] uppercase tracking-widest font-ui text-center">Protocol</th>
-                <th className="text-left py-4 px-6 font-black text-[#555550] text-[10px] uppercase tracking-widest font-ui">Creation Date</th>
-                <th className="text-right py-4 px-6 font-black text-[#E8A020] text-[10px] uppercase tracking-widest font-ui">Actions</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Identifier</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Email Hash</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui text-center">Clearance</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui text-center">Protocol</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Creation Date</th>
+                <th className="text-right py-4 px-6 font-900 text-[#E8A020] text-[10px] uppercase tracking-widest font-ui">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#1C1C1A]">
@@ -211,7 +211,7 @@ export default function UsersManagement() {
                           type="text"
                           value={editingData.name}
                           onChange={e => setEditingData({ ...editingData, name: e.target.value })}
-                          className="w-full bg-[#0A0A09] border border-[#1C1C1A] text-[#E8A020] text-xs font-black uppercase tracking-widest px-3 py-2 outline-none focus:border-[#E8A020]/40"
+                          className="w-full bg-[#0A0A09] border border-[#1C1C1A] text-[#E8A020] text-xs font-900 uppercase tracking-widest px-3 py-2 outline-none focus:border-[#E8A020]/40"
                         />
                       </td>
                       <td className="py-4 px-6">
@@ -219,14 +219,14 @@ export default function UsersManagement() {
                           type="email"
                           value={editingData.email}
                           onChange={e => setEditingData({ ...editingData, email: e.target.value })}
-                          className="w-full bg-[#0A0A09] border border-[#1C1C1A] text-[#8A8880] text-xs font-black uppercase tracking-widest px-3 py-2 outline-none"
+                          className="w-full bg-[#0A0A09] border border-[#1C1C1A] text-[#8A8880] text-xs font-900 uppercase tracking-widest px-3 py-2 outline-none"
                         />
                       </td>
                       <td className="py-4 px-6 text-center">
                         <select
                           value={editingData.role}
                           onChange={e => setEditingData({ ...editingData, role: e.target.value as "user" | "admin" })}
-                          className="bg-[#0A0A09] border border-[#1C1C1A] text-[#F2F0EB] text-[10px] font-black uppercase tracking-widest px-3 py-2 outline-none"
+                          className="bg-[#0A0A09] border border-[#1C1C1A] text-[#F2F0EB] text-[10px] font-900 uppercase tracking-widest px-3 py-2 outline-none"
                         >
                           <option value="user">User</option>
                           <option value="admin">Admin</option>
@@ -237,13 +237,13 @@ export default function UsersManagement() {
                       <td className="py-4 px-6 flex justify-end gap-2">
                         <button
                           onClick={handleSave}
-                          className="flex items-center gap-2 bg-green-500/10 text-green-500 border border-green-500/20 px-4 py-2 text-[9px] font-black uppercase tracking-widest hover:bg-green-500 hover:text-[#0F0F0E] transition-all"
+                          className="flex items-center gap-2 bg-green-500/10 text-green-500 border border-green-500/20 px-4 py-2 text-[9px] font-900 uppercase tracking-widest hover:bg-green-500 hover:text-[#0F0F0E] transition-all"
                         >
                           <Save size={12} /> Sync
                         </button>
                         <button
                           onClick={() => { setEditingId(null); setEditingData(null); }}
-                          className="flex items-center gap-2 bg-[#1C1C1A] text-[#555550] border border-[#1C1C1A] px-4 py-2 text-[9px] font-black uppercase tracking-widest hover:text-[#F2F0EB] transition-all"
+                          className="flex items-center gap-2 bg-[#1C1C1A] text-[#555550] border border-[#1C1C1A] px-4 py-2 text-[9px] font-900 uppercase tracking-widest hover:text-[#F2F0EB] transition-all"
                         >
                           <X size={12} /> Abort
                         </button>
@@ -253,29 +253,29 @@ export default function UsersManagement() {
                     <>
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-[#1C1C1A] text-[#8A8880] flex items-center justify-center text-[10px] font-black border border-[#222220] uppercase font-display">
+                            <div className="w-8 h-8 bg-[#1C1C1A] text-[#8A8880] flex items-center justify-center text-[10px] font-900 border border-[#222220] uppercase font-display">
                                 {user.name?.[0] || 'X'}
                             </div>
-                            <span className="text-[11px] font-black text-[#F2F0EB] uppercase tracking-widest font-ui">{user.name || "SECURE_NODE"}</span>
+                            <span className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">{user.name || "SECURE_NODE"}</span>
                         </div>
                       </td>
-                      <td className="py-4 px-6 text-[10px] font-black text-[#555550] uppercase tracking-tighter font-ui">
+                      <td className="py-4 px-6 text-[10px] font-900 text-[#555550] uppercase tracking-tighter font-ui">
                         {user.email.replace(/(.{3}).+@(.+)/, "$1***@$2")}
                       </td>
                       <td className="py-4 px-6 text-center">
-                        <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 border ${user.role === 'admin' ? 'text-[#E8A020] border-[#E8A020]/20 bg-[#E8A020]/5' : 'text-[#333330] border-[#1C1C1A]'}`}>
+                        <span className={`text-[9px] font-900 uppercase tracking-widest px-3 py-1 border ${user.role === 'admin' ? 'text-[#E8A020] border-[#E8A020]/20 bg-[#E8A020]/5' : 'text-[#333330] border-[#1C1C1A]'}`}>
                           {user.role}
                         </span>
                       </td>
                       <td className="py-4 px-6 text-center">
                          <div className="flex items-center justify-center gap-2">
                            <div className={`w-1.5 h-1.5 rounded-full ${user.status === 'active' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]' : user.status === 'restricted' ? 'bg-blue-500' : 'bg-red-500 animate-pulse'} `} />
-                           <span className={`text-[9px] font-black uppercase tracking-widest ${user.status === 'active' ? 'text-green-500' : user.status === 'restricted' ? 'text-blue-500' : 'text-red-500'}`}>
+                           <span className={`text-[9px] font-900 uppercase tracking-widest ${user.status === 'active' ? 'text-green-500' : user.status === 'restricted' ? 'text-blue-500' : 'text-red-500'}`}>
                               {user.status || 'active'}
                            </span>
                          </div>
                       </td>
-                      <td className="py-4 px-6 text-[10px] font-black text-[#555550] uppercase tracking-widest font-ui">
+                      <td className="py-4 px-6 text-[10px] font-900 text-[#555550] uppercase tracking-widest font-ui">
                          {new Date(user.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
                       </td>
                       <td className="py-4 px-6 flex justify-end items-center gap-1 group/actions">
@@ -310,15 +310,15 @@ export default function UsersManagement() {
                 <div key={user.id} className="p-6 space-y-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-[#1C1C1A] text-[#8A8880] flex items-center justify-center text-[10px] font-black border border-[#222220] uppercase font-display">
+                            <div className="w-8 h-8 bg-[#1C1C1A] text-[#8A8880] flex items-center justify-center text-[10px] font-900 border border-[#222220] uppercase font-display">
                                 {user.name?.[0] || 'X'}
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-xs font-black text-[#F2F0EB] uppercase tracking-widest font-ui">{user.name || "SECURE_NODE"}</span>
-                                <span className="text-[9px] uppercase font-black text-[#555550] tracking-tighter">ID: {user.id.toString().padStart(4, '0')}</span>
+                                <span className="text-xs font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">{user.name || "SECURE_NODE"}</span>
+                                <span className="text-[9px] uppercase font-900 text-[#555550] tracking-tighter">ID: {user.id.toString().padStart(4, '0')}</span>
                             </div>
                         </div>
-                        <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 border ${user.role === 'admin' ? 'text-[#E8A020] border-[#E8A020]/20 bg-[#E8A020]/5' : 'text-[#333330] border-[#1C1C1A]'}`}>
+                        <span className={`text-[8px] font-900 uppercase tracking-widest px-2 py-0.5 border ${user.role === 'admin' ? 'text-[#E8A020] border-[#E8A020]/20 bg-[#E8A020]/5' : 'text-[#333330] border-[#1C1C1A]'}`}>
                           {user.role}
                         </span>
                     </div>
@@ -326,7 +326,7 @@ export default function UsersManagement() {
                     <div className="flex items-center justify-between pt-2">
                         <div className="flex items-center gap-2">
                             <div className={`w-1 h-1 rounded-full ${user.status === 'active' ? 'bg-green-500' : 'bg-red-500'} `} />
-                            <span className="text-[9px] font-black text-[#555550] uppercase tracking-widest font-ui">{user.status || 'ACTIVE'}</span>
+                            <span className="text-[9px] font-900 text-[#555550] uppercase tracking-widest font-ui">{user.status || 'ACTIVE'}</span>
                         </div>
                         <div className="flex items-center gap-1">
                              <button onClick={() => handleEdit(user)} className="p-2 text-[#333330]"><Edit2 size={14} /></button>

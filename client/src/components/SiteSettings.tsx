@@ -236,7 +236,7 @@ export default function SiteSettings() {
                                     <div className="flex items-start justify-between gap-6">
                                         <div className="flex-1 space-y-1">
                                             <div className="flex items-center gap-2">
-                                                <label htmlFor={field.key} className="text-[11px] font-ui font-black text-[#F2F0EB] uppercase tracking-widest">
+                                                <label htmlFor={field.key} className="text-[11px] font-ui font-900 text-[#F2F0EB] uppercase tracking-widest">
                                                     {field.label}
                                                 </label>
                                                 <div className="group-hover:block hidden">

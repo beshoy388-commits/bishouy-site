@@ -189,11 +189,11 @@ export default function AdminPanel() {
                 </h2>
                 <div className="flex items-center gap-4 text-[#8A8880]">
                   <p className="font-ui text-xs uppercase tracking-widest">
-                    Index: <span className="text-[#F2F0EB] font-bold">{articlesQuery.data?.length || 0}</span>
+                    Index: <span className="text-[#F2F0EB] font-700">{articlesQuery.data?.length || 0}</span>
                   </p>
                   <span className="w-1 h-1 rounded-full bg-[#2A2A28]" />
                   <p className="font-ui text-xs uppercase tracking-widest">
-                    Queue: <span className="text-blue-400 font-bold">{articlesQuery.data?.filter(a => a.status === 'draft').length || 0}</span>
+                    Queue: <span className="text-blue-400 font-700">{articlesQuery.data?.filter(a => a.status === 'draft').length || 0}</span>
                   </p>
                 </div>
               </div>
@@ -217,7 +217,7 @@ export default function AdminPanel() {
                         }
                       });
                     }}
-                    className="flex items-center justify-center gap-2 bg-[#1C1C1A] border border-[#2A2A28] hover:border-[#E8A020] text-[#E8A020] font-ui text-[10px] md:text-xs font-bold uppercase tracking-widest px-5 py-3 rounded-sm transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
+                    className="flex items-center justify-center gap-2 bg-[#1C1C1A] border border-[#2A2A28] hover:border-[#E8A020] text-[#E8A020] font-ui text-[10px] md:text-xs font-700 uppercase tracking-widest px-5 py-3 rounded-sm transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
                     disabled={triggerAiMutation.isPending}
                   >
                     {triggerAiMutation.isPending ? (
@@ -240,7 +240,7 @@ export default function AdminPanel() {
                       setEditingId(null);
                       setShowForm(true);
                     }}
-                    className="flex items-center justify-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] md:text-xs font-bold uppercase tracking-widest px-8 py-3 rounded-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-[#E8A020]/20"
+                    className="flex items-center justify-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] md:text-xs font-700 uppercase tracking-widest px-8 py-3 rounded-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-[#E8A020]/20"
                   >
                     <Plus size={16} />
                     Create Manual Draft
@@ -261,7 +261,7 @@ export default function AdminPanel() {
                 <button
                   key={tab.id}
                   onClick={() => setStatusFilter(tab.id as any)}
-                  className={`px-6 py-2.5 relative transition-all duration-300 font-ui text-[9px] font-black uppercase tracking-[0.2em] ${statusFilter === tab.id ? "text-[#0F0F0E]" : "text-[#555550] hover:text-[#8A8880]"}`}
+                  className={`px-6 py-2.5 relative transition-all duration-300 font-ui text-[9px] font-900 uppercase tracking-[0.2em] ${statusFilter === tab.id ? "text-[#0F0F0E]" : "text-[#555550] hover:text-[#8A8880]"}`}
                 >
                   <span className="relative z-10">{tab.label}</span>
                   {statusFilter === tab.id && (
@@ -294,15 +294,15 @@ export default function AdminPanel() {
                       <div className="flex flex-col h-full">
                         <div className="flex items-center justify-between mb-4">
                            <div className="flex items-center gap-2">
-                             <span className="text-[8px] font-black px-2 py-0.5 border border-[#1C1C1A] text-[#8A8880] uppercase tracking-widest">
+                             <span className="text-[8px] font-900 px-2 py-0.5 border border-[#1C1C1A] text-[#8A8880] uppercase tracking-widest">
                                 ID: {article.id.toString().padStart(4, '0')}
                              </span>
                              {article.author === "Redazione AI" ? (
-                               <span className="flex items-center gap-1.5 text-[8px] font-black px-2 py-0.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 uppercase tracking-widest">
+                               <span className="flex items-center gap-1.5 text-[8px] font-900 px-2 py-0.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 uppercase tracking-widest">
                                  <Bot size={10} /> Neural Auth
                                </span>
                              ) : (
-                               <span className="flex items-center gap-1.5 text-[8px] font-black px-2 py-0.5 bg-[#E8A020]/10 text-[#E8A020] border border-[#E8A020]/20 uppercase tracking-widest">
+                               <span className="flex items-center gap-1.5 text-[8px] font-900 px-2 py-0.5 bg-[#E8A020]/10 text-[#E8A020] border border-[#E8A020]/20 uppercase tracking-widest">
                                  <User size={10} /> Human Auth
                                </span>
                              )}
@@ -310,7 +310,7 @@ export default function AdminPanel() {
                            <div className="flex items-center gap-4">
                              <div className="flex items-center gap-2">
                                 <TrendingUp size={10} className="text-green-500/50" />
-                                <span className="text-[10px] font-black text-[#555550] uppercase tracking-widest font-ui">{article.viewCount || 0} IMPULSE</span>
+                                <span className="text-[10px] font-900 text-[#555550] uppercase tracking-widest font-ui">{article.viewCount || 0} IMPULSE</span>
                              </div>
                            </div>
                         </div>
@@ -318,7 +318,7 @@ export default function AdminPanel() {
                         <div className="flex-1 mb-6">
                            <div className="flex items-center gap-2 mb-2">
                               <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: article.categoryColor || '#E8A020' }} />
-                              <span className="text-[9px] font-black text-[#555550] uppercase tracking-widest font-ui">{article.category}</span>
+                              <span className="text-[9px] font-900 text-[#555550] uppercase tracking-widest font-ui">{article.category}</span>
                            </div>
                            <h3 className="font-headline text-xl text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 leading-tight uppercase tracking-tight">
                               {article.title}
@@ -326,7 +326,7 @@ export default function AdminPanel() {
                         </div>
 
                         <div className="flex items-center justify-between pt-6 border-t border-[#1C1C1A] mt-auto">
-                           <div className="text-[9px] font-black text-[#333330] uppercase tracking-widest font-ui">
+                           <div className="text-[9px] font-900 text-[#333330] uppercase tracking-widest font-ui">
                               Deployed: {new Date(article.createdAt).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
                            </div>
                            
@@ -430,13 +430,13 @@ export default function AdminPanel() {
             <div className="flex flex-col">
               <div className="flex items-center gap-3 mb-1">
                  <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] animate-pulse" />
-                 <h2 className="font-ui text-[10px] font-black uppercase tracking-[0.5em] text-[#F2F0EB]">
+                 <h2 className="font-ui text-[10px] font-900 uppercase tracking-[0.5em] text-[#F2F0EB]">
                     Core Command Terminal
                  </h2>
               </div>
               <div className="flex items-center gap-2">
-                 <span className="text-[8px] font-extrabold text-[#555550] uppercase tracking-widest font-ui">Nodal Path:</span>
-                 <span className="text-[9px] font-black text-[#E8A020] uppercase tracking-[0.2em] font-ui flex items-center gap-2">
+                 <span className="text-[8px] font-800 text-[#555550] uppercase tracking-widest font-ui">Nodal Path:</span>
+                 <span className="text-[9px] font-900 text-[#E8A020] uppercase tracking-[0.2em] font-ui flex items-center gap-2">
                     {activeTab} <ChevronRight size={10} strokeWidth={3} /> {showForm ? (editingId ? "Edit" : "Create") : "Index"}
                  </span>
               </div>
@@ -447,19 +447,19 @@ export default function AdminPanel() {
             {/* System Telemetry — Desktop only */}
             <div className="hidden xl:flex items-center gap-10 pr-10 border-r border-[#1C1C1A]/50">
                 <div className="text-right">
-                    <p className="text-[8px] font-black text-[#555550] uppercase tracking-widest mb-1">Signal Integrity</p>
-                    <span className="text-[10px] font-black text-[#22c55e] uppercase tracking-tighter">99.9% LOCKED</span>
+                    <p className="text-[8px] font-900 text-[#555550] uppercase tracking-widest mb-1">Signal Integrity</p>
+                    <span className="text-[10px] font-900 text-[#22c55e] uppercase tracking-tighter">99.9% LOCKED</span>
                 </div>
                 <div className="text-right">
-                    <p className="text-[8px] font-black text-[#555550] uppercase tracking-widest mb-1">Neural Latency</p>
-                    <span className="text-[10px] font-black text-[#E8A020] uppercase tracking-tighter">42ms RESPONSE</span>
+                    <p className="text-[8px] font-900 text-[#555550] uppercase tracking-widest mb-1">Neural Latency</p>
+                    <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-tighter">42ms RESPONSE</span>
                 </div>
             </div>
 
             <div className="flex items-center gap-6">
                 <div className="flex flex-col items-end mr-4">
-                    <span className="text-[10px] font-ui font-black text-[#F2F0EB] uppercase tracking-[0.2em]">{user?.name}</span>
-                    <span className="text-[9px] font-ui text-[#E8A020] uppercase tracking-[0.1em] font-extrabold">Clearance: Root</span>
+                    <span className="text-[10px] font-ui font-900 text-[#F2F0EB] uppercase tracking-[0.2em]">{user?.name}</span>
+                    <span className="text-[9px] font-ui text-[#E8A020] uppercase tracking-[0.1em] font-800">Clearance: Root</span>
                 </div>
                 <button
                 onClick={() => setActiveTab("security")}
@@ -483,7 +483,7 @@ export default function AdminPanel() {
           <div className="flex items-center gap-6">
             <span className="flex items-center gap-2">
               SYSTEM STATUS:
-              <span className={maintenanceStatus.data?.maintenance ? "text-red-500 font-bold" : "text-green-500 font-bold"}>
+              <span className={maintenanceStatus.data?.maintenance ? "text-red-500 font-700" : "text-green-500 font-700"}>
                 {maintenanceStatus.data?.maintenance ? "MAINTENANCE MODE" : "OPERATIONAL"}
               </span>
             </span>

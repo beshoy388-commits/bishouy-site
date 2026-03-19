@@ -85,7 +85,7 @@ export default function PrivacyPolicy() {
                 3. Information We Collect
               </h2>
 
-              <h3 className="font-headline text-lg font-semibold text-[#E8A020] mb-2">
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2">
                 3.1 Account Registration
               </h3>
               <p>When you create an account, we collect:</p>
@@ -102,7 +102,7 @@ export default function PrivacyPolicy() {
                 <li>Date and time of registration and last login</li>
               </ul>
 
-              <h3 className="font-headline text-lg font-semibold text-[#E8A020] mb-2 mt-4">
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
                 3.2 Profile Information (Optional)
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
@@ -114,7 +114,7 @@ export default function PrivacyPolicy() {
                 </li>
               </ul>
 
-              <h3 className="font-headline text-lg font-semibold text-[#E8A020] mb-2 mt-4">
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
                 3.3 Social Interactions
               </h3>
               <p>When you interact with content, we record:</p>
@@ -129,7 +129,7 @@ export default function PrivacyPolicy() {
                 <li>Date and time of each interaction</li>
               </ul>
 
-              <h3 className="font-headline text-lg font-semibold text-[#E8A020] mb-2 mt-4">
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
                 3.4 Newsletter Subscriptions
               </h3>
               <p>
@@ -138,7 +138,7 @@ export default function PrivacyPolicy() {
                 time.
               </p>
 
-              <h3 className="font-headline text-lg font-semibold text-[#E8A020] mb-2 mt-4">
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
                 3.5 Automatically Collected Data
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">

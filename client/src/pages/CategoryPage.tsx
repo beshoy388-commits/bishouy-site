@@ -62,7 +62,7 @@ export default function CategoryPage() {
           </p>
           <Link
             href="/"
-            className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-wider px-6 py-3 rounded-sm transition-colors inline-block"
+            className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors inline-block"
           >
             Back to Home
           </Link>
@@ -99,7 +99,7 @@ export default function CategoryPage() {
           <div className="bg-[#11110F]/60 backdrop-blur-xl border border-[#1C1C1A] p-8 md:p-12 rounded-lg max-w-4xl shadow-2xl">
             <div className="space-y-8">
               <span
-                className="px-5 py-2 text-[10px] font-ui font-black uppercase tracking-[0.4em] rounded-sm inline-block shadow-lg"
+                className="px-5 py-2 text-[10px] font-ui font-900 uppercase tracking-[0.4em] rounded-sm inline-block shadow-lg"
                 style={{ backgroundColor: category.color, color: "#000" }}
               >
                 {category.name}
@@ -125,7 +125,7 @@ export default function CategoryPage() {
                 <Sparkles size={32} />
              </div>
              <div className="relative z-10 text-center md:text-left">
-                <span className="text-[10px] font-black text-[#E8A020] uppercase tracking-[0.4em] block mb-3 font-ui">Neural Synthesis: {category.name}</span>
+                <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] block mb-3 font-ui">Neural Synthesis: {category.name}</span>
                 <h3 className="font-display text-2xl text-[#F2F0EB] mb-4">The Editorial Directive</h3>
                 <p className="text-md text-[#8A8880] leading-relaxed italic font-serif">
                     “{category.description || `Our strategic focus for the ${category.name} intelligence node prioritizes emergent cross-border shifts and high-fidelity reporting on established power structures.`}”
@@ -161,7 +161,7 @@ export default function CategoryPage() {
                 <button
                   onClick={() => fetchNextPage()}
                   disabled={isFetchingNextPage}
-                  className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-wider px-8 py-3 rounded-sm transition-colors mx-auto disabled:opacity-50 inline-block"
+                  className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-8 py-3 rounded-sm transition-colors mx-auto disabled:opacity-50 inline-block"
                 >
                   {isFetchingNextPage ? "Loading..." : "Load More"}
                 </button>
@@ -175,7 +175,7 @@ export default function CategoryPage() {
               </p>
               <Link
                 href="/"
-                className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-wider px-6 py-3 rounded-sm transition-colors inline-block"
+                className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors inline-block"
               >
                 Browse All News
               </Link>

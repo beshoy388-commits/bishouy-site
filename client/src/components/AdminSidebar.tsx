@@ -94,7 +94,7 @@ export default function AdminSidebar({
                         </div>
                         <div className="flex flex-col">
                             <span className="font-display text-xl text-[#F2F0EB] tracking-tighter leading-none">BISHOUY<span className="text-[#E8A020]">.</span></span>
-                            <span className="text-[8px] font-black text-[#555550] uppercase tracking-[0.3em] mt-1 font-ui">Command Core</span>
+                            <span className="text-[8px] font-900 text-[#555550] uppercase tracking-[0.3em] mt-1 font-ui">Command Core</span>
                         </div>
                     </div>
                 ) : (
@@ -111,7 +111,7 @@ export default function AdminSidebar({
                     <div key={idx} className="flex flex-col gap-2">
                         {!isCollapsed && (
                             <div className="px-3 mb-2 flex items-center justify-between">
-                                <span className="text-[9px] font-black text-[#333330] uppercase tracking-[0.3em] font-ui">{group.label}</span>
+                                <span className="text-[9px] font-900 text-[#333330] uppercase tracking-[0.3em] font-ui">{group.label}</span>
                                 <div className="h-[1px] flex-1 ml-4 bg-[#1C1C1A]" />
                             </div>
                         )}
@@ -138,20 +138,20 @@ export default function AdminSidebar({
                                     </div>
 
                                     {!isCollapsed && (
-                                        <span className={`font-ui text-[11px] font-extrabold uppercase tracking-widest transition-opacity duration-300 ${activeTab === item.id ? "opacity-100" : "opacity-60 group-hover:opacity-100"}`}>
+                                        <span className={`font-ui text-[11px] font-800 uppercase tracking-widest transition-opacity duration-300 ${activeTab === item.id ? "opacity-100" : "opacity-60 group-hover:opacity-100"}`}>
                                             {item.label}
                                         </span>
                                     )}
 
                                     {item.badge !== undefined && (
-                                        <span className={`absolute ${isCollapsed ? "top-1 right-1" : "right-3"} flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-red-500 text-white text-[9px] font-black rounded-sm`}>
+                                        <span className={`absolute ${isCollapsed ? "top-1 right-1" : "right-3"} flex items-center justify-center min-w-[16px] h-[16px] px-1 bg-red-500 text-white text-[9px] font-900 rounded-sm`}>
                                             {item.badge}
                                         </span>
                                     )}
 
                                     {/* Tooltip for collapsed state */}
                                     {isCollapsed && (
-                                        <div className="absolute left-full ml-4 px-3 py-2 bg-[#F2F0EB] text-[#0F0F0E] text-[10px] font-black uppercase tracking-widest border-l-4 border-[#E8A020] opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300 translate-x-[-10px] group-hover:translate-x-0 whitespace-nowrap z-[130] shadow-2xl">
+                                        <div className="absolute left-full ml-4 px-3 py-2 bg-[#F2F0EB] text-[#0F0F0E] text-[10px] font-900 uppercase tracking-widest border-l-4 border-[#E8A020] opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-300 translate-x-[-10px] group-hover:translate-x-0 whitespace-nowrap z-[130] shadow-2xl">
                                             {item.label}
                                         </div>
                                     )}
@@ -170,7 +170,7 @@ export default function AdminSidebar({
                 >
                     <LogOut size={18} />
                     {!isCollapsed && (
-                        <span className="font-ui text-[11px] font-black uppercase tracking-widest">Terminate Session</span>
+                        <span className="font-ui text-[11px] font-900 uppercase tracking-widest">Terminate Session</span>
                     )}
                     <div className="absolute inset-0 bg-red-500/0 group-hover:bg-red-500/5 transition-colors" />
                 </button>
@@ -179,7 +179,7 @@ export default function AdminSidebar({
                     <button className={`flex items-center gap-3 px-3 py-3 relative group transition-all text-[#555550] hover:text-[#E8A020]`}>
                         <ExternalLink size={18} />
                         {!isCollapsed && (
-                            <span className="font-ui text-[11px] font-black uppercase tracking-widest">Public Uplink</span>
+                            <span className="font-ui text-[11px] font-900 uppercase tracking-widest">Public Uplink</span>
                         )}
                     </button>
                 </Link>

@@ -82,7 +82,7 @@ export default function NotificationDrawer({ isOpen, onClose }: NotificationDraw
                                 >
                                     <div className="flex flex-col gap-2 p-4 rounded-sm bg-[#1C1C1A]/50 border border-transparent hover:border-[#E8A020]/20 hover:bg-[#1C1C1A] transition-all relative overflow-hidden">
                                         <div className="flex items-center justify-between mb-1">
-                                            <span className="font-ui text-[9px] font-semibold text-[#E8A020] uppercase tracking-widest px-2 py-0.5 bg-[#E8A020]/10 rounded-full flex items-center gap-1.5">
+                                            <span className="font-ui text-[9px] font-600 text-[#E8A020] uppercase tracking-widest px-2 py-0.5 bg-[#E8A020]/10 rounded-full flex items-center gap-1.5">
                                                 <div className="w-1 h-1 rounded-full bg-[#E8A020] animate-pulse" />
                                                 Breaking News
                                             </span>
@@ -96,7 +96,7 @@ export default function NotificationDrawer({ isOpen, onClose }: NotificationDraw
                                         <p className="text-[#8A8880] text-[11px] line-clamp-2 font-ui leading-relaxed">
                                             {article.excerpt}
                                         </p>
-                                        <div className="mt-2 text-[#E8A020] font-ui text-[9px] font-semibold uppercase tracking-widest flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="mt-2 text-[#E8A020] font-ui text-[9px] font-600 uppercase tracking-widest flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                             Read Full Story <ExternalLink size={10} />
                                         </div>
                                     </div>

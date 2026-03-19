@@ -245,7 +245,7 @@ export default function ComponentsShowcase() {
         <div className="space-y-12">
           {/* Text Colors Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Text Colors</h3>
+            <h3 className="text-2xl font-600">Text Colors</h3>
             <Card>
               <CardContent className="pt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -270,7 +270,7 @@ export default function ComponentsShowcase() {
                       <p className="text-sm text-muted-foreground mb-1">
                         Primary
                       </p>
-                      <p className="text-primary text-lg font-medium">
+                      <p className="text-primary text-lg font-500">
                         Primary brand color text
                       </p>
                     </div>
@@ -296,7 +296,7 @@ export default function ComponentsShowcase() {
                       <p className="text-sm text-muted-foreground mb-1">
                         Destructive
                       </p>
-                      <p className="text-destructive text-lg font-medium">
+                      <p className="text-destructive text-lg font-500">
                         Error or destructive action text
                       </p>
                     </div>
@@ -324,54 +324,54 @@ export default function ComponentsShowcase() {
 
           {/* Color Combinations Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Color Combinations</h3>
+            <h3 className="text-2xl font-600">Color Combinations</h3>
             <Card>
               <CardContent className="pt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="bg-primary text-primary-foreground rounded-lg p-4">
-                    <p className="font-medium mb-1">Primary</p>
+                    <p className="font-500 mb-1">Primary</p>
                     <p className="text-sm opacity-90">
                       Primary background with foreground text
                     </p>
                   </div>
                   <div className="bg-secondary text-secondary-foreground rounded-lg p-4">
-                    <p className="font-medium mb-1">Secondary</p>
+                    <p className="font-500 mb-1">Secondary</p>
                     <p className="text-sm opacity-90">
                       Secondary background with foreground text
                     </p>
                   </div>
                   <div className="bg-muted text-muted-foreground rounded-lg p-4">
-                    <p className="font-medium mb-1">Muted</p>
+                    <p className="font-500 mb-1">Muted</p>
                     <p className="text-sm opacity-90">
                       Muted background with foreground text
                     </p>
                   </div>
                   <div className="bg-accent text-accent-foreground rounded-lg p-4">
-                    <p className="font-medium mb-1">Accent</p>
+                    <p className="font-500 mb-1">Accent</p>
                     <p className="text-sm opacity-90">
                       Accent background with foreground text
                     </p>
                   </div>
                   <div className="bg-destructive text-destructive-foreground rounded-lg p-4">
-                    <p className="font-medium mb-1">Destructive</p>
+                    <p className="font-500 mb-1">Destructive</p>
                     <p className="text-sm opacity-90">
                       Destructive background with foreground text
                     </p>
                   </div>
                   <div className="bg-card text-card-foreground rounded-lg p-4 border">
-                    <p className="font-medium mb-1">Card</p>
+                    <p className="font-500 mb-1">Card</p>
                     <p className="text-sm opacity-90">
                       Card background with foreground text
                     </p>
                   </div>
                   <div className="bg-popover text-popover-foreground rounded-lg p-4 border">
-                    <p className="font-medium mb-1">Popover</p>
+                    <p className="font-500 mb-1">Popover</p>
                     <p className="text-sm opacity-90">
                       Popover background with foreground text
                     </p>
                   </div>
                   <div className="bg-background text-foreground rounded-lg p-4 border">
-                    <p className="font-medium mb-1">Background</p>
+                    <p className="font-500 mb-1">Background</p>
                     <p className="text-sm opacity-90">
                       Default background with foreground text
                     </p>
@@ -383,7 +383,7 @@ export default function ComponentsShowcase() {
 
           {/* Buttons Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Buttons</h3>
+            <h3 className="text-2xl font-600">Buttons</h3>
             <Card>
               <CardContent className="pt-6">
                 <div className="flex flex-wrap gap-4">
@@ -405,7 +405,7 @@ export default function ComponentsShowcase() {
 
           {/* Form Inputs Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Form Inputs</h3>
+            <h3 className="text-2xl font-600">Form Inputs</h3>
             <Card>
               <CardContent className="pt-6 space-y-6">
                 <div className="space-y-2">
@@ -619,7 +619,7 @@ export default function ComponentsShowcase() {
                 <div className="space-y-2">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="month" className="text-sm font-medium">
+                      <Label htmlFor="month" className="text-sm font-500">
                         Month
                       </Label>
                       <Select
@@ -644,7 +644,7 @@ export default function ComponentsShowcase() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="year" className="text-sm font-medium">
+                      <Label htmlFor="year" className="text-sm font-500">
                         Year
                       </Label>
                       <Select
@@ -679,7 +679,7 @@ export default function ComponentsShowcase() {
 
           {/* Data Display Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Data Display</h3>
+            <h3 className="text-2xl font-600">Data Display</h3>
             <Card>
               <CardContent className="pt-6 space-y-6">
                 <div className="space-y-2">
@@ -790,19 +790,19 @@ export default function ComponentsShowcase() {
                     </TableHeader>
                     <TableBody>
                       <TableRow>
-                        <TableCell className="font-medium">INV001</TableCell>
+                        <TableCell className="font-500">INV001</TableCell>
                         <TableCell>Paid</TableCell>
                         <TableCell>Credit Card</TableCell>
                         <TableCell className="text-right">$250.00</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell className="font-medium">INV002</TableCell>
+                        <TableCell className="font-500">INV002</TableCell>
                         <TableCell>Pending</TableCell>
                         <TableCell>PayPal</TableCell>
                         <TableCell className="text-right">$150.00</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell className="font-medium">INV003</TableCell>
+                        <TableCell className="font-500">INV003</TableCell>
                         <TableCell>Unpaid</TableCell>
                         <TableCell>Bank Transfer</TableCell>
                         <TableCell className="text-right">$350.00</TableCell>
@@ -868,7 +868,7 @@ export default function ComponentsShowcase() {
 
           {/* Alerts Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Alerts</h3>
+            <h3 className="text-2xl font-600">Alerts</h3>
             <div className="space-y-4">
               <Alert>
                 <AlertCircle className="h-4 w-4" />
@@ -889,7 +889,7 @@ export default function ComponentsShowcase() {
 
           {/* Tabs Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Tabs</h3>
+            <h3 className="text-2xl font-600">Tabs</h3>
             <Tabs defaultValue="account" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="account">Account</TabsTrigger>
@@ -958,7 +958,7 @@ export default function ComponentsShowcase() {
 
           {/* Accordion Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Accordion</h3>
+            <h3 className="text-2xl font-600">Accordion</h3>
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-1">
                 <AccordionTrigger>Is it accessible?</AccordionTrigger>
@@ -985,7 +985,7 @@ export default function ComponentsShowcase() {
 
           {/* Collapsible Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Collapsible</h3>
+            <h3 className="text-2xl font-600">Collapsible</h3>
             <Collapsible>
               <Card>
                 <CardHeader>
@@ -1016,7 +1016,7 @@ export default function ComponentsShowcase() {
 
           {/* Dialog, Sheet, Drawer Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Overlays</h3>
+            <h3 className="text-2xl font-600">Overlays</h3>
             <Card>
               <CardContent className="pt-6">
                 <div className="flex flex-wrap gap-4">
@@ -1098,7 +1098,7 @@ export default function ComponentsShowcase() {
                     </PopoverTrigger>
                     <PopoverContent>
                       <div className="space-y-2">
-                        <h4 className="font-medium leading-none">Dimensions</h4>
+                        <h4 className="font-500 leading-none">Dimensions</h4>
                         <p className="text-sm text-muted-foreground">
                           Set the dimensions for the layer.
                         </p>
@@ -1121,7 +1121,7 @@ export default function ComponentsShowcase() {
 
           {/* Menus Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Menus</h3>
+            <h3 className="text-2xl font-600">Menus</h3>
             <Card>
               <CardContent className="pt-6">
                 <div className="flex flex-wrap gap-4">
@@ -1157,7 +1157,7 @@ export default function ComponentsShowcase() {
                     </HoverCardTrigger>
                     <HoverCardContent>
                       <div className="space-y-2">
-                        <h4 className="text-sm font-semibold">@nextjs</h4>
+                        <h4 className="text-sm font-600">@nextjs</h4>
                         <p className="text-sm">
                           The React Framework – created and maintained by
                           @vercel.
@@ -1172,7 +1172,7 @@ export default function ComponentsShowcase() {
 
           {/* Calendar Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Calendar</h3>
+            <h3 className="text-2xl font-600">Calendar</h3>
             <Card>
               <CardContent className="pt-6 flex justify-center">
                 <Calendar
@@ -1187,7 +1187,7 @@ export default function ComponentsShowcase() {
 
           {/* Carousel Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Carousel</h3>
+            <h3 className="text-2xl font-600">Carousel</h3>
             <Card>
               <CardContent className="pt-6">
                 <Carousel className="w-full max-w-xs mx-auto">
@@ -1197,7 +1197,7 @@ export default function ComponentsShowcase() {
                         <div className="p-1">
                           <Card>
                             <CardContent className="flex aspect-square items-center justify-center p-6">
-                              <span className="text-4xl font-semibold">
+                              <span className="text-4xl font-600">
                                 {index + 1}
                               </span>
                             </CardContent>
@@ -1215,7 +1215,7 @@ export default function ComponentsShowcase() {
 
           {/* Toggle Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Toggle</h3>
+            <h3 className="text-2xl font-600">Toggle</h3>
             <Card>
               <CardContent className="pt-6 space-y-4">
                 <div className="space-y-2">
@@ -1256,7 +1256,7 @@ export default function ComponentsShowcase() {
 
           {/* Aspect Ratio & Scroll Area Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Layout Components</h3>
+            <h3 className="text-2xl font-600">Layout Components</h3>
             <Card>
               <CardContent className="pt-6 space-y-6">
                 <div className="space-y-2">
@@ -1288,7 +1288,7 @@ export default function ComponentsShowcase() {
 
           {/* Resizable Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Resizable Panels</h3>
+            <h3 className="text-2xl font-600">Resizable Panels</h3>
             <Card>
               <CardContent className="pt-6">
                 <ResizablePanelGroup
@@ -1297,13 +1297,13 @@ export default function ComponentsShowcase() {
                 >
                   <ResizablePanel defaultSize={50}>
                     <div className="flex h-full items-center justify-center p-6">
-                      <span className="font-semibold">Panel One</span>
+                      <span className="font-600">Panel One</span>
                     </div>
                   </ResizablePanel>
                   <ResizableHandle />
                   <ResizablePanel defaultSize={50}>
                     <div className="flex h-full items-center justify-center p-6">
-                      <span className="font-semibold">Panel Two</span>
+                      <span className="font-600">Panel Two</span>
                     </div>
                   </ResizablePanel>
                 </ResizablePanelGroup>
@@ -1313,7 +1313,7 @@ export default function ComponentsShowcase() {
 
           {/* Toast Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">Toast</h3>
+            <h3 className="text-2xl font-600">Toast</h3>
             <Card>
               <CardContent className="pt-6 space-y-4">
                 <div className="space-y-2">
@@ -1394,7 +1394,7 @@ export default function ComponentsShowcase() {
 
           {/* AI ChatBox Section */}
           <section className="space-y-4">
-            <h3 className="text-2xl font-semibold">AI ChatBox</h3>
+            <h3 className="text-2xl font-600">AI ChatBox</h3>
             <Card>
               <CardContent className="pt-6">
                 <div className="space-y-4">

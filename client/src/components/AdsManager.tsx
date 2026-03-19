@@ -321,7 +321,7 @@ export default function AdsManager() {
                 disabled={
                   createAdMutation.isPending || updateAdMutation.isPending
                 }
-                className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] px-6 py-2 rounded-sm font-ui text-xs font-semibold uppercase tracking-widest transition-colors"
+                className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] px-6 py-2 rounded-sm font-ui text-xs font-600 uppercase tracking-widest transition-colors"
               >
                 {createAdMutation.isPending || updateAdMutation.isPending ? (
                   <Loader2 size={14} className="animate-spin" />
@@ -373,7 +373,7 @@ export default function AdsManager() {
                           className={`w-2 h-2 rounded-full ${ad.active ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"}`}
                           title={ad.active ? "Active" : "Inactive"}
                         />
-                        <h4 className="font-ui font-extrabold text-[#F2F0EB] truncate text-sm uppercase tracking-tight">
+                        <h4 className="font-ui font-800 text-[#F2F0EB] truncate text-sm uppercase tracking-tight">
                           {ad.title}
                         </h4>
                       </div>
@@ -404,7 +404,7 @@ export default function AdsManager() {
                     {/* Stats */}
                     <div className="flex gap-6">
                       <div className="flex flex-col items-center">
-                        <span className="font-ui text-[9px] text-[#555550] font-black uppercase tracking-widest flex items-center mb-0.5">
+                        <span className="font-ui text-[9px] text-[#555550] font-900 uppercase tracking-widest flex items-center mb-0.5">
                           Visuals
                         </span>
                         <span className="text-[#F2F0EB] font-headline text-lg">
@@ -412,7 +412,7 @@ export default function AdsManager() {
                         </span>
                       </div>
                       <div className="flex flex-col items-center">
-                        <span className="font-ui text-[9px] text-[#555550] font-black uppercase tracking-widest flex items-center mb-0.5">
+                        <span className="font-ui text-[9px] text-[#555550] font-900 uppercase tracking-widest flex items-center mb-0.5">
                           Hits
                         </span>
                         <span className="text-[#E8A020] font-headline text-lg">

@@ -68,13 +68,13 @@ export default function NeuralNotificationCenter() {
                     
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="text-[8px] font-black text-[#E8A020] uppercase tracking-[0.3em] font-ui">Intel Cache Recv</span>
+                            <span className="text-[8px] font-900 text-[#E8A020] uppercase tracking-[0.3em] font-ui">Intel Cache Recv</span>
                             <div className="flex gap-[1px] items-center">
                                 <div className="w-1 h-1 bg-[#22c55e] rounded-full animate-pulse" />
-                                <span className="text-[7px] text-[#22c55e] font-extrabold uppercase tracking-widest">Live</span>
+                                <span className="text-[7px] text-[#22c55e] font-800 uppercase tracking-widest">Live</span>
                             </div>
                         </div>
-                        <h4 className="text-[11px] font-display font-black text-[#F2F0EB] uppercase tracking-wider mb-1 line-clamp-1">
+                        <h4 className="text-[11px] font-display font-900 text-[#F2F0EB] uppercase tracking-wider mb-1 line-clamp-1">
                             {n.title}
                         </h4>
                         <p className="text-[10px] text-[#8A8880] font-ui leading-tight line-clamp-2">

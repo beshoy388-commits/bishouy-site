@@ -129,16 +129,16 @@ export default function UserProfile() {
                   )}
                 </div>
                 <div>
-                  <h1 className="font-display text-2xl md:text-3xl font-black text-[#F2F0EB] flex items-center gap-3">
+                  <h1 className="font-display text-2xl md:text-3xl font-900 text-[#F2F0EB] flex items-center gap-3">
                     {formData.name || "User"}
                     {user.id < 100 && (
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-[2px] bg-[#E8A020]/10 border border-[#E8A020]/30 text-[#E8A020] text-[8px] font-black uppercase tracking-widest leading-none">
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-[2px] bg-[#E8A020]/10 border border-[#E8A020]/30 text-[#E8A020] text-[8px] font-900 uppercase tracking-widest leading-none">
                         Founding Member
                       </span>
                     )}
                   </h1>
                   {formData.username && (
-                    <p className="text-[#E8A020] text-sm font-medium">
+                    <p className="text-[#E8A020] text-sm font-500">
                       @{formData.username}
                     </p>
                   )}
@@ -147,7 +147,7 @@ export default function UserProfile() {
               </div>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
+                className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
               >
                 {isEditing ? (
                   <>
@@ -288,7 +288,7 @@ export default function UserProfile() {
                 <button
                   onClick={handleSaveProfile}
                   disabled={updateMutation.isPending}
-                  className="w-full flex items-center justify-center gap-2 bg-[#27AE60] hover:bg-[#229954] text-white font-ui text-sm font-semibold uppercase tracking-wider px-6 py-3 rounded-sm transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 bg-[#27AE60] hover:bg-[#229954] text-white font-ui text-sm font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors disabled:opacity-50"
                 >
                   <Save size={18} />
                   Save Changes
@@ -326,7 +326,7 @@ export default function UserProfile() {
 
                 <div className="border-b border-[#222220] pb-4">
                   <p className="text-[#8A8880] text-sm mb-1">Access Level</p>
-                  <p className="text-[#F2F0EB] font-medium uppercase tracking-widest text-xs">
+                  <p className="text-[#F2F0EB] font-500 uppercase tracking-widest text-xs">
                     {user.role === "admin" ? (
                       <span className="text-[#E8A020]">System Administrator</span>
                     ) : (
@@ -337,7 +337,7 @@ export default function UserProfile() {
 
                 <div>
                   <p className="text-[#8A8880] text-sm mb-1">Member Since</p>
-                  <p className="text-[#F2F0EB] font-medium">
+                  <p className="text-[#F2F0EB] font-500">
                     {new Date(user.createdAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
@@ -354,7 +354,7 @@ export default function UserProfile() {
                 await logout();
                 window.location.href = "/";
               }}
-              className="w-full mt-8 flex items-center justify-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-sm font-semibold uppercase tracking-wider px-6 py-3 rounded-sm transition-colors"
+              className="w-full mt-8 flex items-center justify-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-sm font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors"
             >
               <LogOut size={18} />
               Logout
@@ -372,7 +372,7 @@ export default function UserProfile() {
                 you can manage articles, comments, and users.
               </p>
               <Link href="/admin">
-                <button className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-wider px-6 py-3 rounded-sm transition-colors">
+                <button className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors">
                   Go to Admin Panel
                 </button>
               </Link>
@@ -431,7 +431,7 @@ export default function UserProfile() {
                   Your private intelligence collection is empty. Save analytical reports to access them here.
                 </p>
                 <Link href="/">
-                  <button className="text-[#E8A020] hover:text-[#D4911C] font-ui text-[10px] uppercase tracking-widest font-black border border-[#E8A020]/30 px-6 py-2 rounded-sm hover:bg-[#E8A020]/5 transition-all">
+                  <button className="text-[#E8A020] hover:text-[#D4911C] font-ui text-[10px] uppercase tracking-widest font-900 border border-[#E8A020]/30 px-6 py-2 rounded-sm hover:bg-[#E8A020]/5 transition-all">
                     Browse Reports
                   </button>
                 </Link>

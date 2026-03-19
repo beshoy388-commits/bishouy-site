@@ -297,7 +297,7 @@ export default function ArticleForm({
           <button
             type="button"
             onClick={() => setActiveTab("editor")}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-sm font-ui text-xs font-semibold uppercase tracking-wider transition-colors ${activeTab === "editor"
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-sm font-ui text-xs font-600 uppercase tracking-wider transition-colors ${activeTab === "editor"
               ? "bg-[#E8A020] text-[#0F0F0E]"
               : "bg-[#1C1C1A] text-[#8A8880] hover:text-[#F2F0EB]"
               }`}
@@ -308,7 +308,7 @@ export default function ArticleForm({
           <button
             type="button"
             onClick={() => setActiveTab("preview")}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-sm font-ui text-xs font-semibold uppercase tracking-wider transition-colors ${activeTab === "preview"
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-sm font-ui text-xs font-600 uppercase tracking-wider transition-colors ${activeTab === "preview"
               ? "bg-[#E8A020] text-[#0F0F0E]"
               : "bg-[#1C1C1A] text-[#8A8880] hover:text-[#F2F0EB]"
               }`}
@@ -328,7 +328,7 @@ export default function ArticleForm({
               {/* Title */}
               <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
                 <label className="block mb-2">
-                  <span className="font-ui text-xs font-semibold text-[#E8A020] uppercase tracking-widest">
+                  <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
                     Title
                   </span>
                 </label>
@@ -347,7 +347,7 @@ export default function ArticleForm({
               {/* Slug */}
               <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
                 <label className="block mb-2">
-                  <span className="font-ui text-xs font-semibold text-[#E8A020] uppercase tracking-widest">
+                  <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
                     Slug (URL)
                   </span>
                 </label>
@@ -369,7 +369,7 @@ export default function ArticleForm({
               {/* Excerpt */}
               <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
                 <label className="block mb-2">
-                  <span className="font-ui text-xs font-semibold text-[#E8A020] uppercase tracking-widest">
+                  <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
                     Excerpt
                   </span>
                 </label>
@@ -391,7 +391,7 @@ export default function ArticleForm({
               {/* Content — Rich Text Editor */}
               <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
                 <label className="block mb-2">
-                  <span className="font-ui text-xs font-semibold text-[#E8A020] uppercase tracking-widest">
+                  <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
                     Content
                   </span>
                   <span className="font-ui text-xs text-[#555550] ml-2">
@@ -411,7 +411,7 @@ export default function ArticleForm({
               {/* Hero Image */}
               <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
                 <label className="block mb-2">
-                  <span className="font-ui text-xs font-semibold text-[#E8A020] uppercase tracking-widest">
+                  <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
                     Hero Image
                   </span>
                   <span className="font-ui text-xs text-[#555550] ml-2">
@@ -432,7 +432,7 @@ export default function ArticleForm({
                 {/* Category */}
                 <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
                   <label className="block mb-2">
-                    <span className="font-ui text-xs font-semibold text-[#E8A020] uppercase tracking-widest">
+                    <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
                       Category
                     </span>
                   </label>
@@ -442,7 +442,7 @@ export default function ArticleForm({
                         key={cat.name}
                         type="button"
                         onClick={() => handleCategoryChange(cat.name)}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-sm border text-xs font-semibold uppercase tracking-wider transition-colors ${formData.category === cat.name
+                        className={`flex items-center gap-2 px-3 py-2 rounded-sm border text-xs font-600 uppercase tracking-wider transition-colors ${formData.category === cat.name
                           ? "border-[#E8A020] bg-[#E8A020]/10 text-[#E8A020]"
                           : "border-[#222220] text-[#8A8880] hover:border-[#555550]"
                           }`}
@@ -462,7 +462,7 @@ export default function ArticleForm({
                   <div className="space-y-4">
                     <div>
                       <label className="block mb-2">
-                        <span className="font-ui text-xs font-semibold text-[#E8A020] uppercase tracking-widest">
+                        <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
                           Author
                         </span>
                       </label>
@@ -479,7 +479,7 @@ export default function ArticleForm({
                     </div>
                     <div>
                       <label className="block mb-2">
-                        <span className="font-ui text-xs font-semibold text-[#E8A020] uppercase tracking-widest">
+                        <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
                           Role
                         </span>
                       </label>
@@ -500,7 +500,7 @@ export default function ArticleForm({
               {/* Tags */}
               <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
                 <label className="block mb-2">
-                  <span className="font-ui text-xs font-semibold text-[#E8A020] uppercase tracking-widest">
+                  <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
                     Tags
                   </span>
                   <span className="font-ui text-xs text-[#555550] ml-2">
@@ -522,7 +522,7 @@ export default function ArticleForm({
                   <button
                     type="button"
                     onClick={handleAddTag}
-                    className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
+                    className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
                   >
                     Add
                   </button>
@@ -590,7 +590,7 @@ export default function ArticleForm({
 
                 <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
                   <label className="block mb-2">
-                    <span className="font-ui text-xs font-semibold text-[#E8A020] uppercase tracking-widest">
+                    <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
                       Read Time
                     </span>
                   </label>
@@ -608,7 +608,7 @@ export default function ArticleForm({
                 {/* Status */}
                 <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
                   <label className="block mb-2">
-                    <span className="font-ui text-xs font-semibold text-[#E8A020] uppercase tracking-widest">
+                    <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
                       Visibility Status
                     </span>
                   </label>
@@ -618,7 +618,7 @@ export default function ArticleForm({
                       onClick={() =>
                         setFormData(prev => ({ ...prev, status: "published" }))
                       }
-                      className={`flex-1 py-1.5 rounded-sm border text-[10px] font-semibold uppercase tracking-widest transition-colors ${formData.status === "published"
+                      className={`flex-1 py-1.5 rounded-sm border text-[10px] font-600 uppercase tracking-widest transition-colors ${formData.status === "published"
                         ? "border-[#E8A020] bg-[#E8A020]/10 text-[#E8A020]"
                         : "border-[#222220] text-[#8A8880] hover:border-[#555550]"
                         }`}
@@ -630,7 +630,7 @@ export default function ArticleForm({
                       onClick={() =>
                         setFormData(prev => ({ ...prev, status: "draft" }))
                       }
-                      className={`flex-1 py-1.5 rounded-sm border text-[10px] font-semibold uppercase tracking-widest transition-colors ${formData.status === "draft"
+                      className={`flex-1 py-1.5 rounded-sm border text-[10px] font-600 uppercase tracking-widest transition-colors ${formData.status === "draft"
                         ? "border-[#E8A020] bg-[#E8A020]/10 text-[#E8A020]"
                         : "border-[#222220] text-[#8A8880] hover:border-[#555550]"
                         }`}
@@ -650,7 +650,7 @@ export default function ArticleForm({
                     createMutation.isPending ||
                     updateMutation.isPending
                   }
-                  className="flex-1 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-sm font-semibold uppercase tracking-wider px-6 py-3 rounded-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-sm font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {isLoading ||
                     createMutation.isPending ||

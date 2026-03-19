@@ -69,7 +69,7 @@ export default function TermsOfService() {
               <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 3. User Accounts
               </h2>
-              <h3 className="font-headline text-lg font-semibold text-[#E8A020] mb-2">
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2">
                 3.1 Registration
               </h3>
               <p>
@@ -87,7 +87,7 @@ export default function TermsOfService() {
                 </li>
               </ul>
 
-              <h3 className="font-headline text-lg font-semibold text-[#E8A020] mb-2 mt-4">
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
                 3.2 Account Responsibility
               </h3>
               <p>
@@ -97,7 +97,7 @@ export default function TermsOfService() {
                 maintain password security.
               </p>
 
-              <h3 className="font-headline text-lg font-semibold text-[#E8A020] mb-2 mt-4">
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
                 3.3 Account Deletion
               </h3>
               <p>
@@ -141,7 +141,7 @@ export default function TermsOfService() {
               <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
                 5. User-Generated Content
               </h2>
-              <h3 className="font-headline text-lg font-semibold text-[#E8A020] mb-2">
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2">
                 5.1 Comments and Interactions
               </h3>
               <p>
@@ -150,7 +150,7 @@ export default function TermsOfService() {
                 store, display, and moderate that content on the Platform.
               </p>
 
-              <h3 className="font-headline text-lg font-semibold text-[#E8A020] mb-2 mt-4">
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
                 5.2 Content Standards
               </h3>
               <p>
@@ -169,7 +169,7 @@ export default function TermsOfService() {
                 <li>Violate the privacy of others</li>
               </ul>
 
-              <h3 className="font-headline text-lg font-semibold text-[#E8A020] mb-2 mt-4">
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
                 5.3 Moderation
               </h3>
               <p>

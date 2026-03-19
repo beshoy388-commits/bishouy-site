@@ -21,7 +21,7 @@ export default function NotFound() {
             </div>
 
             <div className="space-y-4">
-              <h1 className="font-display text-7xl md:text-9xl text-[#F2F0EB] font-black tracking-tighter uppercase opacity-20">
+              <h1 className="font-display text-7xl md:text-9xl text-[#F2F0EB] font-900 tracking-tighter uppercase opacity-20">
                 404
               </h1>
               <h2 className="font-display text-3xl md:text-4xl text-[#F2F0EB] font-bold uppercase tracking-tight">
@@ -35,7 +35,7 @@ export default function NotFound() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
               <Link href="/">
-                <Button className="w-full sm:w-auto bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-extrabold uppercase tracking-[0.2em] px-8 py-6 rounded-sm transition-all shadow-xl">
+                <Button className="w-full sm:w-auto bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-800 uppercase tracking-[0.2em] px-8 py-6 rounded-sm transition-all shadow-xl">
                   <Home className="w-4 h-4 mr-2" />
                   Return Home
                 </Button>

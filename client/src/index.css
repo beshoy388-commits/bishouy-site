@@ -98,6 +98,16 @@ font {
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  /* Precise Numerical Weight Control (Non-Standard) */
+  --font-weight-900: 900;
+  --font-weight-800: 800;
+  --font-weight-700: 700;
+  --font-weight-600: 600;
+  --font-weight-500: 500;
+  --font-weight-400: 400;
+  --font-weight-300: 300;
+  --font-weight-100: 100;
+
   /* Custom Bishouy tokens */
   --color-amber: var(--amber);
   --color-amber-dark: var(--amber-dark);
@@ -495,7 +505,7 @@ font {
   }
 
   .drop-cap::first-letter {
-    @apply font-black border border-[#E8A020]/30 mr-3 px-2 py-0.5 mt-1 float-left text-5xl md:text-6xl text-[#E8A020];
+    @apply font-900 border border-[#E8A020]/30 mr-3 px-2 py-0.5 mt-1 float-left text-5xl md:text-6xl text-[#E8A020];
     font-family: "Bebas Neue", sans-serif;
     line-height: 1;
   }
@@ -628,7 +638,7 @@ font {
   }
 
   .agent-status-tag {
-    @apply px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-sm border;
+    @apply px-2 py-0.5 text-[8px] font-900 uppercase tracking-widest rounded-sm border;
   }
 
   .status-active { @apply text-[#22c55e] border-[#22c55e]/20 bg-[#22c55e]/5; }
