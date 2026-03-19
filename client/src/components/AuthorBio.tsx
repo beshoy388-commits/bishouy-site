@@ -16,6 +16,7 @@ export default function AuthorBio({ authorName }: AuthorBioProps) {
                 <img 
                     src={author.image} 
                     alt={author.name} 
+                    loading="lazy"
                     className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover grayscale border-2 border-[#E8A020]/30"
                 />
             </div>
@@ -30,13 +31,17 @@ export default function AuthorBio({ authorName }: AuthorBioProps) {
                     {author.bio}
                 </p>
                 <div className="flex items-center gap-4">
-                    <a href="#" className="text-[#555550] hover:text-[#E8A020] transition-colors">
-                        <Twitter size={16} />
-                    </a>
-                    <a href="#" className="text-[#555550] hover:text-[#E8A020] transition-colors">
-                        <Linkedin size={16} />
-                    </a>
-                    <a href={`mailto:${authorName.toLowerCase().replace(' ', '.')}@bishouy.com`} className="text-[#555550] hover:text-[#E8A020] transition-colors">
+                    {author.socials?.twitter && (
+                        <a href={author.socials.twitter} target="_blank" rel="noopener noreferrer" className="text-[#555550] hover:text-[#E8A020] transition-colors" aria-label="Twitter">
+                            <Twitter size={16} />
+                        </a>
+                    )}
+                    {author.socials?.linkedin && (
+                        <a href={author.socials.linkedin} target="_blank" rel="noopener noreferrer" className="text-[#555550] hover:text-[#E8A020] transition-colors" aria-label="LinkedIn">
+                            <Linkedin size={16} />
+                        </a>
+                    )}
+                    <a href={`mailto:${authorName.toLowerCase().replaceAll(' ', '.')}@bishouy.com`} className="text-[#555550] hover:text-[#E8A020] transition-colors" aria-label="Email">
                         <Mail size={16} />
                     </a>
                 </div>

@@ -77,6 +77,7 @@ export default function NewsletterModal() {
                                 <img 
                                     src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
                                     alt="Intelligence Briefing" 
+                                    loading="lazy"
                                     className="w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-1000"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#161614] via-transparent to-transparent md:bg-gradient-to-r" />
