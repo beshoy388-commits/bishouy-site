@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Route, Switch } from "wouter";
@@ -87,6 +87,7 @@ function Router() {
             <Route path="/code-of-ethics" component={CodeOfEthics} />
             <Route path="/fact-checking" component={FactCheckingPolicy} />
             <Route path="/ai-ethics" component={AIEthics} />
+            <Route path="/nexus" component={NeuralNexus} />
             <Route path="/404" component={NotFound} />
             <Route component={NotFound} />
           </Switch>
@@ -130,18 +131,30 @@ import CommandPalette from "@/components/CommandPalette";
 import ScrollToTop from "@/components/ScrollToTop";
 import { AudioProvider } from "@/contexts/AudioContext";
 import GlobalAudioPlayer from "@/components/GlobalAudioPlayer";
+import NeuralNotificationCenter from "@/components/NeuralNotificationCenter";
+
+const NeuralNexus = lazy(() => import("@/pages/NeuralNexus"));
 
 function AppContent() {
-  const { setIsSearchOpen } = useUI();
+  const { setIsSearchOpen, isShadowMode } = useUI();
   const [location] = useLocation();
   const isAdminPage = location.startsWith("/admin");
   const isAuthPage = location.startsWith("/login") || location.startsWith("/register") || location.startsWith("/verify");
+
+  useEffect(() => {
+    if (isShadowMode) {
+      document.documentElement.classList.add('shadow-mode-active');
+    } else {
+      document.documentElement.classList.remove('shadow-mode-active');
+    }
+  }, [isShadowMode]);
 
   return (
     <MaintenanceGuard>
       <ScrollToTop />
       <Toaster />
       <GlobalAudioPlayer />
+      <NeuralNotificationCenter />
       <LiveAnalyticsTracker />
       <UserStatusMonitor />
       <GoogleAdSense />

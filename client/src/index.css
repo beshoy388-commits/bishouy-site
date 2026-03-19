@@ -657,4 +657,40 @@ font {
     0% { transform: translateY(0); }
     100% { transform: translateY(150%); }
   }
+
+  @keyframes progress-down {
+    0% { width: 100%; opacity: 1; }
+    90% { width: 0; opacity: 1; }
+    100% { width: 0; opacity: 0; }
+  }
+
+  /* Shadow Mode: Tactical Analysis Theme */
+  .shadow-mode-active {
+    filter: grayscale(1);
+    transition: filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .shadow-mode-active::after {
+    content: "";
+    @apply fixed inset-0 pointer-events-none z-[999] opacity-10;
+    background-image: repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.05) 0px,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+  }
+
+  /* Neural Click Pulse */
+  .neural-click-pulse {
+    @apply absolute rounded-full border border-[#E8A020]/40 pointer-events-none;
+    transform: translate(-50%, -50%) scale(0);
+    animation: neural-pulse-expand 0.6s ease-out forwards;
+  }
+
+  @keyframes neural-pulse-expand {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+  }
 }

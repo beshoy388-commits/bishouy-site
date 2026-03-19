@@ -9,6 +9,7 @@ import { Link } from "wouter";
 import Navbar from "@/components/Navbar";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import ArticleCard from "@/components/ArticleCard";
+import NeuralMouseBackground from "@/components/NeuralMouseBackground";
 import type { Article } from "@/lib/articles";
 import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
@@ -105,9 +106,7 @@ export default function Home() {
 
       {/* Hero Section with Neural Pulse */}
       <section className="neural-pulse-container py-12 md:py-20 lg:py-24 bg-[#0A0A09]">
-        <div className="neural-grid-overlay" />
-        <div className="neural-node-glow top-[10%] left-[20%]" />
-        <div className="neural-node-glow bottom-[10%] right-[10%] animation-delay-2000" />
+        <NeuralMouseBackground />
         
         <div className="container relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">

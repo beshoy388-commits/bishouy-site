@@ -145,6 +145,19 @@ export default function ArticleCard({
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const rw = (w: number) => isMobile ? Math.min(w, 480) : w;
 
+  const [pulses, setPulses] = useState<{ x: number; y: number; id: number }[]>([]);
+
+  const handlePulse = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const newPulse = { x, y, id: Date.now() };
+    setPulses(prev => [...prev, newPulse]);
+    setTimeout(() => {
+      setPulses(prev => prev.filter(p => p.id !== newPulse.id));
+    }, 600);
+  };
+
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     const img = e.target as HTMLImageElement;
     if (img.dataset.triedFallback === "true") return;
@@ -155,7 +168,17 @@ export default function ArticleCard({
   if (variant === "featured") {
     return (
       <Link href={`/article/${article.slug}`}>
-        <article className="article-card group relative h-full min-h-[480px] overflow-hidden rounded-sm cursor-pointer">
+        <article 
+          onClick={handlePulse}
+          className="article-card group relative h-full min-h-[480px] overflow-hidden rounded-sm cursor-pointer"
+        >
+          {pulses.map(p => (
+            <div 
+              key={p.id}
+              className="neural-click-pulse z-[100]"
+              style={{ left: p.x, top: p.y }}
+            />
+          ))}
           {/* Background image */}
           <div className="img-zoom absolute inset-0">
             <img
@@ -243,7 +266,17 @@ export default function ArticleCard({
   if (variant === "horizontal") {
     return (
       <Link href={`/article/${article.slug}`}>
-        <article className="article-card group flex gap-4 cursor-pointer p-2 md:p-0 rounded-sm bg-[#11110F] md:bg-transparent border border-[#1C1C1A] md:border-none">
+        <article 
+          onClick={handlePulse}
+          className="article-card group flex gap-4 cursor-pointer p-2 md:p-0 rounded-sm bg-[#11110F] md:bg-transparent border border-[#1C1C1A] md:border-none relative overflow-hidden"
+        >
+          {pulses.map(p => (
+            <div 
+              key={p.id}
+              className="neural-click-pulse z-[100]"
+              style={{ left: p.x, top: p.y }}
+            />
+          ))}
           <div className="img-zoom flex-shrink-0 w-28 h-24 md:w-24 md:h-20 rounded-sm overflow-hidden text-[#0F0F0E]">
             <img
               src={getSafeImage(article.image, article.category, article.id, rw(400))}
@@ -282,7 +315,17 @@ export default function ArticleCard({
   if (variant === "small") {
     return (
       <Link href={`/article/${article.slug}`}>
-        <article className="article-card group cursor-pointer border-b border-[#1C1C1A] pb-4">
+        <article 
+          onClick={handlePulse}
+          className="article-card group cursor-pointer border-b border-[#1C1C1A] pb-4 relative overflow-hidden"
+        >
+          {pulses.map(p => (
+            <div 
+              key={p.id}
+              className="neural-click-pulse z-[100]"
+              style={{ left: p.x, top: p.y }}
+            />
+          ))}
           <span
             className="category-badge mb-2 inline-block"
             style={{ backgroundColor: article.categoryColor || "#E8A020" }}
@@ -312,7 +355,17 @@ export default function ArticleCard({
   // Default: medium card
   return (
     <Link href={`/article/${article.slug}`}>
-      <article className="article-card group cursor-pointer bg-[#1C1C1A] rounded-sm overflow-hidden h-full flex flex-col">
+      <article 
+        onClick={handlePulse}
+        className="article-card group cursor-pointer bg-[#1C1C1A] rounded-sm overflow-hidden h-full flex flex-col relative"
+      >
+        {pulses.map(p => (
+          <div 
+            key={p.id}
+            className="neural-click-pulse z-[100]"
+            style={{ left: p.x, top: p.y }}
+          />
+        ))}
         <div className="img-zoom aspect-video overflow-hidden relative">
           <img
             src={getSafeImage(article.image, article.category, article.id, rw(800))}

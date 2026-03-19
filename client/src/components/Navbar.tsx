@@ -19,6 +19,8 @@ import {
   Shield,
   UserPlus,
   ArrowRight,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import { CATEGORIES } from "@/lib/articles";
 import { toast } from "sonner";
@@ -40,7 +42,7 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const [currentDate, setCurrentDate] = useState("");
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const { isSearchOpen, setIsSearchOpen } = useUI();
+  const { isSearchOpen, setIsSearchOpen, isShadowMode, setIsShadowMode } = useUI();
 
   const notificationsQuery = trpc.notifications.getLatest.useQuery(undefined, {
     refetchInterval: 60000,
@@ -219,10 +221,26 @@ export default function Navbar() {
                   Login
                 </Link>
               )}
+
+              {/* Shadow Mode Toggle — Desktop */}
+              <button
+                onClick={() => setIsShadowMode(!isShadowMode)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-sm transition-all font-ui text-[9px] font-900 uppercase tracking-widest ${isShadowMode ? "text-[#E8A020] border-[#E8A020]/30 bg-[#E8A020]/5" : "text-[#555550] border-[#222220] hover:border-[#E8A020]/30 hover:text-[#E8A020]"}`}
+                title={isShadowMode ? "Exit Shadow Analysis" : "Enter Shadow Analysis"}
+              >
+                {isShadowMode ? <EyeOff size={14} /> : <Eye size={14} />}
+                <span>{isShadowMode ? "Clearance: Shadow" : "Clearance: Standard"}</span>
+              </button>
             </div>
 
             {/* Mobile: Search (Right) */}
             <div className="flex lg:hidden items-center justify-end flex-1 gap-4">
+              <button
+                onClick={() => setIsShadowMode(!isShadowMode)}
+                className={`p-2 rounded-sm transition-all ${isShadowMode ? "text-[#E8A020] bg-[#E8A020]/10" : "text-[#8A8880]"}`}
+              >
+                {isShadowMode ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
               <button
                 onClick={handleNotifications}
                 className="text-[#8A8880] relative"
