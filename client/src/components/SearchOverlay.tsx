@@ -55,13 +55,33 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                             type="text"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Start typing to search articles..."
-                            className="w-full bg-[#1C1C1A] border-b-2 border-[#2A2A28] focus:border-[#E8A020] px-14 py-6 text-2xl text-[#F2F0EB] placeholder-[#555550] outline-none transition-all"
+                            placeholder="Search Intelligence Node..."
+                            className="w-full bg-[#1C1C1A] border-b-2 border-[#2A2A28] focus:border-[#E8A020] px-14 py-6 text-2xl text-[#F2F0EB] placeholder-[#555550] outline-none transition-all font-display uppercase tracking-tight"
                         />
-                        {searchQuery.isLoading && (
-                            <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin text-[#E8A020]" size={24} />
-                        )}
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                            <span className="text-[9px] font-900 text-[#555550] border border-[#2A2A28] px-1.5 py-0.5 rounded-sm uppercase tracking-widest hidden md:block">ESC to exit</span>
+                            {searchQuery.isLoading && (
+                                <Loader2 className="animate-spin text-[#E8A020]" size={24} />
+                            )}
+                        </div>
                     </div>
+
+                    {!query && (
+                        <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
+                             <h5 className="font-ui text-[10px] font-900 text-[#555550] uppercase tracking-[0.3em] mb-4">Trending Streams</h5>
+                             <div className="flex flex-wrap gap-2">
+                                {["World", "Technology", "Economy", "AI", "Culture", "Pulse"].map(cat => (
+                                    <button 
+                                        key={cat}
+                                        onClick={() => setQuery(cat)}
+                                        className="px-4 py-2 bg-[#1C1C1A] border border-[#2A2A28] text-[#8A8880] text-[10px] font-900 uppercase tracking-widest rounded-full hover:border-[#E8A020] hover:text-[#E8A020] transition-all"
+                                    >
+                                        # {cat}
+                                    </button>
+                                ))}
+                             </div>
+                        </div>
+                    )}
 
                     <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-4 custom-scrollbar">
                         {searchQuery.data && searchQuery.data.length > 0 ? (

@@ -66,9 +66,12 @@ export default function SocialPulse() {
     };
 
     return (
-        <Card className="bg-[#11110F] border-[#1C1C1A] overflow-hidden flex flex-col h-full shadow-2xl">
+        <Card className="bg-[#11110F] border-[#1C1C1A] overflow-hidden flex flex-col h-full shadow-2xl relative">
+            {/* Neural Background Decor */}
+            <div className="absolute inset-0 neural-grid opacity-[0.03] animate-pulse-slow pointer-events-none" />
+            
             {/* Header */}
-            <div className="p-4 border-b border-[#1C1C1A] flex items-center justify-between bg-[#0A0A09]">
+            <div className="p-4 border-b border-[#1C1C1A] flex items-center justify-between bg-[#0A0A09]/80 backdrop-blur-sm relative z-10">
                 <div className="flex items-center gap-2">
                     <div className="relative">
                         <Zap size={16} className="text-[#E8A020]" />

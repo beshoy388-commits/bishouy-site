@@ -159,21 +159,33 @@ export default function Home() {
                     key={article.id}
                     className="fade-in-up"
                     style={{ animationDelay: `${idx * 50}ms` }}
+                    ref={idx === gridArticles.length - 1 ? (node) => {
+                      if (!node || !hasNextPage || isFetchingNextPage) return;
+                      const observer = new IntersectionObserver(
+                        (entries) => {
+                          if (entries[0].isIntersecting) {
+                            fetchNextPage();
+                            observer.disconnect();
+                          }
+                        },
+                        { threshold: 0.1 }
+                      );
+                      observer.observe(node);
+                    } : undefined}
                   >
                     <ArticleCard article={article} variant="medium" />
                   </div>
                 ))}
               </div>
               
-              {hasNextPage && (
-                <div className="mt-12 text-center">
-                  <button
-                    onClick={() => fetchNextPage()}
-                    disabled={isFetchingNextPage}
-                    className="border border-[#E8A020] text-[#E8A020] hover:bg-[#E8A020] hover:text-[#0F0F0E] px-8 py-3 rounded-sm font-display tracking-widest uppercase transition-all flex items-center gap-2 mx-auto disabled:opacity-50"
-                  >
-                    {isFetchingNextPage ? "Loading..." : "Load More"}
-                  </button>
+              {(hasNextPage || isFetchingNextPage) && (
+                <div className="mt-12 text-center py-10">
+                  <div className="inline-flex items-center gap-3 px-6 py-3 border border-[#2A2A28] rounded-full bg-[#11110F]">
+                    <div className="w-1.5 h-1.5 bg-[#E8A020] rounded-full animate-ping" />
+                    <span className="font-ui text-[10px] font-900 text-[#8A8880] uppercase tracking-[0.3em]">
+                      {isFetchingNextPage ? "Syncing Nodes..." : "Scroll for more intelligence"}
+                    </span>
+                  </div>
                 </div>
               )}
             </div>

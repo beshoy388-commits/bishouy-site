@@ -65,8 +65,21 @@ export default function Navbar() {
     // Set formatted dynamic date
     setCurrentDate(formatDateString(new Date()));
 
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    // Search keyboard shortcut (CMD+K / CTRL+K / /)
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isInput = document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA';
+      if (((e.metaKey || e.ctrlKey) && e.key === 'k') || (e.key === '/' && !isInput)) {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [setIsSearchOpen]);
 
   const handleSearchClick = () => {
     setIsSearchOpen(true);
