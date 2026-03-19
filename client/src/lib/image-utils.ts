@@ -60,9 +60,16 @@ export const getSafeImage = (img: string | null | undefined, category: string, i
   }
 
   // Optimize LoremFlickr (it supports width/height in URL)
+  // But clean up multi-keyword or malformed URLs (e.g. containing commas)
   if (img.includes('loremflickr.com')) {
-    // Replace existing dimensions if found (e.g. /1200/800/)
-    return img.replace(/\/\d+\/\d+\//, `/${width}/${Math.round(width * 0.6)}/`);
+    // Extract just the keyword part (first word, no commas, no spaces)
+    const match = img.match(/loremflickr\.com\/\d+\/\d+\/([^/?]+)/);
+    if (match) {
+      const rawKeyword = decodeURIComponent(match[1]).split(',')[0].split(' ')[0].toLowerCase().replace(/[^a-z]/g, '');
+      const keyword = rawKeyword || 'news';
+      return `https://loremflickr.com/${width}/${Math.round(width * 0.6)}/${keyword}`;
+    }
+    return img;
   }
 
   // Optimize Pollinations AI
