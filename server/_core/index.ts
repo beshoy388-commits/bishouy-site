@@ -306,7 +306,7 @@ async function startServer() {
       for (const cat of categories) {
         xml += `
   <url>
-    <loc>${baseUrl}/category/${cat}/</loc>
+    <loc>${baseUrl}/category/${cat}</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>`;
@@ -319,13 +319,13 @@ async function startServer() {
         
         xml += `
   <url>
-    <loc>${baseUrl}/article/${article.slug}/</loc>
+    <loc>${baseUrl}/article/${article.slug}</loc>
     <lastmod>${lastMod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     ${imageUrl ? `
     <image:image>
-      <image:loc>${imageUrl}</image:loc>
+      <image:loc>${imageUrl.startsWith('http') ? imageUrl : baseUrl + imageUrl}</image:loc>
       <image:title><![CDATA[${article.title}]]></image:title>
     </image:image>` : ''}
   </url>`;

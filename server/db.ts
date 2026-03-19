@@ -1248,26 +1248,46 @@ export async function searchArticles(
   if (!db) return [];
 
   // Normalize the search query
-  const searchTerm = `%${query.toLowerCase()}%`;
+  const term = query.toLowerCase();
+  const searchTerm = `%${term}%`;
 
   // Search in title, excerpt, content, and tags
+  // Weighting: Title match (score 10) > Excerpt (score 5) > Content (score 1)
   const results = await db
-    .select()
+    .select({
+      id: articles.id,
+      title: articles.title,
+      slug: articles.slug,
+      excerpt: articles.excerpt,
+      content: articles.content,
+      category: articles.category,
+      categoryColor: articles.categoryColor,
+      image: articles.image,
+      author: articles.author,
+      publishedAt: articles.publishedAt,
+      readTime: articles.readTime,
+      tags: articles.tags,
+      score: sql<number>`
+        (CASE WHEN LOWER(${articles.title}) LIKE ${searchTerm} THEN 10 ELSE 0 END) +
+        (CASE WHEN LOWER(${articles.excerpt}) LIKE ${searchTerm} THEN 5 ELSE 0 END) +
+        (CASE WHEN LOWER(${articles.content}) LIKE ${searchTerm} THEN 1 ELSE 0 END)
+      `
+    })
     .from(articles)
     .where(
       and(
         eq(articles.status, "published"),
         sql`LOWER(${articles.title}) LIKE ${searchTerm} 
             OR LOWER(${articles.excerpt}) LIKE ${searchTerm} 
-            OR LOWER(${articles.content}) LIKE ${searchTerm}
-            OR LOWER(${articles.tags}) LIKE ${searchTerm}`
+            OR LOWER(${articles.content}) LIKE ${searchTerm}`
       )
     )
-    .orderBy(desc(articles.createdAt))
+    .orderBy(desc(sql`score`), desc(articles.publishedAt))
     .limit(limit);
 
-  return results;
+  return results as unknown as Article[];
 }
+
 
 // Newsletter queries
 export async function createSubscriber(

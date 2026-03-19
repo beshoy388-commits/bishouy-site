@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import CookieConsent from "@/components/CookieConsent";
 import BackToTop from "@/components/BackToTop";
 import { Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Home and common components remain eager for instant first load
 import Home from "@/pages/Home";
@@ -48,37 +49,49 @@ const PageFallback = () => (
 const AuthCallback = lazy(() => import("@/pages/AuthCallback"));
 
 function Router() {
+  const [location] = useLocation();
+
   return (
     <Suspense fallback={<PageFallback />}>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/article/:slug" component={ArticleDetail} />
-        <Route path="/category/:slug" component={CategoryPage} />
-        <Route path="/search" component={Search} />
-        <Route path="/profile" component={UserProfile} />
-        <Route path="/u/:username" component={PublicProfile} />
-        <Route path="/privacy-policy" component={PrivacyPolicy} />
-        <Route path="/terms-of-service" component={TermsOfService} />
-        <Route path="/admin" component={AdminPanel} />
-        <Route path="/ai" component={AIAssistant} />
-        <Route path="/login" component={Login} />
-        <Route path="/register" component={Register} />
-        <Route path="/auth/callback" component={AuthCallback} />
-        <Route path="/verify" component={VerifyEmail} />
-        <Route path="/forgot-password" component={ForgotPassword} />
-        <Route path="/reset-password" component={ResetPassword} />
-        <Route path="/unsubscribe" component={Unsubscribe} />
-        <Route path="/about" component={AboutUs} />
-        <Route path="/editorial-team" component={EditorialTeam} />
-        <Route path="/mission-values" component={MissionValues} />
-        <Route path="/contact" component={Contact} />
-        <Route path="/careers" component={Careers} />
-        <Route path="/code-of-ethics" component={CodeOfEthics} />
-        <Route path="/fact-checking" component={FactCheckingPolicy} />
-        <Route path="/ai-ethics" component={AIEthics} />
-        <Route path="/404" component={NotFound} />
-        <Route component={NotFound} />
-      </Switch>
+      <AnimatePresence mode="wait">
+        <motion.div
+           key={location}
+           initial={{ opacity: 0, y: 10 }}
+           animate={{ opacity: 1, y: 0 }}
+           exit={{ opacity: 0, y: -10 }}
+           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/article/:slug" component={ArticleDetail} />
+            <Route path="/category/:slug" component={CategoryPage} />
+            <Route path="/search" component={Search} />
+            <Route path="/profile" component={UserProfile} />
+            <Route path="/u/:username" component={PublicProfile} />
+            <Route path="/privacy-policy" component={PrivacyPolicy} />
+            <Route path="/terms-of-service" component={TermsOfService} />
+            <Route path="/admin" component={AdminPanel} />
+            <Route path="/ai" component={AIAssistant} />
+            <Route path="/login" component={Login} />
+            <Route path="/register" component={Register} />
+            <Route path="/auth/callback" component={AuthCallback} />
+            <Route path="/verify" component={VerifyEmail} />
+            <Route path="/forgot-password" component={ForgotPassword} />
+            <Route path="/reset-password" component={ResetPassword} />
+            <Route path="/unsubscribe" component={Unsubscribe} />
+            <Route path="/about" component={AboutUs} />
+            <Route path="/editorial-team" component={EditorialTeam} />
+            <Route path="/mission-values" component={MissionValues} />
+            <Route path="/contact" component={Contact} />
+            <Route path="/careers" component={Careers} />
+            <Route path="/code-of-ethics" component={CodeOfEthics} />
+            <Route path="/fact-checking" component={FactCheckingPolicy} />
+            <Route path="/ai-ethics" component={AIEthics} />
+            <Route path="/404" component={NotFound} />
+            <Route component={NotFound} />
+          </Switch>
+        </motion.div>
+      </AnimatePresence>
     </Suspense>
   );
 }
@@ -113,6 +126,7 @@ import UserStatusMonitor from "@/components/UserStatusMonitor";
 import GoogleAdSense from "@/components/GoogleAdSense";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import NewsletterModal from "@/components/NewsletterModal";
+import CommandPalette from "@/components/CommandPalette";
 
 function AppContent() {
   const { setIsSearchOpen } = useUI();
@@ -136,6 +150,7 @@ function AppContent() {
         <Router />
       </div>
       <NewsletterModal />
+      <CommandPalette />
       <CookieConsent />
       <BackToTop />
       {!isAdminPage && <MobileBottomNav onSearchClick={() => setIsSearchOpen(true)} />}
