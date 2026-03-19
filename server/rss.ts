@@ -200,7 +200,7 @@ async function rewriteArticle(
               "title": "A sophisticated, broad-reach headline without clickbait",
               "excerpt": "A deep, 2-sentence executive summary",
               "summaryPoints": ["Point 1", "Point 2", "Point 3"],
-              "content": "Formatted Markdown content with embedded image directives and pollinations.ai links as specified.",
+              "content": "Professional Markdown content. START DIRECTLY with text (no # title). NO ALL CAPS.",
               "tags": ["Tag1", "Tag2", "Tag3"],
               "category": "Pick strictly one of: World, Politics, Economy, Technology, Culture, Sports.",
               "imagePrompt": "A highly detailed, professional photo-journalistic image generation prompt (max 180 chars).",

@@ -378,19 +378,20 @@ export default function ArticleDetail() {
     });
 
   const renderArticleContent = (content: string) => {
-    // Check if content looks like HTML (contains tags)
-    const isHtml = /<[a-z][\s\S]*>/i.test(content);
+    // Strip leading Markdown H1 if it matches or follows the title to avoid duplication
+    const strippedContent = content.replace(/^#\s+.*(\r?\n)+/, "");
+    const isHtml = /<[a-z][\s\S]*>/i.test(strippedContent);
 
     if (isHtml) {
       return (
         <div
           className="prose prose-invert max-w-none font-serif text-[#D4D0C8] leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: content }}
+          dangerouslySetInnerHTML={{ __html: strippedContent }}
         />
       );
     }
 
-    const parts = content.split(/(<!-- img:[a-z]+:\d+% -->)/g);
+    const parts = strippedContent.split(/(<!-- img:[a-z]+:\d+% -->)/g);
     let currentImageStyle: { position: string; width: string } | null = null;
 
     return parts.map((part, index) => {
@@ -587,7 +588,7 @@ export default function ArticleDetail() {
       </section>
 
       {/* Article Content */}
-      <article className="container py-12 md:py-16">
+      <article className="container py-12 md:py-16 overflow-x-hidden">
         <div className="overflow-hidden break-words">
           {/* Back Button */}
           <Link href="/">

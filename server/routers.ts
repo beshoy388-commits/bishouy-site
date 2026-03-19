@@ -1088,7 +1088,7 @@ export const appRouter = router({
           categoryColor: (categoryColors as any)[generated.category] || "#E8A020",
           author: authorName,
           authorRole: authorRole,
-          image: `https://image.pollinations.ai/prompt/${encodeURIComponent(generated.imagePrompt || generated.title)}?width=1200&height=800&nologo=true&enhance=true`,
+          image: `https://loremflickr.com/1200/800/${encodeURIComponent(generated.imagePrompt || generated.category || 'news')}`,
           seoTitle: generated.seoTitle || generated.title,
           seoDescription: generated.seoDescription || generated.excerpt,
           status: "draft",

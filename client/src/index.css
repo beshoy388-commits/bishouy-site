@@ -179,6 +179,8 @@ font {
   body {
     @apply bg-background text-foreground;
     font-family: "DM Sans", sans-serif;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
 
@@ -482,7 +484,18 @@ font {
     max-width: 100% !important;
     overflow-wrap: break-word;
     word-wrap: break-word;
-    word-break: break-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    text-align: left; /* Keep left aligned for readability on small screens */
+  }
+
+  /* Justification for premium desktop reading */
+  @media (min-width: 768px) {
+    .prose p {
+      text-align: justify;
+      hyphens: auto;
+    }
   }
 
   .prose img,

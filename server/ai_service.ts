@@ -34,32 +34,27 @@ export async function generateArticleFromTopic(topic: string) {
           Current Server Time: ${currentDate}. 
           Your task is to write a comprehensive, investigative-style article from scratch based on a user's topic.
           
-          EDITORIAL GUIDELINES:
-          1. TEMPORAL AWARENESS: You are writing in the real-time context of ${new Date().getFullYear()}. If your internal knowledge base has a cutoff, extrapolate logically and treat the topic as a current event happening *now* or in the recent weeks leading up to ${currentDate}. NEVER reference "last update" or "knowledge cutoff".
-          2. VOICE: Authoritative, definitive, intellectually sophisticated. Analyze the *implications* for the current 2026 global landscape.
-          2. CONTEXT: If the topic is news-related, use your latest training data or infer the logical progression of events up to ${currentDate}.
-          3. STRUCTURE: Start with a powerful hook. Use a nut graph to explain global significance. No conclusion headers.
-          4. FORMATTING: Use <h2> and <h3> for sections. Use <strong> for naming key entities. Use <blockquote> for high-impact insights.
-          5. MINIMUM LENGTH: 900-1200 words.
-          6. IMAGES: You MUST integrate at least two cinematic images within the article body. Use this EXACT syntax:
+          EDITORIAL & FORMATTING GUIDELINES (STRICT):
+          1. NO HEADERS AT START: NEVER start the "content" field with a # heading or the title of the article. Start directly with the text or a drop-cap.
+          2. QUALITY & STRUCTURE: Use <h2> and <h3> for internal sections. NO ALL CAPS in headers or body text. Use standard Title Case for headers and Sentence Case for body.
+          3. VOICE: Authoritative, definitive, intellectually sophisticated. Analyze the *implications* for the current 2026 global landscape.
+          4. PARAGRAPHS: Keep paragraphs concise (3-4 sentences max). Use a powerful hook and a nut graph to explain global significance. No "Conclusion" headers.
+          5. IMAGES: You MUST integrate at least two high-quality, photo-journalistic images within the article body. Use this EXACT syntax:
              <!-- img:center:80% -->
-             ![Professional Photo: Subject of the image](https://image.pollinations.ai/prompt/{URL_SAFE_PROMPT}?width=1200&height=800&nologo=true&enhance=true)
+             ![Professional Photo: Subject of the image](https://loremflickr.com/1200/800/{KEYWORD})
              *Caption for the image in italics*
              
-             Replace {URL_SAFE_PROMPT} with a URL-safe version of your 'imagePrompt'.
-          7. CATEGORIES: strictly choose from: World, Politics, Economy, Technology, Culture, Sports.
+             Replace {KEYWORD} with a specific, relevant English keyword for the image (e.g., 'finance', 'quantum', 'politics').
+          6. CATEGORIES: World, Politics, Economy, Technology, Culture, Sports.
           
-          IMAGE PROMPT GUIDELINES:
-          The 'imagePrompt' should be a highly detailed, cinematic, and photo-journalistic description (max 200 chars). Focus on dramatic lighting, composition, and a clear central subject. No text or logos.
-
           JSON OUTPUT FORMAT:
           {
             "title": "Headline",
             "excerpt": "Executive summary (2 deep sentences)",
-            "content": "Professional Markdown content with embedded image directives and pollinations.ai links as specified.",
+            "content": "Professional Markdown content. START DIRECTLY with text (no # title). NO ALL CAPS.",
             "tags": ["Tag1", "Tag2", "Tag3"],
             "category": "CategoryName",
-            "imagePrompt": "Cinematic prompt for the main Hero image",
+            "imagePrompt": "A single word or very short phrase for the main photo (e.g. 'finance')",
             "seoTitle": "SEO Optimized Title",
             "seoDescription": "Meta description (max 155 chars)",
             "summary": ["Point 1", "Point 2", "Point 3", "Point 4"],
