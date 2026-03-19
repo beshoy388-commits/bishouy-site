@@ -505,7 +505,14 @@ font {
   }
 
   .drop-cap::first-letter {
-    @apply font-900 border border-[#E8A020]/30 mr-3 px-2 py-0.5 mt-1 float-left text-5xl md:text-6xl text-[#E8A020];
+    border: 1px solid rgba(232, 160, 32, 0.3);
+    margin-right: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    margin-top: 0.25rem;
+    float: left;
+    font-size: 3.75rem;
+    color: #E8A020;
+    font-weight: 900;
     font-family: "Bebas Neue", sans-serif;
     line-height: 1;
   }
@@ -535,7 +542,20 @@ font {
 
   /* Connection between Article Body and Drop Cap */
   .article-body-content p:first-of-type {
-    @apply drop-cap;
+    contain: content;
+  }
+
+  .article-body-content p:first-of-type::first-letter {
+    border: 1px solid rgba(232, 160, 32, 0.3);
+    margin-right: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    margin-top: 0.25rem;
+    float: left;
+    font-size: 3.75rem;
+    color: #E8A020;
+    font-weight: 900;
+    font-family: "Bebas Neue", sans-serif;
+    line-height: 1;
   }
 
   /* Neural Aesthetics */
