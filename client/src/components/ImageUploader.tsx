@@ -84,7 +84,7 @@ export default function ImageUploader({
       {!previewUrl && (
         <div className="grid grid-cols-3 gap-2 p-3 bg-[#11110F] border border-[#1C1C1A] rounded-sm mb-2">
           <div className="space-y-1">
-            <span className="text-[8px] font-900 text-[#555550] uppercase tracking-widest block">Width</span>
+            <span className="text-[8px] font-black text-[#555550] uppercase tracking-widest block">Width</span>
             <select
               value={procOptions.width}
               onChange={e => setProcOptions(prev => ({ ...prev, width: parseInt(e.target.value) }))}
@@ -96,7 +96,7 @@ export default function ImageUploader({
             </select>
           </div>
           <div className="space-y-1">
-            <span className="text-[8px] font-900 text-[#555550] uppercase tracking-widest block">Height</span>
+            <span className="text-[8px] font-black text-[#555550] uppercase tracking-widest block">Height</span>
             <select
               value={procOptions.height}
               onChange={e => setProcOptions(prev => ({ ...prev, height: parseInt(e.target.value) }))}
@@ -108,7 +108,7 @@ export default function ImageUploader({
             </select>
           </div>
           <div className="space-y-1">
-            <span className="text-[8px] font-900 text-[#555550] uppercase tracking-widest block">Fit Mode</span>
+            <span className="text-[8px] font-black text-[#555550] uppercase tracking-widest block">Fit Mode</span>
             <select
               value={procOptions.fit}
               onChange={e => setProcOptions(prev => ({ ...prev, fit: e.target.value }))}
@@ -145,7 +145,7 @@ export default function ImageUploader({
             <>
               <Upload size={32} className="text-[#E8A020]" />
               <div className="text-center">
-                <p className="font-ui text-sm font-600 text-[#F2F0EB]">
+                <p className="font-ui text-sm font-semibold text-[#F2F0EB]">
                   {label}
                 </p>
                 <p className="font-ui text-[10px] text-[#555550] mt-1 uppercase tracking-widest font-bold">

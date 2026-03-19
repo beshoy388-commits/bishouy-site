@@ -113,14 +113,14 @@ export default function Home() {
             <div className="lg:col-span-2 space-y-8">
                <div className="flex items-center gap-3">
                   <div className="h-[2px] w-12 bg-[#E8A020]" />
-                  <span className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em]">Primary Intelligence Node</span>
+                  <span className="font-ui text-[10px] font-black text-[#E8A020] uppercase tracking-[0.4em]">Primary Intelligence Node</span>
                </div>
                <ArticleCard article={mainFeatured} variant="featured" />
             </div>
             <div className="space-y-8">
                <div className="flex items-center justify-between">
                   <h3 className="font-display text-2xl text-[#F2F0EB] uppercase tracking-tighter">Editor's Picks</h3>
-                  <Link href="/category/world" className="text-[10px] font-900 text-[#8A8880] hover:text-[#E8A020] uppercase tracking-widest transition-colors font-ui">See All</Link>
+                  <Link href="/category/world" className="text-[10px] font-black text-[#8A8880] hover:text-[#E8A020] uppercase tracking-widest transition-colors font-ui">See All</Link>
                </div>
                <div className="space-y-8 mt-4">
                   {secondaryFeatured.map((article: any) => (
@@ -142,7 +142,7 @@ export default function Home() {
           <div className="max-w-4xl mx-auto glass-editorial-card p-12 md:p-20 relative overflow-hidden text-center">
              <div className="absolute top-0 left-0 w-full h-1 bg-[#E8A020]" />
              <div className="relative z-10">
-                <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-6 block font-ui">The Editorial Directive</span>
+                <span className="text-[10px] font-black text-[#E8A020] uppercase tracking-[0.4em] mb-6 block font-ui">The Editorial Directive</span>
                 <h2 className="font-display text-4xl md:text-6xl text-[#F2F0EB] mb-8 leading-[0.9] uppercase tracking-tighter">
                    Sovereign news <br/> <span className="text-[#E8A020]">Architecture.</span>
                 </h2>
@@ -151,16 +151,16 @@ export default function Home() {
                 </p>
                 <div className="flex flex-col md:flex-row items-center justify-center gap-8 border-t border-[#222220] pt-10">
                    <div className="text-left">
-                      <p className="text-[9px] font-900 text-[#555550] uppercase tracking-[0.2em] mb-1">Status</p>
+                      <p className="text-[9px] font-black text-[#555550] uppercase tracking-[0.2em] mb-1">Status</p>
                       <div className="flex items-center gap-2">
                          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                         <span className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">Nexus Live</span>
+                         <span className="text-[11px] font-black text-[#F2F0EB] uppercase tracking-widest font-ui">Nexus Live</span>
                       </div>
                    </div>
                    <div className="h-10 w-px bg-[#222220] hidden md:block" />
                    <div className="text-left">
-                      <p className="text-[9px] font-900 text-[#555550] uppercase tracking-[0.2em] mb-1">Archives</p>
-                      <p className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">{articles.length} Reports Logged</p>
+                      <p className="text-[9px] font-black text-[#555550] uppercase tracking-[0.2em] mb-1">Archives</p>
+                      <p className="text-[11px] font-black text-[#F2F0EB] uppercase tracking-widest font-ui">{articles.length} Reports Logged</p>
                    </div>
                 </div>
              </div>
@@ -213,7 +213,7 @@ export default function Home() {
                 <div className="mt-12 text-center py-10">
                   <div className="inline-flex items-center gap-3 px-6 py-3 border border-[#2A2A28] rounded-full bg-[#11110F]">
                     <div className="w-1.5 h-1.5 bg-[#E8A020] rounded-full animate-ping" />
-                    <span className="font-ui text-[10px] font-900 text-[#8A8880] uppercase tracking-[0.3em]">
+                    <span className="font-ui text-[10px] font-black text-[#8A8880] uppercase tracking-[0.3em]">
                       {isFetchingNextPage ? "Syncing Nodes..." : "Scroll for more intelligence"}
                     </span>
                   </div>
@@ -258,7 +258,7 @@ export default function Home() {
                 editorial team.
               </p>
               <Link href="/register">
-                <button className="bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#E8A020]/20 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-all active:scale-95">
+                <button className="bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#E8A020]/20 text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-wider px-6 py-3 rounded-sm transition-all active:scale-95">
                   Create Free Account
                 </button>
               </Link>

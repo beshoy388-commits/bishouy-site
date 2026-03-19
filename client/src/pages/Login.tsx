@@ -101,7 +101,7 @@ export default function Login() {
                   className="space-y-6"
                 >
                   <div className="space-y-2">
-                    <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
+                    <label className="font-ui text-[10px] font-semibold text-[#E8A020] tracking-widest block">
                       Email Address
                     </label>
                     <div className="relative">
@@ -121,7 +121,7 @@ export default function Login() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
+                    <label className="font-ui text-[10px] font-semibold text-[#E8A020] tracking-widest block">
                       Password
                     </label>
                     <div className="relative">
@@ -154,13 +154,13 @@ export default function Login() {
                           onChange={e => setRememberMe(e.target.checked)}
                           className="w-3.5 h-3.5 rounded border-[#222220] bg-[#0F0F0E] text-[#E8A020] focus:ring-0 focus:ring-offset-0"
                         />
-                        <label htmlFor="rememberMe" className="text-[10px] text-[#8A8880] font-ui tracking-widest font-600 cursor-pointer">
+                        <label htmlFor="rememberMe" className="text-[10px] text-[#8A8880] font-ui tracking-widest font-semibold cursor-pointer">
                           Remember for 30 days
                         </label>
                       </div>
                       <Link
                         href="/forgot-password"
-                        className="text-[10px] text-[#8A8880] hover:text-[#E8A020] transition-colors tracking-widest font-ui font-600"
+                        className="text-[10px] text-[#8A8880] hover:text-[#E8A020] transition-colors tracking-widest font-ui font-semibold"
                       >
                         Forgot password?
                       </Link>
@@ -176,7 +176,7 @@ export default function Login() {
                   className="space-y-6"
                 >
                    <div className="space-y-2">
-                    <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block text-center">
+                    <label className="font-ui text-[10px] font-semibold text-[#E8A020] tracking-widest block text-center">
                       Security Code
                     </label>
                     <div className="relative">
@@ -219,7 +219,7 @@ export default function Login() {
                       <button
                         type="button"
                         onClick={() => setRequires2FA(false)}
-                        className="w-full text-[9px] text-[#8A8880] hover:text-[#E8A020] tracking-widest transition-colors font-600"
+                        className="w-full text-[9px] text-[#8A8880] hover:text-[#E8A020] tracking-widest transition-colors font-semibold"
                       >
                         Back to Login
                       </button>
@@ -233,7 +233,7 @@ export default function Login() {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loginMutation.isPending || verify2FAMutation.isPending}
-              className="w-full bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-[10px] font-600 uppercase tracking-widest py-3 rounded-sm flex items-center justify-center gap-2 transition-colors mt-4"
+              className="w-full bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-[10px] font-semibold uppercase tracking-widest py-3 rounded-sm flex items-center justify-center gap-2 transition-colors mt-4"
             >
               {loginMutation.isPending || verify2FAMutation.isPending ? (
                 <Loader2 className="animate-spin" size={16} />

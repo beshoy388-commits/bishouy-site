@@ -27,14 +27,14 @@ export default function Maintenance() {
                     <div className="flex items-center gap-4 bg-[#11110F] border border-[#1C1C1A] p-4 rounded-xl">
                         <Globe size={18} className="text-[#E8A020]" />
                         <div className="text-left">
-                            <p className="text-[10px] font-ui font-800 text-[#8A8880] uppercase tracking-widest">Global Status</p>
+                            <p className="text-[10px] font-ui font-extrabold text-[#8A8880] uppercase tracking-widest">Global Status</p>
                             <p className="text-xs font-ui text-[#F2F0EB]">Restricted Access</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-4 bg-[#11110F] border border-[#1C1C1A] p-4 rounded-xl">
                         <Shield size={18} className="text-green-500" />
                         <div className="text-left">
-                            <p className="text-[10px] font-ui font-800 text-[#8A8880] uppercase tracking-widest">Security Layer</p>
+                            <p className="text-[10px] font-ui font-extrabold text-[#8A8880] uppercase tracking-widest">Security Layer</p>
                             <p className="text-xs font-ui text-[#F2F0EB]">Active Protocol</p>
                         </div>
                     </div>

@@ -422,7 +422,7 @@ export default function RichTextEditor({
         <button
           type="button"
           onClick={() => setShowPreview(!showPreview)}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-xs font-600 uppercase tracking-wider transition-colors ${
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-xs font-semibold uppercase tracking-wider transition-colors ${
             showPreview
               ? "bg-[#E8A020] text-[#0F0F0E]"
               : "bg-[#2A2A28] text-[#8A8880] hover:text-[#E8A020]"
@@ -641,14 +641,14 @@ export default function RichTextEditor({
                 type="button"
                 onClick={handleInsertImage}
                 disabled={!imageDialog.url}
-                className="flex-1 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2.5 rounded-sm transition-colors disabled:opacity-50"
+                className="flex-1 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-wider px-4 py-2.5 rounded-sm transition-colors disabled:opacity-50"
               >
                 Insert Image
               </button>
               <button
                 type="button"
                 onClick={() => setImageDialog({ ...imageDialog, open: false })}
-                className="bg-[#2A2A28] hover:bg-[#333330] text-[#8A8880] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2.5 rounded-sm transition-colors"
+                className="bg-[#2A2A28] hover:bg-[#333330] text-[#8A8880] font-ui text-xs font-semibold uppercase tracking-wider px-4 py-2.5 rounded-sm transition-colors"
               >
                 Cancel
               </button>

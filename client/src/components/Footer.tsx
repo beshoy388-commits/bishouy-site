@@ -70,7 +70,7 @@ export default function Footer() {
               <button
                 type="submit"
                 disabled={subscribeMutation.isPending}
-                className="bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#E8A020]/20 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-5 py-2.5 rounded-sm transition-all active:scale-95 whitespace-nowrap disabled:opacity-50 flex items-center gap-2"
+                className="bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#E8A020]/20 text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-wider px-5 py-2.5 rounded-sm transition-all active:scale-95 whitespace-nowrap disabled:opacity-50 flex items-center gap-2"
               >
                 {subscribeMutation.isPending ? (
                   <Loader2 className="animate-spin" size={12} />
@@ -114,7 +114,7 @@ export default function Footer() {
 
           {/* Categories */}
           <div>
-            <h4 className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest mb-4">
+            <h4 className="font-ui text-[10px] font-semibold text-[#E8A020] uppercase tracking-widest mb-4">
               Sections
             </h4>
             <ul className="space-y-2.5">
@@ -133,7 +133,7 @@ export default function Footer() {
 
           {/* About */}
           <div>
-            <h4 className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest mb-4">
+            <h4 className="font-ui text-[10px] font-semibold text-[#E8A020] uppercase tracking-widest mb-4">
               About Us
             </h4>
             <ul className="space-y-2.5">
@@ -159,7 +159,7 @@ export default function Footer() {
 
           {/* Legal */}
           <div>
-            <h4 className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest mb-4">
+            <h4 className="font-ui text-[10px] font-semibold text-[#E8A020] uppercase tracking-widest mb-4">
               Legal & Fact
             </h4>
             <ul className="space-y-2.5">

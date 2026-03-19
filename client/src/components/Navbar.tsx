@@ -186,7 +186,7 @@ export default function Navbar() {
                   {user.role === "admin" && (
                     <Link
                       href="/admin"
-                      className="flex items-center gap-1.5 text-[#E8A020] hover:text-[#F2F0EB] transition-colors font-ui text-[10px] font-600 uppercase tracking-widest"
+                      className="flex items-center gap-1.5 text-[#E8A020] hover:text-[#F2F0EB] transition-colors font-ui text-[10px] font-semibold uppercase tracking-widest"
                       title="Admin Panel"
                     >
                       <Shield size={14} />
@@ -195,7 +195,7 @@ export default function Navbar() {
                   )}
                   <Link
                     href="/profile"
-                    className="flex items-center gap-1.5 text-[#8A8880] hover:text-[#E8A020] transition-colors font-ui text-[10px] font-600 uppercase tracking-widest"
+                    className="flex items-center gap-1.5 text-[#8A8880] hover:text-[#E8A020] transition-colors font-ui text-[10px] font-semibold uppercase tracking-widest"
                     title="Your Profile"
                   >
                     <UserIcon size={14} />
@@ -225,7 +225,7 @@ export default function Navbar() {
               {/* Shadow Mode Toggle — Desktop */}
               <button
                 onClick={() => setIsShadowMode(!isShadowMode)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-sm transition-all font-ui text-[9px] font-900 uppercase tracking-widest ${isShadowMode ? "text-[#E8A020] border-[#E8A020]/30 bg-[#E8A020]/5" : "text-[#555550] border-[#222220] hover:border-[#E8A020]/30 hover:text-[#E8A020]"}`}
+                className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-sm transition-all font-ui text-[9px] font-black uppercase tracking-widest ${isShadowMode ? "text-[#E8A020] border-[#E8A020]/30 bg-[#E8A020]/5" : "text-[#555550] border-[#222220] hover:border-[#E8A020]/30 hover:text-[#E8A020]"}`}
                 title={isShadowMode ? "Exit Shadow Analysis" : "Enter Shadow Analysis"}
               >
                 {isShadowMode ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -267,7 +267,7 @@ export default function Navbar() {
                 <Link
                   key={cat.slug}
                   href={`/category/${cat.slug}`}
-                  className="font-ui text-[9px] font-800 text-[#8A8880] hover:text-[#F2F0EB] transition-colors uppercase tracking-[0.25em]"
+                  className="font-ui text-[9px] font-extrabold text-[#8A8880] hover:text-[#F2F0EB] transition-colors uppercase tracking-[0.25em]"
                 >
                   {cat.name}
                 </Link>

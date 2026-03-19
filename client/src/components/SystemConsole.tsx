@@ -122,7 +122,7 @@ export default function SystemConsole() {
               <Zap size={20} className="text-blue-500" />
             </div>
             <div>
-              <h4 className="text-[#F2F0EB] text-sm font-600 mb-1">
+              <h4 className="text-[#F2F0EB] text-sm font-semibold mb-1">
                 AI News Aggregator
               </h4>
               <p className="text-[#8A8880] text-xs leading-relaxed">
@@ -153,7 +153,7 @@ export default function SystemConsole() {
               <Mail size={20} className="text-[#E8A020]" />
             </div>
             <div>
-              <h4 className="text-[#F2F0EB] text-sm font-600 mb-1">
+              <h4 className="text-[#F2F0EB] text-sm font-semibold mb-1">
                 Email Delivery Test
               </h4>
               <p className="text-[#8A8880] text-xs leading-relaxed">

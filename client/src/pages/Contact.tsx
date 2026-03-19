@@ -54,7 +54,7 @@ export default function Contact() {
 
                         <form className="bg-[#1C1C1A] p-8 border border-[#2A2A28] rounded-sm flex flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
                             <div>
-                                <label className="block font-ui text-xs font-600 text-[#8A8880] uppercase tracking-widest mb-2">Issue / Department</label>
+                                <label className="block font-ui text-xs font-semibold text-[#8A8880] uppercase tracking-widest mb-2">Issue / Department</label>
                                 <select className="w-full bg-[#0F0F0E] border border-[#2A2A28] text-[#F2F0EB] p-3 rounded-sm font-ui text-sm focus:outline-none focus:border-[#E8A020]">
                                     <option>Editorial Feedback</option>
                                     <option>Secure Tip</option>
@@ -64,12 +64,12 @@ export default function Contact() {
                             </div>
 
                             <div>
-                                <label className="block font-ui text-xs font-600 text-[#8A8880] uppercase tracking-widest mb-2">Email Address</label>
+                                <label className="block font-ui text-xs font-semibold text-[#8A8880] uppercase tracking-widest mb-2">Email Address</label>
                                 <input type="email" placeholder="Optional for secure tips" className="w-full bg-[#0F0F0E] border border-[#2A2A28] text-[#F2F0EB] p-3 rounded-sm font-ui text-sm focus:outline-none focus:border-[#E8A020]" />
                             </div>
 
                             <div>
-                                <label className="block font-ui text-xs font-600 text-[#8A8880] uppercase tracking-widest mb-2">Message</label>
+                                <label className="block font-ui text-xs font-semibold text-[#8A8880] uppercase tracking-widest mb-2">Message</label>
                                 <textarea rows={5} placeholder="Your message..." className="w-full bg-[#0F0F0E] border border-[#2A2A28] text-[#F2F0EB] p-3 rounded-sm font-ui text-sm focus:outline-none focus:border-[#E8A020] resize-none"></textarea>
                             </div>
 

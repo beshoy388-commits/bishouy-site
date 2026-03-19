@@ -122,7 +122,7 @@ export default function Register() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <motion.div variants={itemVariants} className="space-y-2">
-              <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
+              <label className="font-ui text-[10px] font-semibold text-[#E8A020] tracking-widest block">
                 Full Name
               </label>
               <div className="relative">
@@ -144,7 +144,7 @@ export default function Register() {
             </motion.div>
 
             <motion.div variants={itemVariants} className="space-y-2">
-              <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
+              <label className="font-ui text-[10px] font-semibold text-[#E8A020] tracking-widest block">
                 Email Address
               </label>
               <div className="relative">
@@ -180,7 +180,7 @@ export default function Register() {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        className="text-[9px] text-red-500 font-600 uppercase tracking-tighter"
+                        className="text-[9px] text-red-500 font-semibold uppercase tracking-tighter"
                     >
                         Email already registered.
                     </motion.p>
@@ -190,7 +190,7 @@ export default function Register() {
 
             <motion.div variants={itemVariants} className="space-y-4">
               <div className="space-y-2">
-                <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
+                <label className="font-ui text-[10px] font-semibold text-[#E8A020] tracking-widest block">
                   Password
                 </label>
                 <div className="relative">
@@ -235,7 +235,7 @@ export default function Register() {
               </div>
 
               <div className="space-y-2">
-                <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
+                <label className="font-ui text-[10px] font-semibold text-[#E8A020] tracking-widest block">
                   Confirm Password
                 </label>
                 <div className="relative">
@@ -289,7 +289,7 @@ export default function Register() {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={registerMutation.isPending || availability?.available === false}
-              className="w-full bg-[#F2F0EB] hover:bg-[#E8A020] hover:text-[#0F0F0E] disabled:opacity-50 text-[#0F0F0E] font-ui text-[10px] font-600 uppercase tracking-widest py-3 rounded-sm flex items-center justify-center gap-2 transition-all duration-300"
+              className="w-full bg-[#F2F0EB] hover:bg-[#E8A020] hover:text-[#0F0F0E] disabled:opacity-50 text-[#0F0F0E] font-ui text-[10px] font-semibold uppercase tracking-widest py-3 rounded-sm flex items-center justify-center gap-2 transition-all duration-300"
             >
               {registerMutation.isPending ? (
                 <Loader2 className="animate-spin" size={16} />
@@ -304,7 +304,7 @@ export default function Register() {
             Already have an account?{" "}
             <Link
               href="/login"
-              className="text-[#E8A020] hover:underline font-600"
+              className="text-[#E8A020] hover:underline font-semibold"
             >
               Sign In
             </Link>

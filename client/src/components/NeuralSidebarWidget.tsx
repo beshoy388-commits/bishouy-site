@@ -29,7 +29,7 @@ export default function NeuralSidebarWidget({ category = "Intelligence" }: { cat
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-[#E8A020] animate-pulse" />
-            <span className="text-[10px] font-900 text-[#F2F0EB] uppercase tracking-[0.3em] font-ui">Neural Monitor</span>
+            <span className="text-[10px] font-black text-[#F2F0EB] uppercase tracking-[0.3em] font-ui">Neural Monitor</span>
           </div>
           <Zap size={12} className="text-[#E8A020]" />
         </div>
@@ -39,7 +39,7 @@ export default function NeuralSidebarWidget({ category = "Intelligence" }: { cat
           <div>
             <div className="flex justify-between items-end mb-1">
               <span className="text-[9px] text-[#555550] uppercase tracking-widest font-ui">Integrity Index</span>
-              <span className="text-xl font-serif text-[#F2F0EB] font-900">{pulse}%</span>
+              <span className="text-xl font-serif text-[#F2F0EB] font-black">{pulse}%</span>
             </div>
             <div className="h-1 w-full bg-[#1C1C1A] rounded-full overflow-hidden">
               <motion.div 
@@ -83,7 +83,7 @@ export default function NeuralSidebarWidget({ category = "Intelligence" }: { cat
         <div className="mt-8 pt-4 border-t border-[#1C1C1A] flex items-center justify-between">
            <div className="flex items-center gap-2">
              <Activity size={10} className="text-[#E8A020] animate-pulse" />
-             <span className="text-[8px] text-[#555550] uppercase tracking-widest font-800">Neural Link Stable</span>
+             <span className="text-[8px] text-[#555550] uppercase tracking-widest font-extrabold">Neural Link Stable</span>
            </div>
            <span className="text-[8px] text-[#333330] font-mono">NODE_ID: {Math.floor(Math.random() * 10000)}</span>
         </div>

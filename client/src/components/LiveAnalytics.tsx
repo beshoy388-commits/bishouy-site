@@ -66,7 +66,7 @@ export default function LiveAnalytics() {
                 {/* Visitors List */}
                 <div className="lg:col-span-2 space-y-4">
                     <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-ui text-[10px] font-900 text-[#F2F0EB] uppercase tracking-[0.2em] flex items-center gap-2">
+                        <h3 className="font-ui text-[10px] font-black text-[#F2F0EB] uppercase tracking-[0.2em] flex items-center gap-2">
                             <Zap size={14} className="text-[#E8A020]" />
                             Real-Time Access Log
                         </h3>
@@ -129,7 +129,7 @@ export default function LiveAnalytics() {
                             <Card className="bg-[#1C1C1A] border-[#2A2A28] overflow-hidden animate-fade-in shadow-2xl">
                                 <div className="p-6 border-b border-[#2A2A28] bg-gradient-to-br from-[#1C1C1A] to-[#11110F]">
                                     <div className="flex items-center justify-between mb-6">
-                                        <h3 className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.2em]">Node Investigation</h3>
+                                        <h3 className="font-ui text-[10px] font-black text-[#E8A020] uppercase tracking-[0.2em]">Node Investigation</h3>
                                         <button
                                             onClick={() => setSelectedVisitor(null)}
                                             className="p-1 text-[#555550] hover:text-[#F2F0EB]"
@@ -153,7 +153,7 @@ export default function LiveAnalytics() {
                                         <div className="flex items-start gap-4">
                                             <MapPin size={16} className="text-[#8A8880] mt-1" />
                                             <div>
-                                                <p className="text-[10px] font-ui font-900 text-[#333330] uppercase tracking-widest mb-1">IP ADDRESS & ORIGIN</p>
+                                                <p className="text-[10px] font-ui font-black text-[#333330] uppercase tracking-widest mb-1">IP ADDRESS & ORIGIN</p>
                                                 <p className="text-xs text-[#F2F0EB] font-bold">{selectedVisitor.ipAddress}</p>
                                                 <p className="text-[10px] text-[#555550] font-bold uppercase mt-1">Location: {selectedVisitor.location || 'Detecting...'}</p>
                                             </div>
@@ -162,7 +162,7 @@ export default function LiveAnalytics() {
                                         <div className="flex items-start gap-4">
                                             <Monitor size={16} className="text-[#8A8880] mt-1" />
                                             <div>
-                                                <p className="text-[10px] font-ui font-900 text-[#333330] uppercase tracking-widest mb-1">SYSTEM CONFIGURATION</p>
+                                                <p className="text-[10px] font-ui font-black text-[#333330] uppercase tracking-widest mb-1">SYSTEM CONFIGURATION</p>
                                                 <p className="text-[10px] text-[#D4D0C8] font-bold leading-relaxed">{selectedVisitor.userAgent}</p>
                                             </div>
                                         </div>
@@ -170,7 +170,7 @@ export default function LiveAnalytics() {
                                         <div className="flex items-start gap-4">
                                             <Activity size={16} className="text-[#8A8880] mt-1" />
                                             <div>
-                                                <p className="text-[10px] font-ui font-900 text-[#333330] uppercase tracking-widest mb-1">CURRENT TRAJECTORY</p>
+                                                <p className="text-[10px] font-ui font-black text-[#333330] uppercase tracking-widest mb-1">CURRENT TRAJECTORY</p>
                                                 <a
                                                     href={selectedVisitor.currentPath}
                                                     target="_blank"
@@ -185,7 +185,7 @@ export default function LiveAnalytics() {
                                     </div>
 
                                     <div className="pt-6 border-t border-[#2A2A28]">
-                                        <p className="text-[9px] text-[#333330] font-ui uppercase font-900 tracking-[0.2em] mb-4">Activity Timeline</p>
+                                        <p className="text-[9px] text-[#333330] font-ui uppercase font-black tracking-[0.2em] mb-4">Activity Timeline</p>
                                         <div className="space-y-3">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />

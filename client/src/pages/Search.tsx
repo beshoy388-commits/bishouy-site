@@ -64,7 +64,7 @@ export default function Search() {
           </Link>
 
           <div className="max-w-2xl mx-auto">
-            <h1 className="font-display text-3xl md:text-4xl font-900 text-[#F2F0EB] mb-6">
+            <h1 className="font-display text-3xl md:text-4xl font-black text-[#F2F0EB] mb-6">
               Search Articles
             </h1>
 
@@ -81,7 +81,7 @@ export default function Search() {
               </div>
               <button
                 type="submit"
-                className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors"
+                className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-wider px-6 py-3 rounded-sm transition-colors"
               >
                 <SearchIcon size={16} />
                 Search

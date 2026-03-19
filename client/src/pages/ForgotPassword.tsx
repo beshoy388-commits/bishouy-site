@@ -67,7 +67,7 @@ export default function ForgotPassword() {
                 instructions.
               </p>
               <Link href="/login">
-                <button className="w-full bg-[#2A2A28] hover:bg-[#333330] text-[#E8A020] font-ui text-xs font-600 uppercase tracking-widest py-3 px-4 rounded-sm transition-colors border border-[#E8A020]/20">
+                <button className="w-full bg-[#2A2A28] hover:bg-[#333330] text-[#E8A020] font-ui text-xs font-semibold uppercase tracking-widest py-3 px-4 rounded-sm transition-colors border border-[#E8A020]/20">
                   Return to Login
                 </button>
               </Link>
@@ -75,7 +75,7 @@ export default function ForgotPassword() {
           ) : (
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-xs font-ui uppercase font-600 text-[#8A8880] tracking-widest">
+                <label className="text-xs font-ui uppercase font-semibold text-[#8A8880] tracking-widest">
                   Email
                 </label>
                 <input
@@ -106,7 +106,7 @@ export default function ForgotPassword() {
               <button
                 type="submit"
                 disabled={forgotPasswordMutation.isPending}
-                className="w-full bg-[#E8A020] hover:bg-[#F2F0EB] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-widest py-3 px-4 rounded-sm transition-colors flex justify-center items-center"
+                className="w-full bg-[#E8A020] hover:bg-[#F2F0EB] text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-widest py-3 px-4 rounded-sm transition-colors flex justify-center items-center"
               >
                 {forgotPasswordMutation.isPending ? (
                   <Loader2 className="animate-spin" size={16} />

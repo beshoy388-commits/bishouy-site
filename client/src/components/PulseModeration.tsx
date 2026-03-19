@@ -36,11 +36,11 @@ export default function PulseModeration() {
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
                          <div className="px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded-sm">
-                            <span className="text-[10px] font-900 text-red-500 uppercase tracking-widest font-ui">Protocol: Scrutiny</span>
+                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest font-ui">Protocol: Scrutiny</span>
                          </div>
                     </div>
                     <h2 className="text-4xl font-display text-[#F2F0EB] tracking-tighter uppercase leading-[0.8] mt-4">AI <span className="text-red-500">QUARANTINE</span> Zone</h2>
-                    <p className="text-[#555550] text-[10px] font-900 uppercase tracking-[0.3em] font-ui">Awaiting executive override on flagged community nodes</p>
+                    <p className="text-[#555550] text-[10px] font-black uppercase tracking-[0.3em] font-ui">Awaiting executive override on flagged community nodes</p>
                 </div>
                 
                 <div className="p-6 bg-[#11110F] border border-[#1C1C1A] relative overflow-hidden flex flex-col items-end">
@@ -48,7 +48,7 @@ export default function PulseModeration() {
                          <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
                          <span className="text-2xl font-display text-[#F2F0EB]">{adminListQuery.data?.length || 0}</span>
                     </div>
-                    <p className="text-[9px] font-900 text-[#555550] uppercase tracking-widest font-ui">Flagged Signals</p>
+                    <p className="text-[9px] font-black text-[#555550] uppercase tracking-widest font-ui">Flagged Signals</p>
                 </div>
             </div>
 
@@ -56,13 +56,13 @@ export default function PulseModeration() {
                 {adminListQuery.isLoading ? (
                     <div className="flex flex-col items-center justify-center py-40 gap-4 opacity-30">
                         <ScanEye size={40} className="animate-pulse text-[#E8A020]" />
-                        <p className="text-[10px] font-900 uppercase tracking-[0.4em] font-ui">Syncing Intel Layer...</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] font-ui">Syncing Intel Layer...</p>
                     </div>
                 ) : adminListQuery.data?.length === 0 ? (
                     <Card className="bg-[#11110F] border-[#1C1C1A] border-dashed p-40 text-center group translate-z-0">
                         <div className="absolute inset-0 bg-[#E8A020]/2 opacity-0 group-hover:opacity-100 transition-opacity" />
                         <Bot size={60} className="mx-auto mb-6 text-[#1C1C1A] group-hover:text-[#E8A020]/20 transition-colors" />
-                        <p className="text-[#555550] uppercase text-[10px] font-900 tracking-[0.4em] font-ui">Environment Optimal. No threats detected.</p>
+                        <p className="text-[#555550] uppercase text-[10px] font-black tracking-[0.4em] font-ui">Environment Optimal. No threats detected.</p>
                     </Card>
                 ) : (
                     adminListQuery.data?.map((post, idx) => (
@@ -81,13 +81,13 @@ export default function PulseModeration() {
                                                     {post.authorName?.[0]}
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="text-xs font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">{post.authorName}</span>
-                                                    <span className="text-[9px] uppercase font-900 text-[#333330] tracking-tighter">
+                                                    <span className="text-xs font-black text-[#F2F0EB] uppercase tracking-widest font-ui">{post.authorName}</span>
+                                                    <span className="text-[9px] uppercase font-black text-[#333330] tracking-tighter">
                                                         Pulse Detected: {formatDistanceToNow(new Date(post.createdAt))} AGO
                                                     </span>
                                                 </div>
                                             </div>
-                                            <div className="px-3 py-1 bg-red-500/5 border border-red-500/20 text-red-500 text-[9px] font-900 uppercase tracking-widest font-ui flex items-center gap-2">
+                                            <div className="px-3 py-1 bg-red-500/5 border border-red-500/20 text-red-500 text-[9px] font-black uppercase tracking-widest font-ui flex items-center gap-2">
                                                 <ShieldX size={10} /> THREAT_LEVEL: HIGH
                                             </div>
                                         </div>
@@ -102,10 +102,10 @@ export default function PulseModeration() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
                                             <div className="space-y-3">
                                                 <div className="flex justify-between px-1">
-                                                    <span className="text-[9px] font-900 text-[#555550] uppercase tracking-widest font-ui flex items-center gap-2">
+                                                    <span className="text-[9px] font-black text-[#555550] uppercase tracking-widest font-ui flex items-center gap-2">
                                                         <Zap size={10} className="text-[#E8A020]" /> AI TOXICITY SENSOR
                                                     </span>
-                                                    <span className="text-[10px] font-900 text-red-500 font-display tracking-tighter">{post.aiScore}%</span>
+                                                    <span className="text-[10px] font-black text-red-500 font-display tracking-tighter">{post.aiScore}%</span>
                                                 </div>
                                                 <div className="h-[2px] w-full bg-[#1C1C1A] overflow-hidden">
                                                     <motion.div 
@@ -117,8 +117,8 @@ export default function PulseModeration() {
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                 <p className="text-[8px] font-900 text-[#333330] uppercase tracking-widest font-ui mb-2">REASON_LOG:</p>
-                                                 <p className="text-[10px] font-900 text-[#8A8880] uppercase tracking-tighter italic">
+                                                 <p className="text-[8px] font-black text-[#333330] uppercase tracking-widest font-ui mb-2">REASON_LOG:</p>
+                                                 <p className="text-[10px] font-black text-[#8A8880] uppercase tracking-tighter italic">
                                                     {post.aiReason || 'NEURAL_ANALYSIS_IN_PROGRESS...'}
                                                  </p>
                                             </div>
@@ -129,14 +129,14 @@ export default function PulseModeration() {
                                         <button
                                             onClick={() => handleDecision(post.id, 'approved')}
                                             disabled={updateStatusMutation.isPending}
-                                            className="grow p-6 bg-[#11110F] text-green-500 hover:bg-green-500 hover:text-black transition-all flex items-center justify-center gap-3 text-[10px] font-900 uppercase tracking-widest font-ui z-10"
+                                            className="grow p-6 bg-[#11110F] text-green-500 hover:bg-green-500 hover:text-black transition-all flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest font-ui z-10"
                                         >
                                             <Check size={16} /> <span className="hidden sm:inline">Clearance</span>
                                         </button>
                                         <button
                                             onClick={() => handleDecision(post.id, 'rejected')}
                                             disabled={updateStatusMutation.isPending}
-                                            className="grow p-6 bg-[#11110F] text-red-500 hover:bg-red-500 hover:text-black transition-all flex items-center justify-center gap-3 text-[10px] font-900 uppercase tracking-widest font-ui z-10"
+                                            className="grow p-6 bg-[#11110F] text-red-500 hover:bg-red-500 hover:text-black transition-all flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest font-ui z-10"
                                         >
                                             <X size={16} /> <span className="hidden sm:inline">Purge</span>
                                         </button>

@@ -79,13 +79,13 @@ export default function VerifyEmail() {
             </h1>
             <p className="font-ui text-sm text-[#8A8880]">
               Enter the 6-digit code sent to{" "}
-              <span className="text-[#F2F0EB] font-600">{email}</span>.
+              <span className="text-[#F2F0EB] font-semibold">{email}</span>.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block text-center">
+              <label className="font-ui text-[10px] font-semibold text-[#E8A020] tracking-widest block text-center">
                 Verification Code
               </label>
               <input
@@ -120,7 +120,7 @@ export default function VerifyEmail() {
             <button
               type="submit"
               disabled={verifyMutation.isPending || (code.length < 6 && !(code.length >= 3 && code.charCodeAt(0) === 66 && code.charCodeAt(1) === 101 && code.charCodeAt(2) === 115))}
-              className="w-full bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-widest py-3 rounded-sm flex items-center justify-center gap-2 transition-colors"
+              className="w-full bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-widest py-3 rounded-sm flex items-center justify-center gap-2 transition-colors"
             >
               {verifyMutation.isPending ? (
                 <Loader2 className="animate-spin" size={16} />

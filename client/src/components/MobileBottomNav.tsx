@@ -18,7 +18,7 @@ export default function MobileBottomNav({ onSearchClick }: { onSearchClick: () =
                             <div className={`p-1.5 rounded-full transition-colors ${isActive("/") ? "bg-[#E8A020]/10" : "bg-transparent"}`}>
                                 <Home size={18} strokeWidth={isActive("/") ? 2.5 : 2} />
                             </div>
-                            <span className="text-[7px] font-ui font-900 uppercase tracking-widest leading-none">Home</span>
+                            <span className="text-[7px] font-ui font-black uppercase tracking-widest leading-none">Home</span>
                         </button>
                     </Link>
 
@@ -28,7 +28,7 @@ export default function MobileBottomNav({ onSearchClick }: { onSearchClick: () =
                             <div className={`p-1.5 rounded-full transition-colors ${location.startsWith("/category") ? "bg-[#E8A020]/10" : "bg-transparent"}`}>
                                 <Newspaper size={18} strokeWidth={location.startsWith("/category") ? 2.5 : 2} />
                             </div>
-                            <span className="text-[7px] font-ui font-900 uppercase tracking-widest leading-none text-center">News</span>
+                            <span className="text-[7px] font-ui font-black uppercase tracking-widest leading-none text-center">News</span>
                         </button>
                     </Link>
 
@@ -39,7 +39,7 @@ export default function MobileBottomNav({ onSearchClick }: { onSearchClick: () =
                                 <div className={`w-11 h-11 rounded-full flex items-center justify-center shadow-[0_8px_20px_-5px_rgba(232,160,32,0.3)] transition-all duration-500 transform ${isActive("/ai") ? "bg-[#E8A020] scale-110" : "bg-[#11110F] hover:bg-[#1C1C1A] active:scale-95"} border-2 border-[#0F0F0E]`}>
                                     <Sparkles size={18} className={isActive("/ai") ? "text-[#0F0F0E]" : "text-[#E8A020]"} fill={isActive("/ai") ? "currentColor" : "none"} />
                                 </div>
-                                <span className={`text-[6px] font-ui font-900 uppercase tracking-[0.2em] mt-1 whitespace-nowrap px-1.5 py-0.5 rounded-sm bg-[#0F0F0E]/80 backdrop-blur-md ${isActive("/ai") ? "text-[#E8A020]" : "text-[#8A8880]"}`}>AI CORE</span>
+                                <span className={`text-[6px] font-ui font-black uppercase tracking-[0.2em] mt-1 whitespace-nowrap px-1.5 py-0.5 rounded-sm bg-[#0F0F0E]/80 backdrop-blur-md ${isActive("/ai") ? "text-[#E8A020]" : "text-[#8A8880]"}`}>AI CORE</span>
                             </button>
                         </Link>
                     </div>
@@ -52,7 +52,7 @@ export default function MobileBottomNav({ onSearchClick }: { onSearchClick: () =
                         <div className="p-1.5">
                             <Search size={18} strokeWidth={2} />
                         </div>
-                        <span className="text-[7px] font-ui font-900 uppercase tracking-widest leading-none">Search</span>
+                        <span className="text-[7px] font-ui font-black uppercase tracking-widest leading-none">Search</span>
                     </button>
 
                     {/* Profile/Login */}
@@ -68,7 +68,7 @@ export default function MobileBottomNav({ onSearchClick }: { onSearchClick: () =
                                         <User size={18} strokeWidth={isActive("/profile") ? 2.5 : 2} />
                                     </div>
                                 )}
-                                <span className="text-[7px] font-ui font-900 uppercase tracking-widest leading-none">Profile</span>
+                                <span className="text-[7px] font-ui font-black uppercase tracking-widest leading-none">Profile</span>
                             </button>
                         </Link>
                     ) : (
@@ -77,7 +77,7 @@ export default function MobileBottomNav({ onSearchClick }: { onSearchClick: () =
                                 <div className={`p-1.5 rounded-full transition-colors ${isActive("/login") ? "bg-[#E8A020]/10" : "bg-transparent"}`}>
                                     <User size={18} strokeWidth={isActive("/login") ? 2.5 : 2} />
                                 </div>
-                                <span className="text-[7px] font-ui font-900 uppercase tracking-widest leading-none">Login</span>
+                                <span className="text-[7px] font-ui font-black uppercase tracking-widest leading-none">Login</span>
                             </button>
                         </Link>
                     )}

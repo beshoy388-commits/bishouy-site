@@ -65,7 +65,7 @@ export default function GlobalComments() {
         <div className="flex bg-[#1C1C1A] border border-[#2A2A28] rounded-sm p-1 w-full lg:w-auto">
           <button
             onClick={() => setFilter("pending")}
-            className={`flex-1 lg:flex-none px-4 py-2.5 text-[10px] md:text-xs font-ui font-600 uppercase tracking-widest transition-colors rounded-sm flex items-center justify-center gap-2 ${
+            className={`flex-1 lg:flex-none px-4 py-2.5 text-[10px] md:text-xs font-ui font-semibold uppercase tracking-widest transition-colors rounded-sm flex items-center justify-center gap-2 ${
               filter === "pending"
                 ? "bg-[#E8A020] text-[#0F0F0E]"
                 : "text-[#8A8880] hover:text-[#F2F0EB]"
@@ -81,7 +81,7 @@ export default function GlobalComments() {
           </button>
           <button
             onClick={() => setFilter("all")}
-            className={`flex-1 lg:flex-none px-4 py-2.5 text-[10px] md:text-xs font-ui font-600 uppercase tracking-widest transition-colors rounded-sm flex items-center justify-center gap-2 ${
+            className={`flex-1 lg:flex-none px-4 py-2.5 text-[10px] md:text-xs font-ui font-semibold uppercase tracking-widest transition-colors rounded-sm flex items-center justify-center gap-2 ${
               filter === "all"
                 ? "bg-[#333330] text-[#E8A020]"
                 : "text-[#8A8880] hover:text-[#F2F0EB]"

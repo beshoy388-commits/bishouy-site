@@ -94,7 +94,7 @@ export default function UserStatusMonitor() {
                         </h2>
 
                         <div className="bg-[#0A0A09] border border-[#1C1C1A] p-6 rounded-xl mb-8 text-left">
-                            <p className="text-[10px] text-[#555550] uppercase tracking-widest font-900 mb-3">Formal communication from administration:</p>
+                            <p className="text-[10px] text-[#555550] uppercase tracking-widest font-black mb-3">Formal communication from administration:</p>
                             <p className="text-[#D4D0C8] font-ui leading-relaxed text-sm italic">
                                 "{localUser.statusMessage}"
                             </p>

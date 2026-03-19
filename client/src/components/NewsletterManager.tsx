@@ -124,13 +124,13 @@ export default function NewsletterManager() {
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
           <div className="flex items-center gap-3 bg-[#1C1C1A] border border-[#2A2A28] px-4 py-2 rounded-sm w-full sm:w-auto justify-center">
             <Users size={16} className="text-[#E8A020]" />
-            <span className="font-ui text-[10px] sm:text-xs font-600 uppercase tracking-widest text-[#F2F0EB]">
+            <span className="font-ui text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-[#F2F0EB]">
               {activeSubscribersCount} Active Subscribers
             </span>
           </div>
           <button
             onClick={handleTestDaily}
-            className="flex items-center justify-center gap-2 bg-[#1C1C1A] border border-blue-500/30 hover:border-blue-500 text-blue-400 font-ui text-[10px] md:text-xs font-600 uppercase tracking-wider px-4 py-2.5 rounded-sm transition-colors w-full sm:w-auto"
+            className="flex items-center justify-center gap-2 bg-[#1C1C1A] border border-blue-500/30 hover:border-blue-500 text-blue-400 font-ui text-[10px] md:text-xs font-semibold uppercase tracking-wider px-4 py-2.5 rounded-sm transition-colors w-full sm:w-auto"
             disabled={testDailyMutation.isPending}
           >
             <Zap size={14} className={testDailyMutation.isPending ? "animate-pulse" : ""} />
@@ -144,7 +144,7 @@ export default function NewsletterManager() {
           <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block flex items-center gap-1">
+                <label className="font-ui text-[10px] font-semibold text-[#E8A020] uppercase tracking-widest block flex items-center gap-1">
                   <Type size={12} /> Email Subject
                 </label>
                 <input
@@ -158,7 +158,7 @@ export default function NewsletterManager() {
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest block flex items-center gap-1">
+                  <label className="font-ui text-[10px] font-semibold text-[#E8A020] uppercase tracking-widest block flex items-center gap-1">
                     <Layout size={12} /> Email Body (HTML Supported)
                   </label>
                   <div className="flex items-center gap-1">
@@ -229,7 +229,7 @@ export default function NewsletterManager() {
                   disabled={
                     broadcastMutation.isPending || activeSubscribersCount === 0
                   }
-                  className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-sm font-600 uppercase tracking-wider px-6 py-3 rounded-sm transition-colors"
+                  className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-sm font-semibold uppercase tracking-wider px-6 py-3 rounded-sm transition-colors"
                 >
                   {broadcastMutation.isPending ? (
                     <Loader2 size={16} className="animate-spin" />
@@ -245,7 +245,7 @@ export default function NewsletterManager() {
           <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
             <div className="flex items-center gap-2 mb-6">
               <Mail size={16} className="text-[#E8A020]" />
-              <h3 className="font-ui text-xs font-600 text-[#F2F0EB] uppercase tracking-widest">
+              <h3 className="font-ui text-xs font-semibold text-[#F2F0EB] uppercase tracking-widest">
                 Sent History
               </h3>
             </div>
@@ -262,7 +262,7 @@ export default function NewsletterManager() {
                     className="p-4 bg-[#0F0F0E] border border-[#222220] rounded-sm group hover:border-[#E8A020]/30 transition-colors"
                   >
                     <div className="flex justify-between items-start mb-2">
-                      <h4 className="text-sm font-600 text-[#F2F0EB]">
+                      <h4 className="text-sm font-semibold text-[#F2F0EB]">
                         {item.subject}
                       </h4>
                       <span className="text-[10px] font-ui text-[#8A8880] uppercase bg-[#1C1C1A] px-2 py-0.5 rounded-full">
@@ -286,7 +286,7 @@ export default function NewsletterManager() {
 
         <div className="space-y-6">
           <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
-            <h3 className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest mb-4">
+            <h3 className="font-ui text-xs font-semibold text-[#E8A020] uppercase tracking-widest mb-4">
               Subscriber Management
             </h3>
             {listQuery.isLoading ? (

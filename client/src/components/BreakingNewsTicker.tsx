@@ -29,7 +29,7 @@ export default function BreakingNewsTicker() {
         {/* Label */}
         <div className="flex-shrink-0 bg-[#0F0F0E] pl-4 pr-3 py-2 flex items-center gap-2 z-10 notranslate border-r border-[#2A2A28]">
           <span className="w-1.5 h-1.5 rounded-full bg-[#E8A020] animate-pulse" />
-          <span className="font-ui text-[9px] font-800 text-[#E8A020] uppercase tracking-[0.2em] whitespace-nowrap">
+          <span className="font-ui text-[9px] font-extrabold text-[#E8A020] uppercase tracking-[0.2em] whitespace-nowrap">
             Breaking
           </span>
         </div>

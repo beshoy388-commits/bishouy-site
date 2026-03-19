@@ -32,13 +32,13 @@ export default function GlobalAudioPlayer() {
 
               <div className="flex-1 min-w-0">
                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[8px] font-900 text-[#E8A020] uppercase tracking-[0.3em] font-ui">Neural Link Active</span>
+                    <span className="text-[8px] font-black text-[#E8A020] uppercase tracking-[0.3em] font-ui">Neural Link Active</span>
                     <Headphones size={8} className="text-[#8A8880]" />
                  </div>
                  <h4 className="text-[11px] font-headline font-700 text-[#F2F0EB] truncate pr-4">
                     {currentTitle}
                  </h4>
-                 <div className="flex items-center gap-1 mt-1 text-[8px] text-[#555550] uppercase tracking-widest font-800">
+                 <div className="flex items-center gap-1 mt-1 text-[8px] text-[#555550] uppercase tracking-widest font-extrabold">
                     <div className="flex gap-[2px] items-end h-2">
                          <div className="w-0.5 bg-[#E8A020] animate-[bounce_0.6s_infinite] h-full" />
                          <div className="w-0.5 bg-[#E8A020] animate-[bounce_0.6s_infinite_100ms] h-1/2" />

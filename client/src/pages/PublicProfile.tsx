@@ -46,7 +46,7 @@ export default function PublicProfile() {
         <main className="flex-1 flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
                 <Loader2 className="animate-spin text-[#E8A020]" size={40} />
-                <span className="text-[10px] font-900 text-[#555550] uppercase tracking-[0.3em]">Accessing Dossier Node...</span>
+                <span className="text-[10px] font-black text-[#555550] uppercase tracking-[0.3em]">Accessing Dossier Node...</span>
             </div>
         </main>
       </div>
@@ -123,13 +123,13 @@ export default function PublicProfile() {
                             <span className={`agent-status-tag ${profile.role === 'admin' ? 'status-admin' : 'status-active'}`}>
                                 {profile.role === 'admin' ? 'Sovereign Admin' : 'Active Analyst'}
                             </span>
-                            <span className="text-[10px] text-[#555550] uppercase tracking-widest font-800">Verified Identity</span>
+                            <span className="text-[10px] text-[#555550] uppercase tracking-widest font-extrabold">Verified Identity</span>
                         </div>
 
                         <h1 className="font-display text-5xl md:text-6xl text-[#F2F0EB] mb-2 uppercase tracking-tighter">
                             {profile.name}
                         </h1>
-                        <p className="font-ui text-xs text-[#E8A020] font-900 tracking-[0.3em] uppercase mb-8">
+                        <p className="font-ui text-xs text-[#E8A020] font-black tracking-[0.3em] uppercase mb-8">
                             Node / {profile.username}
                         </p>
 
@@ -155,13 +155,13 @@ export default function PublicProfile() {
                 {/* Bio / Strategic Summary */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
                     <div className="md:col-span-2">
-                        <h3 className="font-ui text-[9px] font-900 text-[#555550] uppercase tracking-[0.4em] mb-4">Strategic Summary</h3>
+                        <h3 className="font-ui text-[9px] font-black text-[#555550] uppercase tracking-[0.4em] mb-4">Strategic Summary</h3>
                         <p className="text-[#D4D0C8] text-lg leading-relaxed italic font-serif opacity-80 decoration-[#E8A020]/20 underline-offset-8 underline">
                             "{profile.bio || "No summary provided for this node. Identity currently understated."}"
                         </p>
                     </div>
                     <div className="bg-[#11110F] border border-[#1C1C1A] p-6">
-                        <h3 className="font-ui text-[9px] font-900 text-[#555550] uppercase tracking-[0.2em] mb-4">System Status</h3>
+                        <h3 className="font-ui text-[9px] font-black text-[#555550] uppercase tracking-[0.2em] mb-4">System Status</h3>
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
                                 <span className="text-[10px] text-[#555550] uppercase">Trust Rating</span>
@@ -178,7 +178,7 @@ export default function PublicProfile() {
                 {/* Tactical History / Comments */}
                 <div>
                   <div className="flex items-center justify-between mb-8 pb-4 border-b border-[#1C1C1A]">
-                    <h2 className="font-ui text-[10px] font-900 text-[#F2F0EB] uppercase tracking-[0.4em] flex items-center gap-3">
+                    <h2 className="font-ui text-[10px] font-black text-[#F2F0EB] uppercase tracking-[0.4em] flex items-center gap-3">
                         <MessageSquare size={14} className="text-[#E8A020]" />
                         Analytical History
                     </h2>

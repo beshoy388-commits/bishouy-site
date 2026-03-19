@@ -92,7 +92,7 @@ export default function NewsletterModal() {
                                 {!isSubscribed ? (
                                     <>
                                         <div className="mb-8">
-                                            <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.3em] block mb-2">Protocol: Subscription</span>
+                                            <span className="text-[10px] font-black text-[#E8A020] uppercase tracking-[0.3em] block mb-2">Protocol: Subscription</span>
                                             <h2 className="font-display text-3xl text-[#F2F0EB] mb-4 leading-tight text-white">Don't just read the news. <span className="text-[#E8A020]">Understand the connections.</span></h2>
                                             <p className="text-[#8A8880] text-sm leading-relaxed">
                                                 Join 45,000+ global analysts receiving our daily neural synthesis of geopolitical and technological shifts.
@@ -113,7 +113,7 @@ export default function NewsletterModal() {
                                             </div>
                                             <button 
                                                 disabled={isLoading}
-                                                className="w-full bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-900 uppercase tracking-[0.2em] py-5 rounded-sm transition-all flex items-center justify-center gap-2 group"
+                                                className="w-full bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-black uppercase tracking-[0.2em] py-5 rounded-sm transition-all flex items-center justify-center gap-2 group"
                                             >
                                                 {isLoading ? (
                                                     <Loader2 className="animate-spin" size={18} />

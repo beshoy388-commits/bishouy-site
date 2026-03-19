@@ -34,7 +34,7 @@ export default function AIEthics() {
             <main className="flex-1 container pb-24 pt-12">
                 <div className="max-w-4xl mx-auto">
                     <div className="mb-16 border-b border-[#1C1C1A] pb-12">
-                        <div className="inline-flex items-center gap-2 bg-[#E8A020]/10 text-[#E8A020] px-3 py-1 rounded-full text-[10px] font-900 uppercase tracking-widest mb-6">
+                        <div className="inline-flex items-center gap-2 bg-[#E8A020]/10 text-[#E8A020] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">
                             Protocol 7.0
                         </div>
                         <h1 className="font-display text-4xl md:text-6xl text-[#E8A020] mb-6">AI Ethics & Neural Transparency</h1>

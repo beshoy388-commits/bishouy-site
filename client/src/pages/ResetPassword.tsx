@@ -80,7 +80,7 @@ export default function ResetPassword() {
               The password reset token is missing or invalid.
             </p>
             <Link href="/forgot-password">
-              <button className="bg-[#E8A020] text-[#0F0F0E] px-6 py-2 rounded-sm font-ui text-xs font-600 uppercase tracking-widest">
+              <button className="bg-[#E8A020] text-[#0F0F0E] px-6 py-2 rounded-sm font-ui text-xs font-semibold uppercase tracking-widest">
                 Request New Link
               </button>
             </Link>
@@ -120,7 +120,7 @@ export default function ResetPassword() {
                 redirected to the login page momentarily.
               </p>
               <Link href="/login">
-                <button className="w-full bg-[#E8A020] hover:bg-[#F2F0EB] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-widest py-3 px-4 rounded-sm transition-colors">
+                <button className="w-full bg-[#E8A020] hover:bg-[#F2F0EB] text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-widest py-3 px-4 rounded-sm transition-colors">
                   Login Now
                 </button>
               </Link>
@@ -128,7 +128,7 @@ export default function ResetPassword() {
           ) : (
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-xs font-ui uppercase font-600 text-[#8A8880] tracking-widest">
+                <label className="text-xs font-ui uppercase font-semibold text-[#8A8880] tracking-widest">
                   New Password
                 </label>
                 <div className="relative">
@@ -150,7 +150,7 @@ export default function ResetPassword() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-ui uppercase font-600 text-[#8A8880] tracking-widest">
+                <label className="text-xs font-ui uppercase font-semibold text-[#8A8880] tracking-widest">
                   Confirm Password
                 </label>
                 <div className="relative">
@@ -174,7 +174,7 @@ export default function ResetPassword() {
               <button
                 type="submit"
                 disabled={resetPasswordMutation.isPending}
-                className="w-full bg-[#E8A020] hover:bg-[#F2F0EB] text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-widest py-3 px-4 rounded-sm transition-colors flex justify-center items-center"
+                className="w-full bg-[#E8A020] hover:bg-[#F2F0EB] text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-widest py-3 px-4 rounded-sm transition-colors flex justify-center items-center"
               >
                 {resetPasswordMutation.isPending ? (
                   <Loader2 className="animate-spin" size={16} />

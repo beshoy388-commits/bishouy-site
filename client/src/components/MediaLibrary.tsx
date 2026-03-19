@@ -112,7 +112,7 @@ export default function MediaLibrary() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="space-y-3">
-                            <label className="text-[10px] font-900 text-[#8A8880] uppercase tracking-widest">Output Resonance (Width)</label>
+                            <label className="text-[10px] font-black text-[#8A8880] uppercase tracking-widest">Output Resonance (Width)</label>
                             <input
                                 type="range" min="400" max="2500" step="100"
                                 value={procOptions.width}
@@ -122,7 +122,7 @@ export default function MediaLibrary() {
                             <p className="text-right text-[#E8A020] font-display text-sm font-bold tracking-tighter">{procOptions.width}px</p>
                         </div>
                         <div className="space-y-3">
-                            <label className="text-[10px] font-900 text-[#8A8880] uppercase tracking-widest">Vertical Index (Height)</label>
+                            <label className="text-[10px] font-black text-[#8A8880] uppercase tracking-widest">Vertical Index (Height)</label>
                             <input
                                 type="range" min="400" max="2500" step="100"
                                 value={procOptions.height}
@@ -132,7 +132,7 @@ export default function MediaLibrary() {
                             <p className="text-right text-[#E8A020] font-display text-sm font-bold tracking-tighter">{procOptions.height}px</p>
                         </div>
                         <div className="space-y-3">
-                            <label className="text-[10px] font-900 text-[#8A8880] uppercase tracking-widest">Processing Fit</label>
+                            <label className="text-[10px] font-black text-[#8A8880] uppercase tracking-widest">Processing Fit</label>
                             <select
                                 value={procOptions.fit}
                                 onChange={(e) => setProcOptions(prev => ({ ...prev, fit: e.target.value as any }))}
@@ -162,7 +162,7 @@ export default function MediaLibrary() {
                             <div className="w-16 h-16 rounded-full bg-[#11110F] border border-[#2A2A28] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                                 <Upload size={24} className="text-[#8A8880] group-hover:text-[#E8A020]" />
                             </div>
-                            <p className="text-[11px] font-ui font-900 text-[#F2F0EB] uppercase tracking-widest mb-1">Upload & Process</p>
+                            <p className="text-[11px] font-ui font-black text-[#F2F0EB] uppercase tracking-widest mb-1">Upload & Process</p>
                             <p className="text-[9px] text-[#555550] uppercase font-bold">Max 5MB Node</p>
                             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
                                 <Sparkles size={20} className="text-[#E8A020]" />
@@ -220,7 +220,7 @@ export default function MediaLibrary() {
                             </div>
 
                             <div className="p-4 border-t border-[#1C1C1A]">
-                                <p className="text-[10px] font-ui font-900 text-[#F2F0EB] truncate uppercase tracking-widest mb-1.5">
+                                <p className="text-[10px] font-ui font-black text-[#F2F0EB] truncate uppercase tracking-widest mb-1.5">
                                     {item.title}
                                 </p>
                                 <div className="flex items-center justify-between gap-4">

@@ -646,7 +646,7 @@ export default function ArticleDetail() {
             {article.breaking === 1 && (
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#E8A020] animate-pulse" />
-                <span className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest">
+                <span className="font-ui text-[10px] font-semibold text-[#E8A020] uppercase tracking-widest">
                   Breaking News
                 </span>
               </div>
@@ -656,7 +656,7 @@ export default function ArticleDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             {/* Main Content Column */}
             <div className="lg:col-span-8">
-              <h1 className="font-display text-4xl md:text-5xl font-900 text-[#F2F0EB] leading-tight mb-4">
+              <h1 className="font-display text-4xl md:text-5xl font-black text-[#F2F0EB] leading-tight mb-4">
                 <span>{article.title}</span>
               </h1>
               <p className="text-[#8A8880] text-xl mb-8 leading-relaxed italic border-l-4 border-[#E8A020] pl-6 uppercase tracking-tight">
@@ -675,7 +675,7 @@ export default function ArticleDetail() {
                     className={`${isAnimating && userLiked ? "animate-heart-burst" : ""}`}
                     fill={userLiked ? "currentColor" : "none"}
                   />
-                  <span className="font-ui text-[9px] font-900 uppercase tracking-widest leading-none">
+                  <span className="font-ui text-[9px] font-black uppercase tracking-widest leading-none">
                     {likeCount}
                   </span>
                 </button>
@@ -685,7 +685,7 @@ export default function ArticleDetail() {
                   className={`flex flex-col items-center justify-center gap-1.5 py-4 rounded-sm transition-all shadow-sm ${isSaved ? "bg-[#E8A020] text-[#0F0F0E]" : "bg-[#11110F] text-[#8A8880] border border-[#222220]"}`}
                 >
                   <Bookmark size={16} fill={isSaved ? "currentColor" : "none"} />
-                  <span className="font-ui text-[9px] font-900 uppercase tracking-widest leading-none">
+                  <span className="font-ui text-[9px] font-black uppercase tracking-widest leading-none">
                     {isSaved ? "Saved" : "Save"}
                   </span>
                 </button>
@@ -696,27 +696,27 @@ export default function ArticleDetail() {
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                     <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.292 19.49h2.039L6.486 3.24H4.298l13.311 17.403z" />
                   </svg>
-                  <span className="font-ui text-[9px] font-900 uppercase tracking-widest leading-none">Share</span>
+                  <span className="font-ui text-[9px] font-black uppercase tracking-widest leading-none">Share</span>
                 </button>
                 <button
                   onClick={() => handleShare("copy")}
                   className="flex flex-col items-center justify-center gap-1.5 py-4 bg-[#11110F] text-[#8A8880] border border-[#222220] rounded-sm transition-all"
                 >
                   <LinkIcon size={16} />
-                  <span className="font-ui text-[9px] font-900 uppercase tracking-widest leading-none">Link</span>
+                  <span className="font-ui text-[9px] font-black uppercase tracking-widest leading-none">Link</span>
                 </button>
               </div>
 
               {/* Neural Audio Briefing */}
               <div className="mb-8 flex items-center justify-between p-6 bg-[#11110F] border border-[#1C1C1A] rounded-sm group overflow-hidden relative shadow-lg">
                 <div className="relative z-10">
-                  <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.3em] block mb-2 font-ui">Neural Link Active</span>
+                  <span className="text-[10px] font-black text-[#E8A020] uppercase tracking-[0.3em] block mb-2 font-ui">Neural Link Active</span>
                   <h4 className="font-display text-lg text-[#F2F0EB]">Intelligence Audio Briefing</h4>
                   <p className="text-[10px] text-[#8A8880] mt-1 font-ui uppercase tracking-widest">Sintesi neurale in tempo reale</p>
                 </div>
                 <button 
                   onClick={handleAudioToggle}
-                  className="relative z-10 flex items-center gap-3 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] px-6 py-3 rounded-full font-ui text-[11px] font-900 uppercase tracking-widest transition-all shadow-xl hover:scale-105 active:scale-95 group/btn"
+                  className="relative z-10 flex items-center gap-3 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] px-6 py-3 rounded-full font-ui text-[11px] font-black uppercase tracking-widest transition-all shadow-xl hover:scale-105 active:scale-95 group/btn"
                 >
                   {isAudioPlaying ? (
                     <div className="flex gap-[2px] items-end h-3">
@@ -740,7 +740,7 @@ export default function ArticleDetail() {
                   <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                     <Zap size={80} className="text-[#E8A020]" />
                   </div>
-                  <h3 className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-4">The Intelligence Nexus</h3>
+                  <h3 className="font-ui text-[10px] font-black text-[#E8A020] uppercase tracking-[0.4em] mb-4">The Intelligence Nexus</h3>
                   <p className="font-display text-xl text-[#F2F0EB] leading-tight mb-4">
                     Strategic synthesis of the current intelligence node.
                   </p>
@@ -762,7 +762,7 @@ export default function ArticleDetail() {
                 
                 <div className="bg-[#0F0F0E] border border-[#1C1C1A] p-8 rounded-sm flex flex-col justify-between group hover:border-[#E8A020]/30 transition-colors">
                     <div>
-                        <h4 className="font-ui text-[9px] font-900 text-[#8A8880] uppercase tracking-[0.3em] mb-4">Node Metrics</h4>
+                        <h4 className="font-ui text-[9px] font-black text-[#8A8880] uppercase tracking-[0.3em] mb-4">Node Metrics</h4>
                         <div className="space-y-4">
                             <div className="flex justify-between items-center border-b border-[#1C1C1A] pb-2">
                                 <span className="text-[10px] text-[#555550] uppercase tracking-widest">Sentiment</span>
@@ -780,7 +780,7 @@ export default function ArticleDetail() {
                     </div>
                     <div className="mt-8 pt-4 border-t border-[#1C1C1A] flex items-center gap-2">
                         <Activity size={12} className="text-[#E8A020] animate-pulse" />
-                        <span className="text-[9px] text-[#8A8880] uppercase tracking-widest font-800">Neural Link Stable</span>
+                        <span className="text-[9px] text-[#8A8880] uppercase tracking-widest font-extrabold">Neural Link Stable</span>
                     </div>
                 </div>
               </div>
@@ -887,7 +887,7 @@ export default function ArticleDetail() {
                                   >
                                     {displayName}
                                     {c.userId && c.userId < 100 && (
-                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-[2px] bg-[#E8A020]/10 border border-[#E8A020]/30 text-[#E8A020] text-[8px] font-900 uppercase tracking-widest leading-none">
+                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-[2px] bg-[#E8A020]/10 border border-[#E8A020]/30 text-[#E8A020] text-[8px] font-black uppercase tracking-widest leading-none">
                                         Founding Member
                                       </span>
                                     )}
@@ -957,7 +957,7 @@ export default function ArticleDetail() {
                                     setEditingCommentId(null);
                                     setEditContent("");
                                   }}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-600 text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
+                                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-semibold text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
                                 >
                                   <X size={12} /> Cancel
                                 </button>
@@ -979,7 +979,7 @@ export default function ArticleDetail() {
                                     !editContent.trim() ||
                                     editCommentMutation.isPending
                                   }
-                                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-600 bg-[#2A2A28] text-[#E8A020] hover:bg-[#E8A020] hover:text-[#0F0F0E] rounded-sm transition-colors disabled:opacity-50"
+                                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-semibold bg-[#2A2A28] text-[#E8A020] hover:bg-[#E8A020] hover:text-[#0F0F0E] rounded-sm transition-colors disabled:opacity-50"
                                 >
                                   <Check size={12} /> Save
                                 </button>
@@ -1017,7 +1017,7 @@ export default function ArticleDetail() {
                       <button
                         onClick={handleSubmitComment}
                         disabled={isSubmitting || !commentText.trim()}
-                        className="mt-4 flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
+                        className="mt-4 flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
                       >
                         <Send size={14} />
                         {isSubmitting ? "Submitting..." : "Post Comment"}
@@ -1032,7 +1032,7 @@ export default function ArticleDetail() {
                       </p>
                       <Link
                         href={getLoginUrl()}
-                        className="inline-flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] hover:scale-105 active:scale-95 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-widest px-8 py-3 rounded-sm transition-all shadow-lg shadow-[#E8A020]/10"
+                        className="inline-flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] hover:scale-105 active:scale-95 text-[#0F0F0E] font-ui text-xs font-semibold uppercase tracking-widest px-8 py-3 rounded-sm transition-all shadow-lg shadow-[#E8A020]/10"
                       >
                         Join the Conversation
                       </Link>
@@ -1103,7 +1103,7 @@ export default function ArticleDetail() {
             {/* Sticky Sidebar */}
             <aside className="hidden lg:block lg:col-span-4 space-y-8 lg:sticky lg:top-32 h-fit mb-12">
               <div className="bg-[#1C1C1A] rounded-sm p-6 border border-[#2A2A28] shadow-2xl">
-                <h3 className="font-ui text-[10px] font-600 text-[#8A8880] uppercase tracking-widest mb-6 block border-b border-[#2A2A28] pb-2">
+                <h3 className="font-ui text-[10px] font-semibold text-[#8A8880] uppercase tracking-widest mb-6 block border-b border-[#2A2A28] pb-2">
                   Article Actions
                 </h3>
                 <div className="flex flex-col gap-4">
@@ -1182,7 +1182,7 @@ export default function ArticleDetail() {
               {/* Related Articles in Sidebar */}
               {relatedArticles && relatedArticles.length > 0 && (
                 <div className="bg-[#1C1C1A] rounded-sm p-6 border border-[#2A2A28]">
-                  <h3 className="font-ui text-[10px] font-600 text-[#8A8880] uppercase tracking-widest mb-6 block border-b border-[#2A2A28] pb-2">
+                  <h3 className="font-ui text-[10px] font-semibold text-[#8A8880] uppercase tracking-widest mb-6 block border-b border-[#2A2A28] pb-2">
                     Recommended
                   </h3>
                   <div className="space-y-6">
