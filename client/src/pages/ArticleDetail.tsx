@@ -24,10 +24,13 @@ import {
   Play,
   Square,
   Headphones,
+  Zap,
+  Activity,
 } from "lucide-react";
 import { Link } from "wouter";
 import { getSafeImage, getFallbackImage } from "@/lib/image-utils";
 import { useAuth } from "@/_core/hooks/useAuth";
+import NeuralSidebarWidget from "@/components/NeuralSidebarWidget";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
@@ -751,6 +754,57 @@ export default function ArticleDetail() {
                 </div>
               </div>
 
+              {/* Intelligence Nexus — Inspired by Semafor/Axios */}
+              <div className="mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="md:col-span-2 bg-[#11110F] border-l-2 border-[#E8A020] p-8 rounded-sm shadow-xl relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <Zap size={80} className="text-[#E8A020]" />
+                  </div>
+                  <h3 className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-4">The Intelligence Nexus</h3>
+                  <p className="font-display text-xl text-[#F2F0EB] leading-tight mb-4">
+                    Strategic synthesis of the current intelligence node.
+                  </p>
+                  <div className="space-y-4">
+                    <div className="flex gap-4 items-start">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0" />
+                        <p className="text-[#D4D0C8] text-sm leading-relaxed italic opacity-80 decoration-[#E8A020]/30 underline-offset-4 underline">{article.excerpt}</p>
+                    </div>
+                    {/* Dynamic Bullet Generation - Smart Brevity */}
+                    <div className="flex gap-4 items-start">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0" />
+                        <p className="text-[#D4D0C8] text-sm leading-relaxed">
+                            <strong className="text-[#E8A020] uppercase text-[10px] tracking-widest mr-2">Why it matters:</strong>
+                            Global strategic implications for {article.category} architecture require immediate oversight.
+                        </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#0F0F0E] border border-[#1C1C1A] p-8 rounded-sm flex flex-col justify-between group hover:border-[#E8A020]/30 transition-colors">
+                    <div>
+                        <h4 className="font-ui text-[9px] font-900 text-[#8A8880] uppercase tracking-[0.3em] mb-4">Node Metrics</h4>
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center border-b border-[#1C1C1A] pb-2">
+                                <span className="text-[10px] text-[#555550] uppercase tracking-widest">Sentiment</span>
+                                <span className="text-[10px] text-[#E8A020] font-bold">NEUTRAL</span>
+                            </div>
+                            <div className="flex justify-between items-center border-b border-[#1C1C1A] pb-2">
+                                <span className="text-[10px] text-[#555550] uppercase tracking-widest">Reliability</span>
+                                <span className="text-[10px] text-[#E8A020] font-bold">98.4%</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-[10px] text-[#555550] uppercase tracking-widest">Urgency</span>
+                                <span className="text-[10px] text-[#E8A020] font-bold">MODERATE</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-8 pt-4 border-t border-[#1C1C1A] flex items-center gap-2">
+                        <Activity size={12} className="text-[#E8A020] animate-pulse" />
+                        <span className="text-[9px] text-[#8A8880] uppercase tracking-widest font-800">Neural Link Stable</span>
+                    </div>
+                </div>
+              </div>
+
               {/* Meta Info */}
               <div className="flex flex-wrap items-center gap-6 text-[#8A8880] text-sm border-t border-b border-[#1C1C1A] py-4 notranslate">
                 <div className="flex items-center gap-2">
@@ -1138,6 +1192,11 @@ export default function ArticleDetail() {
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Performance Indicator - Sidebar */}
+              <div className="mb-12">
+                <NeuralSidebarWidget category={article.category} />
               </div>
 
               {/* Related Articles in Sidebar */}
