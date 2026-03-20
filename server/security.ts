@@ -20,10 +20,14 @@ const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 export function checkRateLimit(
   key: string,
   maxAttempts: number = 10,
-  windowMs: number = 60000
+  windowMs: number = 60000,
+  isWhitelistedBot: boolean = false
 ): boolean {
   const now = Date.now();
   const entry = rateLimitStore.get(key);
+  
+  // Elevate limits for search bots (50x the standard limit)
+  const actualLimit = isWhitelistedBot ? maxAttempts * 50 : maxAttempts;
 
   if (!entry || now > entry.resetTime) {
     // Reset or create new entry
@@ -31,7 +35,7 @@ export function checkRateLimit(
     return true;
   }
 
-  if (entry.count >= maxAttempts) {
+  if (entry.count >= actualLimit) {
     return false;
   }
 
@@ -117,6 +121,14 @@ export async function ipBlacklistMiddleware(req: any, res: any, next: any) {
   try {
     const { isIpBlacklisted } = await import("./db");
     const ip = getClientIp(req);
+    const ua = getUserAgent(req);
+
+    // BISHOUY.COM — FULL CRAWLER ACCESSIBILITY
+    // Always allow official search bots, even if the IP is from a shared range previously flagged
+    if (isBot(ua)) {
+        return next();
+    }
+
     if (await isIpBlacklisted(ip)) {
       console.warn(`[Security] Blocked request from blacklisted IP: ${ip}`);
       return res.status(403).send("Access restricted due to security violations.");
@@ -126,6 +138,28 @@ export async function ipBlacklistMiddleware(req: any, res: any, next: any) {
     console.error("[Security] IP Blacklist check failed:", err);
     next();
   }
+}
+
+/**
+ * Detects if the request comes from a known search engine crawler
+ */
+export function isBot(userAgent: string): boolean {
+  const bots = [
+    "Googlebot",
+    "Bingbot",
+    "Slurp",
+    "DuckDuckBot",
+    "Baiduspider",
+    "YandexBot",
+    "Sogou",
+    "Exabot",
+    "facebot",
+    "facebookexternalhit",
+    "ia_archiver",
+    "Lighthouse",
+    "PageSpeed",
+  ];
+  return bots.some(bot => userAgent.includes(bot));
 }
 
 /**
