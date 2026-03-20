@@ -24,6 +24,21 @@ import { ipBlacklistMiddleware } from "../security";
 import cron from "node-cron";
 import { ENV } from "./env";
 
+// Global SEO Helpers
+const escapeXml = (unsafe: string) => {
+  return unsafe.replace(/[<>&"']/g, (c) => {
+    switch (c) {
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '&': return '&amp;';
+      case '"': return '&quot;';
+      case "'": return '&apos;';
+      default: return c;
+    }
+  });
+};
+const getBaseUrl = () => ENV.appUrl.endsWith("/") ? ENV.appUrl.slice(0, -1) : ENV.appUrl;
+
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
     const server = net.createServer();
@@ -296,23 +311,7 @@ async function startServer() {
     try {
       const { getAllArticles } = await import("../db");
       const articles = await getAllArticles(false); // only published
-      const baseUrl = ENV.appUrl.endsWith("/")
-        ? ENV.appUrl.slice(0, -1)
-        : ENV.appUrl;
-
-      // Helper to escape XML entities (Point 2)
-      const escapeXml = (unsafe: string) => {
-        return unsafe.replace(/[<>&"']/g, (c) => {
-          switch (c) {
-            case '<': return '&lt;';
-            case '>': return '&gt;';
-            case '&': return '&amp;';
-            case '"': return '&quot;';
-            case "'": return '&apos;';
-            default: return c;
-          }
-        });
-      };
+      const baseUrl = getBaseUrl();
 
       // Helper to generate a valid, non-data URI image URL for SEO
       const getSitemapImageUrl = (img: string | null | undefined) => {
@@ -399,9 +398,7 @@ async function startServer() {
         return pubDate >= twoDaysAgo;
       });
 
-      const baseUrl = ENV.appUrl.endsWith("/")
-        ? ENV.appUrl.slice(0, -1)
-        : ENV.appUrl;
+      const baseUrl = getBaseUrl();
       const siteName = "BISHOUY";
 
       let xml = `<?xml version="1.0" encoding="UTF-8"?>
