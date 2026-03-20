@@ -377,9 +377,10 @@ export async function syncRSSFeeds(isManual: boolean = false) {
               .toLowerCase()
               .replace(/[^a-z]/g, '')
           );
+          const lockSeed = finalSlug.split('-').pop() || '1';
           const imageUrl =
             originalImage ||
-            `https://loremflickr.com/1200/800/${photoKeyword}`;
+            `https://loremflickr.com/1200/800/${photoKeyword}?lock=${lockSeed}`;
 
           const articleData: InsertArticle = {
             title: editorialPiece.title,

@@ -432,7 +432,7 @@ export default function ArticleDetail() {
                   }}
                 >
                   <img
-                    src={src}
+                    src={getSafeImage(src, article?.category || "news", article?.id || 0)}
                     alt={alt || ""}
                     className={`rounded-sm ${alignClass}`}
                     style={{ width: "100%", height: "auto" }}

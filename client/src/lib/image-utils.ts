@@ -62,12 +62,18 @@ export const getSafeImage = (img: string | null | undefined, category: string, i
   // Optimize LoremFlickr (it supports width/height in URL)
   // But clean up multi-keyword or malformed URLs (e.g. containing commas)
   if (img.includes('loremflickr.com')) {
+    // Determine a stable lock number based on ID to prevent images from changing on navigation
+    // Use a number between 1 and 1000 for the lock
+    const numericId = typeof id === 'number' ? id : (id.split('-').pop() || '1');
+    const lockVal = Math.abs(parseInt(String(numericId)) % 1000) || 1;
+
     // Extract just the keyword part (first word, no commas, no spaces)
     const match = img.match(/loremflickr\.com\/\d+\/\d+\/([^/?]+)/);
     if (match) {
       const rawKeyword = decodeURIComponent(match[1]).split(',')[0].split(' ')[0].toLowerCase().replace(/[^a-z]/g, '');
       const keyword = rawKeyword || 'news';
-      return `https://loremflickr.com/${width}/${Math.round(width * 0.6)}/${keyword}`;
+      // Append lock parameter for persistence
+      return `https://loremflickr.com/${width}/${Math.round(width * 0.6)}/${keyword}?lock=${lockVal}`;
     }
     return img;
   }
