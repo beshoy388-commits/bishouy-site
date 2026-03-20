@@ -91,7 +91,8 @@ function Router() {
             <Route path="/u/:username" component={PublicProfile} />
             <Route path="/privacy-policy" component={PrivacyPolicy} />
             <Route path="/terms-of-service" component={TermsOfService} />
-            <Route path="/admin/*" component={AdminPanel} />
+            <Route path="/admin" component={AdminPanel} />
+            <Route path="/admin/:rest*" component={AdminPanel} />
             <Route path="/ai" component={AIAssistant} />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
