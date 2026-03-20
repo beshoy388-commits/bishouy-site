@@ -39,6 +39,8 @@ const Careers = lazy(() => import("@/pages/Careers"));
 const CodeOfEthics = lazy(() => import("@/pages/CodeOfEthics"));
 const FactCheckingPolicy = lazy(() => import("@/pages/FactCheckingPolicy"));
 const AIEthics = lazy(() => import("@/pages/AIEthics"));
+const CookiePolicy = lazy(() => import("@/pages/CookiePolicy"));
+const Advertise = lazy(() => import("@/pages/Advertise"));
 
 const PageFallback = () => (
   <div className="min-h-screen bg-[#0F0F0E] flex items-center justify-center">
@@ -88,6 +90,8 @@ function Router() {
             <Route path="/fact-checking" component={FactCheckingPolicy} />
             <Route path="/ai-ethics" component={AIEthics} />
             <Route path="/nexus" component={NeuralNexus} />
+            <Route path="/cookie-policy" component={CookiePolicy} />
+            <Route path="/advertise" component={Advertise} />
             <Route path="/404" component={NotFound} />
             <Route component={NotFound} />
           </Switch>

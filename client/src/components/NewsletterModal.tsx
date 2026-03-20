@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, Mail, Sparkles, CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
+import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -98,7 +99,7 @@ export default function NewsletterModal() {
                                             <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.3em] block mb-2">Protocol: Subscription</span>
                                             <h2 className="font-display text-3xl text-[#F2F0EB] mb-4 leading-tight text-white">Don't just read the news. <span className="text-[#E8A020]">Understand the connections.</span></h2>
                                             <p className="text-[#8A8880] text-sm leading-relaxed">
-                                                Join 45,000+ global analysts receiving our daily neural synthesis of geopolitical and technological shifts.
+                                                Join our community of global readers receiving daily synthesis of geopolitical and technological shifts.
                                             </p>
                                         </div>
 
@@ -110,10 +111,20 @@ export default function NewsletterModal() {
                                                     required
                                                     value={email}
                                                     onChange={(e) => setEmail(e.target.value)}
-                                                    placeholder="Enter your terminal email..."
+                                                    placeholder="Enter your email..."
                                                     className="w-full bg-[#0F0F0E] border border-[#2A2A28] text-[#F2F0EB] pl-12 pr-4 py-4 focus:border-[#E8A020] outline-none transition-all placeholder-[#333330] text-sm"
                                                 />
                                             </div>
+                                            <label className="flex items-start gap-3 cursor-pointer group">
+                                                <input 
+                                                  type="checkbox" 
+                                                  required
+                                                  className="mt-1 w-3 h-3 accent-[#E8A020]" 
+                                                />
+                                                <span className="text-[10px] text-[#555550] leading-tight group-hover:text-[#8A8880] transition-colors">
+                                                  I agree to receive the daily briefing and accept the <Link href="/privacy-policy" className="underline">Privacy Policy</Link>.
+                                                </span>
+                                            </label>
                                             <button 
                                                 disabled={isLoading}
                                                 className="w-full bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-xs font-900 uppercase tracking-[0.2em] py-5 rounded-sm transition-all flex items-center justify-center gap-2 group"
@@ -130,7 +141,7 @@ export default function NewsletterModal() {
                                         </form>
 
                                         <p className="mt-6 text-[10px] text-[#555550] leading-tight italic">
-                                            No spam. Our algorithms only deliver high-fidelity insights. Unsubscribe with a single click at any time.
+                                            High-fidelity insights. One-click unsubscribe.
                                         </p>
                                     </>
                                 ) : (

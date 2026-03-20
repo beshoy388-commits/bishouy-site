@@ -7,58 +7,58 @@ import { getArticleBySlug } from "./db";
  */
 export async function injectSeoMeta(template: string, url: string): Promise<string> {
     // 1. Check if the URL is an article page (e.g. /article/the-slug-1234)
+    // 1. Article Page Match
     const articleMatch = url.match(/\/article\/([a-z0-9-]+)/i);
-    if (!articleMatch) {
-        // Return original template for non-article pages (they use basic Bishouy.com meta)
-        return template;
+    // 2. Category Page Match
+    const categoryMatch = url.match(/\/category\/([a-z0-9-]+)/i);
+    // 3. Home Page Match
+    const isHome = url === "/" || url === "";
+
+    let title = "Bishouy.com — Global News & Analysis";
+    let description = "Independent, in-depth, and accessible journalism. Breaking news on politics, economy, technology, and culture updated in real-time.";
+    let image = "https://bishouy.com/og-image.jpg";
+
+    if (articleMatch) {
+      const slug = articleMatch[1];
+      try {
+          const article = await getArticleBySlug(slug);
+          if (article) {
+              title = `${article.title} | BISHOUY`;
+              description = article.excerpt || "Latest news on Bishouy.com";
+              image = article.image || image;
+          }
+      } catch (err) {
+          console.error("SEO Injector Article Fetch Error:", err);
+      }
+    } else if (categoryMatch) {
+      const cat = categoryMatch[1];
+      title = `${cat.charAt(0).toUpperCase() + cat.slice(1)} Archives | BISHOUY`;
+      description = `Explore our full archive of articles in the ${cat} section. Quality journalism from Bishouy.com.`;
     }
 
-    const slug = articleMatch[1];
+    // Inject dynamic meta into the template string
+    let page = template;
     
-    try {
-        const article = await getArticleBySlug(slug);
-        if (!article) return template;
+    // Replace Title
+    page = page.replace(/<title>.*?<\/title>/, `<title>${title}</title>`);
+    
+    // Update Description & OG Meta
+    page = page.replace(
+        /<meta name="description" content=".*?" \/>/, 
+        `<meta name="description" content="${description.replace(/"/g, '&quot;')}" />`
+    );
 
-        const title = `${article.title} | BISHOUY`;
-        const description = article.excerpt || article.seoDescription || "Latest news on Bishouy.com";
-        const image = article.image || "https://bishouy.com/og-image.jpg";
-        const author = article.author || "Bishouy Editorial";
+    const finalMeta = `
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<meta name="googlebot" content="index, follow" />
+<meta property="og:title" content="${title.replace(/"/g, '&quot;')}" />
+<meta property="og:description" content="${description.replace(/"/g, '&quot;')}" />
+<meta property="og:image" content="${image}" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="${title.replace(/"/g, '&quot;')}" />
+<meta name="twitter:description" content="${description.replace(/"/g, '&quot;')}" />
+<meta name="twitter:image" content="${image}" />
+    `;
 
-        // Inject dynamic meta into the template string
-        let page = template;
-        
-        // Replace Title
-        page = page.replace(/<title>.*?<\/title>/, `<title>${title}</title>`);
-        
-        // Update Description & OG Meta
-        page = page.replace(
-            /<meta name="description" content=".*?" \/>/, 
-            `<meta name="description" content="${description.replace(/"/g, '&quot;')}" />`
-        );
-        page = page.replace(
-            /<meta property="og:title" content=".*?" \/>/g, 
-            `<meta property="og:title" content="${title.replace(/"/g, '&quot;')}" />`
-        );
-        page = page.replace(
-            /<meta property="og:description" content=".*?" \/>/g, 
-            `<meta property="og:description" content="${description.replace(/"/g, '&quot;')}" />`
-        );
-        
-        // Append OpenGraph & Twitter Image/Type if missing (basic index.html might have placeholders)
-        const finalMeta = `
-  <meta name="robots" content="index, follow, max-image-preview:large" />
-  <meta name="googlebot" content="index, follow" />
-  <meta property="og:image" content="${image}" />
-  <meta property="article:published_time" content="${(article.publishedAt || article.createdAt || new Date()).toISOString()}" />
-  <meta property="article:author" content="${author}" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="${title.replace(/"/g, '&quot;')}" />
-  <meta name="twitter:description" content="${description.replace(/"/g, '&quot;')}" />
-  <meta name="twitter:image" content="${image}" />
-        `;
-
-        return page.replace('</head>', `${finalMeta}\n</head>`);
-    } catch {
-        return template;
-    }
+    return page.replace('</head>', `${finalMeta}\n</head>`);
 }

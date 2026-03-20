@@ -841,22 +841,38 @@ export const appRouter = router({
     getBySlug: publicProcedure
       .input(z.object({ slug: z.string() }))
       .query(async ({ input, ctx }) => {
-        const ip = getClientIp(ctx.req);
-        const ua = getUserAgent(ctx.req);
-        const isAdmin = ctx.user?.role === "admin";
+        try {
+          const ip = getClientIp(ctx.req);
+          const ua = getUserAgent(ctx.req);
+          const isAdmin = ctx.user?.role === "admin";
 
-        // Admin views don't count toward analytics
-        if (isAdmin) {
-          const db = await getDb();
-          const result = await db!
-            .select()
-            .from(articles)
-            .where(eq(articles.slug, input.slug))
-            .limit(1);
-          return result[0] || null;
+          // Admin views don't count toward analytics
+          if (isAdmin) {
+            const db = await getDb();
+            const result = await db!
+              .select()
+              .from(articles)
+              .where(eq(articles.slug, input.slug))
+              .limit(1);
+            return result[0] || null;
+          }
+
+          const article = await getArticleBySlugWithTracking(input.slug, ctx.user?.id, ip, ua);
+          if (!article) {
+             throw new TRPCError({
+               code: "NOT_FOUND",
+               message: "Article not found"
+             });
+          }
+          return article;
+        } catch (error) {
+           if (error instanceof TRPCError) throw error;
+           console.error("[TRPC] getBySlug critical error:", error);
+           throw new TRPCError({
+             code: "INTERNAL_SERVER_ERROR",
+             message: "Failed to retrieve article securely."
+           });
         }
-
-        return getArticleBySlugWithTracking(input.slug, ctx.user?.id, ip, ua);
       }),
 
     // Public: Get trending articles

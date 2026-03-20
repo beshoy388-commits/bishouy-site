@@ -43,7 +43,7 @@ export default function Home() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#0F0F0E]">
-        <SEO title="Loading Latest News..." />
+        <SEO title="International News & Analysis" />
         <Navbar />
         <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">

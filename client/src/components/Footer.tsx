@@ -32,15 +32,21 @@ export default function Footer() {
     },
   });
 
+  const [gdprConsent, setGdprConsent] = useState(false);
+
   const handleNewsletter = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!gdprConsent) {
+      toast.error("Consent required", { description: "Please accept the privacy terms to subscribe." });
+      return;
+    }
     if (email) {
       subscribeMutation.mutate({ email });
     }
   };
 
   return (
-    <footer className="bg-[#0A0A09] border-t border-[#1C1C1A] mt-16">
+    <footer className="bg-[#0A0A09] border-t border-[#1C1C1A] mt-16 selection:bg-[#E8A020]/20 selection:text-[#E8A020]">
       {/* Newsletter banner */}
       <div className="border-b border-[#1C1C1A]">
         <div className="container py-10">
@@ -55,29 +61,42 @@ export default function Footer() {
                 7:00 AM.
               </p>
             </div>
-            <form
-              onSubmit={handleNewsletter}
-              className="flex gap-2 w-full md:w-auto"
-            >
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="Your email"
-                required
-                className="flex-1 md:w-64 bg-[#1C1C1A] border border-[#2A2A28] text-[#F2F0EB] placeholder-[#555550] font-ui text-sm px-4 py-2.5 rounded-sm focus:outline-none focus:border-[#E8A020] transition-colors"
-              />
-              <button
-                type="submit"
-                disabled={subscribeMutation.isPending}
-                className="bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#E8A020]/20 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-5 py-2.5 rounded-sm transition-all active:scale-95 whitespace-nowrap disabled:opacity-50 flex items-center gap-2"
+            <div className="flex flex-col gap-3 w-full md:w-auto">
+              <form
+                onSubmit={handleNewsletter}
+                className="flex gap-2 w-full md:w-auto"
               >
-                {subscribeMutation.isPending ? (
-                  <Loader2 className="animate-spin" size={12} />
-                ) : null}
-                {subscribeMutation.isPending ? "Subscribing..." : "Subscribe"}
-              </button>
-            </form>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="Your email"
+                  required
+                  className="flex-1 md:w-64 bg-[#1C1C1A] border border-[#2A2A28] text-[#F2F0EB] placeholder-[#555550] font-ui text-sm px-4 py-2.5 rounded-sm focus:outline-none focus:border-[#E8A020] transition-colors"
+                />
+                <button
+                  type="submit"
+                  disabled={subscribeMutation.isPending}
+                  className="bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#E8A020]/20 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-5 py-2.5 rounded-sm transition-all active:scale-95 whitespace-nowrap disabled:opacity-50 flex items-center gap-2"
+                >
+                  {subscribeMutation.isPending ? (
+                    <Loader2 className="animate-spin" size={12} />
+                  ) : null}
+                  {subscribeMutation.isPending ? "Subscribing..." : "Subscribe"}
+                </button>
+              </form>
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <input 
+                  type="checkbox" 
+                  checked={gdprConsent}
+                  onChange={(e) => setGdprConsent(e.target.checked)}
+                  className="w-3 h-3 accent-[#E8A020]" 
+                />
+                <span className="text-[10px] text-[#555550] group-hover:text-[#8A8880] transition-colors">
+                  I consent to the collection of my data in accordance with the <Link href="/privacy-policy" className="underline">Privacy Policy</Link>.
+                </span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -97,13 +116,16 @@ export default function Footer() {
               tell the world's story without filters.
             </p>
             <div className="flex items-center gap-4 mt-6">
-              <a href="#" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="X (Twitter)">
+              <a href="https://x.com/bishouy_com" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="X (Twitter)">
                 <Twitter size={14} />
               </a>
-              <a href="#" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="Instagram">
+              <a href="https://instagram.com/bishouy_com" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="Instagram">
                 <Instagram size={14} />
               </a>
-              <a href="#" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="YouTube">
+              <a href="https://facebook.com/bishouy_official" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="Facebook">
+                <Facebook size={14} />
+              </a>
+              <a href="https://youtube.com/@bishouy" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="YouTube">
                 <Youtube size={14} />
               </a>
               <a href="/api/rss" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="RSS Feed">
@@ -134,16 +156,16 @@ export default function Footer() {
           {/* About */}
           <div>
             <h4 className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest mb-4">
-              About Us
+              Company
             </h4>
             <ul className="space-y-2.5">
               {[
                 { label: "Our Story", href: "/about" },
                 { label: "Editorial Team", href: "/editorial-team" },
-                { label: "AI Ethics Protocol", href: "/ai-ethics" },
-                { label: "Contact Intelligence", href: "/contact" },
-                { label: "Mission & Values", href: "/mission-values" },
+                { label: "Contact Us", href: "/contact" },
+                { label: "Advertise With Us", href: "/advertise" },
                 { label: "Careers", href: "/careers" },
+                { label: "Mission & Values", href: "/mission-values" },
               ].map(item => (
                 <li key={item.label}>
                   <Link
@@ -160,13 +182,15 @@ export default function Footer() {
           {/* Legal */}
           <div>
             <h4 className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest mb-4">
-              Legal & Fact
+              Legal & Transparency
             </h4>
             <ul className="space-y-2.5">
               {[
                 { label: "Privacy Policy", href: "/privacy-policy" },
+                { label: "Cookie Policy", href: "/cookie-policy" },
                 { label: "Terms of Service", href: "/terms-of-service" },
-                { label: "Fact-Checking Policy", href: "/fact-checking" },
+                { label: "Legal Notice", href: "/terms-of-service" },
+                { label: "Fact-Checking Protocol", href: "/fact-checking" },
                 { label: "Code of Ethics", href: "/code-of-ethics" },
               ].map(item => (
                 <li key={item.label}>
@@ -188,7 +212,7 @@ export default function Footer() {
         <div className="container py-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="font-ui text-[11px] text-[#555550]">
-              © 2026 Bishouy.com — All rights reserved
+              © 2026 Bishouy.com — Built for international clarity & analytical depth.
             </p>
             <div className="flex items-center gap-6">
                 <p className="font-ui text-[11px] text-[#555550]">
@@ -196,7 +220,7 @@ export default function Footer() {
                 </p>
                 <div className="h-3 w-[1px] bg-[#1C1C1A]" />
                 <p className="font-ui text-[11px] text-[#555550]">
-                  Reg. News Pub ID: <span className="text-[#8A8880]">BSY-2024-AI</span>
+                  Independence Verified by <span className="text-[#8A8880]">BSY-NEWSBOARD</span>
                 </p>
             </div>
           </div>

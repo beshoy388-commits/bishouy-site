@@ -141,6 +141,17 @@ async function startServer() {
     res.redirect(301, `/article/${slug}`);
   });
 
+  // Global SEO: Normalize URLs by removing trailing slashes (Point 17)
+  app.use((req, res, next) => {
+    if (req.path.length > 1 && req.path.endsWith('/')) {
+        const query = req.url.slice(req.path.length);
+        const safePath = req.path.slice(0, -1);
+        res.redirect(301, safePath + query);
+    } else {
+        next();
+    }
+  });
+
   // SEO: 301 Redirect for legacy date-based Blogger URLs (/2024/09/article-title)
   // These often appear in Google Index during platform transitions.
   app.get("/:year([0-9]{4})/:month([0-9]{2})/:slug", (req, res) => {
@@ -346,7 +357,7 @@ async function startServer() {
     <priority>0.8</priority>
     ${imageUrl ? `
     <image:image>
-      <image:loc>${imageUrl.startsWith('http') ? imageUrl : baseUrl + imageUrl}</image:loc>
+      <image:loc><![CDATA[${imageUrl.startsWith('http') ? imageUrl : baseUrl + imageUrl}]]></image:loc>
       <image:title><![CDATA[${article.title}]]></image:title>
     </image:image>` : ''}
   </url>`;
@@ -415,6 +426,9 @@ async function startServer() {
       : ENV.appUrl;
     const robots = `User-agent: *
 Allow: /
+Disallow: /login
+Disallow: /register
+Disallow: /api/
 Sitemap: ${baseUrl}/sitemap.xml
 Sitemap: ${baseUrl}/sitemap-news.xml`;
     res.header("Content-Type", "text/plain");

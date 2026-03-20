@@ -8,7 +8,6 @@ const MARKETS = [
   { name: "BTC", value: "$97,294", change: "-1.23%" },
   { name: "GOLD", value: "$2,656.9", change: "+0.12%" },
   { name: "USD/EUR", value: "1.084", change: "-0.04%" },
-  { name: "BISHOUY CAP", value: "1.2T", change: "+5.4%" },
 ];
 
 export default function GlobalTicker() {
@@ -22,7 +21,7 @@ export default function GlobalTicker() {
 
   // Combined Data Stream for the unified ticker
   const createItems = () => [
-    ...breakingNews.map(title => ({ type: 'news', label: 'NEWS', value: title })),
+    ...breakingNews.map(title => ({ type: 'news', label: 'NEWS', value: title, change: undefined })),
     ...MARKETS.map(m => ({ type: 'market', label: m.name, value: m.value, change: m.change })),
   ];
 

@@ -43,9 +43,10 @@ export default function CategoryPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0F0F0E] flex items-center justify-center">
+      <main className="min-h-screen bg-[#0F0F0E] flex items-center justify-center">
+        <SEO title="International Archive" />
         <Loader2 className="animate-spin text-[#E8A020]" size={40} />
-      </div>
+      </main>
     );
   }
 
