@@ -46,6 +46,8 @@ export async function injectSeoMeta(template: string, url: string): Promise<stri
         
         // Append OpenGraph & Twitter Image/Type if missing (basic index.html might have placeholders)
         const finalMeta = `
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="googlebot" content="index, follow" />
   <meta property="og:image" content="${image}" />
   <meta property="article:published_time" content="${(article.publishedAt || article.createdAt || new Date()).toISOString()}" />
   <meta property="article:author" content="${author}" />

@@ -42,8 +42,14 @@ export default function SEO({
             element.setAttribute("content", content);
         };
 
+        const robotsContent = noindex 
+            ? "noindex, nofollow" 
+            : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
+            
         updateMeta("description", description);
-        updateMeta("robots", noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
+        updateMeta("robots", robotsContent);
+        // Explicitly set googlebot to follow
+        updateMeta("googlebot", robotsContent);
 
         // Open Graph
         updateMeta("og:title", fullTitle, "property");

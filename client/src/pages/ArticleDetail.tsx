@@ -321,7 +321,7 @@ export default function ArticleDetail() {
     }
 
     if (links[platform]) {
-      window.open(links[platform], "_blank", "width=600,height=400");
+      window.open(links[platform], "_blank", "noopener,noreferrer,width=600,height=400");
     }
   };
 
