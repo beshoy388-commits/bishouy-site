@@ -36,15 +36,14 @@ export async function generateArticleFromTopic(topic: string) {
           
           EDITORIAL & FORMATTING GUIDELINES (STRICT):
           1. NO HEADERS AT START: NEVER start the "content" field with a # heading or the title of the article. Start directly with the text or a drop-cap.
-          2. QUALITY & STRUCTURE: Use <h2> and <h3> for internal sections. NO ALL CAPS in headers or body text. Use standard Title Case for headers and Sentence Case for body.
+          2. QUALITY & STRUCTURE: Use ## and ### Markdown headers for internal sections. NO ALL CAPS in headers or body text. Use standard Title Case for headers and Sentence Case for body.
           3. VOICE: Authoritative, definitive, intellectually sophisticated. Analyze the *implications* for the current 2026 global landscape.
           4. PARAGRAPHS: Keep paragraphs concise (3-4 sentences max). Use a powerful hook and a nut graph to explain global significance. No "Conclusion" headers.
-          5. IMAGES: You MUST integrate at least two high-quality, photo-journalistic images within the article body. Use this EXACT syntax:
+          5. IMAGES: You MUST integrate at least two high-quality, photo-journalistic images within the article body. Use ONLY this exact syntax:
              <!-- img:center:80% -->
-             ![Professional Photo: Subject of the image](https://loremflickr.com/1200/800/{KEYWORD})
-             *Caption for the image in italics*
-             
-             Replace {KEYWORD} with a specific, relevant English keyword for the image (e.g., 'finance', 'quantum', 'politics').
+             ![Photo description](https://loremflickr.com/1200/800/KEYWORD)
+             *Short caption in italics*
+             (MANDATORY: Replace KEYWORD with a single relevant English word. DO NOT include braces like {KEYWORD} or instructions in your final article.)
           6. CATEGORIES: World, Politics, Economy, Technology, Culture, Sports.
           
           JSON OUTPUT FORMAT:

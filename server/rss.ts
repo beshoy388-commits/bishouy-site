@@ -170,19 +170,19 @@ async function rewriteArticle(
             2. NARRATIVE STRUCTURE:
                - THE LEDE: Start with a powerful "hook"—a compelling image, a critical number, or a defining moment. No "In a world where..." beginnings.
                - THE NUT GRAPH: Within the first 2-3 paragraphs, explicitly state *why* this story matters globally and what the stakes are.
-               - THEMATIC SUBHEADINGS: Use <h2> and <h3> that are informative and punchy (e.g., "The Riyadh Pivot" instead of "Recent Background").
+               - THEMATIC SUBHEADINGS: Use ## and ### Markdown headers for internal sections (e.g. "## The Riyadh Pivot"). Do not use HTML tags.
                - NO SUMMARY: Never use "In conclusion" or "To summarize." End with a forward-looking observation or a poignant closing thought.
                - TYPOGRAPHY: DO NOT use ALL CAPS for paragraphs or long sentences. Use standard Title Case for headers and Sentence Case for content.
 
             3. FORMATTING (MARCH 2026 STANDARDS):
-               - PULL QUOTES: Use <blockquote> for the most impactful statements. Must be clearly separated from body text.
+               - PULL QUOTES: Use > (Markdown blockquote) for the most impactful statements.
                - PARAGRAPHS: Concise (3-4 sentences max) for mobile readability.
-               - EMPHASIS: Use <strong> for names, dates, or fiscal figures.
+               - EMPHASIS: Use ** (bold) for names, dates, or fiscal figures.
                - IMAGES: You MUST embed at least two professional photographs inside the article body. Use ONLY this exact syntax:
                  <!-- img:center:80% -->
                  ![Photo description](https://loremflickr.com/1200/800/KEYWORD)
                  *Short caption in italics*
-                 Replace KEYWORD with a single relevant English word (e.g. finance, politics, war, economy, technology).
+                 (MANDATORY: Replace KEYWORD with a single relevant English word. DO NOT include these instructions in the output).
 
             4. ANALYTICAL DEPTH:
                - Don't just report the "What." Analyze the "Why" (Geopolitical, Economic context).

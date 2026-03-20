@@ -41,6 +41,7 @@ import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import SEO from "@/components/SEO";
 import AdPlacement from "@/components/AdPlacement";
 import AuthorBio from "@/components/AuthorBio";
@@ -380,17 +381,8 @@ export default function ArticleDetail() {
   const renderArticleContent = (content: string) => {
     // Strip leading Markdown H1 if it matches or follows the title to avoid duplication
     const strippedContent = content.replace(/^#\s+.*(\r?\n)+/, "");
-    const isHtml = /<[a-z][\s\S]*>/i.test(strippedContent);
-
-    if (isHtml) {
-      return (
-        <div
-          className="prose prose-invert max-w-none font-serif text-[#D4D0C8] leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: strippedContent }}
-        />
-      );
-    }
-
+    
+    // Split content by image directives <!-- img:position:width% -->
     const parts = strippedContent.split(/(<!-- img:[a-z]+:\d+% -->)/g);
     let currentImageStyle: { position: string; width: string } | null = null;
 
@@ -411,6 +403,7 @@ export default function ArticleDetail() {
         <ReactMarkdown
           key={index}
           remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw]}
           components={{
             img: ({ src, alt }) => {
               const imgStyle = style || { position: "center", width: "100" };
