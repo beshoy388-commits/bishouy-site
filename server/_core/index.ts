@@ -314,10 +314,6 @@ async function startServer() {
         });
       };
 
-      const baseUrl = ENV.appUrl.endsWith("/")
-        ? ENV.appUrl.slice(0, -1)
-        : ENV.appUrl;
-
       // Helper to generate a valid, non-data URI image URL for SEO
       const getSitemapImageUrl = (img: string | null | undefined) => {
         if (!img || img.startsWith('data:')) return null;
