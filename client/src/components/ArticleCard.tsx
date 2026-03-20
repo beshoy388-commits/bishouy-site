@@ -143,6 +143,9 @@ const ArticleCard = memo(function ArticleCard({
     </button>
   );
 
+  // Optimization: For the critical LCP image (Featured Hero), we use a fixed width 
+  // to avoid waiting for JS execution/hydration to calculate the URL.
+  const heroWidth = 800; 
   const isMobile = useIsMobile();
   const rw = (w: number) => isMobile ? Math.min(w, 480) : w;
 
@@ -180,10 +183,10 @@ const ArticleCard = memo(function ArticleCard({
               style={{ left: p.x, top: p.y }}
             />
           ))}
-          {/* Background image */}
+          {/* Background image — Fixed width for immediate LCP discovery */}
           <div className="img-zoom absolute inset-0">
             <img
-              src={getSafeImage(article.image, article.category, article.id, rw(800))}
+              src={getSafeImage(article.image, article.category, article.id, heroWidth)}
               alt={article.title}
               className="img-smart-fit"
               loading="eager"

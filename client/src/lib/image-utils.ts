@@ -83,6 +83,15 @@ export const getSafeImage = (img: string | null | undefined, category: string, i
     const baseUrl = img.split('?')[0];
     return `${baseUrl}?width=${width}&height=${Math.round(width * 0.6)}&nologo=true&enhance=true`;
   }
+  
+  // High-Performance Optimization: Use weserv.nl proxy for any external images 
+  // (like Cloudfront or others) that don't support native resizing. 
+  // This is the key to fixing the "1.5MB savings" reported by Google PageSpeed.
+  if (img.startsWith('http') && !img.includes('unsplash.com') && !img.includes('loremflickr.com')) {
+    // Escape the URL for the proxy
+    const encodedUrl = encodeURIComponent(img);
+    return `https://images.weserv.nl/?url=${encodedUrl}&w=${width}&output=webp&q=80&fit=cover`;
+  }
 
   return img;
 };
