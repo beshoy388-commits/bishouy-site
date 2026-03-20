@@ -72,8 +72,9 @@ export const getSafeImage = (img: string | null | undefined, category: string, i
     if (match) {
       const rawKeyword = decodeURIComponent(match[1]).split(',')[0].split(' ')[0].toLowerCase().replace(/[^a-z]/g, '');
       const keyword = rawKeyword || 'news';
-      // Append lock parameter for persistence
-      return `https://loremflickr.com/${width}/${Math.round(width * 0.6)}/${keyword}?lock=${lockVal}`;
+      // Lower width and higher compression for mobile happiness
+      const thumbWidth = Math.min(width, 300);
+      return `https://loremflickr.com/${thumbWidth}/${Math.round(thumbWidth * 0.6)}/${keyword}?lock=${lockVal}`;
     }
     return img;
   }
@@ -90,7 +91,9 @@ export const getSafeImage = (img: string | null | undefined, category: string, i
   if (img.startsWith('http') && !img.includes('unsplash.com') && !img.includes('loremflickr.com')) {
     // Escape the URL for the proxy
     const encodedUrl = encodeURIComponent(img);
-    return `https://images.weserv.nl/?url=${encodedUrl}&w=${width}&output=webp&q=80&fit=cover`;
+    // Use lower quality (50) and capped width (400) for huge savings on mobile
+    const thumbWidth = Math.min(width, width > 700 ? 800 : 400); 
+    return `https://images.weserv.nl/?url=${encodedUrl}&w=${thumbWidth}&output=webp&q=50&fit=cover`;
   }
 
   return img;
