@@ -200,7 +200,7 @@ async function rewriteArticle(
             2. NARRATIVE STRUCTURE:
                - THE LEDE: Start with a powerful "hook"—a compelling image, a critical number, or a defining moment. No "In a world where..." beginnings.
                - THE NUT GRAPH: Within the first 2-3 paragraphs, explicitly state *why* this story matters globally and what the stakes are.
-               - THEMATIC SUBHEADINGS: Use ## and ### Markdown headers for internal sections (e.g. "## The Riyadh Pivot"). Do not use HTML tags.
+               - THEMATIC SUBHEADINGS: Use ONLY ## and ### standard Markdown headers (e.g. "## The Riyadh Pivot"). NEVER use HTML tags, Wikipedia style (== Title ==), or other non-standard symbols for headers.
                - NO SUMMARY: Never use "In conclusion" or "To summarize." End with a forward-looking observation or a poignant closing thought.
                - TYPOGRAPHY: DO NOT use ALL CAPS for paragraphs or long sentences. Use standard Title Case for headers and Sentence Case for content.
 

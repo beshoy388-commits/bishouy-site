@@ -380,8 +380,12 @@ export default function ArticleDetail() {
 
   const renderArticleContent = (content: string) => {
     // Strip leading Markdown H1 if it matches or follows the title to avoid duplication
-    const strippedContent = content.replace(/^#\s+.*(\r?\n)+/, "");
+    let strippedContent = content.replace(/^#\s+.*(\r?\n)+/, "");
     
+    // Fix Wiki-style headers (== Header ==) into standard Markdown (## Header)
+    strippedContent = strippedContent.replace(/^==\s*(.*?)\s*==\s*$/gm, "## $1");
+    strippedContent = strippedContent.replace(/^===\s*(.*?)\s*===\s*$/gm, "### $1");
+
     // Split content by image directives <!-- img:position:width% -->
     const parts = strippedContent.split(/(<!-- img:[a-z]+:\d+% -->)/g);
     let currentImageStyle: { position: string; width: string } | null = null;

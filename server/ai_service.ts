@@ -36,7 +36,7 @@ export async function generateArticleFromTopic(topic: string) {
           
           EDITORIAL & FORMATTING GUIDELINES (STRICT):
           1. NO HEADERS AT START: NEVER start the "content" field with a # heading or the title of the article. Start directly with the text or a drop-cap.
-          2. QUALITY & STRUCTURE: Use ## and ### Markdown headers for internal sections. NO ALL CAPS in headers or body text. Use standard Title Case for headers and Sentence Case for body.
+          2. QUALITY & STRUCTURE: Use ONLY ## and ### standard Markdown headers for internal sections. NEVER use HTML tags or Wiki-style headers (== Title ==). NO ALL CAPS in headers or body text.
           3. VOICE: Authoritative, definitive, intellectually sophisticated. Analyze the *implications* for the current 2026 global landscape.
           4. PARAGRAPHS: Keep paragraphs concise (3-4 sentences max). Use a powerful hook and a nut graph to explain global significance. No "Conclusion" headers.
           5. IMAGES: DO NOT include any auto-generated images, placeholders, or LoremFlickr/Pollinations URLs. Only use real context images if provided (otherwise leave as text-only).
