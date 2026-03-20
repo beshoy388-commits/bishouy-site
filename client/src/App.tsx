@@ -163,8 +163,9 @@ function AppContent() {
         Dynamic Layout Container 
         pt-[160px] (10rem) on mobile, pt-[220px] on desktop 
         Optimized to show more content above the fold while preventing header overlap.
+        Added pb-32 for mobile for the floating navigation.
       */}
-      <div className={!isAdminPage ? `min-h-screen pt-[160px] lg:pt-[195px] ${!isAdminPage ? "pb-24 lg:pb-0" : ""}` : "min-h-screen"}>
+      <div className={!isAdminPage ? `min-h-screen pt-[160px] lg:pt-[195px] ${!isAdminPage ? "pb-32 lg:pb-0" : ""}` : "min-h-screen"}>
         <Router />
       </div>
       <NewsletterModal />

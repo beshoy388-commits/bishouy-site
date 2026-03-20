@@ -10,7 +10,7 @@ export default function MobileBottomNav({ onSearchClick }: { onSearchClick: () =
 
     return (
         <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50">
-            <div className="bg-[#0F0F0E]/95 backdrop-blur-2xl border-t border-[#2A2A28] h-14 shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+            <div className="bg-[#0F0F0E]/80 backdrop-blur-3xl border-t border-[#E8A020]/10 h-14 shadow-[0_-5px_30px_rgba(0,0,0,0.65)]">
                 <div className="grid grid-cols-5 items-center h-full w-full">
                     {/* Home */}
                     <Link href="/">

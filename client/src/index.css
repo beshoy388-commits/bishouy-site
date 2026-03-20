@@ -14,6 +14,8 @@
 html {
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
+  hyphens: auto;
+  overflow-x: hidden;
 }
 
 /* Elite Scroll System */

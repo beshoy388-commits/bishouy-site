@@ -1253,8 +1253,12 @@ export async function searchArticles(
   const term = query.toLowerCase();
   const searchTerm = `%${term}%`;
 
-  // Search in title, excerpt, content, and tags
-  // Weighting: Title match (score 10) > Excerpt (score 5) > Content (score 1)
+  const score = sql<number>`
+    (CASE WHEN LOWER(${articles.title}) LIKE ${searchTerm} THEN 10 ELSE 0 END) +
+    (CASE WHEN LOWER(${articles.excerpt}) LIKE ${searchTerm} THEN 5 ELSE 0 END) +
+    (CASE WHEN LOWER(${articles.content}) LIKE ${searchTerm} THEN 1 ELSE 0 END)
+  `;
+
   const results = await db
     .select({
       id: articles.id,
@@ -1269,11 +1273,7 @@ export async function searchArticles(
       publishedAt: articles.publishedAt,
       readTime: articles.readTime,
       tags: articles.tags,
-      score: sql<number>`
-        (CASE WHEN LOWER(${articles.title}) LIKE ${searchTerm} THEN 10 ELSE 0 END) +
-        (CASE WHEN LOWER(${articles.excerpt}) LIKE ${searchTerm} THEN 5 ELSE 0 END) +
-        (CASE WHEN LOWER(${articles.content}) LIKE ${searchTerm} THEN 1 ELSE 0 END)
-      `
+      score: score
     })
     .from(articles)
     .where(
@@ -1284,7 +1284,7 @@ export async function searchArticles(
             OR LOWER(${articles.content}) LIKE ${searchTerm}`
       )
     )
-    .orderBy(desc(sql`score`), desc(articles.publishedAt))
+    .orderBy(desc(score), desc(articles.publishedAt))
     .limit(limit);
 
   return results as unknown as Article[];
