@@ -213,13 +213,17 @@ export default function Navbar() {
                   </button>
                 </div>
               ) : (
-                <Link
-                  href="/login"
-                  className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-sm transition-colors"
-                >
-                  <LogIn size={14} />
-                  Login
-                </Link>
+                <>
+                  {!trpc.useUtils().auth.me.getData() && (
+                    <Link
+                      href="/login"
+                      className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-sm transition-colors"
+                    >
+                      <LogIn size={14} />
+                      Login
+                    </Link>
+                  )}
+                </>
               )}
 
               {/* Shadow Mode Toggle — Desktop */}
@@ -279,8 +283,8 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-[#0F0F0E] border-t border-[#222220]">
-          <div className="container py-4">
+        <div className="lg:hidden fixed top-[120px] left-0 right-0 bottom-0 bg-[#0F0F0E] z-[40] overflow-y-auto border-t border-[#222220]">
+          <div className="container py-8 pb-32">
             <nav className="flex flex-col gap-1">
               <Link
                 href="/"

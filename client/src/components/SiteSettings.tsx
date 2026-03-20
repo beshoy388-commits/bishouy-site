@@ -293,8 +293,8 @@ export default function SiteSettings() {
                 <div className="max-w-xl mx-auto space-y-4">
                     <h4 className="text-[#E8A020] font-headline text-xl">Dynamic Site Environment</h4>
                     <p className="text-[#8A8880] text-sm font-ui leading-relaxed">
-                        Le modifiche apportate in questa sezione avranno effetto immediato su tutto l'ecosistema del sito.
-                        Assicurati di inserire link validi per garantire una corretta user experience.
+                        Any modifications applied in this section will take immediate effect across the entire site ecosystem.
+                        Ensure all connection strings and URLs are valid to maintain optimal user experience.
                     </p>
                 </div>
             </Card>

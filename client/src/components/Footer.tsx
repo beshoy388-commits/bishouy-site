@@ -34,6 +34,12 @@ export default function Footer() {
 
   const [gdprConsent, setGdprConsent] = useState(false);
 
+  const settingsQuery = trpc.settings.getAll.useQuery();
+  const settings = settingsQuery.data?.reduce((acc, curr) => {
+    acc[curr.key] = curr.value;
+    return acc;
+  }, {} as Record<string, string>) || {};
+
   const handleNewsletter = (e: React.FormEvent) => {
     e.preventDefault();
     if (!gdprConsent) {
@@ -43,6 +49,13 @@ export default function Footer() {
     if (email) {
       subscribeMutation.mutate({ email });
     }
+  };
+
+  const socialLinks = {
+    x: settings.social_x || "https://x.com/bishouy_news",
+    instagram: settings.social_instagram || "https://instagram.com/bishouy_com",
+    facebook: "https://facebook.com/bishouy.official",
+    youtube: "https://youtube.com/@bishouytoubia"
   };
 
   return (
@@ -116,16 +129,16 @@ export default function Footer() {
               tell the world's story without filters.
             </p>
             <div className="flex items-center gap-4 mt-6">
-              <a href="https://x.com/bishouy_com" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="X (Twitter)">
+              <a href={socialLinks.x} target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="X (Twitter)">
                 <Twitter size={14} />
               </a>
-              <a href="https://instagram.com/bishouy_com" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="Instagram">
+              <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="Instagram">
                 <Instagram size={14} />
               </a>
-              <a href="https://facebook.com/bishouy_official" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="Facebook">
+              <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="Facebook">
                 <Facebook size={14} />
               </a>
-              <a href="https://youtube.com/@bishouy" target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="YouTube">
+              <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="YouTube">
                 <Youtube size={14} />
               </a>
               <a href="/api/rss" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="RSS Feed">
@@ -209,9 +222,9 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-[#1C1C1A]">
-        <div className="container py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="font-ui text-[11px] text-[#555550]">
+        <div className="container py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <p className="font-ui text-[11px] text-[#555550] text-center md:text-left leading-relaxed max-w-sm">
               © 2026 Bishouy.com — Built for international clarity & analytical depth.
             </p>
             <div className="flex items-center gap-6">

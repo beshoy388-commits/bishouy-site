@@ -7,10 +7,14 @@ export default function GoogleAdSense() {
     useEffect(() => {
         if (!status) return;
 
-        const adsenseId = status.adsenseId;
+        let adsenseId = status.adsenseId;
         const autoAds = status.adsenseAutoAds;
 
-        if (adsenseId && adsenseId.startsWith("ca-pub-")) {
+        if (adsenseId) {
+            // Auto-format ID to ca-pub- format if missing (Point 6)
+            if (!adsenseId.startsWith("ca-pub-")) {
+                adsenseId = `ca-pub-${adsenseId}`;
+            }
             // Delay injection to improve LCP and TBT
             const timer = setTimeout(() => {
                 // Remove existing script if any

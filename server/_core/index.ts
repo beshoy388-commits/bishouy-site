@@ -300,12 +300,30 @@ async function startServer() {
         ? ENV.appUrl.slice(0, -1)
         : ENV.appUrl;
 
+      // Helper to escape XML entities (Point 2)
+      const escapeXml = (unsafe: string) => {
+        return unsafe.replace(/[<>&"']/g, (c) => {
+          switch (c) {
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '&': return '&amp;';
+            case '"': return '&quot;';
+            case "'": return '&apos;';
+            default: return c;
+          }
+        });
+      };
+
+      const baseUrl = ENV.appUrl.endsWith("/")
+        ? ENV.appUrl.slice(0, -1)
+        : ENV.appUrl;
+
       // Helper to generate a valid, non-data URI image URL for SEO
       const getSitemapImageUrl = (img: string | null | undefined) => {
         if (!img || img.startsWith('data:')) return null;
-        if (img.startsWith('http')) return img;
+        if (img.startsWith('http')) return escapeXml(img);
         const cleanPath = img.startsWith('/') ? img : `/${img}`;
-        return `${baseUrl}${cleanPath}`;
+        return escapeXml(`${baseUrl}${cleanPath}`);
       };
 
       let xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -327,7 +345,7 @@ async function startServer() {
       for (const page of staticPages) {
         xml += `
   <url>
-    <loc>${baseUrl}${page.path === '/' ? '' : page.path}/</loc>
+    <loc>${escapeXml(baseUrl + (page.path === '/' ? '' : page.path))}</loc>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
   </url>`;
@@ -338,7 +356,7 @@ async function startServer() {
       for (const cat of categories) {
         xml += `
   <url>
-    <loc>${baseUrl}/category/${cat}</loc>
+    <loc>${escapeXml(`${baseUrl}/category/${cat}`)}</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>`;
@@ -351,13 +369,13 @@ async function startServer() {
         
         xml += `
   <url>
-    <loc>${baseUrl}/article/${article.slug}</loc>
+    <loc>${escapeXml(`${baseUrl}/article/${article.slug}`)}</loc>
     <lastmod>${lastMod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     ${imageUrl ? `
     <image:image>
-      <image:loc><![CDATA[${imageUrl.startsWith('http') ? imageUrl : baseUrl + imageUrl}]]></image:loc>
+      <image:loc>${imageUrl}</image:loc>
       <image:title><![CDATA[${article.title}]]></image:title>
     </image:image>` : ''}
   </url>`;
@@ -397,10 +415,10 @@ async function startServer() {
         const pubDate = (article.publishedAt || article.createdAt || new Date()).toISOString();
         xml += `
   <url>
-    <loc>${baseUrl}/article/${article.slug}</loc>
+    <loc>${escapeXml(`${baseUrl}/article/${article.slug}`)}</loc>
     <news:news>
       <news:publication>
-        <news:name>${siteName}</news:name>
+        <news:name><![CDATA[${siteName}]]></news:name>
         <news:language>en</news:language>
       </news:publication>
       <news:publication_date>${pubDate}</news:publication_date>
@@ -429,10 +447,25 @@ Allow: /
 Disallow: /login
 Disallow: /register
 Disallow: /api/
+Disallow: /admin/
 Sitemap: ${baseUrl}/sitemap.xml
 Sitemap: ${baseUrl}/sitemap-news.xml`;
     res.header("Content-Type", "text/plain");
     res.send(robots);
+  });
+
+  // Admin catch-all for SPA routing (Point 13)
+  app.get("/admin/*", (req, res, next) => {
+    if (req.url.startsWith('/admin') && !req.url.includes('.')) {
+        res.sendFile(path.resolve(import.meta.dirname, "../../client/dist/index.html"));
+    } else {
+        next();
+    }
+  });
+
+  // System Keep-Alive (Point 20: Mitigation for Render free tier sleep)
+  app.get("/api/health-check", (req, res) => {
+    res.json({ status: "operational", timestamp: new Date().toISOString() });
   });
 
   // SEO: ads.txt
