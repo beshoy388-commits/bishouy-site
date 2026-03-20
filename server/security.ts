@@ -145,19 +145,13 @@ export async function ipBlacklistMiddleware(req: any, res: any, next: any) {
  */
 export function isBot(userAgent: string): boolean {
   const bots = [
-    "Googlebot",
-    "Bingbot",
-    "Slurp",
-    "DuckDuckBot",
-    "Baiduspider",
-    "YandexBot",
-    "Sogou",
-    "Exabot",
-    "facebot",
-    "facebookexternalhit",
-    "ia_archiver",
-    "Lighthouse",
-    "PageSpeed",
+    // Search Engines
+    "Googlebot", "Bingbot", "Slurp", "DuckDuckBot", "Baiduspider", "YandexBot", "Sogou", "Exabot", "ia_archiver",
+    // Performance & SEO Tools
+    "Lighthouse", "PageSpeed", "GTmetrix", "Pingdom",
+    // Social Media Crawlers (Crucial for Rich Previews)
+    "Facebot", "facebookexternalhit", "Twitterbot", "LinkedInBot", "Pinterest", "WhatsApp", "TelegramBot",
+    "SkypeUriPreview", "Discordbot", "Slackbot", "redditbot", "Applebot", "Embedly", "Instagram",
   ];
   return bots.some(bot => userAgent.includes(bot));
 }
