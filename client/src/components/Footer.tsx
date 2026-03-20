@@ -33,12 +33,7 @@ export default function Footer() {
   });
 
   const [gdprConsent, setGdprConsent] = useState(false);
-
-  const settingsQuery = trpc.settings.getAll.useQuery();
-  const settings = settingsQuery.data?.reduce((acc, curr) => {
-    acc[curr.key] = curr.value;
-    return acc;
-  }, {} as Record<string, string>) || {};
+  const { data: status } = trpc.system.getStatus.useQuery();
 
   const handleNewsletter = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,10 +47,10 @@ export default function Footer() {
   };
 
   const socialLinks = {
-    x: settings.social_x || "https://x.com/bishouy_news",
-    instagram: settings.social_instagram || "https://instagram.com/bishouy_com",
-    facebook: "https://facebook.com/bishouy.official",
-    youtube: "https://youtube.com/@bishouytoubia"
+    x: status?.socialX || "https://x.com/bishouy_news",
+    instagram: status?.socialInstagram || "https://instagram.com/bishouy_com",
+    facebook: status?.socialFacebook || "https://facebook.com/bishouy.official",
+    youtube: status?.socialYoutube || "https://youtube.com/@bishouytoubia"
   };
 
   return (
@@ -129,8 +124,10 @@ export default function Footer() {
               tell the world's story without filters.
             </p>
             <div className="flex items-center gap-4 mt-6">
-              <a href={socialLinks.x} target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="X (Twitter)">
-                <Twitter size={14} />
+              <a href={socialLinks.x} target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="X (formerly Twitter)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.294 19.497h2.039L6.486 3.24H4.298L17.607 20.65z" />
+                </svg>
               </a>
               <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="Instagram">
                 <Instagram size={14} />

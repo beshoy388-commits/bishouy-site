@@ -43,6 +43,7 @@ export default function Navbar() {
   const [currentDate, setCurrentDate] = useState("");
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const { isSearchOpen, setIsSearchOpen, isShadowMode, setIsShadowMode } = useUI();
+  const utils = trpc.useUtils();
 
   const notificationsQuery = trpc.notifications.getLatest.useQuery(undefined, {
     refetchInterval: 60000,
@@ -181,9 +182,9 @@ export default function Navbar() {
                 )}
               </button>
 
-              {user ? (
+              {utils.auth.me.getData() || user ? (
                 <div className="flex items-center gap-4 pl-4 border-l border-[#2A2A28]">
-                  {user.role === "admin" && (
+                  {user?.role === "admin" && (
                     <Link
                       href="/admin"
                       className="flex items-center gap-1.5 text-[#E8A020] hover:text-[#F2F0EB] transition-colors font-ui text-[10px] font-600 uppercase tracking-widest"
@@ -214,7 +215,7 @@ export default function Navbar() {
                 </div>
               ) : (
                 <>
-                  {!trpc.useUtils().auth.me.getData() && (
+                  {!utils.auth.me.getData() && (
                     <Link
                       href="/login"
                       className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-sm transition-colors"

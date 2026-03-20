@@ -32,8 +32,10 @@ export default function AuthorBio({ authorName }: AuthorBioProps) {
                 </p>
                 <div className="flex items-center gap-4">
                     {author.socials?.twitter && (
-                        <a href={author.socials.twitter} target="_blank" rel="noopener noreferrer" className="text-[#555550] hover:text-[#E8A020] transition-colors" aria-label="Twitter">
-                            <Twitter size={16} />
+                        <a href={author.socials.twitter} target="_blank" rel="noopener noreferrer" className="text-[#555550] hover:text-[#E8A020] transition-colors" aria-label="X (formerly Twitter)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.294 19.497h2.039L6.486 3.24H4.298L17.607 20.65z" />
+                            </svg>
                         </a>
                     )}
                     {author.socials?.linkedin && (

@@ -1,9 +1,14 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { UIProvider, useUI } from "./contexts/UIContext";
+import { AudioProvider } from "./contexts/AudioContext";
+import { useAuth } from "./_core/hooks/useAuth";
+import { trpc } from "./lib/trpc";
+
 import CookieConsent from "@/components/CookieConsent";
 import BackToTop from "@/components/BackToTop";
 import { Loader2 } from "lucide-react";
@@ -11,8 +16,18 @@ import { motion, AnimatePresence } from "framer-motion";
 
 // Home and common components remain eager for instant first load
 import Home from "@/pages/Home";
+import MobileBottomNav from "@/components/MobileBottomNav";
+import LiveAnalyticsTracker from "@/components/LiveAnalyticsTracker";
+import UserStatusMonitor from "@/components/UserStatusMonitor";
+import GoogleAdSense from "@/components/GoogleAdSense";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
+import NewsletterModal from "@/components/NewsletterModal";
+import CommandPalette from "@/components/CommandPalette";
+import ScrollToTop from "@/components/ScrollToTop";
+import GlobalAudioPlayer from "@/components/GlobalAudioPlayer";
+import NeuralNotificationCenter from "@/components/NeuralNotificationCenter";
 
-// Pages are lazy-loaded to reduce initial bundle size (addressing "unused JavaScript")
+// Pages are lazy-loaded to reduce initial bundle size
 const ArticleDetail = lazy(() => import("@/pages/ArticleDetail"));
 const CategoryPage = lazy(() => import("@/pages/CategoryPage"));
 const Search = lazy(() => import("@/pages/Search"));
@@ -29,6 +44,8 @@ const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("@/pages/TermsOfService"));
 const Unsubscribe = lazy(() => import("@/pages/Unsubscribe"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
+const Maintenance = lazy(() => import("@/pages/Maintenance"));
+const NeuralNexus = lazy(() => import("@/pages/NeuralNexus"));
 
 // About Pages
 const AboutUs = lazy(() => import("@/pages/AboutUs"));
@@ -41,14 +58,16 @@ const FactCheckingPolicy = lazy(() => import("@/pages/FactCheckingPolicy"));
 const AIEthics = lazy(() => import("@/pages/AIEthics"));
 const CookiePolicy = lazy(() => import("@/pages/CookiePolicy"));
 const Advertise = lazy(() => import("@/pages/Advertise"));
+const AuthCallback = lazy(() => import("@/pages/AuthCallback"));
 
 const PageFallback = () => (
   <div className="min-h-screen bg-[#0F0F0E] flex items-center justify-center">
-    <Loader2 className="animate-spin text-[#E8A020]" size={40} />
+    <div className="relative">
+        <div className="absolute inset-0 bg-[#E8A020] blur-2xl opacity-10 animate-pulse" />
+        <Loader2 className="animate-spin text-[#E8A020] relative z-10" size={40} />
+    </div>
   </div>
 );
-
-const AuthCallback = lazy(() => import("@/pages/AuthCallback"));
 
 function Router() {
   const [location] = useLocation();
@@ -72,7 +91,7 @@ function Router() {
             <Route path="/u/:username" component={PublicProfile} />
             <Route path="/privacy-policy" component={PrivacyPolicy} />
             <Route path="/terms-of-service" component={TermsOfService} />
-            <Route path="/admin" component={AdminPanel} />
+            <Route path="/admin/*" component={AdminPanel} />
             <Route path="/ai" component={AIAssistant} />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
@@ -101,11 +120,9 @@ function Router() {
   );
 }
 
-const Maintenance = lazy(() => import("@/pages/Maintenance"));
-
 function MaintenanceGuard({ children }: { children: React.ReactNode }) {
   const { data: status } = trpc.system.getStatus.useQuery(undefined, {
-    staleTime: 30000, // 30 seconds for faster state updates
+    staleTime: 30000,
   });
   const { user } = useAuth();
 
@@ -120,30 +137,10 @@ function MaintenanceGuard({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-import { UIProvider, useUI } from "./contexts/UIContext";
-import MobileBottomNav from "@/components/MobileBottomNav";
-import { trpc } from "./lib/trpc";
-import { useAuth } from "./_core/hooks/useAuth";
-import { useLocation } from "wouter";
-import LiveAnalyticsTracker from "@/components/LiveAnalyticsTracker";
-import UserStatusMonitor from "@/components/UserStatusMonitor";
-
-import GoogleAdSense from "@/components/GoogleAdSense";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
-import NewsletterModal from "@/components/NewsletterModal";
-import CommandPalette from "@/components/CommandPalette";
-import ScrollToTop from "@/components/ScrollToTop";
-import { AudioProvider } from "@/contexts/AudioContext";
-import GlobalAudioPlayer from "@/components/GlobalAudioPlayer";
-import NeuralNotificationCenter from "@/components/NeuralNotificationCenter";
-
-const NeuralNexus = lazy(() => import("@/pages/NeuralNexus"));
-
 function AppContent() {
   const { setIsSearchOpen, isShadowMode } = useUI();
   const [location] = useLocation();
   const isAdminPage = location.startsWith("/admin");
-  const isAuthPage = location.startsWith("/login") || location.startsWith("/register") || location.startsWith("/verify");
 
   useEffect(() => {
     if (isShadowMode) {
@@ -163,12 +160,6 @@ function AppContent() {
       <UserStatusMonitor />
       <GoogleAdSense />
       <GoogleAnalytics />
-      {/* 
-        Dynamic Layout Container 
-        pt-[160px] (10rem) on mobile, pt-[220px] on desktop 
-        Optimized to show more content above the fold while preventing header overlap.
-        Added pb-32 for mobile for the floating navigation.
-      */}
       <div className={!isAdminPage ? `min-h-screen pt-[160px] lg:pt-[195px] ${!isAdminPage ? "pb-32 lg:pb-0" : ""}` : "min-h-screen"}>
         <Router />
       </div>

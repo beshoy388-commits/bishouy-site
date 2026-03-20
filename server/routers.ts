@@ -242,9 +242,15 @@ export const appRouter = router({
         const status = {
           maintenance: settings.find(s => s.key === "maintenance_mode")?.value === "true",
           siteName: settings.find(s => s.key === "site_name")?.value || "BISHOUY",
+          siteDescription: settings.find(s => s.key === "site_description")?.value || "Uncompromising Journalistic Excellence in the Digital Age.",
+          ownerEmail: settings.find(s => s.key === "owner_email")?.value || "contact@bishouy.com",
           allowComments: settings.find(s => s.key === "allow_comments")?.value !== "false",
           adsenseId: settings.find(s => s.key === "google_adsense_id")?.value || null,
           adsenseAutoAds: settings.find(s => s.key === "adsense_auto_ads")?.value === "true",
+          socialX: settings.find(s => s.key === "social_x")?.value || "https://x.com/bishouy_news",
+          socialInstagram: settings.find(s => s.key === "social_instagram")?.value || "https://instagram.com/bishouy_com",
+          socialFacebook: settings.find(s => s.key === "social_facebook")?.value || "https://facebook.com/bishouy.official",
+          socialYoutube: settings.find(s => s.key === "social_youtube")?.value || "https://youtube.com/@bishouytoubia",
         };
         dbCache.set(cacheKey, status, 30000); // Cache for 30s
         return status;
@@ -1012,6 +1018,14 @@ export const appRouter = router({
         );
 
         return article;
+      }),
+
+    // Public: Get Article Count (Point 8)
+    getCount: publicProcedure
+      .input(z.object({ category: z.string().optional() }).optional())
+      .query(async ({ input }) => {
+        const { getArticleCount } = await import("./db");
+        return getArticleCount(false, input?.category);
       }),
 
     // Protected: Delete article (admin only)

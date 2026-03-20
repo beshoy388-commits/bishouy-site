@@ -36,6 +36,10 @@ export default function CategoryPage() {
   );
   
   const articles = data?.pages.flatMap(page => page.items) || [];
+  const countQuery = trpc.articles.getCount.useQuery(
+    { category: category?.name },
+    { enabled: !!category }
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);

@@ -1640,7 +1640,21 @@ export async function getTrendingArticles(limit = 5): Promise<Article[]> {
     .limit(limit);
 }
 
+export async function getArticleCount(includeUnpublished = false, category?: string) {
+  const db = await getDb();
+  let baseQuery = db.select({ count: sql<number>`count(*)` }).from(articles);
 
+  const conditions = [];
+  if (!includeUnpublished) {
+    conditions.push(eq(articles.status, "published"));
+  }
+  if (category) {
+    conditions.push(eq(articles.category, category));
+  }
+
+  const result = await baseQuery.where(and(...conditions));
+  return Number(result[0].count);
+}
 // Site Settings queries
 export async function getSiteSettings(): Promise<SiteSetting[]> {
   const db = await getDb();

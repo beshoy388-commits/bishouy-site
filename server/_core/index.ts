@@ -253,6 +253,54 @@ async function startServer() {
       createContext,
     })
   );
+  // SEO: Standard RSS Feed (Point 3 & 17)
+  app.get("/api/rss", async (req, res) => {
+    try {
+      const { getAllArticles } = await import("../db");
+      const articles = await getAllArticles(false, undefined, 40); // Standard feed: latest 40
+      const baseUrl = ENV.appUrl.endsWith("/") ? ENV.appUrl.slice(0, -1) : ENV.appUrl;
+
+      let rss = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>BISHOUY — News Intelligence</title>
+    <link>${baseUrl}</link>
+    <description>Premium Analytical News Ecosystem</description>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>`;
+
+      for (const article of articles) {
+        const url = `${baseUrl}/article/${article.slug}`;
+        rss += `
+    <item>
+      <title><![CDATA[${article.title}]]></title>
+      <link>${url}</link>
+      <guid>${url}</guid>
+      <pubDate>${new Date(article.createdAt || new Date()).toUTCString()}</pubDate>
+      <description><![CDATA[${article.excerpt}]]></description>
+    </item>`;
+      }
+      rss += `\n  </channel>\n</rss>`;
+      res.header("Content-Type", "application/xml");
+      res.send(rss);
+    } catch (err) {
+      res.status(500).send("RSS generation failure");
+    }
+  });
+
+  // Helper: Escape XML entities (Point 17 & 18)
+  const escapeXml = (unsafe: string) => {
+    return unsafe.replace(/[<>&'"]/g, (c) => {
+      switch (c) {
+        case '<': return '&lt;';
+        case '>': return '&gt;';
+        case '&': return '&amp;';
+        case '\'': return '&apos;';
+        case '"': return '&quot;';
+        default: return c;
+      }
+    });
+  };
+
   // SEO: Google News RSS Feed
   app.get("/feed/google-news", async (req, res) => {
     try {
