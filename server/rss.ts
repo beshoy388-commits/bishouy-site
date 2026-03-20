@@ -113,10 +113,24 @@ function extractImageUrl(item: any): string | undefined {
 
 /**
  * Creates a unique slug from a title.
+ * Safety check: If title is accidentally a URL, strip it to the last segment.
  */
 function createSlug(title: string): string {
+  let cleanTitle = title;
+  
+  if (title.toLowerCase().startsWith('http')) {
+    try {
+      const url = new URL(title);
+      // Take the last part of the path, or the hostname if path is empty
+      cleanTitle = url.pathname.split('/').filter(Boolean).pop() || url.hostname;
+    } catch {
+      // Fallback: just remove common URL parts manually if URL parse fails
+      cleanTitle = title.replace(/^https?:\/\/(www\.)?/, '').replace(/\//g, '-');
+    }
+  }
+
   return (
-    title
+    cleanTitle
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "") +

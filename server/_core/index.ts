@@ -141,6 +141,15 @@ async function startServer() {
     res.redirect(301, `/article/${slug}`);
   });
 
+  // SEO: 301 Redirect for legacy date-based Blogger URLs (/2024/09/article-title)
+  // These often appear in Google Index during platform transitions.
+  app.get("/:year([0-9]{4})/:month([0-9]{2})/:slug", (req, res) => {
+    const { slug } = req.params;
+    // Remove trailing .html if present (common in Blogger)
+    const cleanSlug = slug.replace(/\.html$/, '');
+    res.redirect(301, `/article/${cleanSlug}`);
+  });
+
   // One-click newsletter unsubscribe endpoint
   app.get("/api/unsubscribe", async (req, res) => {
     const token = req.query.token as string;

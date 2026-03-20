@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import viteConfig from "../../vite.config";
+import { injectSeoMeta } from "../seo_inject";
 
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
@@ -38,7 +39,9 @@ export async function setupVite(app: Express, server: Server) {
         `src="/src/main.tsx"`,
         `src="/src/main.tsx?v=${nanoid()}"`
       );
-      const page = await vite.transformIndexHtml(url, template);
+      // Inject SEO Meta for Article Pages and Bots
+      let page = await injectSeoMeta(template, url);
+      page = await vite.transformIndexHtml(url, page);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
       vite.ssrFixStacktrace(e as Error);
@@ -65,7 +68,18 @@ export function serveStatic(app: Express) {
   }));
 
   // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  app.use("*", async (req, res) => {
+    const indexPath = path.resolve(distPath, "index.html");
+    if (!fs.existsSync(indexPath)) {
+      return res.status(404).end();
+    }
+    
+    try {
+      const template = await fs.promises.readFile(indexPath, "utf-8");
+      const page = await injectSeoMeta(template, req.originalUrl);
+      res.status(200).set({ "Content-Type": "text/html" }).send(page);
+    } catch {
+      res.sendFile(indexPath);
+    }
   });
 }
