@@ -106,19 +106,19 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="py-6 md:py-8 lg:py-8 bg-[#0A0A09]">
-        <div className="container relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
-            <div className="lg:col-span-2 space-y-8">
+        <div className="container relative z-10 transition-all duration-500">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 md:gap-12">
+            <div className="lg:col-span-2 space-y-8 mb-10 lg:mb-0">
                <div className="flex items-center gap-3">
                   <div className="h-[2px] w-12 bg-[#E8A020]" />
                   <span className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em]">Featured Story</span>
                </div>
                <ArticleCard article={mainFeatured} variant="featured" />
             </div>
-            <div className="space-y-8">
-               <div className="flex items-center justify-between">
-                  <h3 className="font-display text-2xl text-[#F2F0EB] uppercase tracking-tighter">Editor's Picks</h3>
-                  <Link href="/category/world" className="text-[10px] font-900 text-[#8A8880] hover:text-[#E8A020] uppercase tracking-widest transition-colors font-ui">See All</Link>
+            <div className="space-y-8 mt-10 lg:mt-0">
+               <div className="flex items-center justify-between border-b border-[#1C1C1A] pb-4">
+                  <h3 className="font-display text-2xl md:text-3xl text-[#F2F0EB] uppercase tracking-tighter">Editor's Picks</h3>
+                  <Link href="/category/world" className="text-[11px] font-900 text-[#E8A020] hover:text-[#D4911C] uppercase tracking-[0.2em] transition-colors font-ui">See All</Link>
                </div>
                <div className="space-y-8 mt-4">
                   {secondaryFeatured.map((article: any) => (

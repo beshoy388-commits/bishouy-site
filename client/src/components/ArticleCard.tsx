@@ -183,7 +183,7 @@ const ArticleCard = memo(function ArticleCard({
           {/* Background image */}
           <div className="img-zoom absolute inset-0">
             <img
-              src={getSafeImage(article.image, article.category, article.id, rw(1200))}
+              src={getSafeImage(article.image, article.category, article.id, rw(800))}
               alt={article.title}
               className="img-smart-fit"
               loading="eager"
@@ -280,7 +280,7 @@ const ArticleCard = memo(function ArticleCard({
           ))}
           <div className="img-zoom flex-shrink-0 w-28 h-24 md:w-24 md:h-20 rounded-sm overflow-hidden text-[#0F0F0E]">
             <img
-              src={getSafeImage(article.image, article.category, article.id, rw(400))}
+              src={getSafeImage(article.image, article.category, article.id, rw(300))}
               alt={article.title}
               className="img-smart-fit"
               loading="lazy"
@@ -369,7 +369,7 @@ const ArticleCard = memo(function ArticleCard({
         ))}
         <div className="img-zoom aspect-video overflow-hidden relative">
           <img
-            src={getSafeImage(article.image, article.category, article.id, rw(800))}
+            src={getSafeImage(article.image, article.category, article.id, rw(400))}
             alt={article.title}
             className="w-full h-full object-cover"
             loading="lazy"

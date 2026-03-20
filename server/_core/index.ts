@@ -58,9 +58,10 @@ async function startServer() {
             "'unsafe-inline'",
             "'unsafe-eval'",
             "https://apis.google.com",
-            "https://pagead2.googlesyndication.com",
-            "https://adservice.google.com",
-            "https://www.googletagmanager.com",
+            "https://*.googlesyndication.com",
+            "https://*.google.com",
+            "https://*.doubleclick.net",
+            "https://*.googletagmanager.com",
             "https://fundingchoicesmessages.google.com",
           ],
           "connect-src": [
@@ -70,6 +71,9 @@ async function startServer() {
             "https://*.pollinations.ai",
             "https://loremflickr.com",
             "https://*.loremflickr.com",
+            "https://*.googlesyndication.com",
+            "https://*.google.com",
+            "https://*.doubleclick.net",
             "wss://*.render.com",
             "https://*.render.com",
             "https://vitals.vercel-insights.com",
@@ -96,8 +100,8 @@ async function startServer() {
           "frame-src": [
             "'self'",
             "https://*.google.com",
-            "https://googleads.g.doubleclick.net",
-            "https://tpc.googlesyndication.com",
+            "https://*.doubleclick.net",
+            "https://*.googlesyndication.com",
           ],
           "upgrade-insecure-requests": [],
         },
@@ -113,6 +117,14 @@ async function startServer() {
 
   // Gzip compression — reduces bandwidth by ~60-80%
   app.use(compression());
+
+  // Static assets caching (1 month for JS, CSS, fonts, images)
+  app.use((req, res, next) => {
+    if (req.url.match(/\.(js|css|woff2?|png|jpg|jpeg|gif|svg|ico|webp)$/)) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000, immutable');
+    }
+    next();
+  });
 
   // Global IP Blacklist Protection
   app.use(ipBlacklistMiddleware);
