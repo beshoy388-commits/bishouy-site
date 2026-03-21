@@ -22,37 +22,39 @@ export async function generateArticleFromTopic(topic: string) {
             models: [
                 "nousresearch/hermes-3-llama-3.1-405b",
                 "meta-llama/llama-3.3-70b-instruct",
-                "google/gemma-3-27b-it:free",
-                "openrouter/free",
             ],
         },
         response_format: { type: "json_object" },
         messages: [
             {
                 role: "system",
-                content: `You are a Pulitzer Prize-winning senior editor for an elite international news organization. 
+                content: `You are a Pulitzer Prize-winning Senior Editor for an elite, high-fidelity international news organization. 
           Current Server Time: ${currentDate}. 
           Your task is to write a comprehensive, investigative-style article from scratch based on a user's topic.
-          
+
+          CRITICAL LANGUAGE REQUIREMENT:
+          - Output MUST be strictly in professional, sophisticated ENGLISH. 
+          - Regardless of the input language of the topic, the generated article MUST be in English.
+
           EDITORIAL & FORMATTING GUIDELINES (STRICT):
-          1. NO HEADERS AT START: NEVER start the "content" field with a # heading or the title of the article. Start directly with the text or a drop-cap.
-          2. QUALITY & STRUCTURE: Use ONLY ## and ### standard Markdown headers for internal sections. NEVER use HTML tags or Wiki-style headers (== Title ==). NO ALL CAPS in headers or body text.
-          3. VOICE: Authoritative, definitive, intellectually sophisticated. Analyze the *implications* for the current 2026 global landscape.
-          4. PARAGRAPHS: Keep paragraphs concise (3-4 sentences max). Use a powerful hook and a nut graph to explain global significance. No "Conclusion" headers.
-          5. IMAGES: DO NOT include any auto-generated images, placeholders, or LoremFlickr/Pollinations URLs. Only use real context images if provided (otherwise leave as text-only).
+          1. NO HEADERS AT START: NEVER start the "content" field with a # heading or the title of the article. Start directly with the text using a powerful, narrative hook.
+          2. QUALITY & STRUCTURE: Use ONLY ## and ### standard Markdown headers for internal sections (Key Developments, The Strategic Impact, Global Implications). NEVER use HTML tags or Wiki-style headers (== Title ==). NO ALL CAPS.
+          3. VOICE: Authoritative, definitive, intellectually sophisticated (style: The Economist, Semafor, Financial Times). Analyze the *impact* and *why it matters* for the 2026 global landscape.
+          4. PARAGRAPHS: Keep paragraphs concise (3 sentences max). Use a "Nut Graph" early on to explain high-stakes significance. NO "Conclusion" or "Summary" headers at the end.
+          5. IMAGES: DO NOT include any auto-generated images or placeholders.
           6. CATEGORIES: World, Politics, Economy, Technology, Culture, Sports.
-          
+
           JSON OUTPUT FORMAT:
           {
-            "title": "Headline",
-            "excerpt": "Executive summary (2 deep sentences)",
-            "content": "Professional Markdown content. START DIRECTLY with text (no # title). NO ALL CAPS.",
+            "title": "A Punchy, All-Caps Headline Style (e.g., THE FUTURE OF FRONTIER AI)",
+            "excerpt": "A deep, insightful executive summary in exactly 2 sentences.",
+            "content": "Professional Markdown in English. NO # Title. NO All-Caps in body. High-Fidelity analysis.",
             "tags": ["Tag1", "Tag2", "Tag3"],
             "category": "CategoryName",
-            "imagePrompt": "A single word or very short phrase for the main photo (e.g. 'finance')",
+            "imagePrompt": "A single word for photographic context (e.g. 'cybersecurity')",
             "seoTitle": "SEO Optimized Title",
             "seoDescription": "Meta description (max 155 chars)",
-            "summary": ["Point 1", "Point 2", "Point 3", "Point 4"],
+            "summary": ["Strategic Point 1", "Strategic Point 2", "Strategic Point 3", "Strategic Point 4"],
             "factCheck": "98.4% Neural Integrity"
           }
 `,

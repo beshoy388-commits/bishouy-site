@@ -416,17 +416,26 @@ export async function syncRSSFeeds(isManual: boolean = false) {
           const aiTags = editorialPiece.tags || [];
           const fallbackKeywords = aiTags.slice(0, 3).join(",") || aiCategory;
 
-          // Use real photo from LoremFlickr as fallback (keyword from imagePrompt or category)
-          const photoKeyword = encodeURIComponent(
-            (editorialPiece.imagePrompt || aiCategory || 'news')
-              .split(' ')[0]  // only first word as keyword
-              .toLowerCase()
-              .replace(/[^a-z]/g, '')
-          );
-          const lockSeed = finalSlug.split('-').pop() || '1';
+          const NEWS_PHOTOS = [
+            "photo-1504711434969-e33886168f5c", "photo-1503676260728-1c00da094a0b",
+            "photo-1512428559087-560fa5ceab42", "photo-1526304640581-d334cdbbf45e",
+            "photo-1460925895917-afdab827c52f", "photo-1518770660439-4636190af475",
+            "photo-1550751827-4bd374c3f58b", "photo-1508921340878-ba53e1f016ec",
+            "photo-1532094349884-543bc11b234d", "photo-1486406146926-c627a92ad1ab",
+            "photo-1521295121783-8a321d551ad2", "photo-1451187580459-43490279c0fa"
+          ];
+          
+          let hash = 0;
+          for (let i = 0; i < finalSlug.length; i++) {
+            hash = ((hash << 5) - hash) + finalSlug.charCodeAt(i);
+            hash |= 0;
+          }
+          const index = Math.abs(hash % NEWS_PHOTOS.length);
+          const photoId = NEWS_PHOTOS[index];
+
           const imageUrl =
             originalImage ||
-            `https://loremflickr.com/1200/800/${photoKeyword}?lock=${lockSeed}`;
+            `https://images.unsplash.com/${photoId}?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80`;
 
           const articleData: InsertArticle = {
             title: editorialPiece.title,

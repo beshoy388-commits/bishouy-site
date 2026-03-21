@@ -84,8 +84,6 @@ async function startServer() {
             "https://api.openrouter.ai",
             "https://pollinations.ai",
             "https://*.pollinations.ai",
-            "https://loremflickr.com",
-            "https://*.loremflickr.com",
             "https://*.googlesyndication.com",
             "https://*.google.com",
             "https://*.doubleclick.net",

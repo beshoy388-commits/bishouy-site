@@ -1109,6 +1109,20 @@ export const appRouter = router({
         const authorName = "Bishouy Editorial";
         const authorRole = "Editorial Desk";
 
+        const NEWS_PHOTOS = [
+          "photo-1504711434969-e33886168f5c", "photo-1503676260728-1c00da094a0b",
+          "photo-1512428559087-560fa5ceab42", "photo-1526304640581-d334cdbbf45e",
+          "photo-1460925895917-afdab827c52f", "photo-1518770660439-4636190af475",
+          "photo-1550751827-4bd374c3f58b", "photo-1508921340878-ba53e1f016ec",
+          "photo-1532094349884-543bc11b234d", "photo-1486406146926-c627a92ad1ab",
+        ];
+        let hash = 0;
+        for (let i = 0; i < slug.length; i++) {
+          hash = ((hash << 5) - hash) + slug.charCodeAt(i);
+          hash |= 0;
+        }
+        const photoId = NEWS_PHOTOS[Math.abs(hash % NEWS_PHOTOS.length)];
+
         const articleData = {
           title: generated.title,
           slug,
@@ -1118,7 +1132,7 @@ export const appRouter = router({
           categoryColor: (categoryColors as any)[generated.category] || "#E8A020",
           author: authorName,
           authorRole: authorRole,
-          image: `https://loremflickr.com/1200/800/${encodeURIComponent(generated.imagePrompt || generated.category || 'news')}`,
+          image: `https://images.unsplash.com/${photoId}?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80`,
           seoTitle: generated.seoTitle || generated.title,
           seoDescription: generated.seoDescription || generated.excerpt,
           status: "draft",

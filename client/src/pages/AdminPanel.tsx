@@ -52,6 +52,13 @@ export default function AdminPanel() {
     | "newsletter"
     | "settings"
     | "security"
+    | "system"
+    | "analytics"
+    | "ads"
+    | "media"
+    | "pulse"
+    | "live"
+    | "moderation"
   >("dashboard");
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -139,12 +146,6 @@ export default function AdminPanel() {
             }}
           />
         );
-      case "live":
-        return <LiveAnalytics />;
-      case "pulse":
-        return <PulseModeration />;
-      case "media":
-        return <MediaLibrary />;
       case "articles":
         if (showForm) {
           return (

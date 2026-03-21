@@ -409,6 +409,12 @@ export default function ArticleDetail() {
         filteredParts.push(part);
     }
 
+    // Point 19: Keep track of images rendered to avoid duplicates (2-3 reps)
+    const shownImages = new Set<string>();
+    if (article?.image) {
+       shownImages.add(getSafeImage(article.image, article.category || "news", article.id || 0));
+    }
+
     return filteredParts.map((part, index) => {
       const directiveMatch = part.match(/<!-- img:([a-z]+):(\d+)% -->/);
       if (directiveMatch) {
@@ -429,6 +435,12 @@ export default function ArticleDetail() {
           rehypePlugins={[rehypeRaw]}
           components={{
             img: ({ src, alt }) => {
+              const resolvedSrc = getSafeImage(src, article?.category || "news", article?.id || 0);
+
+              // Point 19: Prevent redundancy. Any image already shown (Hero or earlier body) is skipped.
+              if (shownImages.has(resolvedSrc)) return null;
+              shownImages.add(resolvedSrc);
+
               const imgStyle = style || { position: "center", width: "100" };
               const alignClass =
                 imgStyle.position === "left"
@@ -455,7 +467,7 @@ export default function ArticleDetail() {
                   }}
                 >
                   <img
-                    src={getSafeImage(src, article?.category || "news", article?.id || 0)}
+                    src={resolvedSrc}
                     alt={alt || ""}
                     className={`rounded-sm ${alignClass}`}
                     style={{ width: "100%", height: "auto" }}
