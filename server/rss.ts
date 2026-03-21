@@ -263,7 +263,11 @@ async function rewriteArticle(
     const text = response.choices[0]?.message?.content;
     if (!text) return null;
 
-    return JSON.parse(text);
+    // Robust JSON extraction in case the model wraps output in markdown code blocks
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const cleanText = jsonMatch ? jsonMatch[0] : text;
+
+    return JSON.parse(cleanText);
   } catch (error) {
     console.error("[RSS AI] Editorial rewrite failed:", error);
     return null;

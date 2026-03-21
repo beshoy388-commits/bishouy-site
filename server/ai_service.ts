@@ -69,7 +69,11 @@ export async function generateArticleFromTopic(topic: string) {
     const text = response.choices[0]?.message?.content;
     if (!text) throw new Error("AI generation failed to return content.");
 
-    return JSON.parse(text);
+    // Robust JSON extraction in case the model wraps output in ```json ... ``` blocks
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const cleanText = jsonMatch ? jsonMatch[0] : text;
+    
+    return JSON.parse(cleanText);
 }
 
 /**
@@ -119,7 +123,10 @@ export async function moderateContent(content: string): Promise<{
             ],
         });
 
-        const result = JSON.parse(response.choices[0]?.message?.content || "{}");
+        const textContent = response.choices[0]?.message?.content || "{}";
+        const jsonMatch = textContent.match(/\{[\s\S]*\}/);
+        const cleanText = jsonMatch ? jsonMatch[0] : textContent;
+        const result = JSON.parse(cleanText);
         return {
             score: result.score ?? 0,
             action: result.action ?? "flagged",
