@@ -184,6 +184,8 @@ export const articleSchema = z.object({
   tags: z.array(z.string().max(50)).max(10).optional(),
   slug: z.string().min(1).max(255),
   status: z.enum(["draft", "published"]).optional(),
+  summary: z.string().optional(),
+  factCheck: z.string().optional(),
 });
 
 /**

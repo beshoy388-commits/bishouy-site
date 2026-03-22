@@ -243,7 +243,7 @@ async function rewriteArticle(
               "title": "A sophisticated, broad-reach headline without clickbait",
               "excerpt": "A deep, 2-sentence executive summary",
               "summaryPoints": ["Point 1", "Point 2", "Point 3"],
-              "content": "Professional Markdown content. START DIRECTLY with text (no # title). NO ALL CAPS.",
+              "content": "Professional Markdown content. START DIRECTLY with text (no # title). NO ALL CAPS. IMPORTANT: ESCAPE ALL NEWLINES as \\n! Do not use raw literal newlines inside the JSON strings.",
               "tags": ["Tag1", "Tag2", "Tag3"],
               "category": "Pick strictly one of: World, Politics, Economy, Technology, Culture, Sports.",
               "imagePrompt": "A single relevant English keyword for the hero photo (e.g. finance, politics, war, economy, technology).",

@@ -928,6 +928,8 @@ export const appRouter = router({
           status: z.enum(["draft", "published"]).default("published"),
           readTime: z.number().optional(),
           tags: z.array(z.string()).default([]),
+          summary: z.string().optional(),
+          factCheck: z.string().optional(),
         })
       )
       .mutation(async ({ input, ctx }) => {
@@ -977,6 +979,8 @@ export const appRouter = router({
           status: z.enum(["draft", "published"]).optional(),
           readTime: z.number().optional(),
           tags: z.array(z.string()).optional(),
+          summary: z.string().optional(),
+          factCheck: z.string().optional(),
         })
       )
       .mutation(async ({ input, ctx }) => {

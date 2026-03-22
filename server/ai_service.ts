@@ -48,7 +48,7 @@ export async function generateArticleFromTopic(topic: string) {
           {
             "title": "A Punchy, All-Caps Headline Style (e.g., THE FUTURE OF FRONTIER AI)",
             "excerpt": "A deep, insightful executive summary in exactly 2 sentences.",
-            "content": "Professional Markdown in English. NO # Title. NO All-Caps in body. High-Fidelity analysis.",
+            "content": "Professional Markdown in English. NO # Title. NO All-Caps in body. High-Fidelity analysis. IMPORTANT: ESCAPE ALL NEWLINES as \\n! Do not use raw literal newlines inside the JSON strings.",
             "tags": ["Tag1", "Tag2", "Tag3"],
             "category": "CategoryName",
             "imagePrompt": "A single word for photographic context (e.g. 'cybersecurity')",
