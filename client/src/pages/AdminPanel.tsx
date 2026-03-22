@@ -73,16 +73,16 @@ export default function AdminPanel() {
     if (loading) return;
 
     if (!isAuthenticated) {
-      setLocation("/");
+      window.location.href = "/login";
       return;
     }
     if (user?.role !== "admin") {
       toast.error("Access Denied", {
         description: "You do not have admin privileges",
       });
-      setLocation("/");
+      window.location.href = "/";
     }
-  }, [isAuthenticated, user, loading, setLocation]);
+  }, [isAuthenticated, user, loading]);
 
   const articlesQuery = trpc.articles.listAdmin.useQuery();
   const maintenanceStatus = trpc.system.getStatus.useQuery();

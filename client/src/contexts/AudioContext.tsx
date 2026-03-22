@@ -33,28 +33,31 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     // Stop previous
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "en-US";
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
+    setTimeout(() => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
 
-    utterance.onstart = () => {
-      setIsPlaying(true);
-      setCurrentArticleId(articleId);
-      setCurrentTitle(title);
-    };
+      utterance.onstart = () => {
+        setIsPlaying(true);
+        setCurrentArticleId(articleId);
+        setCurrentTitle(title);
+      };
 
-    utterance.onend = () => {
-      stop();
-    };
+      utterance.onend = () => {
+        stop();
+      };
 
-    utterance.onerror = () => {
-      stop();
-      toast.error("Audio Synthesis Error", { description: "Failed to initialize Neural Link Audio." });
-    };
+      utterance.onerror = (e) => {
+        console.error("Speech Synthesis Error:", e);
+        stop();
+        toast.error("Audio Synthesis Error", { description: "Failed to initialize Neural Link Audio." });
+      };
 
-    synthesisRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
+      synthesisRef.current = utterance;
+      window.speechSynthesis.speak(utterance);
+    }, 50);
   };
 
   useEffect(() => {

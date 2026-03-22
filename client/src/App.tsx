@@ -42,6 +42,7 @@ const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("@/pages/TermsOfService"));
+const LegalNotice = lazy(() => import("@/pages/LegalNotice"));
 const Unsubscribe = lazy(() => import("@/pages/Unsubscribe"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const Maintenance = lazy(() => import("@/pages/Maintenance"));
@@ -61,10 +62,15 @@ const Advertise = lazy(() => import("@/pages/Advertise"));
 const AuthCallback = lazy(() => import("@/pages/AuthCallback"));
 
 const PageFallback = () => (
-  <div className="min-h-screen bg-[#0F0F0E] flex items-center justify-center">
-    <div className="relative">
-        <div className="absolute inset-0 bg-[#E8A020] blur-2xl opacity-10 animate-pulse" />
-        <Loader2 className="animate-spin text-[#E8A020] relative z-10" size={40} />
+  <div className="min-h-screen bg-[#0F0F0E] flex flex-col">
+    {/* Skeleton Header to prevent black structural flash */}
+    <div className="h-[90px] lg:h-[135px] border-b border-[#222220] bg-[#0F0F0E] w-full shrink-0 relative z-[100]" />
+    <div className="flex-1 flex items-center justify-center relative">
+        <div className="absolute inset-0 bg-[#E8A020] blur-3xl opacity-5 animate-pulse w-64 h-64 mx-auto my-auto rounded-full" />
+        <div className="flex flex-col items-center gap-4 relative z-10">
+          <Loader2 className="animate-spin text-[#E8A020]" size={32} />
+          <span className="text-[#8A8880] font-ui text-[10px] font-900 uppercase tracking-[0.2em]">Synchronizing</span>
+        </div>
     </div>
   </div>
 );
@@ -91,6 +97,7 @@ function Router() {
             <Route path="/u/:username" component={PublicProfile} />
             <Route path="/privacy-policy" component={PrivacyPolicy} />
             <Route path="/terms-of-service" component={TermsOfService} />
+            <Route path="/legal-notice" component={LegalNotice} />
             <Route path="/admin" component={AdminPanel} />
             <Route path="/admin/:rest*" component={AdminPanel} />
             <Route path="/ai" component={AIAssistant} />
@@ -176,7 +183,7 @@ function AppContent() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark">
+      <ThemeProvider defaultTheme="dark" switchable={true}>
         <UIProvider>
           <AudioProvider>
             <TooltipProvider>

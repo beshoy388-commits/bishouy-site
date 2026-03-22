@@ -29,7 +29,7 @@ export default function GlobalTicker() {
   const displayItems = [...items, ...items]; // Loop for marquee
 
   return (
-    <div className="bg-[#0A0A09] border-b border-[#1C1C1A] py-2 overflow-hidden notranslate select-none relative z-50">
+    <div className="bg-[#0A0A09] border-b border-[#1C1C1A] py-2 overflow-hidden notranslate select-none relative z-10">
       <div className="container-fluid flex items-center justify-between gap-12 px-6">
         <div className="flex items-center gap-2 shrink-0 border-r border-[#1C1C1A] pr-4">
            <Zap size={10} className="text-[#E8A020] animate-pulse" />

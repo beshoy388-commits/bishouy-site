@@ -439,7 +439,7 @@ export async function syncRSSFeeds(isManual: boolean = false) {
 
           const imageUrl =
             originalImage ||
-            `https://images.unsplash.com/${photoId}?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80`;
+            `https://loremflickr.com/1200/800/${aiPrompt.toLowerCase().replace(/[^a-z]/g, "")}?lock=${Math.abs(hash % 1000)}`;
 
           const articleData: InsertArticle = {
             title: editorialPiece.title,

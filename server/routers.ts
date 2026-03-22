@@ -1136,7 +1136,7 @@ export const appRouter = router({
           categoryColor: (categoryColors as any)[generated.category] || "#E8A020",
           author: authorName,
           authorRole: authorRole,
-          image: `https://images.unsplash.com/${photoId}?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80`,
+          image: `https://loremflickr.com/1200/800/${(generated.imagePrompt || generated.category || "news").toLowerCase().replace(/[^a-z]/g, "")}?lock=${Math.abs(hash % 1000)}`,
           seoTitle: generated.seoTitle || generated.title,
           seoDescription: generated.seoDescription || generated.excerpt,
           status: "draft",

@@ -15,7 +15,7 @@ export default function Contact() {
                         <p className="font-ui text-sm text-[#8A8880] tracking-widest uppercase mb-8">Direct lines to our desks</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
                         <div>
                             <p className="text-[#D4D0C8] leading-relaxed mb-8">
                                 Whether you have a secure tip, a press inquiry, or feedback regarding our recent publications, our communications team is ready to direct your message to the appropriate department.

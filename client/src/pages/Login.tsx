@@ -70,7 +70,7 @@ export default function Login() {
     <div className="min-h-screen bg-[#0F0F0E]">
       <Navbar />
 
-      <main className="container pb-16 flex items-center justify-center">
+      <main className="container min-h-[calc(100vh-200px)] py-16 flex items-center justify-center">
         <motion.div 
            variants={containerVariants}
            initial="hidden"

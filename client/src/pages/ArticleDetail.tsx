@@ -31,6 +31,8 @@ import {
   Maximize2,
   Minimize2,
   FileText,
+  Linkedin,
+  MessageCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
@@ -39,6 +41,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import NeuralSidebarWidget from "@/components/NeuralSidebarWidget";
 import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
+import { formatDateString } from "@/lib/time-utils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
@@ -312,6 +315,7 @@ export default function ArticleDetail() {
       twitter: `https://twitter.com/intent/tweet?url=${url}&text=${title}`,
       whatsapp: `https://api.whatsapp.com/send?text=${title} ${url}`,
       telegram: `https://t.me/share/url?url=${url}&text=${title}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
     };
 
     if (platform === "copy") {
@@ -606,10 +610,10 @@ export default function ArticleDetail() {
       <article className="container py-12 md:py-16 overflow-x-hidden">
         <div className="overflow-hidden break-words">
           {/* Back Button */}
-          <Link href="/">
-            <button className="flex items-center gap-2 text-[#8A8880] hover:text-[#E8A020] transition-colors mb-6">
-              <ArrowLeft size={18} />
-              Back to Home
+          <Link href={`/category/${article.category.toLowerCase().replace(/\s+/g, '-')}`}>
+            <button className="flex items-center gap-2 text-[#8A8880] hover:text-[#E8A020] transition-colors mb-6 font-ui text-[11px] uppercase tracking-widest font-bold">
+              <ArrowLeft size={16} />
+              Back to {article.category}
             </button>
           </Link>
 
@@ -634,12 +638,12 @@ export default function ArticleDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             {/* Main Content Column */}
             <div className="lg:col-span-8">
-              <h1 className="font-display text-3xl md:text-5xl font-900 text-[#F2F0EB] leading-tight mb-4">
+              <h1 className="font-display text-2xl sm:text-4xl md:text-5xl font-900 text-[#F2F0EB] leading-tight mb-6">
                 <span>{article.title}</span>
               </h1>
-              <p className="text-[#8A8880] text-xl mb-8 leading-relaxed italic border-l-4 border-[#E8A020] pl-6 uppercase tracking-tight">
-                <span>{article.excerpt}</span>
-              </p>
+               <div className="text-[#8A8880] text-lg md:text-xl mb-8 leading-relaxed italic border-l-4 border-[#E8A020] pl-6 tracking-tight prose prose-invert prose-p:italic max-w-none">
+                <ReactMarkdown>{article.excerpt}</ReactMarkdown>
+              </div>
 
 
               {/* Quick Actions Mobile - Compact Editorial Bar */}
@@ -675,6 +679,13 @@ export default function ArticleDetail() {
                     <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.292 19.49h2.039L6.486 3.24H4.298l13.311 17.403z" />
                   </svg>
                   <span className="font-ui text-[9px] font-900 uppercase tracking-widest leading-none">Share</span>
+                </button>
+                <button
+                  onClick={() => handleShare("whatsapp")}
+                  className="flex flex-col items-center justify-center gap-1.5 py-4 bg-[#11110F] text-[#8A8880] border border-[#222220] rounded-sm transition-all"
+                >
+                  <MessageCircle size={16} />
+                  <span className="font-ui text-[9px] font-900 uppercase tracking-widest leading-none">WhatsApp</span>
                 </button>
                 <button
                   onClick={() => handleShare("copy")}
@@ -729,14 +740,18 @@ export default function ArticleDetail() {
                            return points.map((point: string, idx: number) => (
                              <div key={idx} className="flex gap-4 items-start">
                                <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0 shadow-[0_0_8px_rgba(232,160,32,0.6)]" />
-                               <p className="text-[#D4D0C8] text-sm leading-relaxed">{point}</p>
+                               <div className="text-[#D4D0C8] text-sm leading-relaxed prose prose-sm prose-invert max-w-none">
+                                  <ReactMarkdown>{point}</ReactMarkdown>
+                                </div>
                              </div>
                            ));
                          } catch (e) {
                            return (
                              <div className="flex gap-4 items-start">
                                <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0" />
-                               <p className="text-[#D4D0C8] text-sm leading-relaxed italic opacity-80">{article.excerpt}</p>
+                               <div className="text-[#D4D0C8] text-sm leading-relaxed italic opacity-80 prose prose-sm prose-invert max-w-none">
+                                   <ReactMarkdown>{article.excerpt}</ReactMarkdown>
+                                </div>
                              </div>
                            )
                          }
@@ -744,20 +759,13 @@ export default function ArticleDetail() {
                     ) : (
                       <div className="flex gap-4 items-start">
                         <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0" />
-                        <p className="text-[#D4D0C8] text-sm leading-relaxed italic opacity-80">{article.excerpt}</p>
+                        <div className="text-[#D4D0C8] text-sm leading-relaxed italic opacity-80 prose prose-sm prose-invert max-w-none">
+                           <ReactMarkdown>{article.excerpt}</ReactMarkdown>
+                        </div>
                       </div>
                     )}
                     
-                    {/* Why it Matters (Contextual) */}
-                    <div className="flex gap-4 items-start pt-2 border-t border-[#E8A020]/10">
-                        <div className="w-4 h-4 rounded-full bg-[#E8A020]/20 flex items-center justify-center flex-shrink-0">
-                           <Zap size={10} className="text-[#E8A020]" />
-                        </div>
-                        <p className="text-[#D4D0C8] text-sm leading-relaxed">
-                            <strong className="text-[#E8A020] uppercase text-[10px] tracking-widest mr-2">Why it matters:</strong>
-                            Strategic synthesis for {article.category} indicates evolving global patterns.
-                        </p>
-                    </div>
+
                   </div>
                 </div>
                 
@@ -804,7 +812,7 @@ export default function ArticleDetail() {
 
               {/* Article Body */}
               <div className="prose prose-invert max-w-none mb-12 article-body-content">
-                <div className="font-serif text-[#D4D0C8] leading-relaxed">
+                <div className="font-body text-[#D4D0C8] leading-relaxed">
                   {renderArticleContent(article.content)}
                   <div className="clear-both" />
                 </div>
@@ -826,6 +834,53 @@ export default function ArticleDetail() {
 
               {/* Author Bio */}
               <AuthorBio authorName={article.author} />
+
+              {/* Related Articles Section - Moved above comments for better visibility */}
+              {relatedArticles && relatedArticles.length > 0 && (
+                <div className="mt-16 pt-12 border-t border-[#1C1C1A]">
+                  <div className="amber-line mb-4" />
+                  <h3 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-8">
+                    Read Next
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {relatedArticles.map((article: any) => {
+                      return (
+                        <Link key={article.id} href={`/article/${article.slug}`}>
+                          <div className="group cursor-pointer">
+                            <div className="aspect-[16/9] overflow-hidden rounded-sm mb-4 relative bg-[#1C1C1A]">
+                              <img
+                                src={getSafeImage(article.image, article.category, article.id, 800)}
+                                alt={article.title}
+                                className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
+                                decoding="async"
+                                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                                  const img = e.target as HTMLImageElement;
+                                  if (img.dataset.triedFallback === "true") return;
+                                  img.dataset.triedFallback = "true";
+                                  img.src = getFallbackImage(article.category || "news", article.id, 800);
+                                }}
+                              />
+                              <div className="absolute top-3 left-3 bg-[#E8A020] text-[#0F0F0E] text-[10px] font-ui font-bold uppercase tracking-widest px-2 py-1 rounded-sm">
+                                {article.category}
+                              </div>
+                            </div>
+                            <h4 className="font-display text-lg text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 mb-2 font-900 leading-tight">
+                              {article.title}
+                            </h4>
+                            <div className="flex items-center gap-4 text-[10px] text-[#555550] font-ui uppercase tracking-widest">
+                              <span className="font-900 text-[#8A8880]">{article.author}</span>
+                              <div className="w-1 h-1 rounded-full bg-[#222220]" />
+                              <span>
+                                {formatDateString(article.publishedAt || article.createdAt)}
+                              </span>
+                            </div>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* Comments Section */}
               <div className="max-w-3xl mx-auto">
@@ -1048,58 +1103,7 @@ export default function ArticleDetail() {
                 )}
               </div>
 
-              {/* Related Articles Section */}
-              {relatedArticles && relatedArticles.length > 0 && (
-                <div className="mt-16 pt-12 border-t border-[#1C1C1A]">
-                  <h3 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-8">
-                    Read Next
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {relatedArticles.map(article => {
-                      const publishDate = article.publishedAt
-                        ? new Date(article.publishedAt)
-                        : new Date(article.createdAt);
 
-                      return (
-                        <Link key={article.id} href={`/article/${article.slug}`}>
-                          <div className="group cursor-pointer">
-                            <div className="aspect-[16/9] overflow-hidden rounded-sm mb-4 relative bg-[#1C1C1A]">
-                              <img
-                                src={getSafeImage(article.image, article.category, article.id, 800)}
-                                alt={article.title}
-                                className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
-                                decoding="async"
-                                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                                  const img = e.target as HTMLImageElement;
-                                  if (img.dataset.triedFallback === "true") return;
-                                  img.dataset.triedFallback = "true";
-                                  img.src = getFallbackImage(article.category || "news", article.id, 800);
-                                }}
-                              />
-                              <div className="absolute top-3 left-3 bg-[#E8A020] text-[#0F0F0E] text-[10px] font-ui font-bold uppercase tracking-widest px-2 py-1 rounded-sm">
-                                {article.category}
-                              </div>
-                            </div>
-                            <h4 className="font-display text-lg text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 mb-2">
-                              {article.title}
-                            </h4>
-                            <div className="flex items-center gap-4 text-xs text-[#8A8880] font-ui uppercase tracking-widest">
-                              <span>{article.author}</span>
-                              <span>
-                                {publishDate.toLocaleDateString("en-US", {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                })}
-                              </span>
-                            </div>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
             </div>
             {/* Sticky Sidebar */}
             <aside className="hidden lg:block lg:col-span-4 space-y-8 lg:sticky lg:top-32 h-fit mb-12">
@@ -1144,31 +1148,21 @@ export default function ArticleDetail() {
                       Share with your network
                     </span>
                     <div className="grid grid-cols-2 gap-3">
+                      <button onClick={() => handleShare("linkedin")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28]" title="LinkedIn">
+                        <Linkedin size={18} />
+                      </button>
+                      <button onClick={() => handleShare("whatsapp")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28]" title="WhatsApp">
+                        <MessageCircle size={18} />
+                      </button>
                       <button onClick={() => handleShare("facebook")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28]" title="Facebook">
                         <Facebook size={18} />
                       </button>
                       <button onClick={() => handleShare("twitter")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28]" title="X (Twitter)">
-                        <svg
-                          viewBox="0 0 24 24"
-                          width="18"
-                          height="18"
-                          fill="currentColor"
-                        >
-                          <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.292 19.49h2.039L6.486 3.24H4.298l13.311 17.403z" />
-                        </svg>
+                        <Twitter size={18} />
                       </button>
-                      <button onClick={() => handleShare("whatsapp")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28]" title="WhatsApp">
-                        <svg
-                          viewBox="0 0 24 24"
-                          width="18"
-                          height="18"
-                          fill="currentColor"
-                        >
-                          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.438 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .004 5.408 0 12.046c0 2.121.54 4.192 1.57 6.052L0 24l6.104-1.602a11.845 11.845 0 005.943 1.602h.005c6.631 0 12.043-5.408 12.046-12.047a11.82 11.82 0 00-3.69-8.498z" />
-                        </svg>
-                      </button>
-                      <button onClick={() => handleShare("copy")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28]" title="Copy Link">
-                        <LinkIcon size={18} />
+                      <button onClick={() => handleShare("copy")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28] col-span-2 flex items-center justify-center gap-2 font-ui text-[10px] uppercase tracking-widest" title="Copy Link">
+                        <LinkIcon size={14} />
+                        Copy Link
                       </button>
                     </div>
                   </div>

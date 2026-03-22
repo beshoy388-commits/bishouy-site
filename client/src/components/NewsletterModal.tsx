@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { X, Mail, Sparkles, CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function NewsletterModal() {
+    const [location] = useLocation();
     const { data: user } = trpc.auth.me.useQuery();
     const [isOpen, setIsOpen] = useState(false);
     const [email, setEmail] = useState("");
@@ -26,6 +27,9 @@ export default function NewsletterModal() {
     });
 
     useEffect(() => {
+        // Do not show on auth pages
+        if (location === "/login" || location === "/register") return;
+
         const isAlreadySubscribedInDB = user?.subscribeToNewsletter === 1;
         const hasSubscribedLocally = localStorage.getItem("newsletter_subscribed");
         const hasDismissed = localStorage.getItem("newsletter_dismissed");
@@ -46,6 +50,14 @@ export default function NewsletterModal() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!email) return;
+        
+        // Ensure manual checkbox check in case HTML5 is bypassed
+        const checkbox = e.currentTarget.querySelector('input[type="checkbox"]') as HTMLInputElement;
+        if (checkbox && !checkbox.checked) {
+             toast.error("Consent required to subscribe.");
+             return;
+        }
+
         setIsLoading(true);
         subscribeMutation.mutate({ email });
     };
@@ -66,7 +78,7 @@ export default function NewsletterModal() {
                         initial={{ scale: 0.9, y: 20, opacity: 0 }}
                         animate={{ scale: 1, y: 0, opacity: 1 }}
                         exit={{ scale: 0.9, y: 20, opacity: 0 }}
-                        className="relative w-full max-w-2xl bg-[#161614] border border-[#2A2A28] rounded-sm overflow-hidden shadow-2xl"
+                        className="relative w-full max-w-xl bg-[#161614] border border-[#2A2A28] rounded-sm overflow-hidden shadow-2xl"
                     >
                         <button 
                             onClick={handleClose}
@@ -92,7 +104,7 @@ export default function NewsletterModal() {
                                 </div>
                             </div>
 
-                            <div className="p-8 md:p-12 flex flex-col justify-center">
+                            <div className="p-6 md:p-8 flex flex-col justify-center">
                                 {!isSubscribed ? (
                                     <>
                                         <div className="mb-8">

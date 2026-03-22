@@ -14,7 +14,6 @@
 html {
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
-  hyphens: auto;
   overflow-x: hidden;
 }
 
@@ -119,7 +118,9 @@ font {
 
 :root {
   --radius: 0.25rem;
+}
 
+.dark {
   /* Dark Editorial Palette */
   --background: oklch(0.108 0.004 60);
   /* #0F0F0E near-black warm */
@@ -171,6 +172,30 @@ font {
   --amber-dark: oklch(0.6 0.14 65);
   --surface: oklch(0.145 0.004 60);
   --surface-2: oklch(0.18 0.004 60);
+}
+
+/* LIGHT MODE - BISHOUY BONE WHITE EDITORIAL */
+:root:not(.dark) {
+  --background: oklch(0.96 0.01 75);
+  /* Bone White #F5F4F0 approx */
+  --foreground: oklch(0.15 0.01 40);
+  /* Coal #1A1918 approx */
+  --card: oklch(0.92 0.01 70);
+  --card-foreground: oklch(0.15 0.01 40);
+  --popover: oklch(0.92 0.01 70);
+  --popover-foreground: oklch(0.15 0.01 40);
+  --primary: oklch(0.68 0.17 72);
+  /* Balanced amber for light */
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.88 0.01 80);
+  --secondary-foreground: oklch(0.15 0.01 40);
+  --muted: oklch(0.88 0.01 80);
+  --muted-foreground: oklch(0.42 0.01 50);
+  --accent: oklch(0.68 0.17 72);
+  --accent-foreground: oklch(0.98 0 0);
+  --border: oklch(0.85 0.01 80);
+  --input: oklch(0.85 0.01 80);
+  --ring: oklch(0.68 0.17 72);
 }
 
 @layer base {
@@ -439,6 +464,11 @@ font {
     background-size: 100% 1px;
   }
 
+  .title-hover:visited span {
+    color: oklch(0.65 0.01 60); /* Slightly grayer for read items */
+    opacity: 0.8;
+  }
+
   /* Premium Image Fitting */
   .img-smart-fit {
     width: 100%;
@@ -454,6 +484,7 @@ font {
     inset: 0;
     width: 100%;
     height: 100%;
+    @apply text-left;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -481,22 +512,26 @@ font {
     margin: auto;
   }
 
+  /* Force left alignment globally for all prose and standard paragraphs */
+  p, .prose p, .prose, .article-body-content p {
+    text-align: left !important;
+    hyphens: none !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+
   /* Responsive fixes for article content */
   .prose {
     max-width: 100% !important;
     overflow-wrap: break-word;
     word-wrap: break-word;
-    hyphens: auto;
-    -webkit-hyphens: auto;
-    -ms-hyphens: auto;
-    text-align: left; /* Keep left aligned for readability on small screens */
+    text-align: left !important; 
   }
 
-  /* Justification for premium desktop reading */
+  /* Premium desktop reading layout - override any leftover justify */
   @media (min-width: 768px) {
-    .prose p {
-      text-align: justify;
-      hyphens: auto;
+    .prose p, .article-body-content p {
+      text-align: left !important;
     }
   }
 
@@ -532,10 +567,26 @@ font {
     line-height: 1;
   }
 
+  /* Responsive Drop Cap Fix */
+  @media (max-width: 768px) {
+    .drop-cap::first-letter, 
+    .article-body-content p:first-of-type::first-letter {
+      float: none !important;
+      font-size: inherit !important;
+      font-weight: inherit !important;
+      font-family: inherit !important;
+      color: inherit !important;
+      border: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  }
+
   .premium-blockquote {
     @apply border-l-4 border-[#E8A020] pl-6 my-10 italic text-xl md:text-2xl text-[#F2F0EB]/90;
     font-family: "Lora", serif;
     position: relative;
+    hyphens: none !important;
   }
 
   .premium-blockquote::before {

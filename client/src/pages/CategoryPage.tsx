@@ -109,7 +109,7 @@ export default function CategoryPage() {
               >
                 {category.name}
               </span>
-              <h1 className="font-display text-5xl sm:text-7xl md:text-9xl text-[#F2F0EB] leading-[0.85] uppercase tracking-tighter">
+              <h1 className="font-display text-4xl sm:text-6xl md:text-8xl lg:text-9xl text-[#F2F0EB] leading-[0.85] uppercase tracking-tighter break-words max-w-full">
                 {category.name}
               </h1>
               <div className="h-px w-24 bg-[#E8A020] my-8" />

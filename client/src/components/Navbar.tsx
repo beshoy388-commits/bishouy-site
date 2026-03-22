@@ -20,7 +20,9 @@ import {
   UserPlus,
   ArrowRight,
   Eye,
-  EyeOff
+  EyeOff,
+  Sun,
+  Moon
 } from "lucide-react";
 import { CATEGORIES } from "@/lib/articles";
 import { toast } from "sonner";
@@ -29,6 +31,7 @@ import { getLoginUrl } from "@/const";
 import NotificationDrawer from "./NotificationDrawer";
 import SearchOverlay from "./SearchOverlay";
 import { useUI } from "@/contexts/UIContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import AdPlacement from "./AdPlacement";
 import { formatDateString } from "@/lib/time-utils";
 
@@ -43,6 +46,7 @@ export default function Navbar() {
   const [currentDate, setCurrentDate] = useState("");
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const { isSearchOpen, setIsSearchOpen, isShadowMode, setIsShadowMode } = useUI();
+  const { theme, toggleTheme } = useTheme();
   const utils = trpc.useUtils();
 
   const notificationsQuery = trpc.notifications.getLatest.useQuery(undefined, {
@@ -95,7 +99,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || isMenuOpen
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${isScrolled || isMenuOpen
         ? "bg-[#0F0F0E]/95 backdrop-blur-md border-b border-[#222220]"
         : "bg-transparent"
         }`}
@@ -105,7 +109,7 @@ export default function Navbar() {
       <div className="border-b border-[#222220] bg-[#0F0F0E] notranslate">
         <div className="container">
           <div className="flex items-center justify-between h-7">
-            <span className="font-ui text-[9px] text-[#8A8880] uppercase tracking-[0.2em]">
+            <span className="font-ui text-[9px] text-[#8A8880] uppercase tracking-[0.2em] hidden sm:block">
               {currentDate || "Loading date..."}
             </span>
             <div className="flex items-center gap-3">
@@ -119,7 +123,7 @@ export default function Navbar() {
       </div>
 
       {/* Main navbar */}
-      <div className="bg-[#0F0F0E]/95 backdrop-blur-sm relative border-b border-[#222220]/50">
+      <div className="bg-[#0F0F0E]/95 backdrop-blur-sm relative z-30 border-b border-[#222220]/50">
         <div className="container">
           <div className="flex items-center justify-between h-16 gap-4">
             {/* Desktop: Left Utilities */}
@@ -229,12 +233,32 @@ export default function Navbar() {
 
               {/* Shadow Mode Toggle — Desktop */}
               <button
-                onClick={() => setIsShadowMode(!isShadowMode)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-sm transition-all font-ui text-[9px] font-900 uppercase tracking-widest ${isShadowMode ? "text-[#E8A020] border-[#E8A020]/30 bg-[#E8A020]/5" : "text-[#555550] border-[#222220] hover:border-[#E8A020]/30 hover:text-[#E8A020]"}`}
+                onClick={() => {
+                  const newState = !isShadowMode;
+                  setIsShadowMode(newState);
+                  if (newState) {
+                    toast.success("Shadow Analysis Enabled", { 
+                      description: "Advanced intelligence verification active.",
+                      duration: 3000 
+                    });
+                  } else {
+                    toast.info("Shadow Analysis Disabled", { duration: 2000 });
+                  }
+                }}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm transition-all duration-300 font-ui text-[10px] font-900 uppercase tracking-widest ${isShadowMode ? "text-[#E8A020] bg-[#E8A020]/10 border border-[#E8A020]/30" : "text-[#555550] border border-transparent hover:text-[#8A8880]"}`}
                 title={isShadowMode ? "Exit Shadow Analysis" : "Enter Shadow Analysis"}
               >
                 {isShadowMode ? <EyeOff size={14} /> : <Eye size={14} />}
                 <span>{isShadowMode ? "Clearance: Shadow" : "Clearance: Standard"}</span>
+              </button>
+
+              {/* Theme Toggle — Desktop */}
+              <button
+                onClick={toggleTheme}
+                className="text-[#8A8880] hover:text-[#E8A020] transition-colors p-1"
+                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              >
+                {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
               </button>
             </div>
 
@@ -245,6 +269,12 @@ export default function Navbar() {
                 className={`p-2 rounded-sm transition-all ${isShadowMode ? "text-[#E8A020] bg-[#E8A020]/10" : "text-[#8A8880]"}`}
               >
                 {isShadowMode ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+              <button
+                onClick={toggleTheme}
+                className="text-[#8A8880]"
+              >
+                {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
               </button>
               <button
                 onClick={handleNotifications}
@@ -284,7 +314,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="lg:hidden fixed top-[120px] left-0 right-0 bottom-0 bg-[#0F0F0E] z-[40] overflow-y-auto border-t border-[#222220]">
+        <div className="lg:hidden absolute top-full left-0 right-0 h-[calc(100vh-60px)] bg-[#0F0F0E] z-[40] overflow-y-auto border-t border-[#222220]">
           <div className="container py-8 pb-32">
             <nav className="flex flex-col gap-1">
               <Link

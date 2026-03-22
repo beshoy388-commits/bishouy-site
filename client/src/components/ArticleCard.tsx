@@ -14,6 +14,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 
 import { getSafeImage, getFallbackImage } from "@/lib/image-utils";
+import { formatDateString } from "@/lib/time-utils";
 
 interface ArticleCardProps {
   article: Article;
@@ -215,7 +216,7 @@ const ArticleCard = memo(function ArticleCard({
               <span>{article.title}</span>
             </h2>
             <p className="font-ui text-sm text-[#8A8880] line-clamp-2 mb-4 hidden md:block">
-              <span>{article.excerpt}</span>
+              <span>{article.excerpt?.replace(/[*#_`~]/g, "")}</span>
             </p>
             <div className="flex items-center gap-4 text-[#8A8880] mb-4">
               <span className="flex items-center gap-1.5 font-ui text-xs">
@@ -226,9 +227,17 @@ const ArticleCard = memo(function ArticleCard({
                 <Clock size={11} />
                 {article.readTime} min
               </span>
-              <span className="font-ui text-xs ml-auto">
-                {(article as any).date}
+              <span className="font-ui text-xs">
+                {formatDateString(article.publishedAt || article.createdAt)}
               </span>
+              {showLikes && (
+                <div
+                  className="ml-auto z-20"
+                  onClick={handleLikeClick}
+                >
+                  <LikeButton />
+                </div>
+              )}
             </div>
 
             {article.tags && (
@@ -254,14 +263,7 @@ const ArticleCard = memo(function ArticleCard({
             )}
           </div>
 
-          {showLikes && (
-            <div
-              className="absolute top-4 right-4 z-20"
-              onClick={handleLikeClick}
-            >
-              <LikeButton />
-            </div>
-          )}
+          {/* Removido do topo */}
         </article>
       </Link>
     );
@@ -300,15 +302,22 @@ const ArticleCard = memo(function ArticleCard({
               >
                 {article.category}
               </span>
-              <h3 className="font-headline text-[13px] md:text-sm font-bold text-[#F2F0EB] leading-tight line-clamp-2 md:line-clamp-2 title-hover">
+              <h3 className="font-headline text-[13px] md:text-sm font-bold text-[#F2F0EB] leading-tight line-clamp-1 title-hover">
                 <span>{article.title}</span>
               </h3>
+              <p className="font-ui text-[10px] text-[#8A8880] line-clamp-1 mt-1">
+                {article.excerpt?.replace(/[*#_`~]/g, "")}
+              </p>
             </div>
             <div className="flex items-center justify-between mt-auto">
               <span className="font-ui text-[9px] md:text-[11px] text-[#555550] uppercase tracking-tighter">
-                {(article as any).date}
+                {formatDateString(article.publishedAt || article.createdAt)}
               </span>
-              {showLikes && <LikeButton />}
+              {showLikes && (
+                <div onClick={handleLikeClick}>
+                  <LikeButton />
+                </div>
+              )}
             </div>
           </div>
         </article>
@@ -340,7 +349,7 @@ const ArticleCard = memo(function ArticleCard({
             {article.title}
           </h3>
           <div className="flex items-center gap-3 text-[#8A8880]">
-            <span className="font-ui text-[11px]">{(article as any).date}</span>
+            <span className="font-ui text-[11px]">{formatDateString(article.publishedAt || article.createdAt)}</span>
             <span className="flex items-center gap-1 font-ui text-[11px]">
               <Clock size={10} />
               {article.readTime} min
@@ -380,14 +389,7 @@ const ArticleCard = memo(function ArticleCard({
             onError={handleImageError}
           />
           <div className="neural-scan-line" />
-          {showLikes && (
-            <div
-              className="absolute top-2 right-2 z-20"
-              onClick={handleLikeClick}
-            >
-              <LikeButton />
-            </div>
-          )}
+          {/* Removed top Like button */}
         </div>
         <div className="p-5 flex-1 flex flex-col">
           <span
@@ -400,14 +402,22 @@ const ArticleCard = memo(function ArticleCard({
             <span>{article.title}</span>
           </h3>
           <p className="font-ui text-xs text-[#8A8880] line-clamp-2 mb-4 flex-1">
-            <span>{article.excerpt}</span>
+            <span>{article.excerpt?.replace(/[*#_`~]/g, "")}</span>
           </p>
           <div className="flex items-center gap-3 text-[#8A8880]">
             <span className="font-ui text-[11px]">{article.author}</span>
-            <span className="font-ui text-[11px] ml-auto flex items-center gap-1">
+            <span className="font-ui text-[11px] flex items-center gap-1">
               <Clock size={10} />
               {article.readTime} min
             </span>
+            <span className="font-ui text-[11px]">
+                {formatDateString(article.publishedAt || article.createdAt)}
+            </span>
+            {showLikes && (
+              <div className="ml-auto z-20" onClick={handleLikeClick}>
+                <LikeButton />
+              </div>
+            )}
           </div>
         </div>
       </article>

@@ -70,7 +70,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
                              <h5 className="font-ui text-[10px] font-900 text-[#555550] uppercase tracking-[0.3em] mb-4">Trending Streams</h5>
                              <div className="flex flex-wrap gap-2">
-                                {["World", "Technology", "Economy", "AI", "Culture", "Pulse"].map(cat => (
+                                {["World", "Politics", "Economy", "Technology", "Culture", "Sports"].map(cat => (
                                     <button 
                                         key={cat}
                                         onClick={() => setQuery(cat)}

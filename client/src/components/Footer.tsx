@@ -69,41 +69,44 @@ export default function Footer() {
                 7:00 AM.
               </p>
             </div>
-            <div className="flex flex-col gap-3 w-full md:w-auto">
+            <div className="flex flex-col gap-4 w-full md:w-auto">
               <form
                 onSubmit={handleNewsletter}
-                className="flex gap-2 w-full md:w-auto"
+                className="flex flex-col gap-3 w-full md:w-auto"
               >
-                <input
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="Your email"
-                  required
-                  className="flex-1 md:w-64 bg-[#1C1C1A] border border-[#2A2A28] text-[#F2F0EB] placeholder-[#555550] font-ui text-sm px-4 py-2.5 rounded-sm focus:outline-none focus:border-[#E8A020] transition-colors"
-                />
-                <button
-                  type="submit"
-                  disabled={subscribeMutation.isPending}
-                  className="bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#E8A020]/20 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-5 py-2.5 rounded-sm transition-all active:scale-95 whitespace-nowrap disabled:opacity-50 flex items-center gap-2"
-                >
-                  {subscribeMutation.isPending ? (
-                    <Loader2 className="animate-spin" size={12} />
-                  ) : null}
-                  {subscribeMutation.isPending ? "Subscribing..." : "Subscribe"}
-                </button>
+                <div className="flex gap-2 w-full md:w-auto">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    placeholder="Your email"
+                    required
+                    className="flex-1 md:w-64 bg-[#1C1C1A] border border-[#2A2A28] text-[#F2F0EB] placeholder-[#555550] font-ui text-sm px-4 py-2.5 rounded-sm focus:outline-none focus:border-[#E8A020] transition-colors"
+                  />
+                  <button
+                    type="submit"
+                    disabled={subscribeMutation.isPending}
+                    className="bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#E8A020]/20 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-5 py-2.5 rounded-sm transition-all active:scale-95 whitespace-nowrap disabled:opacity-50 flex items-center gap-2"
+                  >
+                    {subscribeMutation.isPending ? (
+                      <Loader2 className="animate-spin" size={12} />
+                    ) : null}
+                    {subscribeMutation.isPending ? "Subscribing..." : "Subscribe"}
+                  </button>
+                </div>
+                <label className="flex items-center gap-2 cursor-pointer group">
+                  <input 
+                    type="checkbox" 
+                    required
+                    checked={gdprConsent}
+                    onChange={(e) => setGdprConsent(e.target.checked)}
+                    className="w-3 h-3 accent-[#E8A020]" 
+                  />
+                  <span className="text-[10px] text-[#555550] group-hover:text-[#8A8880] transition-colors">
+                    I consent to the collection of my data in accordance with the <Link href="/privacy-policy" className="underline">Privacy Policy</Link>.
+                  </span>
+                </label>
               </form>
-              <label className="flex items-center gap-2 cursor-pointer group">
-                <input 
-                  type="checkbox" 
-                  checked={gdprConsent}
-                  onChange={(e) => setGdprConsent(e.target.checked)}
-                  className="w-3 h-3 accent-[#E8A020]" 
-                />
-                <span className="text-[10px] text-[#555550] group-hover:text-[#8A8880] transition-colors">
-                  I consent to the collection of my data in accordance with the <Link href="/privacy-policy" className="underline">Privacy Policy</Link>.
-                </span>
-              </label>
             </div>
           </div>
         </div>
