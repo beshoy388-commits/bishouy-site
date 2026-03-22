@@ -104,8 +104,8 @@ export default function Home() {
       <SEO />
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="py-6 md:py-8 lg:py-8 bg-[#0A0A09]">
+      {/* Hero Section — tight layout for mobile */}
+      <section className="pt-0 pb-6 md:py-8 lg:py-8 bg-[#0A0A09]">
         <div className="container relative z-10 transition-all duration-500">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 md:gap-12">
             <div className="lg:col-span-2 space-y-8 mb-10 lg:mb-0">

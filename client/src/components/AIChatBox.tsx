@@ -129,26 +129,7 @@ export function AIChatBox({
   // Filter out system messages
   const displayMessages = messages.filter(msg => msg.role !== "system");
 
-  // Calculate min-height for last assistant message to push user message to top
-  const [minHeightForLastMessage, setMinHeightForLastMessage] = useState(0);
 
-  useEffect(() => {
-    if (containerRef.current && inputAreaRef.current) {
-      const containerHeight = containerRef.current.offsetHeight;
-      const inputHeight = inputAreaRef.current.offsetHeight;
-      const scrollAreaHeight = containerHeight - inputHeight;
-
-      // Reserve space for:
-      // - padding (p-4 = 32px top+bottom)
-      // - user message: 40px (item height) + 16px (margin-top from space-y-4) = 56px
-      // Note: margin-bottom is not counted because it naturally pushes the assistant message down
-      const userMessageReservedHeight = 56;
-      const calculatedHeight =
-        scrollAreaHeight - 32 - userMessageReservedHeight;
-
-      setMinHeightForLastMessage(Math.max(0, calculatedHeight));
-    }
-  }, []);
 
   // Scroll to bottom helper function with smooth animation
   const scrollToBottom = () => {
@@ -226,27 +207,16 @@ export function AIChatBox({
         ) : (
           <ScrollArea className="h-full">
             <div className="flex flex-col space-y-4 p-4">
-              {displayMessages.map((message, index) => {
-                // Apply min-height to last message only if NOT loading (when loading, the loading indicator gets it)
-                const isLastMessage = index === displayMessages.length - 1;
-                const shouldApplyMinHeight =
-                  isLastMessage && !isLoading && minHeightForLastMessage > 0;
-
-                return (
-                  <div
-                    key={index}
-                    className={cn(
-                      "flex gap-3",
-                      message.role === "user"
-                        ? "justify-end items-start"
-                        : "justify-start items-start"
-                    )}
-                    style={
-                      shouldApplyMinHeight
-                        ? { minHeight: `${minHeightForLastMessage}px` }
-                        : undefined
-                    }
-                  >
+              {displayMessages.map((message, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    "flex gap-3",
+                    message.role === "user"
+                      ? "justify-end items-start"
+                      : "justify-start items-start"
+                  )}
+                >
                     {message.role === "assistant" && (
                       <div className="size-8 shrink-0 mt-1 rounded-full bg-primary/10 flex items-center justify-center">
                         <Sparkles className="size-4 text-primary" />
@@ -278,17 +248,12 @@ export function AIChatBox({
                       </div>
                     )}
                   </div>
-                );
-              })}
+                ))}
 
               {isLoading && (
                 <div
                   className="flex items-start gap-3"
-                  style={
-                    minHeightForLastMessage > 0
-                      ? { minHeight: `${minHeightForLastMessage}px` }
-                      : undefined
-                  }
+                  style={undefined}
                 >
                   <div className="size-8 shrink-0 mt-1 rounded-full bg-primary/10 flex items-center justify-center">
                     <Sparkles className="size-4 text-primary" />

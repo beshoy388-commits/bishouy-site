@@ -183,7 +183,7 @@ function AppContent() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark" storageKey="app-theme" switchable={false}>
+      <ThemeProvider defaultTheme="dark" switchable={false}>
         <UIProvider>
           <AudioProvider>
             <TooltipProvider>

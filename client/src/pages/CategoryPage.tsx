@@ -95,7 +95,7 @@ export default function CategoryPage() {
         <div className="container relative z-10">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-[#8A8880] hover:text-[#E8A020] transition-colors mb-10 font-ui text-[10px] uppercase tracking-[0.2em] font-bold"
+            className="hidden sm:inline-flex items-center gap-2 text-[#8A8880] hover:text-[#E8A020] transition-colors mb-10 font-ui text-[10px] uppercase tracking-[0.2em] font-bold"
           >
             <ArrowLeft size={16} />
             BACK TO THE SOURCE

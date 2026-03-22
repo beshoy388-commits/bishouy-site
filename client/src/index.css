@@ -509,6 +509,18 @@ font {
     display: block;
   }
 
+  /* Force tightly packed elements on mobile top area */
+  @media (max-width: 768px) {
+    section:first-of-type, main > section:first-of-type, .container:first-of-type {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
+    
+    .img-hero-frame {
+       margin-top: 0 !important;
+    }
+  }
+
   /* Force left alignment globally for all prose and standard paragraphs */
   p, .prose p, .prose, .article-body-content p {
     text-align: left !important;

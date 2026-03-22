@@ -80,8 +80,8 @@ export default function AIAssistant() {
               messages={messages}
               onSendMessage={handleSend}
               isLoading={chatMutation.isPending}
-              height="600px"
-              className="border-none"
+              height="min(600px, calc(100vh - 350px))"
+              className="border-none mb-20 md:mb-0"
               placeholder="Ask me something about the news..."
               suggestedPrompts={[
                 "Summarize today's top stories",

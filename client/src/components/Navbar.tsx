@@ -105,8 +105,8 @@ export default function Navbar() {
         }`}
     >
       <GlobalTicker />
-      {/* Top bar */}
-      <div className="border-b border-[#222220] bg-[#0F0F0E] notranslate">
+      {/* Top bar — hidden on mobile to maximize space */}
+      <div className="hidden sm:block border-b border-[#222220] bg-[#0F0F0E] notranslate">
         <div className="container">
           <div className="flex items-center justify-between h-7">
             <span className="font-ui text-[9px] text-[#8A8880] uppercase tracking-[0.2em] hidden sm:block">

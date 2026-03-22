@@ -395,7 +395,7 @@ export default function UserProfile() {
                   <Link key={article.id} href={`/article/${article.slug}`}>
                     <div className="flex gap-4 group cursor-pointer border border-[#222220] p-4 rounded-sm hover:border-[#E8A020] transition-colors bg-[#0F0F0E]">
                       {article.image && (
-                        <div className="w-24 h-24 flex-shrink-0 bg-[#222220] rounded-sm overflow-hidden hidden sm:block">
+                        <div className="w-24 h-24 flex-shrink-0 bg-[#222220] rounded-sm overflow-hidden flex">
                           <img
                             src={article.image}
                             alt={article.title}

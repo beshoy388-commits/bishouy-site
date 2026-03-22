@@ -607,7 +607,7 @@ export default function ArticleDetail() {
       </section>
 
       {/* Article Content */}
-      <article className="container pt-6 md:pt-10 pb-12 md:pb-16 overflow-x-hidden">
+      <article className="container pt-2 md:pt-10 pb-12 md:pb-16 overflow-x-hidden">
         <div className="overflow-hidden break-words">
           {/* Back Button */}
           <Link href={`/category/${article.category.toLowerCase().replace(/\s+/g, '-')}`}>
