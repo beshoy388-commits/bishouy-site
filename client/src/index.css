@@ -8,6 +8,7 @@
 
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -485,9 +486,6 @@ font {
     width: 100%;
     height: 100%;
     @apply text-left;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     background-color: #0c0c0b;
     overflow: hidden;
   }
@@ -503,13 +501,12 @@ font {
   }
 
   .img-hero-main {
-    position: relative;
-    z-index: 1;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
     display: block;
-    margin: auto;
   }
 
   /* Force left alignment globally for all prose and standard paragraphs */
@@ -518,6 +515,7 @@ font {
     hyphens: none !important;
     word-break: normal !important;
     overflow-wrap: break-word !important;
+    font-style: normal !important; /* Fix for articles appearing all in italics */
   }
 
   /* Responsive fixes for article content */
@@ -582,11 +580,15 @@ font {
     }
   }
 
-  .premium-blockquote {
+  .premium-blockquote, blockquote {
     @apply border-l-4 border-[#E8A020] pl-6 my-10 italic text-xl md:text-2xl text-[#F2F0EB]/90;
     font-family: "Lora", serif;
     position: relative;
     hyphens: none !important;
+  }
+
+  blockquote p {
+    margin-bottom: 0 !important;
   }
 
   .premium-blockquote::before {

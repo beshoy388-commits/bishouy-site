@@ -12,7 +12,7 @@ export default function GlobalAudioPlayer() {
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
-          className="fixed bottom-24 md:bottom-8 left-4 right-4 md:left-auto md:right-8 md:w-80 z-[120] notranslate"
+          className="fixed bottom-[88px] md:bottom-8 left-4 right-4 md:left-auto md:right-8 md:w-80 z-[120] notranslate"
         >
           <div className="bg-[#11110F]/90 backdrop-blur-xl border border-[#E8A020]/30 p-4 shadow-2xl rounded-sm overflow-hidden relative group">
             {/* Minimal Pulse Background */}

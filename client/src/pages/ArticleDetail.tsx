@@ -607,7 +607,7 @@ export default function ArticleDetail() {
       </section>
 
       {/* Article Content */}
-      <article className="container py-12 md:py-16 overflow-x-hidden">
+      <article className="container pt-6 md:pt-10 pb-12 md:pb-16 overflow-x-hidden">
         <div className="overflow-hidden break-words">
           {/* Back Button */}
           <Link href={`/category/${article.category.toLowerCase().replace(/\s+/g, '-')}`}>
@@ -641,7 +641,7 @@ export default function ArticleDetail() {
               <h1 className="font-display text-2xl sm:text-4xl md:text-5xl font-900 text-[#F2F0EB] leading-tight mb-6">
                 <span>{article.title}</span>
               </h1>
-               <div className="text-[#8A8880] text-lg md:text-xl mb-8 leading-relaxed italic border-l-4 border-[#E8A020] pl-6 tracking-tight prose prose-invert prose-p:italic max-w-none">
+               <div className="text-[#8A8880] text-lg md:text-xl mb-8 leading-relaxed border-l-4 border-[#E8A020] pl-6 tracking-tight prose prose-invert max-w-none">
                 <ReactMarkdown>{article.excerpt}</ReactMarkdown>
               </div>
 
@@ -749,7 +749,7 @@ export default function ArticleDetail() {
                            return (
                              <div className="flex gap-4 items-start">
                                <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0" />
-                               <div className="text-[#D4D0C8] text-sm leading-relaxed italic opacity-80 prose prose-sm prose-invert max-w-none">
+                               <div className="text-[#D4D0C8] text-sm leading-relaxed opacity-80 prose prose-sm prose-invert max-w-none">
                                    <ReactMarkdown>{article.excerpt}</ReactMarkdown>
                                 </div>
                              </div>
@@ -759,7 +759,7 @@ export default function ArticleDetail() {
                     ) : (
                       <div className="flex gap-4 items-start">
                         <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0" />
-                        <div className="text-[#D4D0C8] text-sm leading-relaxed italic opacity-80 prose prose-sm prose-invert max-w-none">
+                        <div className="text-[#D4D0C8] text-sm leading-relaxed opacity-80 prose prose-sm prose-invert max-w-none">
                            <ReactMarkdown>{article.excerpt}</ReactMarkdown>
                         </div>
                       </div>
@@ -869,7 +869,7 @@ export default function ArticleDetail() {
                             </h4>
                             <div className="flex items-center gap-4 text-[10px] text-[#555550] font-ui uppercase tracking-widest">
                               <span className="font-900 text-[#8A8880]">{article.author}</span>
-                              <div className="w-1 h-1 rounded-full bg-[#222220]" />
+                              <div className="w-1 h-1 rounded-full bg-[#222220] hidden" />
                               <span>
                                 {formatDateString(article.publishedAt || article.createdAt)}
                               </span>

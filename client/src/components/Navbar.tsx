@@ -116,7 +116,6 @@ export default function Navbar() {
               <span className="font-ui text-[9px] text-[#8A8880] uppercase tracking-[0.2em] hidden sm:block">
                 Global Network
               </span>
-              <div className="w-1 h-1 rounded-full bg-[#E8A020] animate-pulse" />
             </div>
           </div>
         </div>
@@ -252,30 +251,17 @@ export default function Navbar() {
                 <span>{isShadowMode ? "Clearance: Shadow" : "Clearance: Standard"}</span>
               </button>
 
-              {/* Theme Toggle — Desktop */}
-              <button
-                onClick={toggleTheme}
-                className="text-[#8A8880] hover:text-[#E8A020] transition-colors p-1"
-                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-              >
-                {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-              </button>
             </div>
 
             {/* Mobile: Search (Right) */}
-            <div className="flex lg:hidden items-center justify-end flex-1 gap-4">
+            <div className="flex lg:hidden items-center justify-end flex-1 gap-6">
               <button
                 onClick={() => setIsShadowMode(!isShadowMode)}
                 className={`p-2 rounded-sm transition-all ${isShadowMode ? "text-[#E8A020] bg-[#E8A020]/10" : "text-[#8A8880]"}`}
               >
                 {isShadowMode ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
-              <button
-                onClick={toggleTheme}
-                className="text-[#8A8880]"
-              >
-                {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-              </button>
+
               <button
                 onClick={handleNotifications}
                 className="text-[#8A8880] relative"

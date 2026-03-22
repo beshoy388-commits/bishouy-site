@@ -52,7 +52,10 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       utterance.onerror = (e) => {
         console.error("Speech Synthesis Error:", e);
         stop();
-        toast.error("Audio Synthesis Error", { description: "Failed to initialize Neural Link Audio." });
+        toast.error("Audio Synthesis Error", { 
+          description: "Failed to initialize Neural Link Audio.",
+          duration: 4000 
+        });
       };
 
       synthesisRef.current = utterance;
