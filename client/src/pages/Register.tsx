@@ -2,6 +2,7 @@ import { UserPlus, Mail, Lock, User, Loader2, Eye, EyeOff, CheckCircle, XCircle 
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
@@ -18,7 +19,7 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
-    subscribeToNewsletter: true,
+    subscribeToNewsletter: false,
   });
 
   useEffect(() => {
@@ -99,6 +100,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-[#0F0F0E]">
+      <SEO title="Create Account | BISHOUY" description="Join the bishouy.com global news collective." />
       <Navbar />
 
       <main className="container pb-16 flex items-center justify-center">

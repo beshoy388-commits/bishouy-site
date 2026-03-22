@@ -20,7 +20,7 @@ export const AUTHORS: Record<string, Author> = {
     "Bishouy Editorial": {
         name: "Editorial Desk",
         role: "Global News",
-        image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&w=400&h=400&fit=crop",
+        image: "https://images.unsplash.com/photo-1495020689067-958852a7735e?ixlib=rb-4.0.3&w=400&h=400&fit=crop",
         bio: "Our global editorial collective dedicated to bringing high-fidelity news, analysis, and insights from the intersection of technology, culture, and politics."
     },
     "Bishouy AI": {

@@ -35,7 +35,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[250] flex flex-col bg-[#0F0F0E] backdrop-blur-xl animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[500] flex flex-col bg-[#0F0F0E] animate-in fade-in duration-300">
             <div className="container py-6">
                 <div className="flex items-center justify-between mb-8">
                     <span className="font-display text-2xl text-[#F2F0EB]">Search</span>
