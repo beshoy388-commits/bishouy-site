@@ -50,17 +50,20 @@ const PLANS = [
 export default function PricingModal({ isOpen, onClose, initialView }: PricingModalProps) {
   const { data: user, isLoading, refetch: refetchUser } = trpc.auth.me.useQuery();
   const [view, setView] = useState<"plans" | "manage" | "payment_update" | "cancel_confirm">(
-    initialView || (user?.subscriptionTier !== "free" ? "manage" : "plans")
+    initialView || "plans"
   );
   
+  const hasUserLoaded = user !== undefined && !isLoading;
+  
   useEffect(() => {
-    if (isOpen) {
-       const targetView = initialView || (user?.subscriptionTier !== "free" && user?.subscriptionTier ? "manage" : "plans");
+    if (isOpen && hasUserLoaded) {
+       const userTier = user?.subscriptionTier || "free";
+       const targetView = initialView || (userTier !== "free" ? "manage" : "plans");
        if (view !== targetView) {
           setView(targetView);
        }
     }
-  }, [isOpen, initialView, user?.subscriptionTier, view]);
+  }, [isOpen, initialView, user?.subscriptionTier, hasUserLoaded, view]);
 
   const [selectedPlan, setSelectedPlan] = useState<string>(
     user?.subscriptionTier !== "free" ? user?.subscriptionTier || "premium" : "premium"

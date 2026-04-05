@@ -285,11 +285,12 @@ export default function UserProfile() {
 
   const memberSince = (() => {
     try {
-      if (!user?.createdAt) return "Unknown Access Date";
-      return new Date(user.createdAt).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-      });
+      if (!user?.createdAt) return "Active Member";
+      const d = new Date(user.createdAt);
+      if (isNaN(d.getTime())) return "Active Member";
+      
+      const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      return `${months[d.getMonth()]} ${d.getFullYear()}`;
     } catch {
       return "Active Member";
     }
@@ -1210,10 +1211,15 @@ export default function UserProfile() {
   );
 }
 
-function formatDate(date: Date | string) {
-  return new Date(date).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+function formatDate(date: Date | string | null | undefined) {
+  if (!date) return "Active";
+  try {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "Active";
+    
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  } catch {
+    return "Active";
+  }
 }
