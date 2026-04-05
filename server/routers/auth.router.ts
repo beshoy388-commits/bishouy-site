@@ -93,6 +93,7 @@ export const authRouter = router({
         email: input.email,
         password: hashedPassword,
         name: input.name,
+        username: input.email.split('@')[0] + Math.floor(Math.random() * 1000), // Default username
         role: "user",
         isVerified: 0,
         subscribeToNewsletter: input.subscribeToNewsletter ?? 0,

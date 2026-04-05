@@ -80,8 +80,8 @@ function Router() {
   const [location] = useLocation();
 
   return (
-    <Suspense fallback={<PageFallback />}>
-      <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait">
+      <Suspense fallback={<PageFallback />}>
         <motion.div
            key={location}
            initial={{ opacity: 0, y: 10 }}
@@ -123,16 +123,14 @@ function Router() {
             <Route path="/advertise" component={Advertise} />
             <Route path="/404" component={NotFound} />
             <Route path="/logout" component={() => {
-              useEffect(() => {
-                window.location.href = "/";
-              }, []);
+              window.location.href = "/";
               return null;
             }} />
             <Route component={NotFound} />
           </Switch>
         </motion.div>
-      </AnimatePresence>
-    </Suspense>
+      </Suspense>
+    </AnimatePresence>
   );
 }
 

@@ -186,8 +186,10 @@ export default function UserProfile() {
     window.scrollTo(0, 0);
   }, []);
 
+  const hasProcessedSession = useRef(false);
+
   useEffect(() => {
-    if (user) {
+    if (user && !loading) {
       setFormData({
         name: user.name || "",
         username: user.username || "",
@@ -197,11 +199,23 @@ export default function UserProfile() {
         avatarUrl: user.avatarUrl || "",
       });
     }
+  }, [user, loading]);
 
-    // Check for Stripe session completion
+  // Handle Stripe session completion ONLY ONCE per mount
+  useEffect(() => {
+    if (hasProcessedSession.current) return;
+    if (loading || !user) return;
+
     const params = new URLSearchParams(window.location.search);
     const sessionId = params.get("session_id");
+    
     if (sessionId) {
+      hasProcessedSession.current = true;
+      
+      // Clean up URL immediately to prevent re-processing
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+
       const verifyPromise = verifySessionMutation.mutateAsync({ sessionId });
 
       toast.promise(verifyPromise, {
@@ -215,13 +229,8 @@ export default function UserProfile() {
         },
         error: "VERIFICATION SIGNAL LOST",
       });
-
-      // Clean up URL
-      const newUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, newUrl);
     }
-
-  }, [user]);
+  }, [loading, user, refresh]);
 
   const handleSaveProfile = async () => {
     if (!user) return;
