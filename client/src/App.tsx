@@ -81,47 +81,56 @@ function Router() {
 
   return (
     <Suspense fallback={<PageFallback />}>
-      <div className="w-full h-full"> 
-        <Switch>
-          <Route path="/" component={Home} />
-          <Route path="/article/:slug" component={ArticleDetail} />
-          <Route path="/category/:slug" component={CategoryPage} />
-          <Route path="/search" component={Search} />
-          <Route path="/pricing" component={Pricing} />
-          <Route path="/profile" component={UserProfile} />
-          <Route path="/u/:username" component={PublicProfile} />
-          <Route path="/privacy-policy" component={PrivacyPolicy} />
-          <Route path="/terms-of-service" component={TermsOfService} />
-          <Route path="/legal-notice" component={LegalNotice} />
-          <Route path="/admin" component={AdminPanel} />
-          <Route path="/admin/:rest*" component={AdminPanel} />
-          <Route path="/ai" component={AIAssistant} />
-          <Route path="/login" component={Login} />
-          <Route path="/register" component={Register} />
-          <Route path="/auth/callback" component={AuthCallback} />
-          <Route path="/verify" component={VerifyEmail} />
-          <Route path="/forgot-password" component={ForgotPassword} />
-          <Route path="/reset-password" component={ResetPassword} />
-          <Route path="/unsubscribe" component={Unsubscribe} />
-          <Route path="/about" component={AboutUs} />
-          <Route path="/editorial-team" component={EditorialTeam} />
-          <Route path="/mission-values" component={MissionValues} />
-          <Route path="/contact" component={Contact} />
-          <Route path="/careers" component={Careers} />
-          <Route path="/code-of-ethics" component={CodeOfEthics} />
-          <Route path="/fact-checking" component={FactCheckingPolicy} />
-          <Route path="/ai-ethics" component={AIEthics} />
-          <Route path="/nexus" component={NeuralNexus} />
-          <Route path="/cookie-policy" component={CookiePolicy} />
-          <Route path="/advertise" component={Advertise} />
-          <Route path="/404" component={NotFound} />
-          <Route path="/logout" component={() => {
-            window.location.href = "/";
-            return null;
-          }} />
-          <Route component={NotFound} />
-        </Switch>
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div 
+          key={location}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
+          className="w-full h-full"
+        > 
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/article/:slug" component={ArticleDetail} />
+            <Route path="/category/:slug" component={CategoryPage} />
+            <Route path="/search" component={Search} />
+            <Route path="/pricing" component={Pricing} />
+            <Route path="/profile" component={UserProfile} />
+            <Route path="/u/:username" component={PublicProfile} />
+            <Route path="/privacy-policy" component={PrivacyPolicy} />
+            <Route path="/terms-of-service" component={TermsOfService} />
+            <Route path="/legal-notice" component={LegalNotice} />
+            <Route path="/admin" component={AdminPanel} />
+            <Route path="/admin/:rest*" component={AdminPanel} />
+            <Route path="/ai" component={AIAssistant} />
+            <Route path="/login" component={Login} />
+            <Route path="/register" component={Register} />
+            <Route path="/auth/callback" component={AuthCallback} />
+            <Route path="/verify" component={VerifyEmail} />
+            <Route path="/forgot-password" component={ForgotPassword} />
+            <Route path="/reset-password" component={ResetPassword} />
+            <Route path="/unsubscribe" component={Unsubscribe} />
+            <Route path="/about" component={AboutUs} />
+            <Route path="/editorial-team" component={EditorialTeam} />
+            <Route path="/mission-values" component={MissionValues} />
+            <Route path="/contact" component={Contact} />
+            <Route path="/careers" component={Careers} />
+            <Route path="/code-of-ethics" component={CodeOfEthics} />
+            <Route path="/fact-checking" component={FactCheckingPolicy} />
+            <Route path="/ai-ethics" component={AIEthics} />
+            <Route path="/nexus" component={NeuralNexus} />
+            <Route path="/cookie-policy" component={CookiePolicy} />
+            <Route path="/advertise" component={Advertise} />
+            <Route path="/404" component={NotFound} />
+            <Route path="/logout" component={() => {
+              window.location.href = "/";
+              return null;
+            }} />
+            <Route component={NotFound} />
+          </Switch>
+        </motion.div>
+      </AnimatePresence>
     </Suspense>
   );
 }

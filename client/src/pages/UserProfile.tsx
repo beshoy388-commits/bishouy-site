@@ -226,7 +226,13 @@ export default function UserProfile() {
               {/* Primary Column */}
               <div className="lg:col-span-8">
                  {activeTab === "library" && (
-                    <div className="space-y-12">
+                    <motion.div 
+                      key="library"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="space-y-12"
+                    >
                        <div className="flex items-center justify-between pb-6 border-b border-[#1C1C1A]/50">
                           <h2 className="text-xl font-900 text-[#F2F0EB] uppercase tracking-tighter">SAVED INTELLIGENCE</h2>
                           <span className="text-[10px] text-[#555550] uppercase font-bold tracking-[0.2em]">{savedArticles?.length || 0} ITEMS</span>
@@ -236,22 +242,29 @@ export default function UserProfile() {
                           <div className="py-24 text-center"><Activity size={32} className="text-[#E8A020] animate-pulse mx-auto" /></div>
                        ) : (savedArticles && savedArticles.length > 0) ? (
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                             {savedArticles.map(article => (
-                               <Link key={article.id} href={`/article/${article.slug}`}>
-                                 <div className="group bg-[#11110F] border border-[#1C1C1A] hover:border-[#E8A020]/30 transition-all cursor-pointer h-full overflow-hidden shadow-2xl">
-                                    <div className="aspect-video w-full overflow-hidden bg-[#0A0A09]">
-                                       {article.image && <img src={article.image} alt="" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />}
-                                    </div>
-                                    <div className="p-8">
-                                       <div className="text-[8px] font-900 text-[#E8A020] uppercase tracking-widest mb-4 border border-[#E8A020]/20 px-2 py-1 w-fit rounded-sm bg-[#E8A020]/5">{article.category || 'NEWS'}</div>
-                                       <h3 className="text-[#F2F0EB] font-bold uppercase text-lg mb-6 leading-tight group-hover:text-[#E8A020] transition-colors">{article.title}</h3>
-                                       <div className="flex items-center justify-between pt-6 border-t border-[#1C1C1A]/50">
-                                          <span className="text-[9px] text-[#555550] uppercase tracking-widest">{new Date(article.createdAt).toLocaleDateString()}</span>
-                                          <ChevronRight size={14} className="text-[#555550] group-hover:translate-x-1 transition-transform" />
-                                       </div>
-                                    </div>
-                                 </div>
-                               </Link>
+                             {savedArticles.map((article, idx) => (
+                               <motion.div
+                                 key={article.id}
+                                 initial={{ opacity: 0, y: 20 }}
+                                 animate={{ opacity: 1, y: 0 }}
+                                 transition={{ delay: idx * 0.05 }}
+                               >
+                                 <Link href={`/article/${article.slug}`}>
+                                   <div className="group bg-[#11110F] border border-[#1C1C1A] hover:border-[#E8A020]/30 transition-all cursor-pointer h-full overflow-hidden shadow-2xl">
+                                      <div className="aspect-video w-full overflow-hidden bg-[#0A0A09]">
+                                         {article.image && <img src={article.image} alt="" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" />}
+                                      </div>
+                                      <div className="p-8">
+                                         <div className="text-[8px] font-900 text-[#E8A020] uppercase tracking-widest mb-4 border border-[#E8A020]/20 px-2 py-1 w-fit rounded-sm bg-[#E8A020]/5">{article.category || 'NEWS'}</div>
+                                         <h3 className="text-[#F2F0EB] font-bold uppercase text-lg mb-6 leading-tight group-hover:text-[#E8A020] transition-colors">{article.title}</h3>
+                                         <div className="flex items-center justify-between pt-6 border-t border-[#1C1C1A]/50">
+                                            <span className="text-[9px] text-[#555550] uppercase tracking-widest">{new Date(article.createdAt).toLocaleDateString()}</span>
+                                            <ChevronRight size={14} className="text-[#555550] group-hover:translate-x-1 transition-transform" />
+                                         </div>
+                                      </div>
+                                   </div>
+                                 </Link>
+                               </motion.div>
                              ))}
                           </div>
                        ) : (
@@ -261,11 +274,17 @@ export default function UserProfile() {
                              <Link href="/"><button className="bg-[#E8A020] text-[#0F0F0E] px-10 py-5 text-[10px] font-900 uppercase tracking-widest shadow-xl">EXPLORE CONTENT</button></Link>
                           </div>
                        )}
-                    </div>
+                    </motion.div>
                  )}
 
                  {activeTab === "membership" && (
-                    <div className="space-y-12">
+                    <motion.div 
+                      key="membership"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="space-y-12"
+                    >
                        <h2 className="text-xl font-900 text-[#F2F0EB] uppercase tracking-tighter pb-6 border-b border-[#1C1C1A]/50 font-display">SUBSCRIPTION MODEL</h2>
                        <div className="bg-[#11110F] border border-[#E8A020]/20 p-10 md:p-14 rounded-sm relative overflow-hidden">
                           <div className="absolute top-0 right-0 w-64 h-64 bg-[#E8A020]/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
@@ -282,57 +301,71 @@ export default function UserProfile() {
                                onClick={() => { setModalView(user.subscriptionTier !== 'free' ? 'manage' : 'plans'); setIsPricingOpen(true); }}
                                className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] px-12 py-6 text-[11px] font-900 uppercase tracking-[0.2em] shadow-2xl active:scale-95 transition-all"
                              >
-                               {user.subscriptionTier !== 'free' ? 'MANAGE SUBSCRIPTION' : 'UPGRADE ACCESS'}
+                                {user.subscriptionTier !== 'free' ? 'MANAGE SUBSCRIPTION' : 'UPGRADE ACCESS'}
                              </button>
                           </div>
                        </div>
-                    </div>
+                    </motion.div>
                  )}
 
                  {activeTab === "settings" && (
-                    <div className="space-y-12">
+                    <motion.div 
+                      key="settings"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="space-y-12"
+                    >
                        <div className="flex gap-8 border-b border-[#1C1C1A]/50 pb-6">
                           {["identity", "security"].map(cat => (
                             <button 
-                              key={cat} onClick={() => setSettingsCategory(cat as any)}
-                              className={`text-[10px] font-900 uppercase tracking-[0.3em] transition-all relative ${settingsCategory === cat ? 'text-[#E8A020]' : 'text-[#555550]'}`}
+                               key={cat} onClick={() => setSettingsCategory(cat as any)}
+                               className={`text-[10px] font-900 uppercase tracking-[0.3em] transition-all relative ${settingsCategory === cat ? 'text-[#E8A020]' : 'text-[#555550]'}`}
                             >
-                              {cat}
-                              {settingsCategory === cat && <div className="absolute -bottom-[25px] left-0 right-0 h-0.5 bg-[#E8A020]" />}
+                               {cat}
+                               {settingsCategory === cat && <div className="absolute -bottom-[25px] left-0 right-0 h-0.5 bg-[#E8A020]" />}
                             </button>
                           ))}
                        </div>
 
-                       {settingsCategory === "identity" && (
-                         <div className="space-y-10">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                       <AnimatePresence mode="wait">
+                          {settingsCategory === "identity" && (
+                            <motion.div 
+                              key="identity"
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: 10 }}
+                              className="space-y-10"
+                            >
+                               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                  <div className="space-y-4">
+                                     <label className="text-[9px] font-900 text-[#555550] uppercase tracking-widest">DISPLAY IDENTITY</label>
+                                     <input 
+                                       type="text" value={formData.name} 
+                                       onChange={e => setFormData({...formData, name: e.target.value})}
+                                       className="w-full bg-[#11110F] border border-[#1C1C1A] px-6 py-4 text-[#F2F0EB] text-sm focus:border-[#E8A020]/40 outline-none transition-all"
+                                     />
+                                  </div>
+                                  <div className="space-y-4">
+                                     <label className="text-[9px] font-900 text-[#555550] uppercase tracking-widest">PERMANENT HANDLE</label>
+                                     <input type="text" value={`@${user.username}`} disabled className="w-full bg-[#0A0A09] border border-[#1C1C1A] px-6 py-4 text-[#333330] text-sm cursor-not-allowed" />
+                                  </div>
+                               </div>
                                <div className="space-y-4">
-                                  <label className="text-[9px] font-900 text-[#555550] uppercase tracking-widest">DISPLAY IDENTITY</label>
-                                  <input 
-                                    type="text" value={formData.name} 
-                                    onChange={e => setFormData({...formData, name: e.target.value})}
-                                    className="w-full bg-[#11110F] border border-[#1C1C1A] px-6 py-4 text-[#F2F0EB] text-sm focus:border-[#E8A020]/40 outline-none transition-all"
+                                  <label className="text-[9px] font-900 text-[#555550] uppercase tracking-widest">INTELLIGENCE BIO</label>
+                                  <textarea 
+                                    value={formData.bio} 
+                                    onChange={e => setFormData({...formData, bio: e.target.value})}
+                                    className="w-full bg-[#11110F] border border-[#1C1C1A] px-6 py-6 text-[#F2F0EB] text-sm h-40 focus:border-[#E8A020]/40 outline-none transition-all resize-none leading-relaxed"
                                   />
                                </div>
-                               <div className="space-y-4">
-                                  <label className="text-[9px] font-900 text-[#555550] uppercase tracking-widest">PERMANENT HANDLE</label>
-                                  <input type="text" value={`@${user.username}`} disabled className="w-full bg-[#0A0A09] border border-[#1C1C1A] px-6 py-4 text-[#333330] text-sm cursor-not-allowed" />
-                               </div>
-                            </div>
-                            <div className="space-y-4">
-                               <label className="text-[9px] font-900 text-[#555550] uppercase tracking-widest">INTELLIGENCE BIO</label>
-                               <textarea 
-                                 value={formData.bio} 
-                                 onChange={e => setFormData({...formData, bio: e.target.value})}
-                                 className="w-full bg-[#11110F] border border-[#1C1C1A] px-6 py-6 text-[#F2F0EB] text-sm h-40 focus:border-[#E8A020]/40 outline-none transition-all resize-none leading-relaxed"
-                               />
-                            </div>
-                            <button onClick={handleSaveProfile} className="bg-[#1C1C1A] text-[#F2F0EB] hover:bg-[#2A2A28] border border-[#2A2A28] px-12 py-5 text-[10px] font-900 uppercase tracking-widest transition-all">
-                               {updateMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : 'SAVE CHANGES'}
-                            </button>
-                         </div>
-                       )}
-                    </div>
+                               <button onClick={handleSaveProfile} className="bg-[#1C1C1A] text-[#F2F0EB] hover:bg-[#2A2A28] border border-[#2A2A28] px-12 py-5 text-[10px] font-900 uppercase tracking-widest transition-all">
+                                  {updateMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : 'SAVE CHANGES'}
+                               </button>
+                            </motion.div>
+                          )}
+                       </AnimatePresence>
+                    </motion.div>
                  )}
               </div>
 
