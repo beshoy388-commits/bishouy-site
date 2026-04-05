@@ -107,7 +107,11 @@ export default function ArticleForm({
         featured: generatedArticle.featured === 1,
         breaking: generatedArticle.breaking === 1,
         readTime: generatedArticle.readTime || 5,
-        tags: generatedArticle.tags ? JSON.parse(generatedArticle.tags) : [],
+        tags: (() => {
+          try {
+            return generatedArticle.tags ? JSON.parse(generatedArticle.tags) : [];
+          } catch { return []; }
+        })(),
         slug: generatedArticle.slug,
         status: "draft",
         summary: generatedArticle.summary || "",
@@ -148,7 +152,11 @@ export default function ArticleForm({
         featured: article.featured === 1,
         breaking: article.breaking === 1,
         readTime: article.readTime,
-        tags: article.tags ? JSON.parse(article.tags) : [],
+        tags: (() => {
+          try {
+            return article.tags ? JSON.parse(article.tags) : [];
+          } catch { return []; }
+        })(),
         slug: article.slug,
         status: article.status as "draft" | "published",
         summary: article.summary || "",

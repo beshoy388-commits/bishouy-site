@@ -22,12 +22,17 @@ export default function CookieConsent() {
   useEffect(() => {
     // Check localStorage for existing preference
     const stored = localStorage.getItem("bishouy_cookie_consent");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      setConsent(parsed.preference);
-      setCustomSettings(parsed.settings);
-      // Apply stored preference
-      applyConsent(parsed.settings);
+    try {
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.preference) setConsent(parsed.preference);
+        if (parsed.settings) setCustomSettings(parsed.settings);
+        // Apply stored preference
+        if (parsed.settings) applyConsent(parsed.settings);
+      }
+    } catch (e) {
+      console.error("Cookie consent load error:", e);
+      localStorage.removeItem("bishouy_cookie_consent");
     }
   }, []);
 
