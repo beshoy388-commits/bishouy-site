@@ -105,9 +105,26 @@ export default function CommandPalette() {
             <CommandSeparator className="bg-[#1C1C1A]" />
 
             <CommandGroup heading="System">
-              <CommandItem className="py-3">
+              <CommandItem
+                onSelect={() => runCommand(() => setLocation("/profile?tab=settings&cat=communications"))}
+                className="hover:bg-[#1C1C1A] aria-selected:bg-[#1C1C1A] cursor-pointer py-3"
+              >
                 <Settings size={14} className="mr-3 text-[#8A8880]" />
-                <span className="font-ui text-sm">Preference Logic (Coming Soon)</span>
+                <span className="font-ui text-sm">Newsletter & Alert Preferences</span>
+              </CommandItem>
+              <CommandItem
+                onSelect={() => runCommand(() => setLocation("/profile?tab=settings&cat=security"))}
+                className="hover:bg-[#1C1C1A] aria-selected:bg-[#1C1C1A] cursor-pointer py-3"
+              >
+                <ShieldCheck size={14} className="mr-3 text-[#8A8880]" />
+                <span className="font-ui text-sm">Security Settings</span>
+              </CommandItem>
+              <CommandItem
+                onSelect={() => runCommand(() => setLocation("/profile?tab=membership"))}
+                className="hover:bg-[#1C1C1A] aria-selected:bg-[#1C1C1A] cursor-pointer py-3"
+              >
+                <Sparkles size={14} className="mr-3 text-[#E8A020]" />
+                <span className="font-ui text-sm">Manage Membership</span>
               </CommandItem>
             </CommandGroup>
           </CommandList>

@@ -30,6 +30,8 @@ export const users = sqliteTable("users", {
   twoFactorSecret: text("twoFactorSecret"),
   twoFactorBackupCodes: text("twoFactorBackupCodes"), // JSON string of encrypted backup codes
   subscribeToNewsletter: integer("subscribeToNewsletter", { mode: "number" }).default(0).notNull(),
+  breakingNewsAlerts: integer("breakingNewsAlerts", { mode: "number" }).default(0).notNull(),
+  pushSubscription: text("pushSubscription"), // JSON string of PushSubscription object
   subscriptionTier: text("subscriptionTier", { enum: ["free", "premium", "founder"] })
     .default("free")
     .notNull(),

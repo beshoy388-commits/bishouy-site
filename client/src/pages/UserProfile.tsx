@@ -41,11 +41,14 @@ import ImageUploader from "@/components/ImageUploader";
 import SEO from "@/components/SEO";
 import { motion, AnimatePresence } from "framer-motion";
 import PricingModal from "@/components/PricingModal";
+import { usePushNotifications } from "@/_core/hooks/usePushNotifications";
 
 export default function UserProfile() {
   const { user, loading, logout, refresh } = useAuth({
     redirectOnUnauthenticated: true,
   });
+
+  const push = usePushNotifications();
 
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState<"library" | "membership" | "settings">("library");
@@ -1127,19 +1130,33 @@ export default function UserProfile() {
                                   </button>
                                 </div>
 
-                                <div className="flex items-start justify-between border-t border-[#1C1C1A] pt-12">
+                                <div className={`flex items-start justify-between border-t border-[#1C1C1A] pt-12 ${!push.isSupported ? 'opacity-40' : ''}`}>
                                   <div className="flex-1 pr-12">
                                     <h4 className="text-md text-[#F2F0EB] font-bold mb-3 flex items-center gap-2">
                                       Breaking News Alerts
-                                      <span className="text-[8px] text-[#555550] uppercase tracking-widest border border-[#1C1C1A] px-2 py-0.5 rounded-sm">Coming Soon</span>
+                                      {!push.isSupported && (
+                                        <span className="text-[8px] text-[#555550] uppercase tracking-widest border border-[#1C1C1A] px-2 py-0.5 rounded-sm">Unsupported Browser</span>
+                                      )}
+                                      {push.isSubscribed && (
+                                        <span className="text-[8px] text-[#27AE60] uppercase tracking-widest border border-[#27AE60]/30 px-2 py-0.5 rounded-sm">Active</span>
+                                      )}
                                     </h4>
                                     <p className="text-[14px] text-[#8A8880] leading-relaxed max-w-lg">
-                                      Instant notifications for critical global events as they unfold.
+                                      Instant push notifications for critical global events as they unfold.
                                     </p>
                                   </div>
-                                  <div className="w-14 h-7 rounded-full bg-[#1C1C1A] relative shrink-0 opacity-20 pointer-events-none cursor-not-allowed">
-                                    <div className="absolute top-1.5 left-1.5 w-4 h-4 rounded-full bg-[#555550]" />
-                                  </div>
+                                  <button
+                                    onClick={() => push.isSubscribed ? push.unsubscribe() : push.subscribe()}
+                                    disabled={!push.isSupported || push.isLoading}
+                                    className={`w-14 h-7 rounded-full relative shrink-0 shadow-inner flex items-center px-1.5 focus:outline-none focus:ring-1 focus:ring-[#E8A020] transition-all duration-500 ${push.isSubscribed ? "bg-[#27AE60]" : "bg-[#1C1C1A]"} disabled:cursor-not-allowed`}
+                                    aria-label={`Toggle Breaking News Alerts: ${push.isSubscribed ? 'ON' : 'OFF'}`}
+                                  >
+                                    <div className="absolute inset-0 flex justify-between items-center px-2 pointer-events-none">
+                                      <span className="text-[6px] font-black text-white/40">ON</span>
+                                      <span className="text-[6px] font-black text-white/40">OFF</span>
+                                    </div>
+                                    <div className={`w-4 h-4 rounded-full bg-[#F2F0EB] shadow-md transition-all duration-500 relative z-10 ${push.isSubscribed ? "translate-x-7" : "translate-x-0"}`} />
+                                  </button>
                                 </div>
                               </div>
                             </div>

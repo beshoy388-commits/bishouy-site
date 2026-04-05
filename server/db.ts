@@ -218,6 +218,18 @@ export async function getDb() {
 
       try {
         await client.execute(
+          "ALTER TABLE users ADD COLUMN breakingNewsAlerts INTEGER DEFAULT 0 NOT NULL;"
+        );
+      } catch (err) {}
+
+      try {
+        await client.execute(
+          "ALTER TABLE users ADD COLUMN pushSubscription TEXT;"
+        );
+      } catch (err) {}
+
+      try {
+        await client.execute(
           "ALTER TABLE users ADD COLUMN subscriptionTier TEXT DEFAULT 'free' NOT NULL;"
         );
       } catch (err) {}

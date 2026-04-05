@@ -29,4 +29,9 @@ export const ENV = {
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
   stripePriceIdPremium: process.env.STRIPE_PRICE_ID_PREMIUM ?? "",
   stripePriceIdFounder: process.env.STRIPE_PRICE_ID_FOUNDER ?? "",
+
+  // Web Push (VAPID) — generate keys via: node -e "const w=require('web-push'); const k=w.generateVAPIDKeys(); console.log(JSON.stringify(k))"
+  vapidPublicKey: process.env.VAPID_PUBLIC_KEY ?? "",
+  vapidPrivateKey: process.env.VAPID_PRIVATE_KEY ?? "",
+  vapidEmail: process.env.VAPID_EMAIL ?? "admin@bishouy.com",
 };

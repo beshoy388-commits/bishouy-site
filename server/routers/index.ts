@@ -8,6 +8,7 @@ import { likesRouter } from "./likes.router";
 import { extraRouter } from "./extra.router";
 import { analyticsRouter } from "./analytics.router";
 import { stripeRouter } from "./stripe.router";
+import { pushRouter } from "./push.router";
 
 export const appRouter = router({
   auth: authRouter,
@@ -18,6 +19,7 @@ export const appRouter = router({
   likes: likesRouter,
   analytics: analyticsRouter,
   stripe: stripeRouter,
+  push: pushRouter,
   notifications: extraRouter.notifications,
   bookmarks: extraRouter.bookmarks,
   comments: extraRouter.comments,
