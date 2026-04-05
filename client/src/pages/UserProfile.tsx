@@ -167,7 +167,14 @@ export default function UserProfile() {
     });
   };
 
-  const passkeys = user?.passkeyCredentials ? JSON.parse(user.passkeyCredentials) : [];
+  let passkeys = [];
+  try {
+    if (user?.passkeyCredentials && user.passkeyCredentials !== "") {
+      passkeys = JSON.parse(user.passkeyCredentials);
+    }
+  } catch (e) {
+    console.error("Passkey parsing error", e);
+  }
 
   const requestPassResetMutation = trpc.users.requestPasswordResetCode.useMutation({
     onSuccess: (data) => {
