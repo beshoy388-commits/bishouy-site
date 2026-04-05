@@ -1964,13 +1964,30 @@ export async function updateVisitorSession(data: InsertVisitorSession) {
   // Attempt simple GeoIP lookup if location is missing and IP is present
   if (!location && data.ipAddress && data.ipAddress !== '127.0.0.1' && data.ipAddress !== '::1') {
     try {
-      const response = await fetch(`https://ipapi.co/${data.ipAddress}/json/`);
-      const geo = await response.json();
-      if (geo.city && geo.country_name) {
-        location = `${geo.city}, ${geo.country_name}`;
+      // Use a short timeout of 2 seconds for GeoIP lookups
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
+      
+      const response = await fetch(`https://ipapi.co/${data.ipAddress}/json/`, {
+        signal: controller.signal,
+        headers: {
+          'User-Agent': 'Bishouy-Editorial-Bot/1.0'
+        }
+      });
+      
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        const text = await response.text();
+        if (text && text.trim().startsWith('{')) {
+          const geo = JSON.parse(text);
+          if (geo.city && geo.country_name) {
+            location = `${geo.city}, ${geo.country_name}`;
+          }
+        }
       }
     } catch (err) {
-      console.warn("[Analytics] GeoIP lookup failed:", err);
+      // Silently fail GeoIP lookups to keep server responsiveness
     }
   }
 
