@@ -169,8 +169,11 @@ export default function UserProfile() {
 
   let passkeys = [];
   try {
-    if (user?.passkeyCredentials && user.passkeyCredentials !== "") {
-      passkeys = JSON.parse(user.passkeyCredentials);
+    if (user?.passkeyCredentials && typeof user.passkeyCredentials === "string" && user.passkeyCredentials !== "") {
+      const parsed = JSON.parse(user.passkeyCredentials);
+      if (Array.isArray(parsed)) {
+        passkeys = parsed;
+      }
     }
   } catch (e) {
     console.error("Passkey parsing error", e);
@@ -315,12 +318,17 @@ export default function UserProfile() {
     );
   }
 
-  const memberSince = user.createdAt
-    ? new Date(user.createdAt).toLocaleDateString("en-US", {
+  const memberSince = (() => {
+    try {
+      if (!user?.createdAt) return "Unknown Access Date";
+      return new Date(user.createdAt).toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
-      })
-    : "Unknown Access Date";
+      });
+    } catch {
+      return "Active Member";
+    }
+  })();
 
   return (
     <div className="min-h-screen bg-[#0F0F0E] flex flex-col pt-0">
@@ -397,7 +405,7 @@ export default function UserProfile() {
 
                   {/* Name — Premium display type (Fixed overlap) */}
                   <h1 className="font-display text-3xl md:text-5xl lg:text-7xl font-900 text-[#F2F0EB] leading-tight tracking-tight uppercase max-w-full break-words mb-3">
-                    {user.name || user.username || "Anonymous"}
+                    {String(user.name || user.username || "Anonymous")}
                   </h1>
 
                   {/* Handle + Email (subtle mono) */}
@@ -455,7 +463,7 @@ export default function UserProfile() {
                   <tab.icon size={14} className={activeTab === tab.id ? "text-[#E8A020]" : "text-[#555550]"} />
                   {tab.label}
                   {activeTab === tab.id && (
-                    <motion.div layoutId="tab-underline" className="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-[#E8A020] shadow-[0_-4px_10px_rgba(232,160,32,0.4)]" />
+                    <div className="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-[#E8A020] shadow-[0_-4px_10px_rgba(232,160,32,0.4)]" />
                   )}
                 </button>
               ))}
@@ -485,41 +493,43 @@ export default function UserProfile() {
                         <div className="py-24 flex justify-center">
                           <Activity size={32} className="text-[#E8A020] animate-pulse" />
                         </div>
-                      ) : savedArticles && savedArticles.length > 0 ? (
+                      ) : (Array.isArray(savedArticles) && savedArticles.length > 0) ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                          {savedArticles.map((article, idx) => (
-                            <Link key={article.id} href={`/article/${article.slug}`}>
-                              <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: idx * 0.05 }}
-                                className="group bg-[#0A0A09] border border-[#1C1C1A] rounded-sm overflow-hidden hover:border-[#E8A020]/40 transition-all shadow-xl hover:shadow-2xl cursor-pointer flex flex-col sm:flex-row h-full"
-                              >
-                                {article.image && (
-                                  <div className="w-full sm:w-40 md:w-48 h-44 sm:h-auto overflow-hidden grayscale-[0.8] group-hover:grayscale-0 transition-all duration-700 shrink-0">
-                                    <img src={article.image} alt={article.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000" />
-                                  </div>
-                                )}
-                                <div className="p-6 md:p-8 flex flex-col justify-between flex-1">
-                                  <div>
-                                    <div className="category-badge mb-3 w-fit border border-[#E8A020]/20 shadow-lg">{article.category}</div>
-                                    <h3 className="font-display text-lg md:text-xl text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 leading-tight mb-4 font-bold">
-                                      {article.title}
-                                    </h3>
-                                  </div>
-                                  <div className="flex items-center justify-between pt-4 border-t border-[#1C1C1A]">
-                                    <span className="text-[9px] text-[#555550] uppercase tracking-widest font-bold">
-                                      {formatDate(article.publishedAt || article.createdAt)}
-                                    </span>
-                                    <div className="flex items-center gap-2 text-[#555550] group-hover:text-[#E8A020] transition-colors group-hover:translate-x-1 duration-300">
-                                      <span className="text-[8px] font-900 uppercase tracking-widest hidden md:inline">Access Log</span>
-                                      <ChevronRight size={14} />
+                          {savedArticles.map((article, idx) => {
+                            if (!article || !article.id || !article.title) return null;
+                            return (
+                              <Link key={article.id} href={`/article/${article.slug || ''}`}>
+                                <motion.div
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: Math.min(idx * 0.05, 0.5) }}
+                                  className="group bg-[#0A0A09] border border-[#1C1C1A] rounded-sm overflow-hidden hover:border-[#E8A020]/40 transition-all shadow-xl hover:shadow-2xl cursor-pointer flex flex-col sm:flex-row h-full"
+                                >
+                                  {article.image && (
+                                    <div className="w-full sm:w-40 md:w-48 h-44 sm:h-auto overflow-hidden grayscale-[0.8] group-hover:grayscale-0 transition-all duration-700 shrink-0">
+                                      <img src={article.image} alt="" className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000" />
+                                    </div>
+                                  )}
+                                  <div className="p-6 md:p-8 flex flex-col justify-between flex-1">
+                                    <div>
+                                      <div className="category-badge mb-3 w-fit border border-[#E8A020]/20 shadow-lg">{article.category || 'News'}</div>
+                                      <h3 className="font-display text-lg md:text-xl text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 leading-tight mb-4 font-bold">
+                                        {article.title}
+                                      </h3>
+                                    </div>
+                                    <div className="flex items-center justify-between pt-4 border-t border-[#1C1C1A]">
+                                      <span className="text-[9px] text-[#555550] uppercase tracking-widest font-bold">
+                                        {formatDate(article.publishedAt || article.createdAt || new Date())}
+                                      </span>
+                                      <div className="flex items-center gap-2 text-[#555550] group-hover:text-[#E8A020] transition-colors group-hover:translate-x-1 duration-300">
+                                        <ChevronRight size={14} />
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              </motion.div>
-                            </Link>
-                          ))}
+                                </motion.div>
+                              </Link>
+                            );
+                          })}
                         </div>
                       ) : (
                         <div className="bg-[#0A0A09] border border-[#1C1C1A] border-dashed rounded-sm p-20 text-center mb-12">
