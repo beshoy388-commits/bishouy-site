@@ -9,6 +9,7 @@ interface EditingUser {
   name: string;
   email: string;
   role: "user" | "admin";
+  subscriptionTier: "free" | "premium" | "founder";
 }
 
 export default function UsersManagement() {
@@ -85,6 +86,7 @@ export default function UsersManagement() {
       name: user.name || "",
       email: user.email || "",
       role: user.role,
+      subscriptionTier: user.subscriptionTier || "free",
     });
   };
 
@@ -96,6 +98,7 @@ export default function UsersManagement() {
       name: editingData.name,
       email: editingData.email,
       role: editingData.role,
+      subscriptionTier: editingData.subscriptionTier,
     });
   };
 
@@ -189,7 +192,8 @@ export default function UsersManagement() {
               <tr className="border-b border-[#1C1C1A] bg-[#141412]">
                 <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Identifier</th>
                 <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Email Hash</th>
-                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui text-center">Clearance</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Clearance</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui text-center">Membership</th>
                 <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui text-center">Protocol</th>
                 <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Creation Date</th>
                 <th className="text-right py-4 px-6 font-900 text-[#E8A020] text-[10px] uppercase tracking-widest font-ui">Actions</th>
@@ -226,13 +230,23 @@ export default function UsersManagement() {
                         <select
                           value={editingData.role}
                           onChange={e => setEditingData({ ...editingData, role: e.target.value as "user" | "admin" })}
-                          className="bg-[#0A0A09] border border-[#1C1C1A] text-[#F2F0EB] text-[10px] font-900 uppercase tracking-widest px-3 py-2 outline-none"
+                          className="bg-[#0A0A09] border border-[#1C1C1A] text-[#F2F0EB] text-[10px] font-900 uppercase tracking-widest px-3 py-2 outline-none mb-1 w-full"
                         >
                           <option value="user">User</option>
                           <option value="admin">Admin</option>
                         </select>
                       </td>
-                      <td className="py-4 px-6" />
+                      <td className="py-4 px-6 text-center">
+                        <select
+                          value={editingData.subscriptionTier}
+                          onChange={e => setEditingData({ ...editingData, subscriptionTier: e.target.value as any })}
+                          className="bg-[#0A0A09] border border-[#1C1C1A] text-[#E8A020] text-[10px] font-900 uppercase tracking-widest px-3 py-2 outline-none w-full"
+                        >
+                          <option value="free">Free</option>
+                          <option value="premium">Premium</option>
+                          <option value="founder">Founder</option>
+                        </select>
+                      </td>
                       <td className="py-4 px-6" />
                       <td className="py-4 px-6 flex justify-end gap-2">
                         <button
@@ -265,6 +279,11 @@ export default function UsersManagement() {
                       <td className="py-4 px-6 text-center">
                         <span className={`text-[9px] font-900 uppercase tracking-widest px-3 py-1 border ${user.role === 'admin' ? 'text-[#E8A020] border-[#E8A020]/20 bg-[#E8A020]/5' : 'text-[#333330] border-[#1C1C1A]'}`}>
                           {user.role}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-center">
+                        <span className={`text-[9px] font-900 uppercase tracking-widest px-3 py-1 rounded-sm ${user.subscriptionTier === 'founder' ? 'bg-[#E8A020] text-[#0F0F0E]' : user.subscriptionTier === 'premium' ? 'bg-[#E8A020]/20 text-[#E8A020] border border-[#E8A020]/30' : 'bg-[#1C1C1A] text-[#555550]'}`}>
+                          {user.subscriptionTier || 'free'}
                         </span>
                       </td>
                       <td className="py-4 px-6 text-center">

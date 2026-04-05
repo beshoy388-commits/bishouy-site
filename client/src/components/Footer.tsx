@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 
-export default function Footer() {
+export default function Footer({ hideNewsletter = false }: { hideNewsletter?: boolean }) {
   const [email, setEmail] = useState("");
   const subscribeMutation = trpc.newsletter.subscribe.useMutation({
     onSuccess: () => {
@@ -37,13 +37,18 @@ export default function Footer() {
 
   const handleNewsletter = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!email) {
+      toast.error("Validation Error", { description: "Please enter your email address" });
+      return;
+    }
+
     if (!gdprConsent) {
       toast.error("Consent required", { description: "Please accept the privacy terms to subscribe." });
       return;
     }
-    if (email) {
-      subscribeMutation.mutate({ email });
-    }
+
+    subscribeMutation.mutate({ email });
   };
 
   const socialLinks = {
@@ -54,187 +59,178 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#0A0A09] border-t border-[#1C1C1A] mt-16 selection:bg-[#E8A020]/20 selection:text-[#E8A020]">
-      {/* Newsletter banner */}
-      <div className="border-b border-[#1C1C1A]">
-        <div className="container py-10">
-          <div className="flex flex-col md:flex-row items-center gap-6 md:gap-12">
-            <div className="flex-1">
-              <div className="amber-line mb-3" />
-              <h2 className="font-display text-2xl text-[#F2F0EB] mb-1">
-                STAY INFORMED
-              </h2>
-              <p className="font-ui text-sm text-[#8A8880]">
-                The most important news delivered to your inbox every morning at
-                7:00 AM.
-              </p>
-            </div>
-            <div className="flex flex-col gap-4 w-full md:w-auto">
-              <form
-                onSubmit={handleNewsletter}
-                className="flex flex-col gap-3 w-full md:w-auto"
-              >
-                <div className="flex gap-2 w-full md:w-auto">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    placeholder="Your email"
-                    required
-                    className="flex-1 md:w-64 bg-[#1C1C1A] border border-[#2A2A28] text-[#F2F0EB] placeholder-[#555550] font-ui text-sm px-4 py-2.5 rounded-sm focus:outline-none focus:border-[#E8A020] transition-colors"
-                  />
-                  <button
-                    type="submit"
-                    disabled={subscribeMutation.isPending}
-                    className="bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.03] hover:shadow-lg hover:shadow-[#E8A020]/20 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-5 py-2.5 rounded-sm transition-all active:scale-95 whitespace-nowrap disabled:opacity-50 flex items-center gap-2"
-                  >
-                    {subscribeMutation.isPending ? (
-                      <Loader2 className="animate-spin" size={12} />
-                    ) : null}
-                    {subscribeMutation.isPending ? "Subscribing..." : "Subscribe"}
-                  </button>
+    <footer className="bg-[#0A0A09] mt-16 selection:bg-[#E8A020]/20 selection:text-[#E8A020]">
+      {/* Newsletter Section - Modern Glassmorphic Banner */}
+      {!hideNewsletter && (
+        <div className="container px-4 md:px-6">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#11110F] to-[#0A0A09] border border-[#1C1C1A] p-8 md:p-12 shadow-2xl">
+            {/* Background Accent */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#E8A020]/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+            
+            <div className="relative z-10 flex flex-col lg:flex-row items-center gap-10 lg:gap-20">
+              <div className="flex-1 text-center lg:text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8A020]/10 border border-[#E8A020]/20 mb-6 mx-auto lg:mx-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#E8A020] animate-pulse" />
+                  <span className="text-[9px] font-900 text-[#E8A020] uppercase tracking-[0.2em]">Intel Distribution</span>
                 </div>
-                <label className="flex items-center gap-2 cursor-pointer group">
-                  <input 
-                    type="checkbox" 
-                    required
-                    checked={gdprConsent}
-                    onChange={(e) => setGdprConsent(e.target.checked)}
-                    className="w-3 h-3 accent-[#E8A020]" 
-                  />
-                  <span className="text-[10px] text-[#555550] group-hover:text-[#8A8880] transition-colors">
-                    I consent to the collection of my data in accordance with the <Link href="/privacy-policy" className="underline">Privacy Policy</Link>.
-                  </span>
-                </label>
-              </form>
+                <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-[#F2F0EB] mb-4 leading-none tracking-tighter">
+                  NEVER MISS <br className="hidden md:block"/> A <span className="text-[#E8A020]">CRITICAL</span> UPDATE
+                </h2>
+                <p className="font-ui text-sm text-[#8A8880] max-w-md mx-auto lg:mx-0 leading-relaxed uppercase tracking-widest">
+                  Daily analytical briefings delivered at 07:00 AM UTC.
+                </p>
+              </div>
+
+              <div className="w-full lg:w-auto lg:min-w-[400px]">
+                <form
+                  onSubmit={handleNewsletter}
+                  className="space-y-4"
+                  noValidate
+                >
+                  <div className="relative group">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="Enter your email address"
+                      className="w-full bg-[#0F0F0E] border border-[#2A2A28] text-[#F2F0EB] placeholder-[#555550] font-ui text-sm pl-5 pr-32 py-4 rounded-xl focus:outline-none focus:border-[#E8A020] transition-all group-hover:border-[#333330] shadow-inner"
+                    />
+                    <button
+                      type="submit"
+                      disabled={subscribeMutation.isPending}
+                      className="absolute right-2 top-2 bottom-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-900 uppercase tracking-widest px-6 rounded-lg transition-all active:scale-95 disabled:opacity-50 overflow-hidden"
+                    >
+                      {subscribeMutation.isPending ? (
+                        <Loader2 className="animate-spin" size={14} />
+                      ) : "Subscribe"}
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-3 px-2">
+                    <input 
+                      type="checkbox" 
+                      id="gdpr-footer"
+                      checked={gdprConsent}
+                      onChange={(e) => setGdprConsent(e.target.checked)}
+                      className="w-4 h-4 accent-[#E8A020] rounded border-[#2A2A28] bg-[#0A0A09] cursor-pointer" 
+                    />
+                    <label htmlFor="gdpr-footer" className="text-[10px] text-[#555550] hover:text-[#8A8880] transition-colors cursor-pointer uppercase tracking-tighter">
+                      I accept the <Link href="/privacy-policy" className="text-[#E8A020] hover:underline">Privacy Terms</Link>
+                    </label>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Main footer content */}
-      <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-          {/* Brand */}
-          <div>
-            <Link href="/" aria-label="BISHOUY.COM Home">
-              <span className="font-display text-3xl text-[#F2F0EB] mb-1 block">
+      {/* Main Footer Links */}
+      <div className="container pt-20 pb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-16">
+          {/* Brand Identity */}
+          <div className="lg:col-span-4 flex flex-col gap-6">
+            <Link href="/" className="inline-block group" aria-label="BISHOUY Home">
+              <span className="font-display text-4xl text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors tracking-tighter">
                 BISHOUY<span className="text-[#E8A020]">.</span>
               </span>
             </Link>
-            <p className="font-ui text-xs text-[#8A8880] mt-3 leading-relaxed">
-              Independent, in-depth, and accessible journalism. Since 2024, we
-              tell the world's story without filters.
+            <p className="font-ui text-xs text-[#8A8880] leading-relaxed max-w-sm uppercase tracking-widest">
+              Analytical depth for the global vanguard. <br/> 
+              Independent journalism powered by neural insights.
             </p>
-            <div className="flex items-center gap-4 mt-6">
-              <a href={socialLinks.x} target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="X (formerly Twitter)">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.294 19.497h2.039L6.486 3.24H4.298L17.607 20.65z" />
-                </svg>
-              </a>
-              <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="Instagram">
-                <Instagram size={14} />
-              </a>
-              <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="Facebook">
-                <Facebook size={14} />
-              </a>
-              <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="YouTube">
-                <Youtube size={14} />
-              </a>
-              <a href="/api/rss" className="p-2 bg-[#1C1C1A] text-[#8A8880] hover:text-[#E8A020] hover:scale-110 transition-all rounded-sm border border-[#2A2A28]" aria-label="RSS Feed">
-                <Rss size={14} />
-              </a>
+            <div className="flex items-center gap-3 pt-2">
+              {[
+                { icon: Twitter, href: socialLinks.x, label: "X" },
+                { icon: Instagram, href: socialLinks.instagram, label: "Instagram" },
+                { icon: Facebook, href: socialLinks.facebook, label: "Facebook" },
+                { icon: Youtube, href: socialLinks.youtube, label: "YouTube" },
+                { icon: Rss, href: "/api/rss", label: "RSS" }
+              ].map((social, idx) => (
+                <a 
+                  key={idx} 
+                  href={social.href} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="p-3 bg-[#11110F] text-[#555550] hover:text-[#E8A020] hover:bg-[#1C1C1A] border border-[#1C1C1A] rounded-xl transition-all active:scale-90"
+                  aria-label={social.label}
+                >
+                  {social.icon === Twitter ? (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.294 19.497h2.039L6.486 3.24H4.298L17.607 20.65z" />
+                    </svg>
+                  ) : <social.icon size={14} />}
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Categories */}
-          <div>
-            <h4 className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest mb-4">
-              Sections
-            </h4>
-            <ul className="space-y-2.5">
-              {CATEGORIES.map(cat => (
-                <li key={cat.slug}>
-                  <Link
-                    href={`/category/${cat.slug}`}
-                    className="font-ui text-sm text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
-                  >
-                    {cat.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Quick Links Grid */}
+          <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-10">
+            {/* Sections */}
+            <div className="flex flex-col gap-6">
+              <h4 className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.3em]">Sections</h4>
+              <ul className="flex flex-col gap-4">
+                {CATEGORIES.map(cat => (
+                  <li key={cat.slug}>
+                    <Link href={`/category/${cat.slug}`} className="text-xs text-[#8A8880] hover:text-[#F2F0EB] transition-colors font-ui uppercase tracking-widest">{cat.name}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* About */}
-          <div>
-            <h4 className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest mb-4">
-              Company
-            </h4>
-            <ul className="space-y-2.5">
-              {[
-                { label: "Our Story", href: "/about" },
-                { label: "Editorial Team", href: "/editorial-team" },
-                { label: "Contact Us", href: "/contact" },
-                { label: "Advertise With Us", href: "/advertise" },
-                { label: "Careers", href: "/careers" },
-                { label: "Mission & Values", href: "/mission-values" },
-              ].map(item => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className="font-ui text-sm text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+            {/* Company */}
+            <div className="flex flex-col gap-6">
+              <h4 className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.3em]">Company</h4>
+              <ul className="flex flex-col gap-4">
+                {[
+                  { label: "Our Story", href: "/about" },
+                  { label: "Editorial Team", href: "/editorial-team" },
+                  { label: "Contact Us", href: "/contact" },
+                  { label: "Advertise", href: "/advertise" },
+                  { label: "Careers", href: "/careers" }
+                ].map(item => (
+                  <li key={item.label}>
+                    <Link href={item.href} className="text-xs text-[#8A8880] hover:text-[#F2F0EB] transition-colors font-ui uppercase tracking-widest">{item.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Legal */}
-          <div>
-            <h4 className="font-ui text-[10px] font-600 text-[#E8A020] uppercase tracking-widest mb-4">
-              Legal & Transparency
-            </h4>
-            <ul className="space-y-2.5">
-              {[
-                { label: "Privacy Policy", href: "/privacy-policy" },
-                { label: "Cookie Policy", href: "/cookie-policy" },
-                { label: "Terms of Service", href: "/terms-of-service" },
-                { label: "Legal Notice", href: "/terms-of-service" },
-                { label: "Fact-Checking Protocol", href: "/fact-checking" },
-                { label: "Code of Ethics", href: "/code-of-ethics" },
-              ].map(item => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className="font-ui text-sm text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {/* Legal */}
+            <div className="flex flex-col gap-6">
+              <h4 className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.3em]">Legal</h4>
+              <ul className="flex flex-col gap-4">
+                {[
+                  { label: "Privacy", href: "/privacy-policy" },
+                  { label: "Cookies", href: "/cookie-policy" },
+                  { label: "Terms", href: "/terms-of-service" },
+                  { label: "Ethics", href: "/code-of-ethics" }
+                ].map(item => (
+                  <li key={item.label}>
+                    <Link href={item.href} className="text-xs text-[#8A8880] hover:text-[#F2F0EB] transition-colors font-ui uppercase tracking-widest">{item.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom bar */}
-      <div className="border-t border-[#1C1C1A]">
-        <div className="container py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <p className="font-ui text-[11px] text-[#555550] text-center md:text-left leading-relaxed max-w-sm">
-              © 2026 Bishouy.com — Built for international clarity & analytical depth.
-            </p>
-            <div className="flex items-center gap-6">
-                <p className="font-ui text-[11px] text-[#555550]">
-                  Editor-in-Chief: <span className="text-[#8A8880] font-bold">Beshoy Toubia</span>
-                </p>
-                <div className="h-3 w-[1px] bg-[#1C1C1A]" />
-                <p className="font-ui text-[11px] text-[#555550]">
-                  Independence Verified by <span className="text-[#8A8880]">BSY-NEWSBOARD</span>
-                </p>
+      {/* Bottom Legal Stripe */}
+      <div className="border-t border-[#1C1C1A]/50 bg-[#070706]">
+        <div className="container py-8 flex flex-col md:flex-row items-center justify-between gap-6 px-4">
+          <p className="text-[10px] text-[#555550] uppercase tracking-widest text-center md:text-left">
+            © 2026 BISHOUY.COM — VANGUARD INTELLIGENCE NETWORK. <br className="md:hidden"/> ALL SIGNALS ENCRYPTED.
+          </p>
+          <div className="flex items-center gap-8">
+            <div className="flex flex-col items-end gap-1">
+              <span className="text-[8px] text-[#333330] uppercase tracking-widest font-900">Chief Editor</span>
+              <span className="text-[10px] text-[#8A8880] font-bold uppercase tracking-widest">Beshoy Toubia</span>
+            </div>
+            <div className="w-px h-8 bg-[#1C1C1A]" />
+            <div className="flex flex-col items-end gap-1">
+              <span className="text-[8px] text-[#333330] uppercase tracking-widest font-900">Network Verification</span>
+              <span className="text-[10px] text-[#E8A020] font-bold uppercase tracking-widest">BSY-NODE ALPHA</span>
             </div>
           </div>
         </div>

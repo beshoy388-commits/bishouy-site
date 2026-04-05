@@ -49,28 +49,28 @@ export default function Register() {
   };
 
   const getPasswordStrength = (pass: string) => {
-    if (pass.length === 0) return { label: "", color: "bg-transparent", width: "0%" };
-    if (pass.length < 6) return { label: "Weak", color: "bg-red-500", width: "33%" };
+    if (pass.length === 0) return { label: "", color: "transparent", width: "0%" };
+    if (pass.length < 8) return { label: "Weak", color: "#ef4444", width: "33%" };
     const hasNumbers = /\d/.test(pass);
     const hasChars = /[a-zA-Z]/.test(pass);
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
     
     if (hasNumbers && hasChars && hasSpecial && pass.length >= 10) 
-      return { label: "Strong", color: "bg-green-500", width: "100%" };
+      return { label: "Strong", color: "#22c55e", width: "100%" };
     if ((hasNumbers && hasChars) || pass.length >= 8) 
-      return { label: "Medium", color: "bg-[#E8A020]", width: "66%" };
-    return { label: "Weak", color: "bg-red-500", width: "33%" };
+      return { label: "Medium", color: "#E8A020", width: "66%" };
+    return { label: "Weak", color: "#ef4444", width: "33%" };
   };
 
   const strength = getPasswordStrength(formData.password);
 
   const registerMutation = trpc.auth.register.useMutation({
     onSuccess: data => {
-      toast.success("Account created!", { description: data.message });
+      toast.success("Account created!", { description: "Verification code sent via email." });
       setLocation(`/verify?email=${encodeURIComponent(formData.email)}`);
     },
     onError: error => {
-      toast.error(error.message);
+      toast.error("Registration error: " + (error.message || "Please try again later."));
     },
   });
 
@@ -79,14 +79,14 @@ export default function Register() {
     
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match", {
-        description: "Please ensure both password fields contain the same value."
+        description: "Make sure both password fields contain the same value."
       });
       return;
     }
 
     if (!agreedToTerms) {
       toast.error("Terms of Service", {
-        description: "You must agree to the Terms of Service and Privacy Policy to create an account."
+        description: "You must accept the Terms of Service and Privacy Policy to create an account."
       });
       return;
     }
@@ -94,13 +94,14 @@ export default function Register() {
     registerMutation.mutate({
       name: formData.name,
       email: formData.email,
-      password: formData.password
+      password: formData.password,
+      subscribeToNewsletter: formData.subscribeToNewsletter ? 1 : 0
     });
   };
 
   return (
     <div className="min-h-screen bg-[#0F0F0E]">
-      <SEO title="Create Account | BISHOUY" description="Join the bishouy.com global news collective." />
+      <SEO title="Create Account | BISHOUY" description="Join the global news collective of bishouy.com." />
       <Navbar />
 
       <main className="container pb-16 flex items-center justify-center">
@@ -118,13 +119,13 @@ export default function Register() {
               CREATE ACCOUNT
             </h1>
             <p className="font-ui text-[10px] text-[#8A8880] tracking-tighter">
-              Create your profile on bishouy.com
+              Create your editorial profile on bishouy.com
             </p>
           </motion.div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <motion.div variants={itemVariants} className="space-y-2">
-              <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
+              <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block uppercase">
                 Full Name
               </label>
               <div className="relative">
@@ -139,14 +140,14 @@ export default function Register() {
                     setFormData(prev => ({ ...prev, name: e.target.value }))
                   }
                   className="w-full bg-[#0F0F0E] border border-[#222220] rounded-sm py-2 pl-10 pr-4 text-[#F2F0EB] font-ui text-sm focus:outline-none focus:border-[#E8A020] transition-all"
-                  placeholder="John Doe"
+                  placeholder="Full Name"
                   required
                 />
               </div>
             </motion.div>
 
             <motion.div variants={itemVariants} className="space-y-2">
-              <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
+              <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block uppercase">
                 Email Address
               </label>
               <div className="relative">
@@ -192,7 +193,7 @@ export default function Register() {
 
             <motion.div variants={itemVariants} className="space-y-4">
               <div className="space-y-2">
-                <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
+                <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block uppercase">
                   Password
                 </label>
                 <div className="relative">
@@ -207,7 +208,7 @@ export default function Register() {
                       setFormData(prev => ({ ...prev, password: e.target.value }))
                     }
                     className="w-full bg-[#0F0F0E] border border-[#222220] rounded-sm py-2 pl-10 pr-10 text-[#F2F0EB] font-ui text-sm focus:outline-none focus:border-[#E8A020] transition-colors"
-                    placeholder="At least 8 characters"
+                    placeholder="Minimum 8 characters"
                     minLength={8}
                     required
                   />
@@ -223,13 +224,13 @@ export default function Register() {
                 {formData.password && (
                   <div className="mt-2 space-y-1">
                     <div className="flex justify-between items-center text-[9px] uppercase tracking-tighter font-bold">
-                        <span className="text-[#555550]">Strength:</span>
-                        <span style={{ color: strength.color.replace('bg-', '') }} className="opacity-80">{strength.label}</span>
+                        <span className="text-[#555550]">Security:</span>
+                        <span style={{ color: strength.color }} className="opacity-80">{strength.label}</span>
                     </div>
                     <div className="h-0.5 w-full bg-[#222220] rounded-full overflow-hidden">
                         <div 
-                            className={`h-full ${strength.color} transition-all duration-500`} 
-                            style={{ width: strength.width }}
+                            className="h-full transition-all duration-500" 
+                            style={{ width: strength.width, backgroundColor: strength.color }}
                         />
                     </div>
                   </div>
@@ -237,7 +238,7 @@ export default function Register() {
               </div>
 
               <div className="space-y-2">
-                <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block">
+                <label className="font-ui text-[10px] font-600 text-[#E8A020] tracking-widest block uppercase">
                   Confirm Password
                 </label>
                 <div className="relative">
@@ -252,7 +253,7 @@ export default function Register() {
                       setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))
                     }
                     className="w-full bg-[#0F0F0E] border border-[#222220] rounded-sm py-2 pl-10 pr-10 text-[#F2F0EB] font-ui text-sm focus:outline-none focus:border-[#E8A020] transition-colors"
-                    placeholder="Repeat your password"
+                    placeholder="Repeat password"
                     required
                   />
                 </div>
@@ -265,10 +266,10 @@ export default function Register() {
                     id="newsletter"
                     checked={formData.subscribeToNewsletter}
                     onChange={(e) => setFormData(prev => ({ ...prev, subscribeToNewsletter: e.target.checked }))}
-                    className="mt-1 accent-[#E8A020] bg-[#0F0F0E] border-[#222220]"
+                    className="mt-1 accent-[#E8A020] bg-[#0F0F0E] border-[#222220] rounded-sm"
                 />
                 <label htmlFor="newsletter" className="text-[10px] text-[#8A8880] font-ui leading-tight tracking-tighter">
-                    I want to receive the daily editorial briefing and breaking news alerts.
+                    I want to receive the daily editorial briefing and news alerts.
                 </label>
             </motion.div>
 
@@ -278,10 +279,10 @@ export default function Register() {
                     id="tos"
                     checked={agreedToTerms}
                     onChange={(e) => setAgreedToTerms(e.target.checked)}
-                    className="mt-1 accent-[#E8A020] bg-[#0F0F0E] border-[#222220]"
+                    className="mt-1 accent-[#E8A020] bg-[#0F0F0E] border-[#222220] rounded-sm"
                 />
                 <label htmlFor="tos" className="text-[10px] text-[#8A8880] font-ui leading-tight tracking-tighter">
-                    I agree to the <Link href="/terms-of-service" className="text-[#E8A020] hover:underline">Terms of Service</Link> and <Link href="/privacy-policy" className="text-[#E8A020] hover:underline">Privacy Policy</Link>.
+                    I accept the <Link href="/terms-of-service" className="text-[#E8A020] hover:underline">Terms of Service</Link> and the <Link href="/privacy-policy" className="text-[#E8A020] hover:underline">Privacy Policy</Link>.
                 </label>
             </motion.div>
 

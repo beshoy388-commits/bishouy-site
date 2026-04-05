@@ -9,9 +9,9 @@ export default function MobileBottomNav({ onSearchClick }: { onSearchClick: () =
     const isActive = (path: string) => location === path;
 
     return (
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50">
-            <div className="bg-[#0F0F0E]/80 backdrop-blur-3xl border-t border-[#E8A020]/10 h-14 shadow-[0_-5px_30px_rgba(0,0,0,0.65)]">
-                <div className="grid grid-cols-5 items-center h-full w-full">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 pb-[env(safe-area-inset-bottom)] bg-[#0F0F0E]/90 backdrop-blur-3xl border-t border-[#E8A020]/10 shadow-[0_-5px_30px_rgba(0,0,0,0.65)]">
+            <div className="h-14">
+                <div className="grid grid-cols-5 items-center h-full w-full px-1">
                     {/* Home */}
                     <Link href="/">
                         <button className={`w-full flex flex-col items-center justify-center gap-1 transition-all duration-300 ${isActive("/") ? "text-[#E8A020]" : "text-[#8A8880]"}`}>

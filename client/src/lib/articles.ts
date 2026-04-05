@@ -25,6 +25,7 @@ export interface Article {
   authorId?: number | null;
   likeCount?: number;
   hasLiked?: boolean;
+  premiumOnly?: number | boolean;
 }
 
 export const CATEGORIES = [

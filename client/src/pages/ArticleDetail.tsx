@@ -33,6 +33,8 @@ import {
   FileText,
   Linkedin,
   MessageCircle,
+  ChevronRight,
+  Lock,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
@@ -48,6 +50,7 @@ import rehypeRaw from "rehype-raw";
 import SEO from "@/components/SEO";
 import AdPlacement from "@/components/AdPlacement";
 import AuthorBio from "@/components/AuthorBio";
+import PricingModal from "@/components/PricingModal";
 
 export default function ArticleDetail() {
   const [match, params] = useRoute("/article/:slug");
@@ -66,12 +69,16 @@ export default function ArticleDetail() {
   const [editContent, setEditContent] = useState("");
   // Consolidating all editorial power into a single view (no more Brevity Mode duplication)
   const [isAudioLoading, setIsAudioLoading] = useState(false);
+  const [isPricingOpen, setIsPricingOpen] = useState(false);
 
-  // Query for article data
   const { data: article, isLoading } = trpc.articles.getBySlug.useQuery(
     { slug: slug || "" },
     { enabled: !!slug }
   );
+ 
+  const isAdmin = user?.role === "admin";
+  const isSubscriber = user?.subscriptionTier === "premium" || user?.subscriptionTier === "founder";
+  const isPremiumLocked = article?.premiumOnly === 1 && !isSubscriber && !isAdmin;
 
   // Query for comments
   const { data: comments, refetch: refetchComments } =
@@ -269,7 +276,7 @@ export default function ArticleDetail() {
     }
   }, [hasSavedQuery.data, user]);
 
-  // Handler per il click sul like
+  // Like click handler
   const handleLikeClick = () => {
     if (!user) {
       window.location.href = getLoginUrl();
@@ -280,7 +287,7 @@ export default function ArticleDetail() {
     }
   };
 
-  // Handler per il click sul salvataggio (bookmark)
+  // Save click handler (bookmark)
   const handleBookmarkClick = () => {
     if (!user) {
       window.location.href = getLoginUrl();
@@ -385,6 +392,11 @@ export default function ArticleDetail() {
   const renderArticleContent = (content: string) => {
     // Strip leading Markdown H1 if it matches or follows the title to avoid duplication
     let strippedContent = content.replace(/^#\s+.*(\r?\n)+/, "");
+    
+    // Point 20: Filter out unwanted template placeholders
+    strippedContent = strippedContent.replace(/Photo description/gi, "");
+    strippedContent = strippedContent.replace(/\*Short caption in italics\*/gi, "");
+    strippedContent = strippedContent.replace(/\*Field Intel Segment\*/gi, "");
     
     // Fix Wiki-style headers (== Header ==) into standard Markdown (## Header)
     strippedContent = strippedContent.replace(/==+\s*(.*?)\s*==+/g, "\n\n## $1\n\n");
@@ -549,7 +561,16 @@ export default function ArticleDetail() {
 
   const handleAudioToggle = () => {
     if (!article) return;
-    togglePlay(article.id, article.title, article.excerpt);
+    
+    // If it's already playing this article, stop it completely
+    if (isAudioPlaying) {
+        stop();
+        return;
+    }
+
+    // Strip markdown characters and common HTML tags for a cleaner narration
+    const cleanContent = article.content.replace(/<[^>]*>?/gm, "").replace(/[#*`~]/g, "");
+    togglePlay(article.id, article.title, `${article.title}. ${article.excerpt}. ${cleanContent}`);
   };
 
   return (
@@ -575,50 +596,40 @@ export default function ArticleDetail() {
       </div>
 
 
-      {/* Hero Image — Pulled to top on mobile to cover void space */}
-      <section className="relative h-[300px] md:h-[450px] overflow-hidden bg-black -mt-24 sm:mt-0">
-        <div className="img-hero-frame">
+      {/* Hero Section — Vanguard Elevation Overlay */}
+      <section className="relative h-[35vh] md:h-[50vh] lg:h-[60vh] overflow-hidden bg-[#0A0A09]">
+        <div className="absolute inset-0 z-0">
           <div
-            className="img-hero-blur-bg"
-            style={{ backgroundImage: `url(${getSafeImage(article.image, article.category, article.id, rw(1400))})` }}
+            className="absolute inset-0 bg-cover bg-center grayscale-[0.5] blur-2xl opacity-20 scale-110"
+            style={{ backgroundImage: `url(${getSafeImage(article.image, article.category, article.id, 1200)})` }}
           />
           <img
-            src={getSafeImage(article.image, article.category, article.id, rw(1400))}
+            src={getSafeImage(article.image, article.category, article.id, 1600)}
             alt={article.title}
-            className="img-hero-main"
+            className="w-full h-full object-cover grayscale-[0.2]"
             loading="eager"
             decoding="async"
             fetchPriority="high"
-            onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-              const img = e.target as HTMLImageElement;
-              if (img.dataset.triedFallback === "true") return;
-              img.dataset.triedFallback = "true";
-
-              const fallbackUrl = getFallbackImage(article.category || "news", article.id, rw(1400));
-
-              img.src = fallbackUrl;
-
-              const parent = img.parentElement?.parentElement; // frame is parent, hero section is grandparent? No, frame contains blur-bg and img
-              if (parent) {
-                const blurBg = parent.querySelector('.img-hero-blur-bg') as HTMLElement;
-                if (blurBg) blurBg.style.backgroundImage = `url(${fallbackUrl})`;
-              }
-            }}
+            onError={handleImageError}
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0E] via-[#0F0F0E]/40 to-transparent" />
+          <div className="absolute inset-0 neural-grid opacity-[0.05] pointer-events-none" />
+          <div className="neural-scan-line" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0E] via-transparent to-transparent pointer-events-none" />
       </section>
 
-      {/* Article Content */}
-      <article className="container pt-2 md:pt-10 pb-12 md:pb-16 overflow-x-hidden">
-        <div className="overflow-hidden break-words">
-          {/* Back Button */}
-          <Link href={`/category/${article.category.toLowerCase().replace(/\s+/g, '-')}`}>
-            <button className="flex items-center gap-2 text-[#8A8880] hover:text-[#E8A020] transition-colors mb-6 font-ui text-[11px] uppercase tracking-widest font-bold">
-              <ArrowLeft size={16} />
-              Back to {article.category}
-            </button>
-          </Link>
+      {/* Article Container */}
+      <article className="container relative z-10 -mt-20 md:-mt-32 pb-16">
+        <div className="max-w-5xl mx-auto bg-[#0F0F0E]/80 backdrop-blur-3xl border border-[#1C1C1A] rounded-3xl p-6 md:p-12 lg:p-16 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.9)] overflow-hidden">
+          {/* Controls Bar */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 border-b border-[#1C1C1A] pb-8">
+             <Link href={`/category/${article.category.toLowerCase().replace(/\s+/g, '-')}`}>
+               <button className="inline-flex items-center gap-2 text-[#8A8880] hover:text-[#E8A020] transition-all font-ui text-[10px] uppercase tracking-widest font-900 group">
+                 <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                 Explore {article.category} Section
+               </button>
+             </Link>
+          </div>
 
           {/* Category and Breaking Badge */}
           <div className="flex items-center gap-3 mb-6">
@@ -641,8 +652,13 @@ export default function ArticleDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             {/* Main Content Column */}
             <div className="lg:col-span-8">
-              <h1 className="font-display text-2xl sm:text-4xl md:text-5xl font-900 text-[#F2F0EB] leading-tight mb-6">
+              <h1 className="font-display text-2xl sm:text-4xl md:text-5xl font-900 text-[#F2F0EB] leading-tight mb-6 text-balance">
                 <span>{article.title}</span>
+                {article.premiumOnly === 1 && (
+                  <span className="inline-flex items-center gap-2 ml-4 px-3 py-1 bg-[#E8A020] text-[#0F0F0E] text-[10px] font-900 uppercase tracking-widest leading-none rounded-sm align-middle">
+                    <Zap size={10} fill="currentColor" /> Premium
+                  </span>
+                )}
               </h1>
                <div className="text-[#8A8880] text-lg md:text-xl mb-8 leading-relaxed border-l-4 border-[#E8A020] pl-6 tracking-tight prose prose-invert max-w-none">
                 <ReactMarkdown>{article.excerpt}</ReactMarkdown>
@@ -684,13 +700,6 @@ export default function ArticleDetail() {
                   <span className="font-ui text-[9px] font-900 uppercase tracking-widest leading-none">Share</span>
                 </button>
                 <button
-                  onClick={() => handleShare("whatsapp")}
-                  className="flex flex-col items-center justify-center gap-1.5 py-4 bg-[#11110F] text-[#8A8880] border border-[#222220] rounded-sm transition-all"
-                >
-                  <MessageCircle size={16} />
-                  <span className="font-ui text-[9px] font-900 uppercase tracking-widest leading-none">WhatsApp</span>
-                </button>
-                <button
                   onClick={() => handleShare("copy")}
                   className="flex flex-col items-center justify-center gap-1.5 py-4 bg-[#11110F] text-[#8A8880] border border-[#222220] rounded-sm transition-all"
                 >
@@ -699,412 +708,430 @@ export default function ArticleDetail() {
                 </button>
               </div>
 
-              {/* Neural Audio Briefing */}
-              <div className="mb-8 flex items-center justify-between p-6 bg-[#11110F] border border-[#1C1C1A] rounded-sm group overflow-hidden relative shadow-lg">
-                <div className="relative z-10">
-                  <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.3em] block mb-2 font-ui">AI Audio Briefing Active</span>
-                  <h4 className="font-display text-lg text-[#F2F0EB]">Listen to this story</h4>
-                  <p className="text-[10px] text-[#8A8880] mt-1 font-ui uppercase tracking-widest">Powered by AI voice</p>
-                </div>
-                <button 
-                  onClick={handleAudioToggle}
-                  className="relative z-10 flex items-center gap-3 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] px-6 py-3 rounded-full font-ui text-[11px] font-900 uppercase tracking-widest transition-all shadow-xl hover:scale-105 active:scale-95 group/btn"
-                >
-                  {isAudioPlaying ? (
-                    <div className="flex gap-[2px] items-end h-3">
-                         <div className="w-1.5 bg-[#0F0F0E] animate-[bounce_0.6s_infinite] h-full" />
-                         <div className="w-1.5 bg-[#0F0F0E] animate-[bounce_0.8s_infinite] h-2" />
-                         <div className="w-1.5 bg-[#0F0F0E] animate-[bounce_0.5s_infinite] h-3" />
-                         <div className="w-1.5 bg-[#0F0F0E] animate-[bounce_0.7s_infinite] h-1" />
+              {isPremiumLocked ? (
+                /* Premium Paywall - Semafor/Axios Inspired High Fidelity Lock */
+                <div className="relative mt-12 mb-20 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0F0F0E]/80 to-[#0F0F0E] z-10 -mt-20" />
+                  
+                  <div className="relative z-20 pt-20 pb-12 flex flex-col items-center text-center max-w-lg mx-auto">
+                    <div className="w-16 h-16 rounded-full bg-[#E8A020]/10 border border-[#E8A020]/20 flex items-center justify-center mb-8 animate-pulse text-[#E8A020]">
+                      <Zap size={32} fill="currentColor" />
                     </div>
-                  ) : <Play size={14} fill="currentColor" />}
-                  {isAudioPlaying ? "Stop Briefing" : "Play Briefing"}
-                </button>
-                {/* Abstract Visual Feedback */}
-                <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-                    <div className="w-full h-full neural-grid" />
-                </div>
-              </div>
-
-              {/* Intelligence Nexus — Inspired by Semafor/Axios */}
-              <div className="mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2 bg-[#11110F] border-l-2 border-[#E8A020] p-8 rounded-sm shadow-xl relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                    <Zap size={80} className="text-[#E8A020]" />
-                  </div>
-                  <h3 className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-4">Key Takeaways</h3>
-                  <div className="space-y-4">
-                    {/* Render AI summary if present */}
-                    {article.summary ? (
-                       (() => {
-                         try {
-                           const points = JSON.parse(article.summary);
-                           if (!Array.isArray(points)) throw new Error("Not array");
-                           return points.map((point: string, idx: number) => (
-                             <div key={idx} className="flex gap-4 items-start">
-                               <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0 shadow-[0_0_8px_rgba(232,160,32,0.6)]" />
-                               <div className="text-[#D4D0C8] text-sm leading-relaxed prose prose-sm prose-invert max-w-none">
-                                  <ReactMarkdown>{point}</ReactMarkdown>
-                                </div>
-                             </div>
-                           ));
-                         } catch (e) {
-                           return (
-                             <div className="flex gap-4 items-start">
-                               <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0" />
-                               <div className="text-[#D4D0C8] text-sm leading-relaxed opacity-80 prose prose-sm prose-invert max-w-none">
-                                   <ReactMarkdown>{article.excerpt}</ReactMarkdown>
-                                </div>
-                             </div>
-                           )
-                         }
-                       })()
-                    ) : (
-                      <div className="flex gap-4 items-start">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] mt-1.5 flex-shrink-0" />
-                        <div className="text-[#D4D0C8] text-sm leading-relaxed opacity-80 prose prose-sm prose-invert max-w-none">
-                           <ReactMarkdown>{article.excerpt}</ReactMarkdown>
-                        </div>
-                      </div>
-                    )}
                     
-
+                    <h2 className="font-display text-3xl font-900 text-[#F2F0EB] uppercase tracking-tighter mb-4">
+                      Premium Content <br/> 
+                      <span className="text-[#E8A020]">Locked</span>
+                    </h2>
+                    
+                     <p className="font-ui text-xs text-[#8A8880] mb-10 leading-relaxed uppercase tracking-[0.2em]">
+                        This investigative report is exclusive to BISHOUY Premium members. Upgrade your membership to access the full analysis.
+                     </p>
+                    
+                    <div className="w-full space-y-4">
+                      <button 
+                        onClick={() => setIsPricingOpen(true)}
+                        className="block w-full bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] py-4 rounded-sm font-ui text-[11px] font-900 uppercase tracking-[0.3em] transition-all shadow-xl active:scale-95"
+                      >
+                         UPGRADE TO PREMIUM
+                      </button>
+                      
+                      {!user && (
+                        <Link 
+                          href={getLoginUrl()} 
+                          className="block w-full border border-[#2A2A28] text-[#8A8880] hover:text-[#F2F0EB] py-4 rounded-sm font-ui text-[11px] font-900 uppercase tracking-[0.3em] transition-all active:scale-95"
+                        >
+                           SIGN IN TO VERIFY ACCESS
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
-                
-                <div className="bg-[#11110F] border border-[#1C1C1A] p-8 rounded-sm flex flex-col justify-between group hover:border-[#E8A020]/30 transition-colors shadow-xl">
-                    <div>
-                        <h4 className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.3em] mb-6">Story Insights</h4>
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center border-b border-[#1C1C1A] pb-3">
-                                <span className="text-[10px] text-[#8A8880] uppercase tracking-widest font-ui">Tone</span>
-                                <span className="text-[10px] text-[#F2F0EB] font-bold">NEUTRAL</span>
-                            </div>
-                            <div className="flex justify-between items-center border-b border-[#1C1C1A] pb-3">
-                                <span className="text-[10px] text-[#8A8880] uppercase tracking-widest font-ui">Trust Score</span>
-                                <span className="text-[10px] text-[#F2F0EB] font-bold">{article.factCheck || "98.4%"}</span>
-                            </div>
-                            <div className="flex justify-between items-center pb-1">
-                                <span className="text-[10px] text-[#8A8880] uppercase tracking-widest font-ui">Importance</span>
-                                <span className="text-[10px] text-[#F2F0EB] font-bold">MODERATE</span>
-                            </div>
-                        </div>
+              ) : (
+                /* Dynamic Content Sections */
+                <>
+                  {/* AI Audio Briefing */}
+                  <div className="mb-8 flex items-center justify-between p-6 bg-[#11110F] border border-[#1C1C1A] rounded-sm group overflow-hidden relative shadow-lg">
+                    <div className="relative z-10">
+                      <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.3em] block mb-2 font-ui">AI Audio Briefing Active</span>
+                      <h4 className="font-display text-lg text-[#F2F0EB]">Listen to this story</h4>
+                      <p className="text-[10px] text-[#8A8880] mt-1 font-ui uppercase tracking-widest">Powered by AI voice</p>
                     </div>
-                    <div className="mt-8 pt-4 border-t border-[#1C1C1A] flex items-center gap-2">
-                        <Activity size={12} className="text-[#E8A020] animate-pulse" />
-                        <span className="text-[9px] text-[#8A8880] uppercase tracking-widest font-900 whitespace-nowrap">Analysis Active</span>
+                    {isSubscriber || isAdmin ? (
+                      <button 
+                        onClick={handleAudioToggle}
+                        className="relative z-10 flex items-center gap-3 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] px-6 py-3 rounded-full font-ui text-[11px] font-900 uppercase tracking-widest transition-all shadow-xl hover:scale-105 active:scale-95 group/btn"
+                      >
+                        {isAudioPlaying ? (
+                          <div className="flex gap-[2px] items-end h-3">
+                               <div className="w-1.5 bg-[#0F0F0E] animate-[bounce_0.6s_infinite] h-full" />
+                               <div className="w-1.5 bg-[#0F0F0E] animate-[bounce_0.8s_infinite] h-2" />
+                               <div className="w-1.5 bg-[#0F0F0E] animate-[bounce_0.5s_infinite] h-3" />
+                               <div className="w-1.5 bg-[#0F0F0E] animate-[bounce_0.7s_infinite] h-1" />
+                          </div>
+                        ) : <Play size={14} fill="currentColor" />}
+                        {isAudioPlaying ? "Stop Briefing" : "Play Briefing"}
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => setIsPricingOpen(true)}
+                        className="relative z-10 flex items-center gap-2 bg-[#2A2A28] hover:bg-[#E8A020] hover:text-[#0F0F0E] text-[#8A8880] px-4 py-2 rounded-full font-ui text-[10px] font-900 uppercase tracking-widest transition-all shadow-xl"
+                      >
+                        <Lock size={12} fill="currentColor" /> Premium Feature
+                      </button>
+                    )}
+                    {/* Abstract Visual Feedback */}
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+                        <div className="w-full h-full neural-grid" />
                     </div>
-                </div>
-              </div>
+                  </div>
+                  
+                  {/* Article Highlights */}
+                  <div className="mb-12">
+                    <div className="bg-[#11110F] border-l-2 border-[#E8A020] p-8 rounded-sm shadow-xl relative overflow-hidden group">
+                      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity whitespace-nowrap overflow-hidden">
+                        <Zap size={80} className="text-[#E8A020]" />
+                      </div>
+                      <h3 className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-4">Key Takeaways</h3>
+                      <div className="space-y-4">
+                        {/* Render AI summary if present */}
+                        {article.summary ? (
+                           (() => {
+                             try {
+                               const points = JSON.parse(article.summary);
+                               if (!Array.isArray(points)) throw new Error("Not array");
+                               return points.map((point: string, idx: number) => (
+                                 <div key={idx} className="flex gap-4 group/item">
+                                   <span className="text-[#E8A020] font-900 font-ui text-[10px] mt-1 tracking-tighter">0{idx + 1} //</span>
+                                   <div className="text-[#F2F0EB] text-sm font-bold leading-snug tracking-tight group-hover/item:text-[#E8A020] transition-colors prose prose-invert max-w-none">
+                                      <ReactMarkdown>{point}</ReactMarkdown>
+                                   </div>
+                                 </div>
+                               ));
+                             } catch (e) { 
+                               return (
+                                 <div className="flex gap-4 group/item">
+                                   <span className="text-[#E8A020] font-900 font-ui text-[10px] mt-1 tracking-tighter">01 //</span>
+                                   <p className="text-[#F2F0EB] text-sm font-bold leading-snug tracking-tight group-hover/item:text-[#E8A020] transition-colors">Editorial summary in progress for this report.</p>
+                                 </div>
+                               ); 
+                             }
+                           })()
+                        ) : (
+                           <div className="flex gap-4 group/item">
+                            <span className="text-[#E8A020] font-900 font-ui text-[10px] mt-1 tracking-tighter">01 //</span>
+                            <p className="text-[#F2F0EB] text-sm font-bold leading-snug tracking-tight group-hover/item:text-[#E8A020] transition-colors">Editorial summary in progress for this report.</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
 
-              {/* Meta Info */}
-              <div className="flex flex-wrap items-center gap-6 text-[#8A8880] text-sm border-t border-b border-[#1C1C1A] py-4 notranslate">
-                <div className="flex items-center gap-2">
-                  <User size={16} />
-                  <span>{article.author}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Calendar size={16} />
-                  <span>{publishDate}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock size={16} />
-                  <span>{article.readTime} min read</span>
-                </div>
-              </div>
+                  {/* Meta Info */}
+                  <div className="flex flex-wrap items-center gap-6 text-[#8A8880] text-sm border-t border-b border-[#1C1C1A] py-4 notranslate">
+                    <div className="flex items-center gap-2">
+                      <User size={16} />
+                      <span>{article.author}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar size={16} />
+                      <span>{publishDate}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock size={16} />
+                      <span>{article.readTime} min read</span>
+                    </div>
+                  </div>
 
-              {/* Article Body */}
-              <div className="prose prose-invert max-w-none mb-12 article-body-content">
-                <div className="font-body text-[#D4D0C8] leading-relaxed">
-                  {renderArticleContent(article.content)}
-                  <div className="clear-both" />
-                </div>
-              </div>
+                  {/* Article Body */}
+                  <div className="prose prose-invert max-w-none mb-12 article-body-content">
+                    <div className="font-body text-[#D4D0C8] leading-relaxed">
+                      {renderArticleContent(article.content)}
+                      <div className="clear-both" />
+                    </div>
+                  </div>
 
-              {/* Tags */}
-              {tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {tags.map((tag: string, i: number) => (
-                    <span
-                      key={i}
-                      className="px-3 py-1 bg-[#1C1C1A] text-[#8A8880] font-ui text-xs rounded-sm"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              )}
+                  {/* Tags */}
+                  {tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-8">
+                      {tags.map((tag: string, i: number) => (
+                        <span
+                          key={i}
+                          className="px-3 py-1 bg-[#1C1C1A] text-[#8A8880] font-ui text-xs rounded-sm"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
-              {/* Author Bio */}
-              <AuthorBio authorName={article.author} />
+                  {/* Author Bio */}
+                  <AuthorBio authorName={article.author} />
 
-              {/* Related Articles Section - Moved above comments for better visibility */}
-              {relatedArticles && relatedArticles.length > 0 && (
-                <div className="mt-16 pt-12 border-t border-[#1C1C1A]">
-                  <div className="amber-line mb-4" />
-                  <h3 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-8">
-                    Read Next
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {relatedArticles.map((article: any) => {
-                      return (
-                        <Link key={article.id} href={`/article/${article.slug}`}>
-                          <div className="group cursor-pointer">
-                            <div className="aspect-[16/9] overflow-hidden rounded-sm mb-4 relative bg-[#1C1C1A]">
-                              <img
-                                src={getSafeImage(article.image, article.category, article.id, 800)}
-                                alt={article.title}
-                                className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
-                                decoding="async"
-                                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                                  const img = e.target as HTMLImageElement;
-                                  if (img.dataset.triedFallback === "true") return;
-                                  img.dataset.triedFallback = "true";
-                                  img.src = getFallbackImage(article.category || "news", article.id, 800);
-                                }}
-                              />
-                              <div className="absolute top-3 left-3 bg-[#E8A020] text-[#0F0F0E] text-[10px] font-ui font-bold uppercase tracking-widest px-2 py-1 rounded-sm">
-                                {article.category}
+                  {/* Related Articles Section */}
+                  {relatedArticles && relatedArticles.length > 0 && (
+                    <div className="mt-16 pt-12 border-t border-[#1C1C1A]">
+                      <div className="amber-line mb-4" />
+                      <h3 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-8">
+                        Read Next
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {relatedArticles.map((article: any) => (
+                          <Link key={article.id} href={`/article/${article.slug}`}>
+                            <div className="group cursor-pointer">
+                              <div className="aspect-[16/9] overflow-hidden rounded-sm mb-4 relative bg-[#1C1C1A]">
+                                <img
+                                  src={getSafeImage(article.image, article.category, article.id, 800)}
+                                  alt={article.title}
+                                  className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
+                                  loading="lazy"
+                                />
+                                <div className="absolute top-3 left-3 bg-[#E8A020] text-[#0F0F0E] text-[10px] font-ui font-bold uppercase tracking-widest px-2 py-1 rounded-sm">
+                                  {article.category}
+                                </div>
+                              </div>
+                              <h4 className="font-display text-lg text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 mb-2 font-900 leading-tight">
+                                {article.title}
+                              </h4>
+                              <div className="flex items-center gap-4 text-[10px] text-[#555550] font-ui uppercase tracking-widest">
+                                <span className="font-900 text-[#8A8880]">{article.author}</span>
+                                <span>
+                                  {formatDateString(article.publishedAt || article.createdAt)}
+                                </span>
                               </div>
                             </div>
-                            <h4 className="font-display text-lg text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 mb-2 font-900 leading-tight">
-                              {article.title}
-                            </h4>
-                            <div className="flex items-center gap-4 text-[10px] text-[#555550] font-ui uppercase tracking-widest">
-                              <span className="font-900 text-[#8A8880]">{article.author}</span>
-                              <div className="w-1 h-1 rounded-full bg-[#222220] hidden" />
-                              <span>
-                                {formatDateString(article.publishedAt || article.createdAt)}
-                              </span>
-                            </div>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
-              {/* Comments Section */}
-              <div className="max-w-3xl mx-auto">
-                <h3 className="font-headline text-xl font-bold text-[#F2F0EB] mb-6">
-                  Comments
-                </h3>
+                  <div className="max-w-3xl mx-auto">
+                    <h3 className="font-headline text-xl font-bold text-[#F2F0EB] mb-6">
+                      Comments
+                    </h3>
 
-                {/* Approved Comments */}
-                {comments && comments.length > 0 ? (
-                  <div className="space-y-4 mb-8">
-                    {comments.map(comment => {
-                      const c = comment as any;
-                      const displayName = c.userUsername
-                        ? `@${c.userUsername}`
-                        : c.userName || "Anonymous";
-                      const isOwner =
-                        user && (user.id === c.userId || user.role === "admin");
-                      const isEditing = editingCommentId === c.id;
+                    {/* Approved Comments */}
+                    {comments && comments.length > 0 ? (
+                      <div className="space-y-4 mb-8">
+                        {comments.map(comment => {
+                          const c = comment as any;
+                          const displayName = c.userUsername
+                            ? `@${c.userUsername}`
+                            : c.userName || "Anonymous";
+                          const isOwner =
+                            user && (user.id === c.userId || user.role === "admin");
+                          const isEditing = editingCommentId === c.id;
 
-                      const ProfileWrapper = ({
-                        children,
-                      }: {
-                        children: React.ReactNode;
-                      }) => {
-                        if (c.userUsername) {
+                          const ProfileWrapper = ({
+                            children,
+                          }: {
+                            children: React.ReactNode;
+                          }) => {
+                            if (c.userUsername) {
+                              return (
+                                <Link href={`/u/${c.userUsername}`}>{children}</Link>
+                              );
+                            }
+                            return <>{children}</>;
+                          };
+
                           return (
-                            <Link href={`/u/${c.userUsername}`}>{children}</Link>
-                          );
-                        }
-                        return <>{children}</>;
-                      };
+                            <div
+                              key={c.id}
+                              className="bg-[#1C1C1A] rounded-sm p-6 relative group"
+                            >
+                              <div className="flex items-start justify-between mb-3">
+                                <ProfileWrapper>
+                                  <div
+                                    className={`flex items-center gap-3 ${c.userUsername ? "cursor-pointer hover:opacity-80 transition-opacity" : ""}`}
+                                  >
+                                    <div className="relative">
+                                      {c.userAvatarUrl ? (
+                                        <img
+                                          src={c.userAvatarUrl}
+                                          alt={displayName}
+                                          className="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover flex-shrink-0 border border-[#2A2A28]"
+                                        />
+                                      ) : (
+                                        <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-[#2A2A28] flex items-center justify-center flex-shrink-0">
+                                          <span className="text-[#8A8880] text-xs font-bold">
+                                            {displayName.charAt(1)?.toUpperCase() ||
+                                              displayName.charAt(0).toUpperCase()}
+                                          </span>
+                                        </div>
+                                      )}
+                                      {c.userSubscriptionTier && c.userSubscriptionTier !== 'free' && (
+                                        <div className={`absolute -bottom-0.5 -right-0.5 p-1 rounded-full border-2 border-[#1C1C1A] shadow-xl ${c.userSubscriptionTier === 'founder' ? 'bg-[#E8A020] text-[#0F0F0E]' : 'bg-[#1C1C1A] text-[#E8A020] border-[#E8A020]/30'}`}>
+                                          <Zap size={8} fill={c.userSubscriptionTier === 'founder' ? 'currentColor' : 'none'} />
+                                        </div>
+                                      )}
+                                    </div>
+                                    <div className="min-w-0">
+                                      <div
+                                        className={`font-900 text-[11px] md:text-xs uppercase tracking-widest flex items-center gap-2 flex-wrap mb-0.5 ${c.userUsername ? "text-[#E8A020]" : "text-[#F2F0EB]"}`}
+                                      >
+                                        <span className={c.userUsername ? "text-[#E8A020]" : "text-[#F2F0EB]"}>{displayName}</span>
+                                        {c.userSubscriptionTier === 'founder' && (
+                                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-[1px] bg-[#E8A020] text-[#0F0F0E] text-[7px] font-900 uppercase tracking-tighter shadow-[0_0_10px_rgba(232,160,32,0.2)]">
+                                            Founder
+                                          </span>
+                                        )}
+                                        {c.userSubscriptionTier === 'premium' && (
+                                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-[1px] bg-[#1C1C1A] border border-[#E8A020]/20 text-[#E8A020] text-[7px] font-900 uppercase tracking-tighter">
+                                            Premium
+                                          </span>
+                                        )}
+                                      </div>
+                                      <p className="text-[10px] text-[#8A8880] flex items-center gap-1.5 tracking-wide">
+                                        {new Date(c.createdAt).toLocaleDateString(
+                                          "en-US",
+                                          {
+                                            year: "numeric",
+                                            month: "short",
+                                            day: "numeric",
+                                          }
+                                        )}
+                                        {c.isEdited === 1 && (
+                                          <span className="italic opacity-60">
+                                            (edited)
+                                          </span>
+                                        )}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </ProfileWrapper>
 
-                      return (
-                        <div
-                          key={c.id}
-                          className="bg-[#1C1C1A] rounded-sm p-6 relative group"
-                        >
-                          <div className="flex items-start justify-between mb-3">
-                            <ProfileWrapper>
-                              <div
-                                className={`flex items-center gap-3 ${c.userUsername ? "cursor-pointer hover:opacity-80 transition-opacity" : ""}`}
-                              >
-                                {c.userAvatarUrl ? (
-                                  <img
-                                    src={c.userAvatarUrl}
-                                    alt={displayName}
-                                    className="w-8 h-8 rounded-full object-cover flex-shrink-0 border border-[#2A2A28]"
-                                  />
-                                ) : (
-                                  <div className="w-8 h-8 rounded-full bg-[#2A2A28] flex items-center justify-center flex-shrink-0">
-                                    <span className="text-[#8A8880] text-xs font-bold">
-                                      {displayName.charAt(1)?.toUpperCase() ||
-                                        displayName.charAt(0).toUpperCase()}
-                                    </span>
+                                {/* Actions for the comment owner or admin */}
+                                {isOwner && !isEditing && (
+                                  <div className="flex items-center gap-2 opacity-70 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                                    <button
+                                      onClick={() => {
+                                        setEditingCommentId(c.id);
+                                        setEditContent(c.content);
+                                      }}
+                                      className="text-[#8A8880] hover:text-[#E8A020] transition-colors p-2"
+                                      title="Edit comment"
+                                    >
+                                      <Edit2 size={18} />
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                       deleteCommentMutation.mutate({ id: c.id });
+                                     }}
+                                      className="text-[#8A8880] hover:text-red-500 transition-colors p-2"
+                                      title="Delete comment"
+                                    >
+                                      <Trash2 size={18} />
+                                    </button>
                                   </div>
                                 )}
-                                <div>
-                                  <p
-                                    className={`font-500 text-sm flex items-center gap-2 ${c.userUsername ? "text-[#E8A020]" : "text-[#F2F0EB]"}`}
-                                  >
-                                    {displayName}
-                                    {c.userId && c.userId < 100 && (
-                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded-[2px] bg-[#E8A020]/10 border border-[#E8A020]/30 text-[#E8A020] text-[8px] font-900 uppercase tracking-widest leading-none">
-                                        Founding Member
-                                      </span>
-                                    )}
-                                  </p>
-                                  <p className="text-xs text-[#8A8880] flex items-center gap-1.5">
-                                    {new Date(c.createdAt).toLocaleDateString(
-                                      "en-US",
-                                      {
-                                        year: "numeric",
-                                        month: "short",
-                                        day: "numeric",
+                              </div>
+
+                              {isEditing ? (
+                                <div className="mt-2">
+                                  <textarea
+                                    value={editContent}
+                                    onChange={e => setEditContent(e.target.value)}
+                                    className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm p-3 text-[#D4D0C8] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] resize-none"
+                                    rows={3}
+                                  />
+                                  <div className="flex justify-end gap-2 mt-2">
+                                    <button
+                                      onClick={() => {
+                                        setEditingCommentId(null);
+                                        setEditContent("");
+                                      }}
+                                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-600 text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
+                                    >
+                                      <X size={12} /> Cancel
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        if (
+                                          editContent.trim() &&
+                                          editContent !== c.content
+                                        ) {
+                                          editCommentMutation.mutate({
+                                            id: c.id,
+                                            content: editContent,
+                                          });
+                                        } else {
+                                          setEditingCommentId(null);
+                                        }
+                                      }}
+                                      disabled={
+                                        !editContent.trim() ||
+                                        editCommentMutation.isPending
                                       }
-                                    )}
-                                    {c.isEdited === 1 && (
-                                      <span className="italic opacity-70">
-                                        (edited)
-                                      </span>
-                                    )}
-                                  </p>
+                                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-600 bg-[#2A2A28] text-[#E8A020] hover:bg-[#E8A020] hover:text-[#0F0F0E] rounded-sm transition-colors disabled:opacity-50"
+                                    >
+                                      <Check size={12} /> Save
+                                    </button>
+                                  </div>
                                 </div>
-                              </div>
-                            </ProfileWrapper>
-
-                            {/* Actions for the comment owner or admin */}
-                            {isOwner && !isEditing && (
-                              <div className="flex items-center gap-2 opacity-70 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                                <button
-                                  onClick={() => {
-                                    setEditingCommentId(c.id);
-                                    setEditContent(c.content);
-                                  }}
-                                  className="text-[#8A8880] hover:text-[#E8A020] transition-colors p-2"
-                                  title="Edit comment"
-                                >
-                                  <Edit2 size={18} />
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    if (
-                                      window.confirm(
-                                        "Are you sure you want to delete this comment?"
-                                      )
-                                    ) {
-                                      deleteCommentMutation.mutate({ id: c.id });
-                                    }
-                                  }}
-                                  className="text-[#8A8880] hover:text-red-500 transition-colors p-2"
-                                  title="Delete comment"
-                                >
-                                  <Trash2 size={18} />
-                                </button>
-                              </div>
-                            )}
-                          </div>
-
-                          {isEditing ? (
-                            <div className="mt-2">
-                              <textarea
-                                value={editContent}
-                                onChange={e => setEditContent(e.target.value)}
-                                className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm p-3 text-[#D4D0C8] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] resize-none"
-                                rows={3}
-                              />
-                              <div className="flex justify-end gap-2 mt-2">
-                                <button
-                                  onClick={() => {
-                                    setEditingCommentId(null);
-                                    setEditContent("");
-                                  }}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-600 text-[#8A8880] hover:text-[#F2F0EB] transition-colors"
-                                >
-                                  <X size={12} /> Cancel
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    if (
-                                      editContent.trim() &&
-                                      editContent !== c.content
-                                    ) {
-                                      editCommentMutation.mutate({
-                                        id: c.id,
-                                        content: editContent,
-                                      });
-                                    } else {
-                                      setEditingCommentId(null);
-                                    }
-                                  }}
-                                  disabled={
-                                    !editContent.trim() ||
-                                    editCommentMutation.isPending
-                                  }
-                                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-ui uppercase font-600 bg-[#2A2A28] text-[#E8A020] hover:bg-[#E8A020] hover:text-[#0F0F0E] rounded-sm transition-colors disabled:opacity-50"
-                                >
-                                  <Check size={12} /> Save
-                                </button>
-                              </div>
+                              ) : (
+                                <p className="text-[#D4D0C8] leading-relaxed whitespace-pre-wrap">
+                                  {c.content}
+                                </p>
+                              )}
                             </div>
-                          ) : (
-                            <p className="text-[#D4D0C8] leading-relaxed whitespace-pre-wrap">
-                              {c.content}
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className="text-[#8A8880] mb-8">
-                    No comments yet. Be the first to comment!
-                  </p>
-                )}
-
-                {/* Comment Form */}
-                {allowComments ? (
-                  user ? (
-                    <div className="bg-[#1C1C1A] rounded-sm p-6">
-                      <h4 className="font-500 text-[#F2F0EB] mb-4">
-                        Leave a Comment
-                      </h4>
-                      <textarea
-                        value={commentText}
-                        onChange={e => setCommentText(e.target.value)}
-                        placeholder="Share your thoughts..."
-                        className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm p-3 text-[#D4D0C8] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] resize-none"
-                        rows={4}
-                      />
-                      <button
-                        onClick={handleSubmitComment}
-                        disabled={isSubmitting || !commentText.trim()}
-                        className="mt-4 flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
-                      >
-                        <Send size={14} />
-                        {isSubmitting ? "Submitting..." : "Post Comment"}
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="bg-[#1C1C1A] rounded-sm p-8 text-center border border-[#E8A020]/20 relative overflow-hidden group">
-                      <div className="absolute inset-0 bg-gradient-to-b from-[#E8A020]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <h4 className="font-display text-xl text-[#F2F0EB] mb-3 relative z-10">BECOME A MEMBER</h4>
-                      <p className="text-[#8A8880] text-sm mb-6 max-w-md mx-auto relative z-10">
-                        Sign in to share your analysis, build your personal <strong className="text-[#E8A020]">Intelligence Library</strong>, and unlock exclusive AI-powered features.
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-[#8A8880] mb-8">
+                        No comments yet. Be the first to comment!
                       </p>
-                      <Link
-                        href={getLoginUrl()}
-                        className="inline-flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] hover:scale-105 active:scale-95 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-widest px-8 py-3 rounded-sm transition-all shadow-lg shadow-[#E8A020]/10"
-                      >
-                        Join the Conversation
-                      </Link>
-                    </div>
-                  )
-                ) : (
-                  <div className="bg-[#1C1C1A]/50 rounded-sm p-6 text-center border border-dashed border-[#222220]">
-                    <p className="text-[#555550] font-ui text-xs uppercase tracking-widest">
-                      Comments are disabled for this article
-                    </p>
+                    )}
+
+                    {/* Comment Form */}
+                    {allowComments ? (
+                      user ? (
+                        <div className="bg-[#1C1C1A] rounded-sm p-6">
+                          <h4 className="font-500 text-[#F2F0EB] mb-4">
+                            Leave a Comment
+                          </h4>
+                          <textarea
+                            value={commentText}
+                            onChange={e => setCommentText(e.target.value)}
+                            placeholder="Share your thoughts..."
+                            className="w-full bg-[#0F0F0E] border border-[#2A2A28] rounded-sm p-3 text-[#D4D0C8] placeholder-[#555550] focus:outline-none focus:border-[#E8A020] resize-none"
+                            rows={4}
+                          />
+                          <button
+                            onClick={handleSubmitComment}
+                            disabled={isSubmitting || !commentText.trim()}
+                            className="mt-4 flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
+                          >
+                            <Send size={14} />
+                            {isSubmitting ? "Submitting..." : "Post Comment"}
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="bg-[#1C1C1A] rounded-sm p-8 text-center border border-[#E8A020]/20 relative overflow-hidden group">
+                          <div className="absolute inset-0 bg-gradient-to-b from-[#E8A020]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <h4 className="font-display text-xl text-[#F2F0EB] mb-3 relative z-10">BECOME A MEMBER</h4>
+                          <p className="text-[#8A8880] text-sm mb-6 max-w-md mx-auto relative z-10">
+                            Sign in to share your analysis, build your personal <strong className="text-[#E8A020]">Intelligence Library</strong>, and unlock exclusive AI-powered features.
+                          </p>
+                          <Link
+                            href={getLoginUrl()}
+                            className="inline-flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] hover:scale-105 active:scale-95 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-widest px-8 py-3 rounded-sm transition-all shadow-lg shadow-[#E8A020]/10"
+                          >
+                            Join the Conversation
+                          </Link>
+                        </div>
+                      )
+                    ) : (
+                      <div className="bg-[#1C1C1A]/50 rounded-sm p-6 text-center border border-dashed border-[#222220]">
+                        <p className="text-[#555550] font-ui text-xs uppercase tracking-widest">
+                          Comments are disabled for this article
+                        </p>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+                </>
+              )}
 
 
             </div>
@@ -1150,12 +1177,9 @@ export default function ArticleDetail() {
                     <span className="font-ui text-[10px] text-[#555550] uppercase tracking-widest mb-4 block">
                       Share with your network
                     </span>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-3 gap-3">
                       <button onClick={() => handleShare("linkedin")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28]" title="LinkedIn">
                         <Linkedin size={18} />
-                      </button>
-                      <button onClick={() => handleShare("whatsapp")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28]" title="WhatsApp">
-                        <MessageCircle size={18} />
                       </button>
                       <button onClick={() => handleShare("facebook")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28]" title="Facebook">
                         <Facebook size={18} />
@@ -1163,7 +1187,7 @@ export default function ArticleDetail() {
                       <button onClick={() => handleShare("twitter")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28]" title="X (Twitter)">
                         <Twitter size={18} />
                       </button>
-                      <button onClick={() => handleShare("copy")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28] col-span-2 flex items-center justify-center gap-2 font-ui text-[10px] uppercase tracking-widest" title="Copy Link">
+                      <button onClick={() => handleShare("copy")} className="p-3 bg-[#0F0F0E] hover:text-[#E8A020] hover:border-[#E8A020] transition-all rounded-sm border border-[#2A2A28] col-span-3 flex items-center justify-center gap-2 font-ui text-[10px] uppercase tracking-widest" title="Copy Link">
                         <LinkIcon size={14} />
                         Copy Link
                       </button>
@@ -1174,7 +1198,7 @@ export default function ArticleDetail() {
 
               {/* Performance Indicator - Sidebar */}
               <div className="mb-12">
-                <NeuralSidebarWidget category={article.category} />
+                <NeuralSidebarWidget category={article.category} locked={isPremiumLocked} />
               </div>
 
               {/* Related Articles in Sidebar */}
@@ -1207,12 +1231,76 @@ export default function ArticleDetail() {
         </div>
       </article>
 
+      {/* Related Articles — Bottom Section - Vanguard Style */}
+      {relatedArticles && relatedArticles.length > 0 && (
+        <section className="container py-24 border-t border-[#1C1C1A]">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+               <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8A020]/10 border border-[#E8A020]/20 mb-4">
+                    <span className="text-[9px] font-900 text-[#E8A020] uppercase tracking-[0.3em]">Extended Intelligence</span>
+                  </div>
+                  <h3 className="font-display text-3xl md:text-4xl text-[#F2F0EB] uppercase tracking-tighter">
+                    CONTINUE <span className="text-[#E8A020]">EXPLORING</span>
+                  </h3>
+               </div>
+               <Link href={`/category/${article.category.toLowerCase()}`} className="text-[11px] font-900 text-[#8A8880] hover:text-[#E8A020] uppercase tracking-[0.3em] transition-all flex items-center gap-2 group">
+                  EXPLORE ALL {article.category}
+                  <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+               </Link>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+              {relatedArticles.slice(0, 3).map((article: any, idx: number) => (
+                <Link key={article.id} href={`/article/${article.slug}`}>
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="group cursor-pointer"
+                  >
+                    <div className="aspect-[16/10] overflow-hidden rounded-xl bg-[#11110F] border border-[#1C1C1A] group-hover:border-[#E8A020]/30 transition-all duration-500 relative mb-6">
+                      <img 
+                        src={getSafeImage(article.image, article.category, article.id, 600)} 
+                        alt={article.title}
+                        className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0E]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <span className="font-ui text-[9px] text-[#E8A020] font-900 uppercase tracking-widest">
+                          {article.category}
+                        </span>
+                        <div className="h-px w-4 bg-[#2A2A28]" />
+                        <span className="font-ui text-[9px] text-[#555550] font-900 uppercase tracking-widest">
+                          {formatDateString(article.publishedAt || article.createdAt)}
+                        </span>
+                      </div>
+                      <h4 className="font-display text-xl text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 leading-tight font-bold">
+                        {article.title}
+                      </h4>
+                    </div>
+                  </motion.div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Bottom Ad Placement */}
-      <div className="container pb-12 overflow-hidden">
+      <div className="container pb-8 overflow-hidden">
         <AdPlacement position="banner_bottom" />
       </div>
 
       <Footer />
+
+      <PricingModal 
+        isOpen={isPricingOpen} 
+        onClose={() => setIsPricingOpen(false)} 
+      />
     </main>
   );
 }

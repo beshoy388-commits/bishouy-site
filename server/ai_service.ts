@@ -20,7 +20,6 @@ export async function generateArticleFromTopic(topic: string) {
         model: "meta-llama/llama-3.3-70b-instruct",
         extra_body: {
             models: [
-                "nousresearch/hermes-3-llama-3.1-405b",
                 "meta-llama/llama-3.3-70b-instruct",
             ],
         },

@@ -23,4 +23,10 @@ export const ENV = {
   adminIpWhitelist: process.env.ADMIN_IP_WHITELIST ?? "",
   // Ultimate Emergency 2FA Bypass (Never share this code)
   admin2faOverrideCode: process.env.ADMIN_2FA_OVERRIDE_CODE ?? "",
+  
+  // Stripe Integration
+  stripeSecretKey: process.env.STRIPE_SECRET_KEY ?? "",
+  stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
+  stripePriceIdPremium: process.env.STRIPE_PRICE_ID_PREMIUM ?? "",
+  stripePriceIdFounder: process.env.STRIPE_PRICE_ID_FOUNDER ?? "",
 };

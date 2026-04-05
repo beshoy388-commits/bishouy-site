@@ -182,7 +182,6 @@ async function rewriteArticle(
       // @ts-ignore - OpenRouter specific fallback extension
       extra_body: {
         models: [
-          "nousresearch/hermes-3-llama-3.1-405b",
           "meta-llama/llama-3.3-70b-instruct",
           "google/gemma-3-27b-it:free",
           "openrouter/free",
@@ -224,8 +223,8 @@ async function rewriteArticle(
                - EMPHASIS: Use ** (bold) for names, dates, or fiscal figures.
                - IMAGES: If you have Available Real Source Images, embed at least 2 of them using ONLY this exact syntax:
                  <!-- img:center:80% -->
-                 ![Photo description](URL_FROM_THE_LIST)
-                 *Short caption in italics*
+                 ![Intelligence Synthesis](URL_FROM_THE_LIST)
+                 *Field Intel Segment*
                - If Available Real Source Images is NONE, do not include any image tags or placeholders in the content.
 
             4. ANALYTICAL DEPTH:
@@ -236,7 +235,7 @@ async function rewriteArticle(
             5. CATEGORY CONTEXT:
                The source feed category is: "${feedCategory}". Align the tone accordingly.
 
-            6. LENGTH: Minimum 800-1100 words.
+            6. LENGTH: Minimum 500-800 words.
 
             JSON OUTPUT FORMAT (MANDATORY):
             {
@@ -341,6 +340,17 @@ export async function syncRSSFeeds(isManual: boolean = false) {
             continue;
           }
 
+          // Strict image requirement: Skip articles that don't have a source image
+          let originalImage = extractImageUrl(item);
+          if (!originalImage) {
+            log(`[RSS] Skipping article: "${item.title}" (Nessuna immagine vera fornita dalla fonte)`);
+            continue;
+          }
+          
+          if (originalImage && originalImage.startsWith("http://")) {
+             originalImage = originalImage.replace("http://", "https://");
+          }
+
           // Re-check for kill-switch before each article
           if (process.env.DISABLE_RSS_SYNC === "true") {
             log("[RSS] Interrupted by kill-switch.");
@@ -401,16 +411,8 @@ export async function syncRSSFeeds(isManual: boolean = false) {
           };
 
           // IMAGE LOGIC:
-          // 1. First choice: The original image from the news source (most authentic)
-          // 2. Second choice: Dynamic AI-generated image from Pollinations.ai based on the AI prompt
-          // 3. Third choice: Themed image from LoremFlickr based on tags
-          // 4. Fallback: Professional desk news background
-          let originalImage = extractImageUrl(item);
-
-          // Ensure HTTPS for original images to avoid Mixed Content issues on the live site
-          if (originalImage && originalImage.startsWith("http://")) {
-            originalImage = originalImage.replace("http://", "https://");
-          }
+          // We already verified 'originalImage' exists at the start of the loop.
+          // This ensures 100% authenticity for cover photos.
 
           const aiPrompt = (editorialPiece.imagePrompt || editorialPiece.title)
             .substring(0, 150) // Use full allowed length
@@ -439,7 +441,7 @@ export async function syncRSSFeeds(isManual: boolean = false) {
 
           const imageUrl =
             originalImage ||
-            `https://loremflickr.com/1200/800/${aiPrompt.toLowerCase().replace(/[^a-z]/g, "")}?lock=${Math.abs(hash % 1000)}`;
+            `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=1200&q=80`;
 
           const articleData: InsertArticle = {
             title: editorialPiece.title,

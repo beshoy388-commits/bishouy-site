@@ -9,6 +9,8 @@ import {
   Clock,
   CheckCircle2,
   Loader2,
+  ShieldCheck,
+  Zap,
   ArrowRight,
 } from "lucide-react";
 
@@ -159,9 +161,23 @@ export default function GlobalComments() {
                             {displayName.charAt(0).toUpperCase()}
                           </div>
                         )}
-                        <span className="font-ui text-xs text-[#E8A020] font-500">
-                          {displayName}
-                        </span>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="font-ui text-xs text-[#E8A020] font-bold">
+                            {displayName}
+                          </span>
+                          {comment.userSubscriptionTier === 'founder' && (
+                            <span className="flex items-center gap-1 bg-[#E8A020] text-[#0F0F0E] px-1.5 py-0.5 rounded-[1px] text-[7px] font-900 uppercase tracking-tighter shadow-[0_0_10px_rgba(232,160,32,0.3)]">
+                              <Zap size={8} fill="currentColor" />
+                              Founder
+                            </span>
+                          )}
+                          {comment.userSubscriptionTier === 'premium' && (
+                            <span className="flex items-center gap-1 bg-[#1C1C1A] text-[#E8A020] border border-[#E8A020]/30 px-1.5 py-0.5 rounded-[1px] text-[7px] font-900 uppercase tracking-tighter">
+                              <ShieldCheck size={8} />
+                              Premium
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       <span className="font-ui text-xs text-[#555550] flex items-center gap-1">
@@ -233,13 +249,7 @@ export default function GlobalComments() {
 
                     <button
                       onClick={() => {
-                        if (
-                          confirm(
-                            "Are you sure you want to PERMANENTLY delete this comment? This action cannot be undone."
-                          )
-                        ) {
-                          deleteMutation.mutate({ id: comment.id });
-                        }
+                        deleteMutation.mutate({ id: comment.id });
                       }}
                       disabled={deleteMutation.isPending}
                       className="p-2.5 bg-[#2A2A28] hover:bg-red-900/30 text-red-500 rounded-sm transition-colors disabled:opacity-50 border border-[#333330] hover:border-red-500/30"

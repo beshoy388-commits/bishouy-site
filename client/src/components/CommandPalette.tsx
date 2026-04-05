@@ -48,7 +48,7 @@ export default function CommandPalette() {
     <>
       <button 
         onClick={() => setOpen(true)}
-        className="fixed bottom-32 md:bottom-8 right-6 md:right-8 z-50 p-3 bg-[#E8A020] text-[#0F0F0E] rounded-full shadow-2xl hover:scale-110 transition-transform hidden md:flex items-center gap-2 group border border-[#0F0F0E]/20"
+        className="fixed bottom-40 md:bottom-28 right-6 md:right-8 z-50 p-3 bg-[#E8A020] text-[#0F0F0E] rounded-full shadow-2xl hover:scale-110 transition-transform hidden md:flex items-center gap-2 group border border-[#0F0F0E]/20"
       >
         <Search size={20} />
         <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 font-ui text-[10px] font-900 uppercase tracking-widest whitespace-nowrap">Intelligence Search (⌘K)</span>

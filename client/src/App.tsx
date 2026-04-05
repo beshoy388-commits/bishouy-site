@@ -29,6 +29,7 @@ import NeuralNotificationCenter from "@/components/NeuralNotificationCenter";
 
 // Pages are lazy-loaded to reduce initial bundle size
 const ArticleDetail = lazy(() => import("@/pages/ArticleDetail"));
+const Pricing = lazy(() => import("@/pages/Pricing"));
 const CategoryPage = lazy(() => import("@/pages/CategoryPage"));
 const Search = lazy(() => import("@/pages/Search"));
 const UserProfile = lazy(() => import("@/pages/UserProfile"));
@@ -93,6 +94,7 @@ function Router() {
             <Route path="/article/:slug" component={ArticleDetail} />
             <Route path="/category/:slug" component={CategoryPage} />
             <Route path="/search" component={Search} />
+            <Route path="/pricing" component={Pricing} />
             <Route path="/profile" component={UserProfile} />
             <Route path="/u/:username" component={PublicProfile} />
             <Route path="/privacy-policy" component={PrivacyPolicy} />
@@ -120,6 +122,12 @@ function Router() {
             <Route path="/cookie-policy" component={CookiePolicy} />
             <Route path="/advertise" component={Advertise} />
             <Route path="/404" component={NotFound} />
+            <Route path="/logout" component={() => {
+              useEffect(() => {
+                window.location.href = "/";
+              }, []);
+              return null;
+            }} />
             <Route component={NotFound} />
           </Switch>
         </motion.div>
@@ -168,7 +176,7 @@ function AppContent() {
       <UserStatusMonitor />
       <GoogleAdSense />
       <GoogleAnalytics />
-      <div className={!isAdminPage ? `min-h-screen pt-[160px] lg:pt-[195px] ${!isAdminPage ? "pb-32 lg:pb-0" : ""}` : "min-h-screen"}>
+      <div className={!isAdminPage ? `min-h-screen pt-[140px] lg:pt-[195px] ${!isAdminPage ? "pb-32 lg:pb-0" : ""}` : "min-h-screen"}>
         <Router />
       </div>
       <NewsletterModal />
@@ -176,6 +184,7 @@ function AppContent() {
       <CookieConsent />
       <BackToTop />
       {!isAdminPage && <MobileBottomNav onSearchClick={() => setIsSearchOpen(true)} />}
+      <div className="noise-overlay" />
     </MaintenanceGuard>
   );
 }

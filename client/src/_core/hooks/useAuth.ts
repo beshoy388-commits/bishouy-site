@@ -67,6 +67,12 @@ export function useAuth(options?: UseAuthOptions) {
     if (state.user) return;
     if (typeof window === "undefined") return;
 
+    // In development, handle unauthorized state without redirecting
+    if (import.meta.env.DEV) {
+      console.warn("[DEV] Unauthorized redirect suppressed (useAuth)");
+      return;
+    }
+
     // Avoid redirects if we are already on the destination page
     if (window.location.pathname === redirectPath) return;
 

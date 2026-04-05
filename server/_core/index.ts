@@ -78,22 +78,28 @@ async function startServer() {
             "https://*.doubleclick.net",
             "https://*.googletagmanager.com",
             "https://fundingchoicesmessages.google.com",
+            "https://js.stripe.com",
           ],
+          "script-src-attr": ["'unsafe-inline'"],
           "connect-src": [
             "'self'",
+            "http://localhost:*",
+            "http://127.0.0.1:*",
+            "ws://localhost:*",
+            "ws://127.0.0.1:*",
             "https://api.openrouter.ai",
             "https://pollinations.ai",
             "https://*.pollinations.ai",
             "https://*.googlesyndication.com",
             "https://*.google.com",
             "https://*.doubleclick.net",
-            "wss://*.render.com",
             "https://*.render.com",
             "https://vitals.vercel-insights.com",
             "https://www.googletagmanager.com",
             "https://*.google-analytics.com",
             "https://*.analytics.google.com",
             "https://*.googletagmanager.com",
+            "https://api.stripe.com",
           ],
           "img-src": [
             "'self'",
@@ -115,18 +121,50 @@ async function startServer() {
             "https://*.google.com",
             "https://*.doubleclick.net",
             "https://*.googlesyndication.com",
+            "https://js.stripe.com",
+            "https://hooks.stripe.com",
           ],
-          "upgrade-insecure-requests": [],
+          ...(ENV.isProduction ? { "upgrade-insecure-requests": [] } : {}),
         },
       },
       crossOriginEmbedderPolicy: false, // allows embeds (images, iframes)
-      hsts: {
+      hsts: ENV.isProduction ? {
         maxAge: 31536000,
         includeSubDomains: true,
         preload: true,
-      },
+      } : false,
     })
   );
+
+  // CORS - Crucial for Safari local development and cross-origin preflights
+  app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    const host = req.headers.host;
+    
+    // Only apply CORS if there is an origin and it's not the same as the host
+    if (origin) {
+      const isAllowed = origin.includes("localhost") || origin.includes("127.0.0.1") || origin === ENV.appUrl;
+      
+      if (isAllowed) {
+        res.header("Access-Control-Allow-Origin", origin);
+        res.header("Access-Control-Allow-Credentials", "true");
+      } else if (process.env.NODE_ENV !== "production") {
+        // In dev, be more permissive if needed, but avoid * with credentials
+        res.header("Access-Control-Allow-Origin", origin);
+        res.header("Access-Control-Allow-Credentials", "true");
+      }
+      
+      res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS,PATCH");
+      res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, Content-Length, X-Requested-With, trpc-batch-mode, x-trpc-source");
+      
+      // Handle Preflight
+      if (req.method === "OPTIONS") {
+        return res.status(200).end();
+      }
+    }
+    
+    next();
+  });
 
   // Gzip compression — reduces bandwidth by ~60-80%
   app.use(compression());
@@ -141,6 +179,117 @@ async function startServer() {
 
   // Global IP Blacklist Protection
   app.use(ipBlacklistMiddleware);
+  
+  // Stripe Webhook (MUST be before general JSON body parser)
+  app.post("/api/webhooks/stripe", express.raw({ type: "application/json" }), async (req, res) => {
+    const signature = req.headers["stripe-signature"] as string;
+    let event;
+
+    const { stripe } = await import("./stripe");
+
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        signature,
+        ENV.stripeWebhookSecret
+      );
+    } catch (err: any) {
+      console.error(`[Stripe Webhook] Error: ${err.message}`);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    const { updateUser, getUserById, getUserByStripeCustomerId } = await import("../db");
+
+    try {
+      switch (event.type) {
+        case "checkout.session.completed": {
+          const session = event.data.object as any;
+          const userId = parseInt(session.metadata.userId);
+          const tier = session.metadata.tier as "premium" | "founder";
+          
+          // Get priceId from line_items if possible, or use defaults
+          let priceId = "";
+          try {
+            const items = await stripe.checkout.sessions.listLineItems(session.id);
+            priceId = items.data[0]?.price?.id || "";
+          } catch (e) {
+            priceId = tier === "premium" ? ENV.stripePriceIdPremium : ENV.stripePriceIdFounder;
+          }
+          
+          await updateUser(userId, {
+            subscriptionTier: tier,
+            stripeCustomerId: session.customer,
+            stripeSubscriptionId: session.subscription,
+            stripePriceId: priceId,
+            subscriptionStatus: "active",
+          });
+          console.log(`[Stripe Webhook] Checkout completed for user ${userId} (Tier: ${tier})`);
+          break;
+        }
+        case "customer.subscription.updated":
+        case "customer.subscription.deleted": {
+          const subscription = event.data.object as any;
+          const user = await getUserByStripeCustomerId(subscription.customer);
+          if (user) {
+            const status = subscription.status;
+            let tier: "free" | "premium" | "founder" = "free";
+            const priceId = subscription.items?.data?.[0]?.price?.id || "";
+            
+            if (status === "active" || status === "trialing") {
+               const { ENV } = await import("./env");
+               if (priceId === ENV.stripePriceIdPremium) {
+                 tier = "premium";
+               } else if (priceId === ENV.stripePriceIdFounder) {
+                 tier = "founder";
+               } else {
+                 tier = "premium"; // Default to premium fallback
+               }
+            } else if (status === "past_due") {
+               // Optional: keep tier for 'past_due' or set to 'free' (currently free for safety)
+               tier = "free";
+            } else {
+               tier = "free";
+            }
+            
+            await updateUser(user.id, {
+              subscriptionStatus: status,
+              subscriptionTier: tier,
+              stripeSubscriptionId: subscription.id,
+              stripePriceId: priceId,
+            });
+            console.log(`[Stripe Webhook] Subscription ${event.type.split('.').pop()} for user ${user.id}: ${status} (Tier: ${tier})`);
+          }
+          break;
+        }
+        case "invoice.payment_failed": {
+          const invoice = event.data.object as any;
+          const user = await getUserByStripeCustomerId(invoice.customer);
+          if (user) {
+             await updateUser(user.id, {
+               subscriptionStatus: "past_due",
+               subscriptionTier: "free" // Lockdown on failure
+             });
+             console.log(`[Stripe Webhook] Payment failed for user ${user.id}. Access restricted.`);
+          }
+          break;
+        }
+      }
+      res.json({ received: true });
+    } catch (err) {
+      console.error(`[Stripe Webhook] Database Error:`, err);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  // Apple Pay Domain Verification
+  app.get("/.well-known/apple-developer-merchantid-domain-association", (req, res) => {
+    const filePath = path.join(process.cwd(), "apple-developer-merchantid-domain-association");
+    if (fs.existsSync(filePath)) {
+      res.sendFile(filePath);
+    } else {
+      res.status(404).send("Verification file not found. Please upload it to the server root.");
+    }
+  });
 
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
@@ -284,20 +433,6 @@ async function startServer() {
       res.status(500).send("RSS generation failure");
     }
   });
-
-  // Helper: Escape XML entities (Point 17 & 18)
-  const escapeXml = (unsafe: string) => {
-    return unsafe.replace(/[<>&'"]/g, (c) => {
-      switch (c) {
-        case '<': return '&lt;';
-        case '>': return '&gt;';
-        case '&': return '&amp;';
-        case '\'': return '&apos;';
-        case '"': return '&quot;';
-        default: return c;
-      }
-    });
-  };
 
   // SEO: Google News RSS Feed
   app.get("/feed/google-news", async (req, res) => {
@@ -483,6 +618,8 @@ async function startServer() {
       : ENV.appUrl;
     const robots = `User-agent: *
 Allow: /
+Allow: /api/rss
+Allow: /feed/google-news
 Disallow: /login
 Disallow: /register
 Disallow: /api/

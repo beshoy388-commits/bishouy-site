@@ -169,9 +169,7 @@ export default function SecurityStatus() {
                     </div>
                     <button 
                         onClick={() => {
-                            if (confirm("NEW SECURITY GENESIS: This will invalidate all previous backup codes and generate 10 new emergency keys. Proceed?")) {
-                                generateCodesMutation.mutate();
-                            }
+                            generateCodesMutation.mutate();
                         }}
                         disabled={generateCodesMutation.isPending}
                         className="whitespace-nowrap flex items-center gap-2 px-8 py-4 bg-[#1C1C1A] border border-[#2A2A28] text-[#E8A020] hover:border-[#E8A020] hover:bg-[#E8A020]/5 rounded text-xs font-bold uppercase tracking-widest transition-all shadow-xl"
@@ -219,9 +217,7 @@ export default function SecurityStatus() {
                         {blacklistedIps && blacklistedIps.length > 0 && (
                             <button 
                                 onClick={() => {
-                                    if(confirm("DANGER: Are you sure you want to clear the ENTIRE IP blacklist? This will restore access to all currently blocked addresses.")) {
-                                        clearBlacklistMutation.mutate();
-                                    }
+                                    clearBlacklistMutation.mutate();
                                 }}
                                 disabled={clearBlacklistMutation.isPending}
                                 className="flex items-center gap-1.5 px-3 py-1 bg-red-500/10 text-red-500 border border-red-500/20 rounded text-[9px] font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all"

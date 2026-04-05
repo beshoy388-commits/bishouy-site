@@ -349,3 +349,42 @@ export async function sendWelcomeEmailWithBenefits(email: string, name: string) 
     `,
   });
 }
+
+export async function sendEmailChangeCode(email: string, code: string) {
+  await sendBrevoEmail({
+    to: email,
+    subject: "Change Your Email Address - Bishouy.com",
+    htmlContent: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0F0F0E; padding: 40px; border-radius: 8px; color: #F2F0EB; border: 1px solid #1C1C1A;">
+        <h1 style="color: #E8A020; text-align: center; font-size: 24px;">Security Verification Code</h1>
+        <p style="font-size: 16px; margin-top: 30px;">To update your editorial identification (email address), please use the verification code below. This code will expire in 10 minutes.</p>
+        <div style="background-color: #11110F; padding: 30px; text-align: center; border-radius: 4px; margin: 30px 0; border: 1px solid #E8A020;">
+          <span style="font-size: 36px; font-weight: 900; letter-spacing: 8px; color: #E8A020; font-family: 'Courier New', Courier, monospace;">${code}</span>
+        </div>
+        <p style="font-size: 14px; color: #8A8880; line-height: 1.6;">If you did not initiate this change request, please secure your account immediately or contact <a href="mailto:security@bishouy.com" style="color: #E8A020;">security@bishouy.com</a>.</p>
+        <hr style="border: none; border-top: 1px solid #1C1C1A; margin: 30px 0;"/>
+        <p style="font-size: 11px; color: #555550; text-align: center; text-transform: uppercase; letter-spacing: 1px;">BISHOUY EDITORIAL GROUP — SECURITY PROTOCOL AC-X4</p>
+      </div>
+    `,
+  });
+}
+ 
+export async function sendPasswordResetCode(email: string, code: string) {
+  await sendBrevoEmail({
+    to: email,
+    subject: "Reset Your Password - Bishouy.com",
+    htmlContent: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0F0F0E; padding: 40px; border-radius: 8px; color: #F2F0EB; border: 1px solid #1C1C1A;">
+        <h1 style="color: #E8A020; text-align: center; font-size: 24px;">Password Reset Protocol</h1>
+        <p style="font-size: 16px; margin-top: 30px;">A request was made to reset the password for your editorial profile. Please use the 6-digit verification code below to establish your new security credentials. This code will expire in 10 minutes.</p>
+        <div style="background-color: #11110F; padding: 30px; text-align: center; border-radius: 4px; margin: 30px 0; border: 1px solid #E8A020;">
+          <span style="font-size: 36px; font-weight: 900; letter-spacing: 8px; color: #E8A020; font-family: 'Courier New', Courier, monospace;">${code}</span>
+        </div>
+        <p style="font-size: 14px; color: #8A8880; line-height: 1.6;">If you did not request this reset, you can safely ignore this email. Your current password will remain unchanged.</p>
+        <p style="font-size: 12px; color: #555550; font-style: italic; margin-top: 20px;">For your protection, never share this code with anyone, including Bishouy staff.</p>
+        <hr style="border: none; border-top: 1px solid #1C1C1A; margin: 30px 0;"/>
+        <p style="font-size: 11px; color: #555550; text-align: center; text-transform: uppercase; letter-spacing: 1px;">BISHOUY EDITORIAL GROUP — SECURITY PROTOCOL PR-Z9</p>
+      </div>
+    `,
+  });
+}

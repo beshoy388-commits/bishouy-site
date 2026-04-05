@@ -1,6 +1,54 @@
-import { eq, ne, desc, and, sql, gt } from "drizzle-orm";
+import { eq, ne, desc, and, or, sql, gt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
+import {
+  users,
+  articles,
+  comments,
+  advertisements,
+  articleLikes,
+  subscribers,
+  verificationCodes,
+  passwordResetTokens,
+  sentNewsletters,
+  savedArticles,
+  pageViews,
+  siteSettings,
+  visitorSessions,
+  ipBlacklist,
+  socialPosts,
+  socialLikes,
+  User,
+  InsertUser,
+  Article,
+  InsertArticle,
+  Comment,
+  InsertComment,
+  Advertisement,
+  InsertAdvertisement,
+  ArticleLike,
+  InsertArticleLike,
+  InsertSubscriber,
+  VerificationCode,
+  InsertVerificationCode,
+  PasswordResetToken,
+  InsertPasswordResetToken,
+  SentNewsletter,
+  InsertSentNewsletter,
+  SavedArticle,
+  InsertSavedArticle,
+  PageView,
+  InsertPageView,
+  SiteSetting,
+  InsertSiteSetting,
+  SocialPost,
+  InsertSocialPost,
+  SocialLike,
+  InsertSocialLike,
+  VisitorSession,
+  InsertVisitorSession
+} from "../drizzle/schema";
+
 export {
   users,
   articles,
@@ -16,54 +64,7 @@ export {
   siteSettings,
   visitorSessions,
   ipBlacklist,
-} from "../drizzle/schema";
-import {
-  InsertUser,
-  User,
-  users,
-  articles,
-  InsertArticle,
-  Article,
-  comments,
-  InsertComment,
-  Comment,
-  advertisements,
-  InsertAdvertisement,
-  Advertisement,
-  articleLikes,
-  ArticleLike,
-  InsertArticleLike,
-  subscribers,
-  InsertSubscriber,
-  verificationCodes,
-  VerificationCode,
-  InsertVerificationCode,
-  passwordResetTokens,
-  PasswordResetToken,
-  InsertPasswordResetToken,
-  sentNewsletters,
-  SentNewsletter,
-  InsertSentNewsletter,
-  savedArticles,
-  SavedArticle,
-  InsertSavedArticle,
-  pageViews,
-  PageView,
-  InsertPageView,
-  siteSettings,
-  SiteSetting,
-  InsertSiteSetting,
-  socialPosts,
-  SocialPost,
-  InsertSocialPost,
-  socialLikes,
-  SocialLike,
-  InsertSocialLike,
-  visitorSessions,
-  VisitorSession,
-  InsertVisitorSession,
-  ipBlacklist,
-} from "../drizzle/schema";
+};
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -94,9 +95,17 @@ export async function getDb() {
           "ALTER TABLE comments ADD COLUMN originalContent TEXT;"
         );
         console.log("[Migration] Added originalContent column to comments");
-      } catch (err) {
-        // Se la colonna esiste già, ignora l'errore
-      }
+      } catch (err) {}
+
+      try {
+        await client.execute(
+          "ALTER TABLE articles ADD COLUMN summary TEXT;"
+        );
+        await client.execute(
+          "ALTER TABLE articles ADD COLUMN factCheck TEXT;"
+        );
+        console.log("[Migration] Added summary and factCheck columns to articles");
+      } catch (err) {}
 
       try {
         await client.execute(`
@@ -134,7 +143,8 @@ export async function getDb() {
         { name: "viewCount", type: "INTEGER" },
         { name: "authorId", type: "INTEGER" },
         { name: "sourceUrl", type: "TEXT" },
-        { name: "sourceTitle", type: "TEXT" }
+        { name: "sourceTitle", type: "TEXT" },
+        { name: "premiumOnly", type: "INTEGER DEFAULT 0" }
       ];
 
       for (const col of articleColumns) {
@@ -205,6 +215,32 @@ export async function getDb() {
           "ALTER TABLE users ADD COLUMN subscribeToNewsletter INTEGER DEFAULT 0 NOT NULL;"
         );
       } catch (err) {}
+
+      try {
+        await client.execute(
+          "ALTER TABLE users ADD COLUMN subscriptionTier TEXT DEFAULT 'free' NOT NULL;"
+        );
+      } catch (err) {}
+
+      // Stripe columns migration
+      const stripeUserColumns = [
+        { name: "stripeCustomerId", type: "TEXT" },
+        { name: "stripeSubscriptionId", type: "TEXT" },
+        { name: "stripePriceId", type: "TEXT" },
+        { name: "subscriptionStatus", type: "TEXT" },
+      ];
+
+      for (const col of stripeUserColumns) {
+        try {
+          await client.execute(`ALTER TABLE users ADD COLUMN ${col.name} ${col.type};`);
+          console.log(`[Migration] Success: Added ${col.name} to users`);
+        } catch (err: any) {
+          if (err.message && (err.message.includes("duplicate") || err.message.includes("already exist"))) {
+            continue;
+          }
+          console.warn(`[Migration] Skip column ${col.name}: ${err.message}`);
+        }
+      }
 
       // Migration for ip_blacklist table
       try {
@@ -318,6 +354,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     ) {
       values.role = "admin";
       updateSet.role = "admin";
+      values.subscriptionTier = "founder";
+      updateSet.subscriptionTier = "founder";
     }
 
     if (user.username !== undefined) {
@@ -539,6 +577,7 @@ export type CommentWithUser = Comment & {
   userName: string | null;
   userUsername: string | null;
   userAvatarUrl: string | null;
+  userSubscriptionTier: string | null;
 };
 
 // Comment queries
@@ -567,6 +606,7 @@ export async function getCommentsByArticle(
       userName: users.name,
       userUsername: users.username,
       userAvatarUrl: users.avatarUrl,
+      userSubscriptionTier: users.subscriptionTier,
     })
     .from(comments)
     .leftJoin(users, eq(comments.userId, users.id))
@@ -594,6 +634,7 @@ export async function getAllComments(): Promise<CommentWithUser[]> {
       userName: users.name,
       userUsername: users.username,
       userAvatarUrl: users.avatarUrl,
+      userSubscriptionTier: users.subscriptionTier,
     })
     .from(comments)
     .leftJoin(users, eq(comments.userId, users.id))
@@ -685,6 +726,7 @@ export async function getPendingComments(): Promise<CommentWithUser[]> {
       userName: users.name,
       userUsername: users.username,
       userAvatarUrl: users.avatarUrl,
+      userSubscriptionTier: users.subscriptionTier,
     })
     .from(comments)
     .leftJoin(users, eq(comments.userId, users.id))
@@ -808,6 +850,7 @@ export async function getPublicUserByUsername(username: string) {
       location: users.location,
       createdAt: users.createdAt,
       role: users.role,
+      isVerified: users.isVerified,
     })
     .from(users)
     .where(eq(users.username, username))
@@ -882,6 +925,19 @@ export async function getUserByEmail(email: string): Promise<User | undefined> {
     .where(eq(users.email, email))
     .limit(1);
   return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getUserByStripeCustomerId(
+  stripeCustomerId: string
+): Promise<User | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db
+    .select()
+    .from(users)
+    .where(eq(users.stripeCustomerId, stripeCustomerId))
+    .limit(1);
+  return result[0];
 }
 
 export async function getUserById(id: number): Promise<User | undefined> {
@@ -1562,7 +1618,7 @@ export async function getAnalyticsSummary() {
 export async function cleanupExpiredVerificationCodes(): Promise<void> {
   try {
     const db = await getDb();
-    const now = Math.floor(Date.now() / 1000);
+    const now = new Date();
     await db!
       .delete(verificationCodes)
       .where(sql`${verificationCodes.expiresAt} < ${now}`);
@@ -1574,7 +1630,7 @@ export async function cleanupExpiredVerificationCodes(): Promise<void> {
 export async function cleanupExpiredResetTokens(): Promise<void> {
   try {
     const db = await getDb();
-    const now = Math.floor(Date.now() / 1000);
+    const now = new Date();
     await db!
       .delete(passwordResetTokens)
       .where(sql`${passwordResetTokens.expiresAt} < ${now}`);
@@ -1883,11 +1939,35 @@ export async function getArticleBySourceUrlorTitle(url: string | null = null, ti
   const db = await getDb();
   if (!db || (!url && !title)) return null;
 
+  const conditions = [];
+  if (url) conditions.push(eq(articles.sourceUrl, url));
+  if (title) conditions.push(eq(articles.sourceTitle, title));
+
+  if (conditions.length === 0) return null;
+
   const result = await db
     .select()
     .from(articles)
-    .where(url ? eq(articles.sourceUrl, url) : eq(articles.sourceTitle, title as string))
+    .where(or(...conditions))
     .limit(1);
 
   return result[0] || null;
+}
+
+export async function getBlacklistedIps(): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(ipBlacklist).orderBy(desc(ipBlacklist.createdAt));
+}
+
+export async function unblacklistIp(ip: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(ipBlacklist).where(eq(ipBlacklist.ipAddress, ip));
+}
+
+export async function clearBlacklist(): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(ipBlacklist);
 }

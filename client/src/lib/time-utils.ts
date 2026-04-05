@@ -16,8 +16,11 @@ export function formatRelativeTime(date: Date | string | number): string {
     return `${Math.floor(diff / 31104000)}y`;
 }
 
-export function formatDateString(date: Date | string | number): string {
-    return new Date(date).toLocaleDateString("en-US", {
+export function formatDateString(date: Date | string | number | undefined | null): string {
+    if (!date) return "N/A";
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "Invalid Date";
+    return d.toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
         year: "numeric"

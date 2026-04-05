@@ -19,10 +19,9 @@ import {
   Shield,
   UserPlus,
   ArrowRight,
-  Eye,
-  EyeOff,
   Sun,
-  Moon
+  Moon,
+  Zap
 } from "lucide-react";
 import { CATEGORIES } from "@/lib/articles";
 import { toast } from "sonner";
@@ -36,7 +35,6 @@ import AdPlacement from "./AdPlacement";
 import { formatDateString } from "@/lib/time-utils";
 
 import GlobalTicker from "./GlobalTicker";
-import BreakingNewsTicker from "./BreakingNewsTicker";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -100,11 +98,11 @@ export default function Navbar() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${isScrolled || isMenuOpen
-        ? "bg-[#0F0F0E]/95 backdrop-blur-md border-b border-[#222220]"
+        ? "bg-[#0F0F0E] border-b border-[#222220]"
         : "bg-transparent"
         }`}
     >
-      <GlobalTicker />
+
       {/* Top bar — hidden on mobile to maximize space */}
       <div className="hidden sm:block border-b border-[#222220] bg-[#0F0F0E] notranslate">
         <div className="container">
@@ -114,7 +112,7 @@ export default function Navbar() {
             </span>
             <div className="flex items-center gap-3">
               <span className="font-ui text-[9px] text-[#8A8880] uppercase tracking-[0.2em] hidden sm:block">
-                Global Network
+                Editorial Network
               </span>
             </div>
           </div>
@@ -149,6 +147,14 @@ export default function Navbar() {
                 <Sparkles size={16} />
                 AI Assistant
               </Link>
+              <Link
+                href="/pricing"
+                className="text-[#E8A020] hover:text-[#F2F0EB] transition-colors flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest font-900 ml-2"
+                title="Premium Membership"
+              >
+                <Zap size={16} fill="currentColor" />
+                Premium
+              </Link>
             </div>
 
             {/* Mobile: Menu Toggle (Left) */}
@@ -158,14 +164,14 @@ export default function Navbar() {
                 className="text-[#F2F0EB] hover:text-[#E8A020] transition-colors"
                 aria-label={isMenuOpen ? "Close main menu" : "Open main menu"}
               >
-                {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
             </div>
 
             {/* Logo — center (Desktop & Mobile) */}
             <div className="flex-shrink-0 flex justify-center absolute left-1/2 -translate-x-1/2">
               <Link href="/" className="notranslate" aria-label="BISHOUY.COM Home">
-                <span className="font-display text-xl sm:text-2xl md:text-2xl lg:text-3xl text-[#F2F0EB] tracking-tighter hover:text-[#E8A020] transition-all block leading-none">
+                <span className="font-display text-3xl sm:text-3xl md:text-4xl lg:text-5xl text-[#F2F0EB] tracking-tighter hover:text-[#E8A020] transition-all block leading-none">
                   <span>BISHOUY</span>
                   <span className="text-[#E8A020]">.</span>
                 </span>
@@ -199,11 +205,23 @@ export default function Navbar() {
                   )}
                   <Link
                     href="/profile"
-                    className="flex items-center gap-1.5 text-[#8A8880] hover:text-[#E8A020] transition-colors font-ui text-[10px] font-600 uppercase tracking-widest"
+                    className="flex items-center gap-2 group"
                     title="Your Profile"
                   >
-                    <UserIcon size={14} />
-                    Profile
+                    <div className="flex items-center gap-1.5 text-[#8A8880] group-hover:text-[#E8A020] transition-colors font-ui text-[10px] font-600 uppercase tracking-widest">
+                       <UserIcon size={14} />
+                       Profile
+                    </div>
+                    {user?.subscriptionTier === 'founder' && (
+                      <span className="bg-[#E8A020] text-[#0F0F0E] px-1.5 py-0.5 rounded-[1px] text-[7px] font-900 tracking-tighter uppercase shadow-[0_0_10px_rgba(232,160,32,0.3)]">
+                        Founder
+                      </span>
+                    )}
+                    {user?.subscriptionTier === 'premium' && (
+                      <span className="bg-[#1C1C1A] border border-[#E8A020]/30 text-[#E8A020] px-1.5 py-0.5 rounded-[1px] text-[7px] font-900 tracking-tighter uppercase">
+                        Premium
+                      </span>
+                    )}
                   </Link>
                   <button
                     onClick={async () => {
@@ -219,54 +237,35 @@ export default function Navbar() {
               ) : (
                 <>
                   {!utils.auth.me.getData() && (
-                    <Link
-                      href="/login"
-                      className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-sm transition-colors"
-                    >
-                      <LogIn size={14} />
-                      Login
-                    </Link>
+                    <div className="flex items-center gap-3">
+                      <Link
+                        href="/login"
+                        className="flex items-center gap-2 text-[#8A8880] hover:text-[#E8A020] font-ui text-[10px] font-bold uppercase tracking-widest px-2 py-2 transition-colors"
+                      >
+                        Login
+                      </Link>
+                      <Link
+                        href="/register"
+                        className="flex items-center gap-2 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-sm transition-colors"
+                      >
+                        <UserPlus size={14} />
+                        Register
+                      </Link>
+                    </div>
                   )}
                 </>
               )}
 
-              {/* Shadow Mode Toggle — Desktop */}
-              <button
-                onClick={() => {
-                  const newState = !isShadowMode;
-                  setIsShadowMode(newState);
-                  if (newState) {
-                    toast.success("Shadow Analysis Enabled", { 
-                      description: "Advanced intelligence verification active.",
-                      duration: 3000 
-                    });
-                  } else {
-                    toast.info("Shadow Analysis Disabled", { duration: 2000 });
-                  }
-                }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm transition-all duration-300 font-ui text-[10px] font-900 uppercase tracking-widest ${isShadowMode ? "text-[#E8A020] bg-[#E8A020]/10 border border-[#E8A020]/30" : "text-[#555550] border border-transparent hover:text-[#8A8880]"}`}
-                title={isShadowMode ? "Exit Shadow Analysis" : "Enter Shadow Analysis"}
-              >
-                {isShadowMode ? <EyeOff size={14} /> : <Eye size={14} />}
-                <span>{isShadowMode ? "Clearance: Shadow" : "Clearance: Standard"}</span>
-              </button>
 
             </div>
 
-            {/* Mobile: Search (Right) */}
             <div className="flex lg:hidden items-center justify-end flex-1 gap-6">
-              <button
-                onClick={() => setIsShadowMode(!isShadowMode)}
-                className={`p-2 rounded-sm transition-all ${isShadowMode ? "text-[#E8A020] bg-[#E8A020]/10" : "text-[#8A8880]"}`}
-              >
-                {isShadowMode ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
 
               <button
                 onClick={handleNotifications}
                 className="text-[#8A8880] relative"
               >
-                <Bell size={18} />
+                <Bell size={22} />
                 {hasUnread && <span className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-red-500 rounded-full" />}
               </button>
               <button
@@ -274,11 +273,12 @@ export default function Navbar() {
                 className="text-[#8A8880] hover:text-[#E8A020] transition-colors"
                 aria-label="Open search on mobile"
               >
-                <Search size={18} />
+                <Search size={22} />
               </button>
             </div>
           </div>
         </div>
+        <GlobalTicker />
 
         {/* Category bar — tight and premium */}
         <div className="hidden lg:block border-t border-[#222220] py-3 bg-[#0F0F0E]/50">
@@ -317,7 +317,7 @@ export default function Navbar() {
                 className="font-ui text-sm text-[#E8A020] py-3 border-b border-[#1C1C1A] flex items-center gap-2"
               >
                 <Sparkles size={16} />
-                Editorial Intelligence (AI)
+                AI Assistant
               </Link>
               <div className="py-2 mt-2">
                 <span className="font-ui text-[10px] text-[#555550] uppercase tracking-widest font-bold">Categories</span>
@@ -337,10 +337,21 @@ export default function Navbar() {
                   <Link
                     href="/profile"
                     onClick={() => setIsMenuOpen(false)}
-                    className="font-ui text-sm text-[#8A8880] py-3 border-b border-[#1C1C1A] flex items-center gap-2"
+                    className="font-ui text-sm text-[#8A8880] py-3 border-b border-[#1C1C1A] flex items-center justify-between"
                   >
-                    <UserIcon size={16} />
-                    Intelligence Library
+                    <div className="flex items-center gap-2">
+                      <UserIcon size={16} />
+                      Personal Library
+                    </div>
+                    <div className="flex gap-2">
+                       {user.subscriptionTier === 'founder' && (
+                         <span className="bg-[#E8A020] text-[#0F0F0E] px-2 py-0.5 rounded-[1px] text-[8px] font-900 uppercase">Founder</span>
+                       )}
+                       {user.subscriptionTier === 'premium' && (
+                         <span className="bg-[#1C1C1A] border border-[#E8A020]/30 text-[#E8A020] px-2 py-0.5 rounded-[1px] text-[8px] font-900 uppercase">Premium</span>
+                       )}
+                       <ArrowRight size={14} className="text-[#333330]" />
+                    </div>
                   </Link>
                   {user.role === "admin" && (
                     <Link
@@ -349,7 +360,7 @@ export default function Navbar() {
                       className="font-ui text-sm text-[#E8A020] py-3 border-b border-[#1C1C1A] flex items-center gap-2"
                     >
                       <Shield size={16} />
-                      System Control
+                      Dashboard Admin
                     </Link>
                   )}
                   <div className="flex items-center justify-between py-4">
@@ -365,9 +376,29 @@ export default function Navbar() {
                       className="flex items-center gap-2 text-red-500/70 hover:text-red-500 transition-colors font-ui text-[10px] uppercase tracking-widest font-bold"
                     >
                       <LogOut size={14} />
-                      Terminate Session
+                      Logout
                     </button>
                   </div>
+                </div>
+              )}
+              {!user && (
+                <div className="flex flex-col gap-1 mt-6 pt-6 border-t border-[#1C1C1A]">
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="font-ui text-sm text-[#F2F0EB] py-3 border-b border-[#1C1C1A] flex items-center justify-between"
+                  >
+                    Login
+                    <LogIn size={14} className="text-[#333330]" />
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="font-ui text-sm text-[#E8A020] py-3 border-b border-[#1C1C1A] flex items-center justify-between"
+                  >
+                    Register
+                    <UserPlus size={14} />
+                  </Link>
                 </div>
               )}
             </nav>

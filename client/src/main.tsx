@@ -14,6 +14,12 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
   if (typeof window === "undefined") return;
 
+  // In development, avoid aggressive redirects that interrupt the layout testing
+  if (import.meta.env.DEV) {
+    console.warn("[DEV] Unauthorized state suppressed (no redirect):", error.message);
+    return;
+  }
+
   const isUnauthorized = error.message === UNAUTHED_ERR_MSG;
 
   if (!isUnauthorized) return;

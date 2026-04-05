@@ -58,6 +58,7 @@ export default function ArticleForm({
     status: "published" as "draft" | "published",
     summary: "",
     factCheck: "",
+    premiumOnly: false,
   });
 
   const [tagInput, setTagInput] = useState("");
@@ -111,6 +112,7 @@ export default function ArticleForm({
         status: "draft",
         summary: generatedArticle.summary || "",
         factCheck: generatedArticle.factCheck || "98% Neural Integrity",
+        premiumOnly: false,
       });
       setAiTopic("");
       setIsGenerating(false);
@@ -151,6 +153,7 @@ export default function ArticleForm({
         status: article.status as "draft" | "published",
         summary: article.summary || "",
         factCheck: article.factCheck || "",
+        premiumOnly: article.premiumOnly === 1,
       });
     }
   }, [getArticleQuery.data]);
@@ -236,7 +239,9 @@ export default function ArticleForm({
           ...formData,
         });
       } else {
-        createMutation.mutate(formData);
+        createMutation.mutate({
+          ...formData,
+        });
       }
     } finally {
       setIsLoading(false);
@@ -261,9 +266,9 @@ export default function ArticleForm({
               <Sparkles size={24} />
             </div>
             <div className="flex-1">
-              <h3 className="font-display text-xl text-[#F2F0EB] mb-2">AI Editorial Assistant</h3>
+              <h3 className="font-display text-xl text-[#F2F0EB] mb-2">AI Article Generator</h3>
               <p className="font-ui text-sm text-[#8A8880] mb-4">
-                Enter a topic, headline, or event, and our senior AI correspondent will draft a complete, investigative-style article for you.
+                Enter a topic, headline, or event, and our AI assistant will draft a complete article for you.
               </p>
               <div className="flex gap-2">
                 <input
@@ -557,7 +562,7 @@ export default function ArticleForm({
                 <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
                   <label className="block mb-4">
                     <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
-                      AI Summary Points (JSON)
+                      AI Article Highlights (JSON)
                     </span>
                   </label>
                   <textarea
@@ -569,14 +574,14 @@ export default function ArticleForm({
                     placeholder='["Point 1", "Point 2", "Point 3"]'
                   />
                   <p className="font-ui text-[10px] text-[#555550] mt-2">
-                    Enter as a JSON array of strings for the Intelligence Nexus.
+                    Enter as a JSON array of strings for the Highlights section.
                   </p>
                 </Card>
 
                 <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
                   <label className="block mb-4">
                     <span className="font-ui text-xs font-600 text-[#E8A020] uppercase tracking-widest">
-                      Neural Credibility Score
+                      Trust Score
                     </span>
                   </label>
                   <input
@@ -585,10 +590,10 @@ export default function ArticleForm({
                     value={formData.factCheck}
                     onChange={handleInputChange}
                     className="w-full bg-[#0F0F0E] border border-[#2A2A28] text-[#F2F0EB] font-ui text-sm px-4 py-3 rounded-sm focus:outline-none focus:border-[#E8A020] transition-colors"
-                    placeholder="e.g., 98.4% Neural Integrity"
+                    placeholder="e.g., 98.4% Trust Score"
                   />
                   <p className="font-ui text-[10px] text-[#555550] mt-2">
-                    Visible in the Node Metrics section.
+                    Visible in the Article Metrics section.
                   </p>
                 </Card>
               </div>
@@ -630,6 +635,26 @@ export default function ArticleForm({
                       </span>
                       <span className="font-ui text-xs text-[#555550]">
                         Shows in ticker
+                      </span>
+                    </div>
+                  </label>
+                </Card>
+
+                <Card className="bg-[#1C1C1A] border-[#2A2A28] p-6">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="premiumOnly"
+                      checked={formData.premiumOnly}
+                      onChange={handleInputChange}
+                      className="w-5 h-5 rounded accent-[#E8A020]"
+                    />
+                    <div>
+                      <span className="font-ui text-sm text-[#F2F0EB] block">
+                         Premium Content
+                      </span>
+                      <span className="font-ui text-xs text-[#555550]">
+                         Locks reading for Free users
                       </span>
                     </div>
                   </label>

@@ -29,24 +29,25 @@ export default function GlobalTicker() {
   const displayItems = [...items, ...items]; // Loop for marquee
 
   return (
-    <div className="bg-[#0A0A09] border-b border-[#1C1C1A] py-2 overflow-hidden notranslate select-none relative z-10">
-      <div className="container-fluid flex items-center justify-between gap-12 px-6">
-        <div className="flex items-center gap-2 shrink-0 border-r border-[#1C1C1A] pr-4">
+    <div className="bg-[#0A0A09] border-t border-b border-[#1C1C1A] py-3 overflow-hidden notranslate select-none relative z-10">
+      <div className="container-fluid flex items-center gap-4 sm:gap-12 px-6">
+        <div className="flex items-center gap-2 shrink-0 border-r border-[#1C1C1A] pr-2 sm:pr-4">
            <Zap size={10} className="text-[#E8A020] animate-pulse" />
-           <span className="text-[8px] font-900 text-[#E8A020] uppercase tracking-[0.4em] font-ui whitespace-nowrap">Neural Intelligence Feed</span>
+           <span className="text-[8px] font-900 text-[#E8A020] uppercase tracking-[0.4em] font-ui whitespace-nowrap hidden sm:inline">Neural Intelligence Feed</span>
+           <span className="text-[8px] font-900 text-[#E8A020] uppercase tracking-widest font-ui sm:hidden">Live</span>
         </div>
         
         <div className="flex-1 overflow-hidden relative">
-          <div className="flex items-center gap-12 animate-marquee whitespace-nowrap">
+          <div className="flex items-center gap-6 animate-marquee whitespace-nowrap">
             {displayItems.map((item, i) => (
-              <div key={i} className="flex items-center gap-8 shrink-0">
+              <div key={i} className="flex items-center gap-4 shrink-0">
                 {item.type === 'news' ? (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <span className="text-[9px] font-900 text-[#E8A020] tracking-widest px-1.5 py-0.5 bg-[#E8A020]/10 border border-[#E8A020]/20 rounded-[2px]">{item.label}</span>
                     <span className="text-[10px] text-[#F2F0EB] font-ui font-800 uppercase tracking-wider">{item.value}</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <span className="text-[9px] text-[#555550] font-ui uppercase font-900 tracking-widest">{item.label}</span>
                     <span className="text-[10px] text-[#F2F0EB] font-display">{item.value}</span>
                     <span className={`text-[8px] font-900 flex items-center gap-0.5 ${item.change?.startsWith('+') ? 'text-[#22c55e]' : 'text-[#ef4444]'}`}>
