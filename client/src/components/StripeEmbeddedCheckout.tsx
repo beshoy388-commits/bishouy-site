@@ -9,11 +9,12 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 interface StripeEmbeddedCheckoutProps {
   tier: "premium" | "founder";
+  couponCode?: string;
   onClose: () => void;
   onBack: () => void;
 }
 
-export default function StripeEmbeddedCheckout({ tier, onClose, onBack }: StripeEmbeddedCheckoutProps) {
+export default function StripeEmbeddedCheckout({ tier, couponCode, onClose, onBack }: StripeEmbeddedCheckoutProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,8 +28,8 @@ export default function StripeEmbeddedCheckout({ tier, onClose, onBack }: Stripe
   });
 
   useEffect(() => {
-    createCheckoutSession.mutate({ tier, uiMode: "embedded" });
-  }, [tier]);
+    createCheckoutSession.mutate({ tier, couponCode, uiMode: "embedded" });
+  }, [tier, couponCode]);
 
   const planInfo = tier === "premium" 
     ? { name: "Premium Membership", price: "€10/mo", icon: <Zap size={20} />, trial: true }

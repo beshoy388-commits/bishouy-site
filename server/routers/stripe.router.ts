@@ -64,9 +64,12 @@ export const stripeRouter = router({
         }
       }
 
-      // If a coupon code was provided, we could pre-apply it here,
-      // but since we enabled allow_promotion_codes, the user can just type it in.
-      // The critical fix is excluding the trial_period_days when a code is intended.
+      // 3.5 Apply coupon if provided
+      if (input.couponCode) {
+        sessionConfig.allow_promotion_codes = undefined; // Cannot use both discounts and allow_promotion_codes
+        // In embedded mode or if we specifically pass the exact coupon code
+        sessionConfig.discounts = [{ coupon: input.couponCode }];
+      }
 
       // 4. Configure mode-specific parameters
       if (input.uiMode === "embedded") {

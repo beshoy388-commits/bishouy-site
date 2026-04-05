@@ -3,6 +3,7 @@ import { X, Check, ShieldCheck, Zap, ArrowLeft, Settings, CreditCard, AlertTrian
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import StripeEmbeddedCheckout from "./StripeEmbeddedCheckout";
 
 interface PricingModalProps {
   isOpen: boolean;
@@ -66,18 +67,7 @@ export default function PricingModal({ isOpen, onClose, initialView }: PricingMo
   );
   const [isProcessing, setIsProcessing] = useState(false);
   const [couponCode, setCouponCode] = useState("");
-
-  const createCheckoutSession = trpc.stripe.createCheckoutSession.useMutation({
-    onSuccess: (data) => {
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    },
-    onError: (err: any) => {
-      toast.error(err.message || "STRIPE ERROR");
-      setIsProcessing(false);
-    }
-  });
+  const [showEmbeddedCheckout, setShowEmbeddedCheckout] = useState(false);
 
   const createPortalSession = trpc.stripe.createPortalSession.useMutation({
     onSuccess: (data) => {
@@ -96,11 +86,7 @@ export default function PricingModal({ isOpen, onClose, initialView }: PricingMo
       toast.info("Plan already active", { description: "You are already utilizing this access level." });
       return;
     }
-    setIsProcessing(true);
-    createCheckoutSession.mutate({ 
-      tier: planId as "premium" | "founder",
-      couponCode: couponCode ? couponCode.trim() : undefined
-    });
+    setShowEmbeddedCheckout(true);
   };
 
   const handleCancel = () => {
@@ -377,6 +363,15 @@ export default function PricingModal({ isOpen, onClose, initialView }: PricingMo
             )}
           </motion.div>
         </div>
+      )}
+
+      {showEmbeddedCheckout && (
+        <StripeEmbeddedCheckout 
+          tier={selectedPlan as "premium" | "founder"} 
+          couponCode={couponCode ? couponCode.trim() : undefined}
+          onClose={() => { setShowEmbeddedCheckout(false); onClose(); }} 
+          onBack={() => setShowEmbeddedCheckout(false)} 
+        />
       )}
     </AnimatePresence>
   );
