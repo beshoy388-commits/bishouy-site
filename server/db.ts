@@ -610,7 +610,7 @@ export async function getCommentsByArticle(
     ? and(eq(comments.articleId, articleId), eq(comments.approved, 1))
     : eq(comments.articleId, articleId);
 
-  const rows = await db
+  const results = await db
     .select({
       id: comments.id,
       articleId: comments.articleId,
@@ -631,14 +631,20 @@ export async function getCommentsByArticle(
     .where(whereCondition)
     .orderBy(desc(comments.createdAt));
 
-  return rows as CommentWithUser[];
+  return results.map((row: any) => ({
+    ...row,
+    userName: row.userName ?? "Nuovo Utente",
+    userUsername: row.userUsername ?? "user",
+    userAvatarUrl: row.userAvatarUrl ?? "",
+    userSubscriptionTier: row.userSubscriptionTier ?? "free"
+  })) as CommentWithUser[];
 }
 
 export async function getAllComments(): Promise<CommentWithUser[]> {
   const db = await getDb();
   if (!db) return [];
 
-  const rows = await db
+  const results = await db
     .select({
       id: comments.id,
       articleId: comments.articleId,
@@ -658,7 +664,13 @@ export async function getAllComments(): Promise<CommentWithUser[]> {
     .leftJoin(users, eq(comments.userId, users.id))
     .orderBy(desc(comments.createdAt));
 
-  return rows as CommentWithUser[];
+  return results.map((row: any) => ({
+    ...row,
+    userName: row.userName ?? "Nuovo Utente",
+    userUsername: row.userUsername ?? "user",
+    userAvatarUrl: row.userAvatarUrl ?? "",
+    userSubscriptionTier: row.userSubscriptionTier ?? "free"
+  })) as CommentWithUser[];
 }
 
 export async function createComment(data: InsertComment): Promise<Comment> {
@@ -881,10 +893,17 @@ export async function getPublicUserByUsername(username: string) {
     .from(comments)
     .where(and(eq(comments.userId, result[0].id), eq(comments.approved, 1)));
 
-  return {
+  // Sanitization: Ensure null fields from DB are returned as safe strings for the frontend
+  const sanitizedUser = {
     ...result[0],
+    bio: result[0].bio ?? "",
+    avatarUrl: result[0].avatarUrl ?? "",
+    website: result[0].website ?? "",
+    location: result[0].location ?? "",
     totalComments: commentsCount[0]?.count || 0,
   };
+
+  return sanitizedUser;
 }
 
 export async function getPublicUserComments(username: string) {
@@ -963,7 +982,18 @@ export async function getUserById(id: number): Promise<User | undefined> {
   if (!db) return undefined;
 
   const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  if (result.length === 0) return undefined;
+
+  // Sanitization for consistent frontend experience
+  const user = result[0];
+  return {
+    ...user,
+    bio: user.bio ?? "",
+    avatarUrl: user.avatarUrl ?? "",
+    website: user.website ?? "",
+    location: user.location ?? "",
+    status: user.status || "active",
+  };
 }
 
 export async function updateUser(
@@ -1791,7 +1821,7 @@ export async function getSocialPosts(status: "approved" | "pending" | "rejected"
   const db = await getDb();
   if (!db) return [];
 
-  return db
+  const posts = await db
     .select({
       id: socialPosts.id,
       content: socialPosts.content,
@@ -1809,6 +1839,13 @@ export async function getSocialPosts(status: "approved" | "pending" | "rejected"
     .where(eq(socialPosts.status, status))
     .orderBy(desc(socialPosts.createdAt))
     .limit(limit);
+
+  return posts.map((post: any) => ({
+    ...post,
+    authorName: post.authorName ?? "Contributor",
+    authorAvatar: post.authorAvatar ?? "",
+    authorRole: post.authorRole ?? "user"
+  }));
 }
 
 export async function createSocialPost(data: InsertSocialPost): Promise<SocialPost> {

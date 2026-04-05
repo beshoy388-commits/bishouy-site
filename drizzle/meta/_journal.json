@@ -43,6 +43,13 @@
       "when": 1773569213837,
       "tag": "0005_numerous_warhawk",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1775388545620,
+      "tag": "0006_tiresome_kate_bishop",
+      "breakpoints": true
     }
   ]
 }
