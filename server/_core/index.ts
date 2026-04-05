@@ -619,10 +619,10 @@ async function startServer() {
     const robots = `User-agent: *
 Allow: /
 Allow: /api/rss
+Allow: /api/trpc/articles.getBySlug
 Allow: /feed/google-news
 Disallow: /login
 Disallow: /register
-Disallow: /api/
 Disallow: /admin/
 Sitemap: ${baseUrl}/sitemap.xml
 Sitemap: ${baseUrl}/sitemap-news.xml`;

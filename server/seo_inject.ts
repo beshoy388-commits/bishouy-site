@@ -48,7 +48,7 @@ export async function injectSeoMeta(template: string, url: string): Promise<stri
         `<meta name="description" content="${description.replace(/"/g, '&quot;')}" />`
     );
 
-    const finalMeta = `
+    let finalMeta = `
 <meta name="robots" content="index, follow, max-image-preview:large" />
 <meta name="googlebot" content="index, follow" />
 <meta property="og:title" content="${title.replace(/"/g, '&quot;')}" />
@@ -59,6 +59,30 @@ export async function injectSeoMeta(template: string, url: string): Promise<stri
 <meta name="twitter:description" content="${description.replace(/"/g, '&quot;')}" />
 <meta name="twitter:image" content="${image}" />
     `;
+
+    // Inject JSON-LD Schema for Articles to help Google News crawler
+    if (articleMatch && title !== "Bishouy.com — Global News & Analysis") {
+       const escapedTitle = title.replace(/"/g, '\\"');
+       const escapedDescription = description.replace(/"/g, '\\"');
+       finalMeta += `
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": "${escapedTitle}",
+  "image": [
+    "${image}"
+   ],
+  "datePublished": "${new Date().toISOString()}",
+  "author": [{
+      "@type": "Organization",
+      "name": "Bishouy Editorial",
+      "url": "https://bishouy.com/"
+  }]
+}
+</script>
+       `;
+    }
 
     return page.replace('</head>', `${finalMeta}\n</head>`);
 }
