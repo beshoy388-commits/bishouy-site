@@ -11,7 +11,7 @@ export const stripeRouter = router({
   createCheckoutSession: protectedProcedure
     .input(z.object({ 
       tier: z.enum(["premium", "founder"]),
-      uiMode: z.enum(["hosted", "embedded"]).optional().default("hosted"),
+      uiMode: z.enum(["hosted", "embedded_page"]).optional().default("hosted"),
       couponCode: z.string().optional()
     }))
     .mutation(async ({ input, ctx }) => {
@@ -52,8 +52,8 @@ export const stripeRouter = router({
       };
 
       // Only set ui_mode for embedded to avoid errors in hosted/default mode
-      if (input.uiMode === "embedded") {
-        sessionConfig.ui_mode = "embedded" as Stripe.Checkout.SessionCreateParams.UiMode;
+      if (input.uiMode === "embedded_page") {
+        sessionConfig.ui_mode = "embedded_page" as any;
       }
 
       // 3. Add 7-day free trial ONLY IF no coupon is pre-applied (to avoid Stripe conflict)
@@ -72,7 +72,7 @@ export const stripeRouter = router({
       }
 
       // 4. Configure mode-specific parameters
-      if (input.uiMode === "embedded") {
+      if (input.uiMode === "embedded_page") {
         sessionConfig.return_url = `${ENV.appUrl}/profile?session_id={CHECKOUT_SESSION_ID}&tier=${input.tier}`;
       } else {
         sessionConfig.success_url = `${ENV.appUrl}/profile?session_id={CHECKOUT_SESSION_ID}&tier=${input.tier}`;

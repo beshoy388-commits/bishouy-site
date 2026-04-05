@@ -28,7 +28,7 @@ export default function StripeEmbeddedCheckout({ tier, couponCode, onClose, onBa
   });
 
   useEffect(() => {
-    createCheckoutSession.mutate({ tier, couponCode, uiMode: "embedded" });
+    createCheckoutSession.mutate({ tier, couponCode, uiMode: "embedded_page" });
   }, [tier, couponCode]);
 
   const planInfo = tier === "premium" 
