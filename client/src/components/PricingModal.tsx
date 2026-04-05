@@ -57,13 +57,12 @@ export default function PricingModal({ isOpen, onClose, initialView }: PricingMo
   
   useEffect(() => {
     if (isOpen && hasUserLoaded) {
+       // Only auto-sync view when modal is freshly opened
        const userTier = user?.subscriptionTier || "free";
        const targetView = initialView || (userTier !== "free" ? "manage" : "plans");
-       if (view !== targetView) {
-          setView(targetView);
-       }
+       setView(targetView);
     }
-  }, [isOpen, initialView, user?.subscriptionTier, hasUserLoaded, view]);
+  }, [isOpen]); // Only sync when isOpen changes, not when 'view' or 'initialView' changes
 
   const [selectedPlan, setSelectedPlan] = useState<string>(
     user?.subscriptionTier !== "free" ? user?.subscriptionTier || "premium" : "premium"

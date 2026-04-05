@@ -1,6 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ShieldAlert, CheckCircle, X, Shield, Lock, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -58,6 +58,8 @@ export default function UserStatusMonitor() {
     const isActive = localUser.status === 'active';
 
     const isPending = acknowledgeMutation.isPending || purgeMeMutation.isPending;
+
+    const securityId = useMemo(() => Date.now().toString().slice(-4), []);
 
     return (
         <AnimatePresence>
@@ -139,7 +141,7 @@ export default function UserStatusMonitor() {
                         </div>
                         
                         <div className="px-8 py-4 bg-[#0A0A09] border-t border-[#1C1C1A] flex justify-between items-center text-[7px] text-[#333330] uppercase tracking-widest font-bold">
-                            <span>Rif: SEC-NODE-{localUser.id}-{Date.now().toString().slice(-4)}</span>
+                            <span>Rif: SEC-NODE-{localUser.id}-{securityId}</span>
                             <span>Digital Signature Verified</span>
                         </div>
                     </motion.div>

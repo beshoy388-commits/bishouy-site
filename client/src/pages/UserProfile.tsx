@@ -1,6 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useRoute } from "wouter";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import {
@@ -272,7 +272,7 @@ export default function UserProfile() {
     );
   }
 
-  const memberSince = (() => {
+  const memberSince = useMemo(() => {
     try {
       if (!user?.createdAt) return "Active Member";
       const d = new Date(user.createdAt);
@@ -282,7 +282,7 @@ export default function UserProfile() {
     } catch {
       return "Active Member";
     }
-  })();
+  }, [user?.createdAt]);
 
   return (
     <div className="min-h-screen bg-[#0F0F0E] flex flex-col pt-0">
