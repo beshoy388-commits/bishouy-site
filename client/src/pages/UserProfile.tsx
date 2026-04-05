@@ -128,6 +128,17 @@ export default function UserProfile() {
     } catch { return "Active Member"; }
   }, [user?.createdAt]);
 
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    updateMutation.mutate({
+      name: formData.name,
+      username: formData.username,
+      bio: formData.bio,
+      location: formData.location,
+      avatarUrl: formData.avatarUrl,
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0F0F0E] flex flex-col items-center justify-center p-6">
@@ -358,7 +369,12 @@ export default function UserProfile() {
            </div>
         </section>
 
-        <PricingModal isOpen={isPricingOpen} onClose={() => setIsPricingOpen(false)} initialView={modalView} />
+        <PricingModal 
+          isOpen={isPricingOpen} 
+          onClose={() => setIsPricingOpen(false)} 
+          user={user}
+          initialView={modalView}
+        />
       </main>
 
       <Footer hideNewsletter />
