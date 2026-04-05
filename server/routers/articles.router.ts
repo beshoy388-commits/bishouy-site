@@ -16,7 +16,9 @@ import {
   getArticleLikeCount,
   hasUserLikedArticle,
   getArticleWithLikeInfo,
+  getUsersWithPushSubscriptions,
 } from "../db";
+import { broadcastBreakingNewsPush } from "../push";
 import { InsertArticle } from "../../drizzle/schema";
 import {
   validateAndCleanArticleData,
@@ -299,6 +301,24 @@ export const articlesRouter = router({
         getUserAgent(ctx.req)
       );
 
+      // Trigger Breaking News Push Notification
+      if (dbData.breaking === 1 && dbData.status === "published") {
+        try {
+          const subscribers = await getUsersWithPushSubscriptions();
+          if (subscribers.length > 0) {
+            await broadcastBreakingNewsPush(subscribers, {
+              title: "BREAKING: " + article.title,
+              body: article.excerpt || "Major update from BISHOUY.",
+              url: `/article/${article.slug}`,
+              tag: "breaking-news",
+            });
+            console.log(`[Push] Broadcasted breaking news to ${subscribers.length} users`);
+          }
+        } catch (err) {
+          console.error("[Push] Failed to broadcast breaking news:", err);
+        }
+      }
+
       // FORCE CACHE REFRESH: Ensures the new article appears immediately
       dbCache.clear();
 
@@ -364,6 +384,29 @@ export const articlesRouter = router({
         getClientIp(ctx.req),
         getUserAgent(ctx.req)
       );
+
+      // Trigger Breaking News Push Notification if transitioning to Published + Breaking
+      const isNowBreaking = (dbData.breaking !== undefined ? dbData.breaking : currentArticle.breaking) === 1;
+      const isNowPublished = (dbData.status !== undefined ? dbData.status : currentArticle.status) === "published";
+      const wasBreaking = currentArticle.breaking === 1;
+      const wasPublished = currentArticle.status === "published";
+
+      if (isNowBreaking && isNowPublished && (!wasBreaking || !wasPublished)) {
+        try {
+          const subscribers = await getUsersWithPushSubscriptions();
+          if (subscribers.length > 0) {
+            await broadcastBreakingNewsPush(subscribers, {
+              title: "BREAKING: " + article.title,
+              body: article.excerpt || "Major update from BISHOUY.",
+              url: `/article/${article.slug}`,
+              tag: "breaking-news",
+            });
+            console.log(`[Push] Broadcasted breaking news to ${subscribers.length} users`);
+          }
+        } catch (err) {
+          console.error("[Push] Failed to broadcast breaking news:", err);
+        }
+      }
 
       // FORCE CACHE REFRESH: Ensures status changes (Publish/Draft) reflect immediately
       dbCache.clear();

@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { router, protectedProcedure, publicProcedure } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
-import { getUserById, updateUser } from "../db";
+import { getUserById, updateUser, getUsersWithPushSubscriptions } from "../db";
 import { ENV } from "../_core/env";
+import { broadcastBreakingNewsPush } from "../push";
 
 export const pushRouter = router({
   // Return the VAPID public key so client can subscribe
@@ -66,5 +67,35 @@ export const pushRouter = router({
 
       await updateUser(user.id, updates);
       return { success: true, enabled: input.enabled };
+    }),
+
+  // ADMIN ONLY: Broadcast a breaking news push notification to all subscribers
+  broadcastBreaking: protectedProcedure
+    .input(
+      z.object({
+        title: z.string(),
+        body: z.string(),
+        url: z.string().optional().default("/"),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const sender = await getUserById(ctx.user.id);
+      if (!sender || sender.role !== "admin") {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required." });
+      }
+
+      const subscribers = await getUsersWithPushSubscriptions();
+      if (subscribers.length === 0) {
+        return { sent: 0, message: "No push subscribers found." };
+      }
+
+      const sent = await broadcastBreakingNewsPush(subscribers, {
+        title: input.title,
+        body: input.body,
+        url: input.url,
+        tag: "breaking-news",
+      });
+
+      return { sent, total: subscribers.length };
     }),
 });

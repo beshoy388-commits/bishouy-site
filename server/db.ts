@@ -230,6 +230,12 @@ export async function getDb() {
 
       try {
         await client.execute(
+          "ALTER TABLE users ADD COLUMN passkeyCredentials TEXT;"
+        );
+      } catch (err) {}
+
+      try {
+        await client.execute(
           "ALTER TABLE users ADD COLUMN subscriptionTier TEXT DEFAULT 'free' NOT NULL;"
         );
       } catch (err) {}
@@ -974,6 +980,32 @@ export async function updateUser(
     .returning();
   if (!updated[0]) throw new Error("Failed to update user");
   return updated[0];
+}
+
+/**
+ * Returns all users who have opted in to breaking news push notifications
+ * and have a stored push subscription.
+ */
+export async function getUsersWithPushSubscriptions(): Promise<
+  { userId: number; pushSubscription: string }[]
+> {
+  const db = await getDb();
+  if (!db) return [];
+
+  const rows = await db
+    .select({ id: users.id, pushSubscription: users.pushSubscription })
+    .from(users)
+    .where(
+      and(
+        eq(users.breakingNewsAlerts, 1),
+        // pushSubscription is not null
+        sql`${users.pushSubscription} IS NOT NULL`
+      )
+    );
+
+  return rows
+    .filter((r: { id: number; pushSubscription: string | null }) => r.pushSubscription !== null)
+    .map((r: { id: number; pushSubscription: string | null }) => ({ userId: r.id, pushSubscription: r.pushSubscription! }));
 }
 
 export async function deleteUser(id: number): Promise<void> {

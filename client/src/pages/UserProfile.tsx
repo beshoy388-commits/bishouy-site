@@ -42,6 +42,7 @@ import SEO from "@/components/SEO";
 import { motion, AnimatePresence } from "framer-motion";
 import PricingModal from "@/components/PricingModal";
 import { usePushNotifications } from "@/_core/hooks/usePushNotifications";
+import { startRegistration } from "@simplewebauthn/browser";
 
 export default function UserProfile() {
   const { user, loading, logout, refresh } = useAuth({
@@ -143,6 +144,30 @@ export default function UserProfile() {
     },
     onError: (err) => toast.error(err.message)
   });
+
+  const generatePasskeyOptions = trpc.passkeys.generateRegistrationOptions.useMutation();
+  const verifyPasskeyRegistration = trpc.passkeys.verifyRegistration.useMutation();
+  const removePasskeyMutation = trpc.passkeys.removePasskey.useMutation();
+  const handleRegisterPasskey = () => {
+    generatePasskeyOptions.mutate(undefined, {
+      onSuccess: (options) => {
+        startRegistration({ optionsJSON: options as any }).then(attResp => {
+          verifyPasskeyRegistration.mutate(attResp, {
+            onSuccess: () => {
+              toast.success("Passkey registered");
+              refresh();
+            },
+            onError: (err) => toast.error(err.message)
+          });
+        }).catch(err => {
+          if (err.name !== "NotAllowedError") toast.error(err.message);
+        });
+      },
+      onError: (err) => toast.error(err.message)
+    });
+  };
+
+  const passkeys = user?.passkeyCredentials ? JSON.parse(user.passkeyCredentials) : [];
 
   const requestPassResetMutation = trpc.users.requestPasswordResetCode.useMutation({
     onSuccess: (data) => {
@@ -1060,19 +1085,24 @@ export default function UserProfile() {
                                   </button>
                                 </div>
 
-                                <div className="flex items-center justify-between opacity-30 cursor-not-allowed border-t border-[#1C1C1A] pt-10">
+                                <div className="flex items-center justify-between border-t border-[#1C1C1A] pt-10">
                                   <div>
                                     <h4 className="text-sm text-[#F2F0EB] font-bold mb-2">Biometric Passkeys</h4>
-                                    <p className="text-[12px] text-[#555550]">Sign in using FaceID, TouchID or hardware security keys.</p>
+                                    <p className="text-[12px] text-[#8A8880]">Sign in using FaceID, TouchID or hardware security keys.</p>
                                   </div>
-                                  <span className="text-[9px] text-[#555550] uppercase tracking-widest font-900 bg-[#1C1C1A] px-3 py-1 rounded-sm">Coming Soon</span>
+                                   <button
+                                     onClick={handleRegisterPasskey}
+                                     className="text-[10px] font-bold uppercase tracking-widest bg-[#1C1C1A] hover:bg-[#252522] text-[#E8A020] px-4 py-2 rounded-sm border border-[#1C1C1A] transition-colors"
+                                   >
+                                     Add Key
+                                   </button>
                                 </div>
 
                                 <div className="pt-10 border-t border-[#1C1C1A]">
                                   <div className="bg-[#0A0A09]/50 border border-[#1C1C1A] p-8 rounded-sm flex flex-col items-center justify-center text-center">
                                     <Fingerprint size={32} className="text-[#E8A020] mb-4 opacity-40" />
-                                    <h3 className="text-[11px] font-900 uppercase tracking-[0.3em] text-[#F2F0EB] mb-2">PLATFORM ENCRYPTION</h3>
-                                    <p className="text-[10px] text-[#555550] uppercase tracking-widest leading-relaxed">Your account is protected by end-to-end encryption.</p>
+                                    <h3 className="text-[11px] font-900 uppercase tracking-[0.3em] text-[#F2F0EB] mb-2">BIOMETRIC SECURITY</h3>
+                                    <p className="text-[10px] text-[#8A8880] uppercase tracking-widest leading-relaxed">Secured by your device's hardware enclave.</p>
                                   </div>
                                 </div>
 

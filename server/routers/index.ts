@@ -9,6 +9,7 @@ import { extraRouter } from "./extra.router";
 import { analyticsRouter } from "./analytics.router";
 import { stripeRouter } from "./stripe.router";
 import { pushRouter } from "./push.router";
+import { passkeysRouter } from "./passkeys.router";
 
 export const appRouter = router({
   auth: authRouter,
@@ -20,6 +21,7 @@ export const appRouter = router({
   analytics: analyticsRouter,
   stripe: stripeRouter,
   push: pushRouter,
+  passkeys: passkeysRouter,
   notifications: extraRouter.notifications,
   bookmarks: extraRouter.bookmarks,
   comments: extraRouter.comments,
