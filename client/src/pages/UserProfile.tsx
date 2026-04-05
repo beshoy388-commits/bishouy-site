@@ -42,7 +42,6 @@ import SEO from "@/components/SEO";
 import { motion, AnimatePresence } from "framer-motion";
 import PricingModal from "@/components/PricingModal";
 import { usePushNotifications } from "@/_core/hooks/usePushNotifications";
-import { startRegistration } from "@simplewebauthn/browser";
 
 export default function UserProfile() {
   const { user, loading, logout, refresh } = useAuth({
@@ -144,40 +143,6 @@ export default function UserProfile() {
     },
     onError: (err) => toast.error(err.message)
   });
-
-  const generatePasskeyOptions = trpc.passkeys.generateRegistrationOptions.useMutation();
-  const verifyPasskeyRegistration = trpc.passkeys.verifyRegistration.useMutation();
-  const removePasskeyMutation = trpc.passkeys.removePasskey.useMutation();
-  const handleRegisterPasskey = () => {
-    generatePasskeyOptions.mutate(undefined, {
-      onSuccess: (options) => {
-        startRegistration({ optionsJSON: options as any }).then(attResp => {
-          verifyPasskeyRegistration.mutate(attResp, {
-            onSuccess: () => {
-              toast.success("Passkey registered");
-              refresh();
-            },
-            onError: (err) => toast.error(err.message)
-          });
-        }).catch(err => {
-          if (err.name !== "NotAllowedError") toast.error(err.message);
-        });
-      },
-      onError: (err) => toast.error(err.message)
-    });
-  };
-
-  let passkeys = [];
-  try {
-    if (user?.passkeyCredentials && typeof user.passkeyCredentials === "string" && user.passkeyCredentials !== "") {
-      const parsed = JSON.parse(user.passkeyCredentials);
-      if (Array.isArray(parsed)) {
-        passkeys = parsed;
-      }
-    }
-  } catch (e) {
-    console.error("Passkey parsing error", e);
-  }
 
   const requestPassResetMutation = trpc.users.requestPasswordResetCode.useMutation({
     onSuccess: (data) => {
@@ -1084,11 +1049,6 @@ export default function UserProfile() {
                               </h3>
 
                               <div className="space-y-10">
-                                <div className="flex items-center justify-between group">
-                                  <div className="max-w-full">
-                                    <h4 className="text-sm text-[#F2F0EB] font-bold mb-2 group-hover:text-[#E8A020] transition-colors">Two-Factor Authentication <span className={`text-[8px] font-900 px-2 py-0.5 rounded-full ${user.twoFactorEnabled ? "text-[#27AE60] bg-[#27AE60]/5 border border-[#27AE60]/20" : "text-[#555550] bg-[#1C1C1A] border border-[#2A2A28]"}`}>{user.twoFactorEnabled ? "ENABLED" : "DISABLED"}</span></h4>
-                                    <p className="text-[12px] text-[#555550] leading-relaxed">Require a verification code from your email for every new sign-in attempt.</p>
-                                  </div>
                                   <button
                                     onClick={() => toggle2FAMutation.mutate({ enabled: !user.twoFactorEnabled })}
                                     className={`w-14 h-7 rounded-full relative transition-all duration-500 shadow-inner flex items-center px-1.5 focus:outline-none focus:ring-1 focus:ring-[#E8A020] ${user.twoFactorEnabled ? "bg-[#27AE60]" : "bg-[#1C1C1A]"}`}
@@ -1101,32 +1061,9 @@ export default function UserProfile() {
                                     <div className={`w-4 h-4 rounded-full bg-[#F2F0EB] shadow-md transition-all duration-500 relative z-10 ${user.twoFactorEnabled ? "translate-x-7" : "translate-x-0"}`} />
                                   </button>
                                 </div>
-
-                                <div className="flex items-center justify-between border-t border-[#1C1C1A] pt-10">
-                                  <div>
-                                    <h4 className="text-sm text-[#F2F0EB] font-bold mb-2">Biometric Passkeys</h4>
-                                    <p className="text-[12px] text-[#8A8880]">Sign in using FaceID, TouchID or hardware security keys.</p>
-                                  </div>
-                                   <button
-                                     onClick={handleRegisterPasskey}
-                                     className="text-[10px] font-bold uppercase tracking-widest bg-[#1C1C1A] hover:bg-[#252522] text-[#E8A020] px-4 py-2 rounded-sm border border-[#1C1C1A] transition-colors"
-                                   >
-                                     Add Key
-                                   </button>
-                                </div>
-
-                                <div className="pt-10 border-t border-[#1C1C1A]">
-                                  <div className="bg-[#0A0A09]/50 border border-[#1C1C1A] p-8 rounded-sm flex flex-col items-center justify-center text-center">
-                                    <Fingerprint size={32} className="text-[#E8A020] mb-4 opacity-40" />
-                                    <h3 className="text-[11px] font-900 uppercase tracking-[0.3em] text-[#F2F0EB] mb-2">BIOMETRIC SECURITY</h3>
-                                    <p className="text-[10px] text-[#8A8880] uppercase tracking-widest leading-relaxed">Secured by your device's hardware enclave.</p>
-                                  </div>
-                                </div>
-
                               </div>
-                            </div>
-                          </motion.div>
-                        )}
+                            </motion.div>
+                          )}
 
                         {settingsCategory === "communications" && (
                           <motion.div
