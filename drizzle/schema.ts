@@ -30,7 +30,7 @@ export const users = sqliteTable("users", {
   twoFactorSecret: text("twoFactorSecret"),
   twoFactorBackupCodes: text("twoFactorBackupCodes"), // JSON string of encrypted backup codes
   subscribeToNewsletter: integer("subscribeToNewsletter", { mode: "number" }).default(0).notNull(),
-  breakingNewsAlerts: integer("breakingNewsAlerts", { mode: "number" }).default(0).notNull(),
+  breakingNewsAlerts: integer("breakingNewsAlerts", { mode: "number" }).default(0),
   pushSubscription: text("pushSubscription"), // JSON string of PushSubscription object
   passkeyCredentials: text("passkeyCredentials"), // JSON string of registered authenticators (WebAuthn)
   subscriptionTier: text("subscriptionTier", { enum: ["free", "premium", "founder"] })
@@ -90,7 +90,7 @@ export const articles = sqliteTable("articles", {
   sourceTitle: text("sourceTitle"),
   summary: text("summary"), // AI generated bullet points (JSON string)
   factCheck: text("factCheck"), // Trust score or verification status
-  premiumOnly: integer("premiumOnly", { mode: "number" }).default(0).notNull(),
+  premiumOnly: integer("premiumOnly", { mode: "number" }).default(0),
 });
 
 export type Article = typeof articles.$inferSelect;
