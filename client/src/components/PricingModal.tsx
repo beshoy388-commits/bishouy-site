@@ -160,30 +160,30 @@ export default function PricingModal({ isOpen, onClose, user, initialView }: Pri
                       <button 
                         onClick={handlePaymentUpdate}
                         disabled={isProcessing}
-                        className="flex items-center justify-between p-4 md:p-5 bg-[#1C1C1A] hover:bg-[#2A2A28] border border-[#2A2A28] rounded-sm transition-all"
+                        className="flex items-center justify-between p-5 md:p-5 bg-[#1C1C1A] hover:bg-[#2A2A28] border border-[#2A2A28] rounded-sm transition-all active:scale-[0.98]"
                       >
                          <div className="flex items-center gap-4">
-                            <CreditCard size={18} className="text-[#8A8880]" />
+                            <CreditCard size={20} className="text-[#8A8880]" />
                             <div className="text-left">
-                               <p className="text-[9px] md:text-[10px] font-900 text-[#F2F0EB] uppercase tracking-widest">Billing & Payment</p>
-                               <p className="text-[8px] text-[#555550] uppercase tracking-widest">Invoices & Card</p>
+                               <p className="text-[10px] md:text-[10px] font-900 text-[#F2F0EB] uppercase tracking-widest">Billing & Payment</p>
+                               <p className="text-[9px] md:text-[8px] text-[#555550] uppercase tracking-widest mt-0.5">Invoices & Card</p>
                             </div>
                          </div>
-                         <ChevronRight size={14} className="text-[#2A2A28]" />
+                         <ChevronRight size={16} className="text-[#2A2A28]" />
                       </button>
 
                       <button 
                         onClick={() => setView("plans")}
-                        className="flex items-center justify-between p-4 md:p-5 bg-[#1C1C1A] hover:bg-[#2A2A28] border border-[#2A2A28] rounded-sm transition-all"
+                        className="flex items-center justify-between p-5 md:p-5 bg-[#1C1C1A] hover:bg-[#2A2A28] border border-[#2A2A28] rounded-sm transition-all active:scale-[0.98]"
                       >
                          <div className="flex items-center gap-4">
-                            <Zap size={18} className="text-[#8A8880]" />
+                            <Zap size={20} className="text-[#8A8880]" />
                             <div className="text-left">
-                               <p className="text-[9px] md:text-[10px] font-900 text-[#F2F0EB] uppercase tracking-widest">Change Level</p>
-                               <p className="text-[8px] text-[#555550] uppercase tracking-widest">Switch Access</p>
+                               <p className="text-[10px] md:text-[10px] font-900 text-[#F2F0EB] uppercase tracking-widest">Change Level</p>
+                               <p className="text-[9px] md:text-[8px] text-[#555550] uppercase tracking-widest mt-0.5">Switch Access</p>
                             </div>
                          </div>
-                         <ChevronRight size={14} className="text-[#2A2A28]" />
+                         <ChevronRight size={16} className="text-[#2A2A28]" />
                       </button>
                    </div>
 
@@ -250,7 +250,7 @@ export default function PricingModal({ isOpen, onClose, user, initialView }: Pri
                     <button 
                      onClick={() => handleUpgrade(selectedPlan)}
                      disabled={isProcessing || selectedPlan === user?.subscriptionTier}
-                     className="w-full md:w-auto bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] px-10 py-4 font-900 text-[10px] uppercase tracking-widest disabled:opacity-50 transition-all shadow-xl"
+                     className="w-full md:w-auto bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] px-10 py-5 md:py-4 font-900 text-[12px] md:text-[10px] uppercase tracking-widest disabled:opacity-50 transition-all shadow-xl active:scale-[0.98]"
                     >
                       {isProcessing ? "SYNCING..." : (selectedPlan === user?.subscriptionTier ? "ACTIVE" : "SUBSCRIBE NOW")}
                    </button>
@@ -264,14 +264,14 @@ export default function PricingModal({ isOpen, onClose, user, initialView }: Pri
                initial={{ opacity: 0, scale: 0.95 }}
                animate={{ opacity: 1, scale: 1 }}
                exit={{ opacity: 0, scale: 0.95 }}
-               className="flex-1 flex items-center justify-center p-12"
+               className="flex-1 flex items-center justify-center p-8 md:p-12 pb-[env(safe-area-inset-bottom)]"
              >
                 <div className="max-w-md w-full text-center">
                    <AlertTriangle size={48} className="text-red-500 mx-auto mb-6" />
-                   <h3 className="text-2xl font-900 text-[#F2F0EB] uppercase mb-4">Confirm?</h3>
-                   <p className="text-[11px] text-[#8A8880] uppercase mb-10">You will be redirected to the Billing Portal.</p>
-                   <button onClick={handleCancel} className="w-full bg-red-600 text-white py-4 font-900 uppercase text-[10px] tracking-widest mb-4 shadow-xl">TERMINATE MEMBERSHIP</button>
-                   <button onClick={() => setView("manage")} className="w-full bg-[#1C1C1A] text-[#555550] py-4 font-900 uppercase text-[10px] tracking-widest">BACK</button>
+                   <h3 className="text-2xl md:text-3xl font-900 text-[#F2F0EB] uppercase mb-4 tracking-tighter">Confirm?</h3>
+                   <p className="text-[11px] md:text-[12px] text-[#8A8880] uppercase mb-10 leading-relaxed max-w-[250px] mx-auto md:max-w-none">You will be redirected to the Billing Portal.</p>
+                   <button onClick={handleCancel} className="w-full bg-red-600 hover:bg-red-700 text-white py-5 md:py-4 font-900 uppercase text-[11px] md:text-[10px] tracking-widest mb-4 shadow-xl active:scale-[0.98] transition-transform">TERMINATE MEMBERSHIP</button>
+                   <button onClick={() => setView("manage")} className="w-full bg-[#1C1C1A] text-[#8A8880] hover:text-[#F2F0EB] py-5 md:py-4 font-900 uppercase text-[11px] md:text-[10px] tracking-widest active:scale-[0.98] transition-all">BACK</button>
                 </div>
              </motion.div>
           )}

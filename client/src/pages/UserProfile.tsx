@@ -369,32 +369,32 @@ export default function UserProfile() {
               </div>
 
               {/* Sidebar Column */}
-              <div className="lg:col-span-4 space-y-10">
+              <div className="lg:col-span-4 space-y-8 md:space-y-10">
                  {user.role === 'admin' && (
-                    <div className="bg-[#1C1C1A]/20 border border-[#E8A020]/30 p-10 rounded-sm">
-                       <h4 className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-6">ADMIN CONSOLE</h4>
-                       <p className="text-[#8A8880] text-[12px] leading-relaxed mb-8 font-serif italic">Access system core feeds and platform governance modules.</p>
-                       <Link href="/admin"><button className="w-full bg-transparent border border-[#E8A020]/50 text-[#E8A020] py-4 text-[10px] font-900 uppercase tracking-widest hover:bg-[#E8A020]/10 transition-all">INITIALIZE MODERATION</button></Link>
+                    <div className="bg-[#1C1C1A]/20 border border-[#E8A020]/30 p-6 md:p-10 rounded-sm">
+                       <h4 className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] mb-4 md:mb-6">ADMIN CONSOLE</h4>
+                       <p className="text-[#8A8880] text-[11px] md:text-[12px] leading-relaxed mb-6 md:mb-8 font-serif italic">Access system core feeds and platform governance modules.</p>
+                       <Link href="/admin"><button className="w-full bg-transparent border border-[#E8A020]/50 text-[#E8A020] py-5 md:py-4 text-[10px] font-900 uppercase tracking-widest hover:bg-[#E8A020]/10 transition-all shadow-lg active:scale-[0.98]">INITIALIZE MODERATION</button></Link>
                     </div>
                  )}
                  
-                 <div className="bg-[#11110F] border border-[#1C1C1A] p-10 rounded-sm">
+                 <div className="bg-[#11110F] border border-[#1C1C1A] p-6 md:p-10 rounded-sm">
                     <h4 className="text-[10px] font-900 text-[#555550] uppercase tracking-[0.4em] mb-6">SECURITY STATUS</h4>
-                    <div className="space-y-6">
-                       <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest">
+                    <div className="space-y-5 md:space-y-6">
+                       <div className="flex items-center justify-between text-[10px] md:text-[11px] font-bold uppercase tracking-widest">
                           <span className="text-[#333330]">Identity</span>
                           <span className="text-[#27AE60]">VERIFIED</span>
                        </div>
-                       <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest">
+                       <div className="flex items-center justify-between text-[10px] md:text-[11px] font-bold uppercase tracking-widest">
                           <span className="text-[#333330]">Encryption</span>
                           <span className="text-[#27AE60]">AES-256</span>
                        </div>
-                       <Link href="/contact"><button className="w-full bg-[#1C1C1A] text-[#8A8880] py-4 text-[9px] font-900 uppercase tracking-widest mt-4">CONTACT ASSISTANCE</button></Link>
+                       <Link href="/contact"><button className="w-full bg-[#1C1C1A] text-[#8A8880] py-5 md:py-4 text-[10px] font-900 uppercase tracking-widest mt-4 shadow-lg active:scale-[0.98]">CONTACT ASSISTANCE</button></Link>
                     </div>
                  </div>
 
-                 <button onClick={async () => { await logout(); window.location.href='/'; }} className="w-full flex items-center justify-center gap-3 text-red-900 hover:text-red-600 transition-colors uppercase text-[9px] font-900 tracking-widest py-4 border border-red-900/10 hover:border-red-900/30">
-                    <LogOut size={14} /> TERMINATE SESSION
+                 <button onClick={async () => { await logout(); window.location.href='/'; }} className="w-full flex items-center justify-center gap-3 text-red-900 hover:text-red-600 transition-colors uppercase text-[10px] font-900 tracking-widest py-5 md:py-4 border border-red-900/10 hover:border-red-900/30 bg-red-900/5 hover:bg-red-900/10 active:scale-[0.98]">
+                    <LogOut size={16} /> TERMINATE SESSION
                  </button>
               </div>
 
