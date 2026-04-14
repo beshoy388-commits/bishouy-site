@@ -80,16 +80,16 @@ function Router() {
   const [location] = useLocation();
 
   return (
-    <Suspense fallback={<PageFallback />}>
-      <AnimatePresence mode="wait">
-        <motion.div 
-          key={location}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="w-full h-full overflow-x-hidden"
-        > 
+    <AnimatePresence mode="wait">
+      <motion.div 
+        key={location}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.35 }}
+        className="w-full h-full overflow-x-hidden"
+      > 
+        <Suspense fallback={<PageFallback />}>
           <Switch>
             <Route path="/" component={Home} />
             <Route path="/article/:slug" component={ArticleDetail} />
@@ -129,9 +129,9 @@ function Router() {
             }} />
             <Route component={NotFound} />
           </Switch>
-        </motion.div>
-      </AnimatePresence>
-    </Suspense>
+        </Suspense>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
