@@ -4,8 +4,6 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { LogIn, Mail, Lock, ArrowRight, Loader2, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 
 export default function Login() {
@@ -68,9 +66,8 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F0F0E]">
+    <div className="flex flex-col min-h-0">
       <SEO title="Sign In | BISHOUY" description="Access your private intelligence collection and premium features." />
-      <Navbar />
 
       <main className="container min-h-[calc(100vh-200px)] py-16 flex items-center justify-center">
         <motion.div 
@@ -252,7 +249,6 @@ export default function Login() {
         </motion.div>
       </main>
 
-      <Footer />
     </div>
   );
 }

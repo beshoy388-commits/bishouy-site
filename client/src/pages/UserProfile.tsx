@@ -1,7 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useEffect, useState, useRef, useMemo } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import {
   Loader2,
   LogOut,
@@ -142,7 +140,7 @@ export default function UserProfile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0F0F0E] flex flex-col items-center justify-center p-6">
-        <div className="w-12 h-12 border-t-2 border-[#E8A020] rounded-full animate-spin mb-6" />
+        <div className="w-12 h-12 border-2 border-[#E8A020]/20 border-t-[#E8A020] rounded-full animate-pulse mb-6" />
         <span className="text-[10px] text-[#F2F0EB] uppercase tracking-[0.4em] animate-pulse">Initializing Identity...</span>
       </div>
     );
@@ -151,9 +149,8 @@ export default function UserProfile() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-[#0F0F0E] flex flex-col pt-0 selection:bg-[#E8A020]/30">
+    <div className="flex flex-col selection:bg-[#E8A020]/30 min-h-0">
       <SEO title={`${user.name || user.username} | PROFILE`} description="Manage your intelligence network and security." />
-      <Navbar />
 
       <main className="flex-1">
         {/* Header Section - Modern Editorial */}
@@ -410,7 +407,6 @@ export default function UserProfile() {
         />
       </main>
 
-      <Footer hideNewsletter />
     </div>
   );
 }

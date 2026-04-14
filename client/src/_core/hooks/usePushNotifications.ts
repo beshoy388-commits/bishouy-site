@@ -55,7 +55,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
       "Notification" in window;
 
     setIsSupported(supported);
-    setPermission((Notification?.permission as NotificationPermission) ?? "default");
+    setPermission((window.Notification?.permission as NotificationPermission) ?? "default");
 
     if (!supported) return;
 
@@ -90,7 +90,7 @@ export function usePushNotifications(): UsePushNotificationsReturn {
 
     setIsLoading(true);
     try {
-      const perm = await Notification.requestPermission();
+      const perm = await window.Notification.requestPermission();
       setPermission(perm);
       if (perm !== "granted") {
         toast.error("Permission denied", {

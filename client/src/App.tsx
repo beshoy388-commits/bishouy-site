@@ -87,8 +87,8 @@ function Router() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.4 }}
-          className="w-full h-full"
+          transition={{ duration: 0.3 }}
+          className="w-full h-full overflow-x-hidden"
         > 
           <Switch>
             <Route path="/" component={Home} />
@@ -152,10 +152,15 @@ function MaintenanceGuard({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
 function AppContent() {
   const { setIsSearchOpen, isShadowMode } = useUI();
   const [location] = useLocation();
   const isAdminPage = location.startsWith("/admin");
+  const isAuthPage = location === "/login" || location === "/register" || location === "/forgot-password" || location === "/reset-password";
+  const hideStandardLayout = isAdminPage || isAuthPage;
 
   useEffect(() => {
     if (isShadowMode) {
@@ -168,21 +173,29 @@ function AppContent() {
   return (
     <MaintenanceGuard>
       <ScrollToTop />
-      <Toaster />
+      <Toaster position="bottom-right" richColors theme="dark" />
       <GlobalAudioPlayer />
       <NeuralNotificationCenter />
       <LiveAnalyticsTracker />
       <UserStatusMonitor />
-      <GoogleAdSense />
-      <GoogleAnalytics />
-      <div className={!isAdminPage ? `min-h-screen pt-[140px] lg:pt-[195px] ${!isAdminPage ? "pb-32 lg:pb-0" : ""}` : "min-h-screen"}>
-        <Router />
+      {!isAdminPage && <GoogleAdSense />}
+      {!isAdminPage && <GoogleAnalytics />}
+      
+      <div className="flex flex-col min-h-screen bg-[#0F0F0E]">
+        {!hideStandardLayout && <Navbar />}
+        
+        <main className={`flex-1 flex flex-col ${!hideStandardLayout ? "pt-[140px] lg:pt-[195px] pb-32 lg:pb-0" : ""}`}>
+          <Router />
+        </main>
+        
+        {!hideStandardLayout && <Footer hideNewsletter={location === '/profile'} />}
       </div>
+      
       <NewsletterModal />
       <CommandPalette />
       <CookieConsent />
       <BackToTop />
-      {!isAdminPage && <MobileBottomNav onSearchClick={() => setIsSearchOpen(true)} />}
+      {!hideStandardLayout && <MobileBottomNav onSearchClick={() => setIsSearchOpen(true)} />}
       <div className="noise-overlay" />
     </MaintenanceGuard>
   );

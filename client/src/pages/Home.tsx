@@ -7,12 +7,9 @@
 import { useEffect, lazy, Suspense } from "react";
 import { Link } from "wouter";
 import { Sparkles } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import ArticleCard from "@/components/ArticleCard";
 import NeuralMouseBackground from "@/components/NeuralMouseBackground";
 import type { Article } from "@/lib/articles";
-import Footer from "@/components/Footer";
 import { trpc } from "@/lib/trpc";
 import SEO from "@/components/SEO";
 import ArticleCardSkeleton from "@/components/ArticleCardSkeleton";
@@ -43,9 +40,8 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0F0F0E]">
+      <div className="bg-[#0F0F0E]">
         <SEO title="International News & Analysis" />
-        <Navbar />
         <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
             <div className="lg:col-span-2">
@@ -63,7 +59,6 @@ export default function Home() {
             ))}
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -72,11 +67,9 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-[#0F0F0E]">
         <SEO title="No Articles" />
-        <Navbar />
         <div className="container text-center">
           <p className="text-[#8A8880] text-lg">No articles available yet.</p>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -101,9 +94,8 @@ export default function Home() {
     // Removed slice so all dynamically loaded articles show up
 
   return (
-    <main className="min-h-screen bg-[#0F0F0E] relative">
+    <div className="relative">
       <SEO />
-      <Navbar />
 
       {/* Hero Section — Modern Neural Elevation */}
       <section className="relative pt-0 pb-12 md:py-16 bg-[#0A0A09] overflow-hidden">
@@ -234,7 +226,6 @@ export default function Home() {
         </section>
       )}
 
-      <Footer />
-    </main>
+    </div>
   );
 }

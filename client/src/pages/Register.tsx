@@ -1,7 +1,5 @@
 import { UserPlus, Mail, Lock, User, Loader2, Eye, EyeOff, CheckCircle, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { useEffect } from "react";
 import { trpc } from "@/lib/trpc";
@@ -100,9 +98,8 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F0F0E]">
+    <div className="flex flex-col min-h-0">
       <SEO title="Create Account | BISHOUY" description="Join the global news collective of bishouy.com." />
-      <Navbar />
 
       <main className="container pb-16 flex items-center justify-center">
         <motion.div 
@@ -167,7 +164,7 @@ export default function Register() {
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
                     {isCheckingEmail ? (
-                        <Loader2 className="animate-spin text-[#555550]" size={14} />
+                        <Loader2 className="animate-pulse text-[#555550]" size={14} />
                     ) : availability && formData.email.includes('@') ? (
                         availability.available ? (
                             <CheckCircle className="text-green-500" size={14} />
@@ -295,7 +292,7 @@ export default function Register() {
               className="w-full bg-[#F2F0EB] hover:bg-[#E8A020] hover:text-[#0F0F0E] disabled:opacity-50 text-[#0F0F0E] font-ui text-[10px] font-600 uppercase tracking-widest py-3 rounded-sm flex items-center justify-center gap-2 transition-all duration-300"
             >
               {registerMutation.isPending ? (
-                <Loader2 className="animate-spin" size={16} />
+                <Loader2 className="animate-pulse" size={16} />
               ) : (
                 <UserPlus size={16} />
               )}
@@ -315,7 +312,6 @@ export default function Register() {
         </motion.div>
       </main>
 
-      <Footer />
     </div>
   );
 }

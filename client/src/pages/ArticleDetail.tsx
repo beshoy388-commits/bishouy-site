@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { useRoute } from "wouter";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { useAudio } from "@/contexts/AudioContext";
 import ArticleDetailSkeleton from "@/components/ArticleDetailSkeleton";
 import { trpc } from "@/lib/trpc";
@@ -338,18 +336,14 @@ export default function ArticleDetail() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-[#0F0F0E]">
-        <Navbar />
         <ArticleDetailSkeleton />
-      </main>
     );
   }
 
   if (!article) {
     return (
-      <main className="min-h-screen bg-[#0F0F0E]">
+      <>
         <SEO title="Article Not Found" noindex={true} />
-        <Navbar />
         <div className="container py-20 text-center">
           <h1 className="text-2xl font-bold text-[#F2F0EB] mb-4">
             Article not found
@@ -360,7 +354,7 @@ export default function ArticleDetail() {
             </button>
           </Link>
         </div>
-      </main>
+      </>
     );
   }
 
@@ -554,8 +548,7 @@ export default function ArticleDetail() {
     img.src = getFallbackImage(article?.category || "news", article?.id || 0, 1400);
   };
 
-  if (isLoading) return <ArticleDetailSkeleton />;
-  if (!article) return <ArticleDetailSkeleton />;
+  if (isLoading || !article) return <ArticleDetailSkeleton />;
 
   const isAudioPlaying = isPlaying && currentArticleId === article?.id;
 
@@ -574,7 +567,7 @@ export default function ArticleDetail() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0F0F0E] selection:bg-[#E8A020]/30 selection:text-[#E8A020] relative">
+    <div className="selection:bg-[#E8A020]/30 selection:text-[#E8A020] relative min-h-0">
       <SEO
         title={article.title}
         description={article.excerpt}
@@ -585,7 +578,6 @@ export default function ArticleDetail() {
         updatedDate={article.updatedAt}
         category={article.category}
       />
-      <Navbar />
 
       {/* Reading Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-[3px] z-[100] bg-transparent">
@@ -1295,12 +1287,13 @@ export default function ArticleDetail() {
         <AdPlacement position="banner_bottom" />
       </div>
 
-      <Footer />
+
 
       <PricingModal 
         isOpen={isPricingOpen} 
         onClose={() => setIsPricingOpen(false)} 
+        user={user}
       />
-    </main>
+    </div>
   );
 }
