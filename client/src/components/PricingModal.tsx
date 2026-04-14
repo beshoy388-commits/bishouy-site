@@ -103,7 +103,7 @@ export default function PricingModal({ isOpen, onClose, user, initialView }: Pri
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center md:p-6 overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center md:p-6 overflow-hidden">
       {/* Background Overlay - Simplified */}
       <div 
         onClick={onClose}

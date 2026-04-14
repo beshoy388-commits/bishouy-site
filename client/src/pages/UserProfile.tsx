@@ -195,8 +195,8 @@ export default function UserProfile() {
 
         {/* Content Navigation */}
         <div className="sticky top-[90px] lg:top-[135px] bg-[#0F0F0E]/80 backdrop-blur-xl z-40 border-b border-[#1C1C1A]">
-          <div className="container max-w-5xl mx-auto px-4 md:px-6">
-             <div className="flex gap-2 md:gap-4 h-16 md:h-20 overflow-x-auto no-scrollbar">
+          <div className="container max-w-5xl mx-auto px-2 md:px-6">
+             <div className="flex flex-wrap md:flex-nowrap gap-1 md:gap-4 justify-center md:justify-start py-3 md:h-20 w-full">
                 {[
                   { id: "library", label: "Intelligence Library", icon: Bookmark },
                   { id: "membership", label: "Membership Center", icon: Zap },
@@ -205,11 +205,11 @@ export default function UserProfile() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex items-center gap-3 px-6 h-full text-[10px] md:text-[11px] font-900 uppercase tracking-widest transition-all relative shrink-0 ${activeTab === tab.id ? 'text-[#E8A020]' : 'text-[#555550] hover:text-[#F2F0EB]'}`}
+                    className={`flex items-center gap-2 md:gap-3 px-3 md:px-6 py-2 md:py-0 md:h-full text-[9px] md:text-[11px] font-900 uppercase tracking-widest transition-all relative shrink-0 ${activeTab === tab.id ? 'text-[#E8A020] bg-[#E8A020]/10 md:bg-transparent rounded-sm md:rounded-none' : 'text-[#555550] hover:text-[#F2F0EB]'}`}
                   >
-                    <tab.icon size={16} />
+                    <tab.icon size={14} className="md:w-4 md:h-4" />
                     {tab.label}
-                    {activeTab === tab.id && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#E8A020] shadow-[0_0_15px_rgba(232,160,32,0.5)]" />}
+                    {activeTab === tab.id && <div className="hidden md:block absolute bottom-0 left-0 right-0 h-1 bg-[#E8A020] shadow-[0_0_15px_rgba(232,160,32,0.5)]" />}
                   </button>
                 ))}
              </div>
@@ -336,6 +336,13 @@ export default function UserProfile() {
                               exit={{ opacity: 0, x: 10 }}
                               className="space-y-10"
                             >
+                               <div className="space-y-4">
+                                 <label className="text-[9px] font-900 text-[#555550] uppercase tracking-widest">PROFILE IMAGE</label>
+                                 <ImageUploader 
+                                   value={formData.avatarUrl} 
+                                   onChange={(url) => setFormData({...formData, avatarUrl: url})} 
+                                 />
+                               </div>
                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                                   <div className="space-y-4">
                                      <label className="text-[9px] font-900 text-[#555550] uppercase tracking-widest">DISPLAY IDENTITY</label>
@@ -363,6 +370,33 @@ export default function UserProfile() {
                                </button>
                             </motion.div>
                           )}
+
+                          {settingsCategory === "security" && (
+                            <motion.div 
+                              key="security"
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: 10 }}
+                              className="space-y-10"
+                            >
+                               <div className="space-y-4">
+                                  <label className="text-[9px] font-900 text-[#555550] uppercase tracking-widest">REGISTERED EMAIL</label>
+                                  <input 
+                                    type="email" value={user.email} disabled
+                                    className="w-full bg-[#0A0A09] border border-[#1C1C1A] px-6 py-4 text-[#8A8880] text-sm cursor-not-allowed"
+                                  />
+                               </div>
+                               <div className="space-y-4 border-t border-[#1C1C1A]/50 pt-8 mt-8">
+                                  <h4 className="text-[12px] font-900 text-[#F2F0EB] uppercase tracking-widest">AUTHENTICATION CREDENTIALS</h4>
+                                  <p className="text-[10px] text-[#555550] leading-relaxed mb-6">Updating your password requires a verification link sent to your registered email address.</p>
+                                  <Link href="/forgot-password">
+                                    <button className="w-full md:w-auto bg-[#1C1C1A] text-[#E8A020] hover:bg-[#2A2A28] border border-[#2A2A28] px-12 py-5 md:py-5 text-[10px] md:text-[10px] font-900 uppercase tracking-widest transition-all shadow-lg active:scale-[0.98]">
+                                      RESET PASSWORD SECURELY
+                                    </button>
+                                  </Link>
+                               </div>
+                            </motion.div>
+                          )}
                        </AnimatePresence>
                     </motion.div>
                  )}
@@ -382,8 +416,8 @@ export default function UserProfile() {
                     <h4 className="text-[10px] font-900 text-[#555550] uppercase tracking-[0.4em] mb-6">SECURITY STATUS</h4>
                     <div className="space-y-5 md:space-y-6">
                        <div className="flex items-center justify-between text-[10px] md:text-[11px] font-bold uppercase tracking-widest">
-                          <span className="text-[#333330]">Identity</span>
-                          <span className="text-[#27AE60]">VERIFIED</span>
+                          <span className="text-[#333330]">Account Status</span>
+                          <span className="text-[#27AE60]">ACTIVE</span>
                        </div>
                        <div className="flex items-center justify-between text-[10px] md:text-[11px] font-bold uppercase tracking-widest">
                           <span className="text-[#333330]">Encryption</span>
