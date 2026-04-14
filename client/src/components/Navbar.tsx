@@ -300,7 +300,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="lg:hidden absolute top-full left-0 right-0 h-[calc(100vh-60px)] bg-[#0F0F0E] z-[40] overflow-y-auto border-t border-[#222220]">
+        <div className="lg:hidden absolute top-full left-0 right-0 h-[calc(100dvh-60px)] bg-[#0F0F0E] z-[40] overflow-y-auto border-t border-[#222220]">
           <div className="container py-8 pb-32">
             <nav className="flex flex-col gap-1">
               <Link
