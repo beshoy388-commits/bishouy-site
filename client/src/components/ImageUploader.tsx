@@ -111,7 +111,7 @@ export default function ImageUploader({
       setPreviewUrl(data.url);
       setLocalPreview(null);
       onImageUpload(data.url);
-      toast.success("Intelligence visual asset calibrated.");
+      toast.success("Profile photo updated!");
     } catch (error) {
       console.error("Processing error:", error);
       toast.error("Sync failure");
@@ -155,7 +155,7 @@ export default function ImageUploader({
           ) : (
             <div className="text-center group-hover:scale-110 transition-transform duration-700">
               <Upload size={32} className="text-[#E8A020] mx-auto mb-3 opacity-30 group-hover:opacity-100" />
-              <p className="font-ui text-[9px] font-900 uppercase tracking-widest text-[#555550] group-hover:text-[#F2F0EB]">Scan Identity Source</p>
+              <p className="font-ui text-[9px] font-900 uppercase tracking-widest text-[#555550] group-hover:text-[#F2F0EB]">Choose Photo</p>
             </div>
           )}
         </div>
@@ -171,7 +171,7 @@ export default function ImageUploader({
           <div className="flex items-center justify-between mb-8">
              <div className="flex items-center gap-3">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#E8A020] animate-pulse" />
-                <span className="text-[10px] font-900 text-[#F2F0EB] uppercase tracking-[0.3em] font-ui">Recalibration Protocol</span>
+                <span className="text-[10px] font-900 text-[#F2F0EB] uppercase tracking-[0.3em] font-ui">Adjust Photo</span>
              </div>
              <button onClick={() => setLocalPreview(null)} className="text-[#555550] hover:text-[#C0392B] transition-colors"><X size={16} /></button>
           </div>
@@ -207,7 +207,7 @@ export default function ImageUploader({
             <div className="w-full max-w-sm space-y-6">
                <div className="space-y-4">
                   <div className="flex justify-between text-[10px] font-900 uppercase tracking-[0.2em] text-[#555550]">
-                     <span>Field Magnification</span>
+                     <span>Zoom Level</span>
                      <span className="text-[#E8A020]">{Math.round(zoom * 100)}%</span>
                   </div>
                   <div className="flex items-center gap-4">
@@ -238,7 +238,7 @@ export default function ImageUploader({
                   disabled={isUploading}
                   className="flex-1 bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] font-ui text-[10px] font-900 uppercase tracking-[0.2em] py-4 rounded-sm flex items-center justify-center gap-3 transition-all relative group disabled:opacity-50"
                  >
-                   {isUploading ? <Loader2 className="animate-spin" size={16} /> : <><Check size={18} /> Sync Account</>}
+                   {isUploading ? <Loader2 className="animate-spin" size={16} /> : <><Check size={18} /> Save Photo</>}
                  </button>
                </div>
             </div>

@@ -341,7 +341,7 @@ export default function Navbar() {
                   >
                     <div className="flex items-center gap-2">
                       <UserIcon size={16} />
-                      Personal Library
+                      My Account
                     </div>
                     <div className="flex gap-2">
                        {user.subscriptionTier === 'founder' && (
@@ -365,7 +365,7 @@ export default function Navbar() {
                   )}
                   <div className="flex items-center justify-between py-4">
                     <span className="font-ui text-xs text-[#555550] uppercase tracking-widest">
-                      Session
+                      Account
                     </span>
                     <button
                       onClick={async () => {

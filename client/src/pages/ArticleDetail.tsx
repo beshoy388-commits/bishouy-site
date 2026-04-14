@@ -186,8 +186,8 @@ export default function ArticleDetail() {
   const createCommentMutation = trpc.comments.create.useMutation({
     onSuccess: () => {
       setCommentText("");
-      toast.success("Comment processing initiated.", {
-        description: "Your insights are being distributed. They will appear shortly.",
+      toast.success("Comment submitted!", {
+        description: "Your comment will appear shortly.",
       });
       refetchComments();
     },
@@ -628,7 +628,7 @@ export default function ArticleDetail() {
             <div className="flex items-center gap-2 bg-[#E8A020]/5 px-2 py-1 rounded-sm border border-[#E8A020]/20">
               <Zap size={10} className="text-[#E8A020]" />
               <span className="font-ui text-[9px] font-900 text-[#E8A020] uppercase tracking-widest">
-                Verified Intel
+                Published
               </span>
             </div>
             {article.breaking === 1 && (

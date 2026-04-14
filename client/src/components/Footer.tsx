@@ -71,13 +71,13 @@ export default function Footer({ hideNewsletter = false }: { hideNewsletter?: bo
               <div className="flex-1 text-center lg:text-left">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8A020]/10 border border-[#E8A020]/20 mb-6 mx-auto lg:mx-0">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#E8A020] animate-pulse" />
-                  <span className="text-[9px] font-900 text-[#E8A020] uppercase tracking-[0.2em]">Intel Distribution</span>
+                  <span className="text-[9px] font-900 text-[#E8A020] uppercase tracking-[0.2em]">Newsletter</span>
                 </div>
                 <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-[#F2F0EB] mb-4 leading-none tracking-tighter">
                   NEVER MISS <br className="hidden md:block"/> A <span className="text-[#E8A020]">CRITICAL</span> UPDATE
                 </h2>
                 <p className="font-ui text-sm text-[#8A8880] max-w-md mx-auto lg:mx-0 leading-relaxed uppercase tracking-widest">
-                  Daily analytical briefings delivered at 07:00 AM UTC.
+                  Get the top stories delivered to your inbox every morning.
                 </p>
               </div>
 
@@ -220,7 +220,7 @@ export default function Footer({ hideNewsletter = false }: { hideNewsletter?: bo
       <div className="border-t border-[#1C1C1A]/50 bg-[#070706]">
         <div className="container py-8 flex flex-col md:flex-row items-center justify-between gap-6 px-4">
           <p className="text-[10px] text-[#555550] uppercase tracking-widest text-center md:text-left">
-            © 2026 BISHOUY.COM — VANGUARD INTELLIGENCE NETWORK. <br className="md:hidden"/> ALL SIGNALS ENCRYPTED.
+            © 2026 BISHOUY.COM — ALL RIGHTS RESERVED.
           </p>
           <div className="flex items-center gap-8">
             <div className="flex flex-col items-end gap-1">

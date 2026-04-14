@@ -3,8 +3,7 @@ import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { ShieldCheck, ArrowRight, Loader2 } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import { ShieldCheck, ArrowRight, Loader2 } from "lucide-react";
 
 export default function VerifyEmail() {
   const [location, setLocation] = useLocation();
@@ -65,8 +64,7 @@ export default function VerifyEmail() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F0F0E]">
-      <Navbar />
+    <div className="flex flex-col min-h-0">
 
       <main className="container pb-16 flex items-center justify-center">
         <div className="w-full max-w-md bg-[#1C1C1A] border border-[#2A2A28] p-8 rounded-sm">
@@ -123,7 +121,7 @@ export default function VerifyEmail() {
               className="w-full bg-[#E8A020] hover:bg-[#D4911C] disabled:opacity-50 text-[#0F0F0E] font-ui text-xs font-600 uppercase tracking-widest py-3 rounded-sm flex items-center justify-center gap-2 transition-colors"
             >
               {verifyMutation.isPending ? (
-                <Loader2 className="animate-spin" size={16} />
+                <Loader2 className="animate-pulse" size={16} />
               ) : (
                 <ArrowRight size={16} />
               )}
@@ -138,7 +136,7 @@ export default function VerifyEmail() {
               className="w-full font-ui text-[10px] text-[#8A8880] hover:text-[#E8A020] transition-colors disabled:opacity-50 disabled:hover:text-[#8A8880] uppercase tracking-widest flex justify-center items-center gap-2 border border-[#2A2A28] py-3 rounded-sm"
             >
               {isResending ? (
-                <Loader2 className="animate-spin" size={14} />
+                <Loader2 className="animate-pulse" size={14} />
               ) : null}
               {cooldown > 0
                 ? `Resend Code in ${cooldown}s`
@@ -155,7 +153,6 @@ export default function VerifyEmail() {
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 }

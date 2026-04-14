@@ -108,7 +108,7 @@ export default function Home() {
             <div className="lg:col-span-2 space-y-8 mb-10 lg:mb-0">
                <div className="flex items-center gap-3">
                   <div className="h-[2px] w-12 bg-[#E8A020]" />
-                  <span className="font-display text-[14px] font-900 text-[#E8A020] uppercase tracking-[0.3em]">Featured Intelligence</span>
+                  <span className="font-display text-[14px] font-900 text-[#E8A020] uppercase tracking-[0.3em]">Featured Story</span>
                </div>
                <ArticleCard article={mainFeatured} variant="featured" />
             </div>
@@ -135,7 +135,7 @@ export default function Home() {
       <div className="container py-8 overflow-hidden">
         <div className="flex items-center gap-6 opacity-30">
           <span className="font-display text-sm text-[#F2F0EB] uppercase tracking-[0.4em] whitespace-nowrap">
-            REAL-TIME INTEL FEED
+            LATEST NEWS
           </span>
           <div className="flex-1 h-px bg-gradient-to-r from-[#2A2A28] to-transparent" />
         </div>
@@ -178,7 +178,7 @@ export default function Home() {
                 >
                   <div className={`w-2 h-2 bg-[#E8A020] rounded-full ${isFetchingNextPage ? 'animate-ping' : 'group-hover:scale-125 transition-transform'}`} />
                   <span className="font-ui text-[11px] font-900 text-[#8A8880] group-hover:text-[#F2F0EB] transition-colors uppercase tracking-[0.4em]">
-                    {isFetchingNextPage ? "Analyzing Data Streams..." : "Decrypt More Content"}
+                    {isFetchingNextPage ? "Loading..." : "Load More Articles"}
                   </span>
                 </button>
             </div>
@@ -201,18 +201,18 @@ export default function Home() {
             <div className="bg-gradient-to-br from-[#11110F] to-[#0A0A09] border border-[#1C1C1A] rounded-2xl p-10 md:p-20 text-center shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)]">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8A020]/10 border border-[#E8A020]/20 mb-8 mx-auto">
                 <Sparkles size={12} className="text-[#E8A020]" />
-                <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.2em]">Intelligence Access</span>
+                <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.2em]">Free Access</span>
               </div>
               <h2 className="font-display text-4xl md:text-6xl text-[#F2F0EB] mb-6 leading-none tracking-tighter uppercase font-bold">
-                ENLIST IN THE <br className="hidden md:block"/> <span className="text-[#E8A020]">VANGUARD</span>
+                JOIN <br className="hidden md:block"/> <span className="text-[#E8A020]">BISHOUY</span>
               </h2>
               <p className="font-ui text-sm md:text-md text-[#8A8880] mb-12 max-w-xl mx-auto uppercase tracking-[0.2em] leading-relaxed">
-                Unlock deep-tier regional analysis and neural briefings by joining our global network today.
+                Get access to exclusive articles, AI-powered audio briefings, and premium analysis. Join free today.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                 <Link href="/register">
-                  <button className="w-full sm:w-auto bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.05] hover:shadow-[0_0_30px_rgba(232,160,32,0.3)] text-[#0F0F0E] font-ui text-[11px] font-900 uppercase tracking-widest px-12 py-5 rounded-sm transition-all active:scale-95 shadow-2xl">
-                    Create Identity
+                  <button className="w-full sm:w-auto bg-[#E8A020] hover:bg-[#D4911C] hover:scale-[1.05] hover:shadow-[0_0_30px_rgba(232,160,32,0.3)] text-[#0F0F0E] font-ui text-[12px] font-900 uppercase tracking-widest px-12 py-5 rounded-sm transition-all active:scale-95 shadow-2xl">
+                    Create Account
                   </button>
                 </Link>
                 <Link href="/login">
