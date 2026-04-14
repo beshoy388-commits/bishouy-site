@@ -339,8 +339,8 @@ export default function UserProfile() {
                                <div className="space-y-4">
                                  <label className="text-[9px] font-900 text-[#555550] uppercase tracking-widest">PROFILE IMAGE</label>
                                  <ImageUploader 
-                                   value={formData.avatarUrl} 
-                                   onChange={(url) => setFormData({...formData, avatarUrl: url})} 
+                                   currentImage={formData.avatarUrl} 
+                                   onImageUpload={(url) => setFormData({...formData, avatarUrl: url})} 
                                  />
                                </div>
                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
