@@ -90,7 +90,7 @@ function Router() {
         className="w-full h-full overflow-x-hidden"
       > 
         <Suspense fallback={<PageFallback />}>
-          <Switch>
+           <Switch location={location}>
             <Route path="/" component={Home} />
             <Route path="/article/:slug" component={ArticleDetail} />
             <Route path="/category/:slug" component={CategoryPage} />
