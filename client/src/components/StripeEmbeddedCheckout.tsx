@@ -50,10 +50,10 @@ export default function StripeEmbeddedCheckout({ tier, couponCode, onClose, onBa
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="relative w-full h-full md:h-[95vh] md:max-w-2xl bg-[#0F0F0E] md:border md:border-[#E8A020]/20 md:rounded-lg shadow-[0_0_80px_rgba(0,0,0,0.8),0_0_30px_rgba(232,160,32,0.08)] flex flex-col overflow-hidden z-20"
+        className="relative w-full h-[100dvh] md:h-[95vh] md:max-w-2xl bg-[#0F0F0E] md:border md:border-[#E8A020]/20 md:rounded-lg shadow-[0_0_80px_rgba(0,0,0,0.8),0_0_30px_rgba(232,160,32,0.08)] flex flex-col overflow-hidden z-20"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2A2A28] shrink-0 bg-[#0F0F0E]/95 backdrop-blur-sm z-30">
+        <div className="flex items-center justify-between px-6 py-4 pt-[max(1rem,env(safe-area-inset-top))] md:pt-4 border-b border-[#2A2A28] shrink-0 bg-[#0F0F0E]/95 backdrop-blur-sm z-30">
           <div className="flex items-center gap-3">
             <button 
               onClick={onBack}

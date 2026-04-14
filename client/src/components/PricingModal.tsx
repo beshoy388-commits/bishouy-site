@@ -103,15 +103,15 @@ export default function PricingModal({ isOpen, onClose, user, initialView }: Pri
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center md:p-6 overflow-hidden">
       {/* Background Overlay - Simplified */}
       <div 
         onClick={onClose}
         className="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity"
       />
       
-      <div className="relative w-full max-w-4xl max-h-[92dvh] md:max-h-[90vh] bg-[#11110F] border border-[#2A2A28] rounded-sm shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in duration-300">
-        <div className="flex items-center justify-between px-5 py-4 md:px-6 md:py-5 border-b border-[#1C1C1A] shrink-0">
+      <div className="relative w-full h-[100dvh] md:h-auto md:max-h-[90vh] max-w-4xl bg-[#11110F] border-0 md:border md:border-[#2A2A28] rounded-none md:rounded-sm shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in duration-300">
+        <div className="flex items-center justify-between px-5 py-4 pt-[max(1rem,env(safe-area-inset-top))] md:pt-5 md:px-6 md:py-5 border-b border-[#1C1C1A] shrink-0 bg-[#11110F] z-10">
            <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-[#E8A020]/10 flex items-center justify-center border border-[#E8A020]/20">
                  <Settings size={14} className="text-[#E8A020]" />
@@ -136,7 +136,7 @@ export default function PricingModal({ isOpen, onClose, user, initialView }: Pri
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
               transition={{ duration: 0.3 }}
-              className="flex-1 overflow-y-auto p-5 md:p-10 custom-scrollbar"
+              className="flex-1 overflow-y-auto p-5 pb-[env(safe-area-inset-bottom)] md:p-10 custom-scrollbar"
             >
                 <div className="max-w-2xl mx-auto">
                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-6 md:p-8 bg-[#0C0C0B] border border-[#1C1C1A] rounded-sm mb-8 md:mb-10">

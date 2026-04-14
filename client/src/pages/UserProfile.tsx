@@ -154,14 +154,14 @@ export default function UserProfile() {
 
       <main className="flex-1">
         {/* Header Section - Modern Editorial */}
-        <section className="relative pt-24 pb-12 overflow-hidden px-4 md:px-6 border-b border-[#1C1C1A]">
+        <section className="relative pt-16 md:pt-24 pb-8 md:pb-12 overflow-hidden px-4 md:px-6 border-b border-[#1C1C1A]">
           <div className="absolute inset-0 bg-[#E8A020]/[0.02] -skew-y-3 origin-right translate-y-[-10%]" />
           <div className="container relative z-10 max-w-5xl mx-auto">
-             <div className="flex flex-col md:flex-row items-center md:items-start gap-10 md:gap-14">
+             <div className="flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-14">
                 {/* Avatar Halo Design */}
                 <div className="relative group shrink-0">
                   <div className="absolute -inset-2 bg-gradient-to-tr from-[#E8A020]/20 to-transparent rounded-full blur-xl opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
-                  <div className="w-28 h-28 md:w-44 md:h-44 rounded-full p-[1px] bg-gradient-to-b from-[#E8A020]/40 to-[#1C1C1A] relative z-10">
+                  <div className="w-24 h-24 md:w-44 md:h-44 rounded-full p-[1px] bg-gradient-to-b from-[#E8A020]/40 to-[#1C1C1A] relative z-10">
                     <div className="w-full h-full rounded-full bg-[#0F0F0E] overflow-hidden flex items-center justify-center border-4 border-[#0F0F0E]">
                         {user.avatarUrl ? (
                           <img src={user.avatarUrl} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
@@ -280,26 +280,28 @@ export default function UserProfile() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="space-y-12"
+                      className="space-y-8 md:space-y-12"
                     >
-                       <h2 className="text-xl font-900 text-[#F2F0EB] uppercase tracking-tighter pb-6 border-b border-[#1C1C1A]/50 font-display">SUBSCRIPTION MODEL</h2>
-                       <div className="bg-[#11110F] border border-[#E8A020]/20 p-10 md:p-14 rounded-sm relative overflow-hidden">
-                          <div className="absolute top-0 right-0 w-64 h-64 bg-[#E8A020]/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
-                          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
-                             <div>
-                                <span className="text-[9px] font-900 text-[#555550] uppercase tracking-[0.4em] block mb-4">ACCESS LEVEL</span>
-                                <h3 className="text-4xl md:text-6xl font-900 text-[#F2F0EB] uppercase italic tracking-tighter mb-4">{user.subscriptionTier || 'FREE'}</h3>
-                                <div className="flex items-center gap-4">
-                                   <div className="flex items-center gap-2 text-[10px] text-[#27AE60] font-bold uppercase"><CheckCircle size={14} /> Active Period</div>
-                                   <div className="flex items-center gap-2 text-[10px] text-[#8A8880] font-bold uppercase font-mono tracking-widest">ID: BSY-{user.id.toString().padStart(6, '0')}</div>
+                       <h2 className="text-xl md:text-2xl font-900 text-[#F2F0EB] uppercase tracking-tighter pb-4 md:pb-6 border-b border-[#1C1C1A]/50 font-display">SUBSCRIPTION MODEL</h2>
+                       <div className="bg-[#11110F] border border-[#E8A020]/20 p-6 md:p-14 rounded-sm relative overflow-hidden flex flex-col items-center md:items-stretch text-center md:text-left">
+                          <div className="absolute top-0 right-0 w-64 h-64 bg-[#E8A020]/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                          <div className="flex flex-col md:flex-row justify-between items-center md:items-center gap-8 md:gap-10 w-full relative z-10">
+                             <div className="flex flex-col items-center md:items-start text-center md:text-left w-full">
+                                <span className="text-[9px] md:text-[9px] font-900 text-[#555550] uppercase tracking-[0.4em] block mb-2 md:mb-4">ACCESS LEVEL</span>
+                                <h3 className="text-4xl md:text-6xl font-900 text-[#F2F0EB] uppercase italic tracking-tighter mb-6 md:mb-4">{user.subscriptionTier || 'FREE'}</h3>
+                                <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4 justify-center md:justify-start w-full">
+                                   <div className="flex items-center gap-2 text-[9px] md:text-[10px] text-[#27AE60] font-900 uppercase tracking-widest p-3 md:p-0 bg-[#27AE60]/10 md:bg-transparent rounded-sm md:rounded-none w-full md:w-auto justify-center"><CheckCircle size={14} /> Active Period</div>
+                                   <div className="flex items-center gap-2 text-[9px] md:text-[10px] text-[#8A8880] font-900 uppercase font-mono tracking-widest p-3 md:p-0 bg-[#1C1C1A] md:bg-transparent border border-[#2A2A28] md:border-transparent rounded-sm md:rounded-none w-full md:w-auto justify-center">ID: BSY-{user.id.toString().padStart(6, '0')}</div>
                                 </div>
                              </div>
-                             <button 
-                               onClick={() => { setModalView(user.subscriptionTier !== 'free' ? 'manage' : 'plans'); setIsPricingOpen(true); }}
-                               className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] px-12 py-6 text-[11px] font-900 uppercase tracking-[0.2em] shadow-2xl active:scale-95 transition-all"
-                             >
-                                {user.subscriptionTier !== 'free' ? 'MANAGE SUBSCRIPTION' : 'UPGRADE ACCESS'}
-                             </button>
+                             <div className="w-full md:w-auto shrink-0 mt-2 md:mt-0">
+                               <button 
+                                 onClick={() => { setModalView(user.subscriptionTier !== 'free' ? 'manage' : 'plans'); setIsPricingOpen(true); }}
+                                 className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] px-8 md:px-12 py-5 md:py-6 text-[10px] md:text-[11px] font-900 uppercase tracking-[0.2em] shadow-2xl active:scale-95 transition-all w-full md:w-auto flex items-center justify-center gap-3"
+                               >
+                                  {user.subscriptionTier !== 'free' ? 'MANAGE PLAN' : 'UPGRADE ACCESS'} <ChevronRight size={16} className="md:hidden" />
+                               </button>
+                             </div>
                           </div>
                        </div>
                     </motion.div>
@@ -356,8 +358,8 @@ export default function UserProfile() {
                                     className="w-full bg-[#11110F] border border-[#1C1C1A] px-6 py-6 text-[#F2F0EB] text-sm h-40 focus:border-[#E8A020]/40 outline-none transition-all resize-none leading-relaxed"
                                   />
                                </div>
-                               <button onClick={handleSaveProfile} className="bg-[#1C1C1A] text-[#F2F0EB] hover:bg-[#2A2A28] border border-[#2A2A28] px-12 py-5 text-[10px] font-900 uppercase tracking-widest transition-all">
-                                  {updateMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : 'SAVE CHANGES'}
+                               <button onClick={handleSaveProfile} className="w-full md:w-auto bg-[#1C1C1A] text-[#F2F0EB] hover:bg-[#2A2A28] border border-[#2A2A28] px-12 py-5 md:py-5 text-[10px] md:text-[10px] font-900 uppercase tracking-widest transition-all">
+                                  {updateMutation.isPending ? <Loader2 size={16} className="animate-spin mx-auto md:mx-0" /> : 'SAVE CHANGES'}
                                </button>
                             </motion.div>
                           )}
