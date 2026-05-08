@@ -9,6 +9,7 @@ import {
   getArticlesByCategory,
   searchArticles,
   getRelatedArticles,
+  getRecentArticles,
   createArticle,
   updateArticle,
   deleteArticle,
@@ -254,11 +255,17 @@ export const articlesRouter = router({
       }));
     }),
 
-  // Public: Get related articles
   getRelated: publicProcedure
     .input(z.object({ articleId: z.number(), limit: z.number().default(3) }))
     .query(async ({ input }) => {
       return getRelatedArticles(input.articleId, input.limit);
+    }),
+
+  // Public: Get recent articles
+  getRecent: publicProcedure
+    .input(z.object({ limit: z.number().default(5) }).optional())
+    .query(async ({ input }) => {
+      return getRecentArticles(input?.limit);
     }),
 
   // Protected: Create article (admin only)

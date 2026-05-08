@@ -50,6 +50,10 @@ import AdPlacement from "@/components/AdPlacement";
 import AuthorBio from "@/components/AuthorBio";
 import PricingModal from "@/components/PricingModal";
 import ArticleJsonLd from "@/components/ArticleJsonLd";
+import ArticleProgressBar from "@/components/ArticleProgressBar";
+import RelatedArticles from "@/components/RelatedArticles";
+import ArticleSidebar from "@/components/ArticleSidebar";
+import NewsletterCta from "@/components/NewsletterCta";
 
 export default function ArticleDetail() {
   const [match, params] = useRoute("/article/:slug");
@@ -177,21 +181,7 @@ export default function ArticleDetail() {
   const { data: systemStatus } = trpc.system.getStatus.useQuery();
   const allowComments = systemStatus?.allowComments ?? true;
 
-  // Query for related articles
-  const { data: relatedArticles } = trpc.articles.getRelated.useQuery(
-    { articleId: article?.id || 0, limit: 3 },
-    { enabled: !!article?.id }
-  );
-
-  const { data: trendingArticles } = trpc.articles.trending.useQuery(
-    { limit: 5 },
-    { staleTime: 300000 }
-  );
-
-  const { data: recentArticles } = trpc.articles.list.useQuery(
-    { limit: 5 },
-    { staleTime: 60000 }
-  );
+  // Mutations moved to components where possible, or kept if local
 
   // Mutation to create a comment
   const createCommentMutation = trpc.comments.create.useMutation({
@@ -599,13 +589,7 @@ export default function ArticleDetail() {
         dateModified={article.updatedAt}
       />
 
-      {/* Reading Progress Bar */}
-      <div className="fixed top-0 left-0 w-full h-[3px] z-[100] bg-transparent">
-        <div
-          className="h-full bg-[#E8A020] transition-all duration-150 ease-out"
-          style={{ width: `${scrollProgress}%` }}
-        />
-      </div>
+      <ArticleProgressBar />
 
 
       {/* Hero Section — Vanguard Elevation Overlay */}
@@ -854,11 +838,12 @@ export default function ArticleDetail() {
                     </div>
                   </div>
 
-                  {/* Article Body */}
-                    <div className="font-body text-[#D4D0C8] leading-relaxed">
+                    <div id="article-body" className="font-body text-[#D4D0C8] leading-relaxed">
                       {renderArticleContent(article.content)}
                       <div className="clear-both" />
                     </div>
+
+                    <NewsletterCta />
 
                     {/* Category Hub Link */}
                     <div className="mt-12 p-8 bg-[#11110F] border border-[#1C1C1A] rounded-xl flex flex-col md:flex-row items-center justify-between gap-6 group hover:border-[#E8A020]/20 transition-all">
@@ -890,43 +875,6 @@ export default function ArticleDetail() {
                   {/* Author Bio */}
                   <AuthorBio authorName={article.author} />
 
-                  {/* Related Articles Section */}
-                  {relatedArticles && relatedArticles.length > 0 && (
-                    <div className="mt-16 pt-12 border-t border-[#1C1C1A]">
-                      <div className="amber-line mb-4" />
-                      <h3 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-8">
-                        Read Next
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {relatedArticles.map((article: any) => (
-                          <Link key={article.id} href={`/article/${article.slug}`}>
-                            <div className="group cursor-pointer">
-                              <div className="aspect-[16/9] overflow-hidden rounded-sm mb-4 relative bg-[#1C1C1A]">
-                                <img
-                                  src={getSafeImage(article.image, article.category, article.id, 800)}
-                                  alt={article.title}
-                                  className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
-                                  loading="lazy"
-                                />
-                                <div className="absolute top-3 left-3 bg-[#E8A020] text-[#0F0F0E] text-[10px] font-ui font-bold uppercase tracking-widest px-2 py-1 rounded-sm">
-                                  {article.category}
-                                </div>
-                              </div>
-                              <h4 className="font-display text-lg text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 mb-2 font-900 leading-tight">
-                                {article.title}
-                              </h4>
-                              <div className="flex items-center gap-4 text-[10px] text-[#555550] font-ui uppercase tracking-widest">
-                                <span className="font-900 text-[#8A8880]">{article.author}</span>
-                                <span>
-                                  {formatDateString(article.publishedAt || article.createdAt)}
-                                </span>
-                              </div>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
 
                   <div className="max-w-3xl mx-auto">
                     <h3 className="font-headline text-xl font-bold text-[#F2F0EB] mb-6">
@@ -1224,79 +1172,7 @@ export default function ArticleDetail() {
                 <NeuralSidebarWidget category={article.category} locked={isPremiumLocked} />
               </div>
 
-              {/* Recommended Articles in Sidebar */}
-              {relatedArticles && relatedArticles.length > 0 && (
-                <div className="bg-[#1C1C1A] rounded-sm p-6 border border-[#2A2A28]">
-                  <h3 className="font-ui text-[10px] font-600 text-[#8A8880] uppercase tracking-widest mb-6 block border-b border-[#2A2A28] pb-2">
-                    Recommended
-                  </h3>
-                  <div className="space-y-6">
-                    {relatedArticles.slice(0, 3).map(article => (
-                      <Link key={article.id} href={`/article/${article.slug}`}>
-                        <div className="group cursor-pointer">
-                          <h4 className="font-headline text-sm text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 mb-1">
-                            {article.title}
-                          </h4>
-                          <span className="text-[10px] font-ui text-[#555550] uppercase tracking-widest">
-                            {article.category}
-                          </span>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Trending Now */}
-              {trendingArticles && trendingArticles.length > 0 && (
-                <div className="bg-[#1C1C1A] rounded-sm p-6 border border-[#2A2A28]">
-                  <h3 className="font-ui text-[10px] font-600 text-[#8A8880] uppercase tracking-widest mb-6 block border-b border-[#2A2A28] pb-2">
-                    Trending Intelligence
-                  </h3>
-                  <div className="space-y-6">
-                    {trendingArticles.map((article, idx) => (
-                      <Link key={article.id} href={`/article/${article.slug}`}>
-                        <div className="group cursor-pointer flex gap-4">
-                          <span className="font-display text-2xl text-[#222220] group-hover:text-[#E8A020]/20 transition-colors font-900 leading-none">
-                            0{idx + 1}
-                          </span>
-                          <div>
-                            <h4 className="font-headline text-sm text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 mb-1 leading-tight">
-                              {article.title}
-                            </h4>
-                            <span className="text-[9px] font-ui text-[#8A8880] uppercase tracking-widest">
-                              {article.viewCount || 0} Views
-                            </span>
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Recent Briefings */}
-              {recentArticles && (
-                <div className="bg-[#11110F] rounded-sm p-6 border border-[#1C1C1A]">
-                  <h3 className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-widest mb-6 block border-b border-[#E8A020]/10 pb-2">
-                    Latest Updates
-                  </h3>
-                  <div className="space-y-6">
-                    {recentArticles.slice(0, 5).map((article: any) => (
-                      <Link key={article.id} href={`/article/${article.slug}`}>
-                        <div className="group cursor-pointer">
-                          <h4 className="font-headline text-xs text-[#8A8880] group-hover:text-[#F2F0EB] transition-colors line-clamp-2 mb-1 uppercase tracking-tight">
-                            {article.title}
-                          </h4>
-                          <span className="text-[8px] font-ui text-[#444440] uppercase tracking-widest">
-                            {formatDateString(article.publishedAt || article.createdAt)}
-                          </span>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <ArticleSidebar currentSlug={article.slug} />
 
               {/* Sidebar Ad Placement */}
               <AdPlacement position="sidebar" className="mt-8" />
@@ -1305,64 +1181,7 @@ export default function ArticleDetail() {
         </div>
       </article>
 
-      {/* Related Articles — Bottom Section - Vanguard Style */}
-      {relatedArticles && relatedArticles.length > 0 && (
-        <section className="container py-24 border-t border-[#1C1C1A]">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-               <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8A020]/10 border border-[#E8A020]/20 mb-4">
-                    <span className="text-[9px] font-900 text-[#E8A020] uppercase tracking-[0.3em]">Extended Intelligence</span>
-                  </div>
-                  <h3 className="font-display text-3xl md:text-4xl text-[#F2F0EB] uppercase tracking-tighter">
-                    CONTINUE <span className="text-[#E8A020]">EXPLORING</span>
-                  </h3>
-               </div>
-               <Link href={`/category/${article.category.toLowerCase()}`} className="text-[11px] font-900 text-[#8A8880] hover:text-[#E8A020] uppercase tracking-[0.3em] transition-all flex items-center gap-2 group">
-                  EXPLORE ALL {article.category}
-                  <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-               </Link>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-              {relatedArticles.slice(0, 3).map((article: any, idx: number) => (
-                <Link key={article.id} href={`/article/${article.slug}`}>
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="group cursor-pointer"
-                  >
-                    <div className="aspect-[16/10] overflow-hidden rounded-xl bg-[#11110F] border border-[#1C1C1A] group-hover:border-[#E8A020]/30 transition-all duration-500 relative mb-6">
-                      <img 
-                        src={getSafeImage(article.image, article.category, article.id, 600)} 
-                        alt={article.title}
-                        className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0E]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <span className="font-ui text-[9px] text-[#E8A020] font-900 uppercase tracking-widest">
-                          {article.category}
-                        </span>
-                        <div className="h-px w-4 bg-[#2A2A28]" />
-                        <span className="font-ui text-[9px] text-[#555550] font-900 uppercase tracking-widest">
-                          {formatDateString(article.publishedAt || article.createdAt)}
-                        </span>
-                      </div>
-                      <h4 className="font-display text-xl text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 leading-tight font-bold">
-                        {article.title}
-                      </h4>
-                    </div>
-                  </motion.div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      <RelatedArticles articleId={article.id} category={article.category} />
 
       {/* Bottom Ad Placement */}
       <div className="container pb-8 overflow-hidden">

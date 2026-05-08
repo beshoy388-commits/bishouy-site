@@ -588,6 +588,28 @@ export async function getRelatedArticles(
     .limit(limitCount);
 }
 
+export async function getRecentArticles(limitCount: number = 5): Promise<Article[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(articles)
+    .where(eq(articles.status, "published"))
+    .orderBy(desc(articles.publishedAt))
+    .limit(limitCount);
+}
+
+export async function getTrendingArticles(limitCount: number = 5): Promise<Article[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(articles)
+    .where(eq(articles.status, "published"))
+    .orderBy(desc(articles.viewCount))
+    .limit(limitCount);
+}
+
 export async function getBreakingArticles(limit = 5): Promise<Article[]> {
   const db = await getDb();
   if (!db) return [];
@@ -1768,17 +1790,7 @@ export async function trackView(
   }
 }
 
-export async function getTrendingArticles(limit = 5): Promise<Article[]> {
-  const db = await getDb();
-  if (!db) return [];
-
-  return db
-    .select()
-    .from(articles)
-    .where(eq(articles.status, "published"))
-    .orderBy(desc(articles.viewCount))
-    .limit(limit);
-}
+// Removed duplicate getTrendingArticles
 
 export async function getArticleCount(includeUnpublished = false, category?: string) {
   const db = await getDb();

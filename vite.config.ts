@@ -5,9 +5,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
-import vitePrerenderPkg from "vite-plugin-prerender";
-
-const vitePrerender = (vitePrerenderPkg as any).default || vitePrerenderPkg;
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const vitePrerender = require("vite-plugin-prerender");
 
 // =============================================================================
 // Manus Debug Collector - Vite Plugin
