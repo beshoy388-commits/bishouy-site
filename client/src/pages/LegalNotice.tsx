@@ -19,17 +19,17 @@ export default function LegalNotice() {
               <p>Tax ID / VAT: [INSERT VAT NUMBER]</p>
             </div>
           </section>
-          
+
           <section className="bg-[#11110F] p-8 border border-[#1C1C1A] rounded-sm">
             <h2 className="text-[#E8A020] text-sm font-ui mb-4 uppercase tracking-[0.3em] font-900">Communication Protocols</h2>
             <p className="text-sm leading-relaxed">Official legal correspondence and regulatory inquiries must be directed to our dedicated compliance desk: <span className="text-[#F2F0EB] font-bold">legal@bishouy.com</span>.</p>
           </section>
-          
+
           <section className="bg-[#11110F] p-8 border border-[#1C1C1A] rounded-sm">
             <h2 className="text-[#E8A020] text-sm font-ui mb-4 uppercase tracking-[0.3em] font-900">Intellectual Sovereignty</h2>
             <p className="text-sm leading-relaxed">The Neural Nexus, including all AI-synthesized intelligence segments, proprietary datasets, and curated editorial content, is protected under international intellectual property treaties. Unauthorized extraction or duplication will trigger defensive legal protocols.</p>
           </section>
-          
+
           <div className="pt-12 text-[9px] uppercase tracking-[0.5em] text-[#333330]">
             BISHOUY SYSTEM CORE // LEGAL REVISION: 4.01.2026
           </div>
