@@ -392,12 +392,29 @@ async function startServer() {
     }
   });
 
-  // tRPC API
+  // tRPC API with Response Caching for public routes
   app.use(
     "/api/trpc",
     createExpressMiddleware({
       router: appRouter,
       createContext,
+      responseMeta({ paths, errors, type }) {
+        // Cache public queries for 1 minute (SWR 1 hour)
+        // Public paths are typically those starting with 'articles.' or specific public routers
+        const publicPaths = ['articles.', 'social.', 'extra.ads', 'advertisements.'];
+        const isPublic = paths?.every(p => publicPaths.some(pub => p.startsWith(pub)));
+        const isOk = errors.length === 0;
+        const isQuery = type === 'query';
+
+        if (isPublic && isOk && isQuery) {
+          return {
+            headers: {
+              'cache-control': 's-maxage=60, stale-while-revalidate=3600',
+            },
+          };
+        }
+        return {};
+      },
     })
   );
   // SEO: Standard RSS Feed (Point 3 & 17)
@@ -711,6 +728,32 @@ cron.schedule("0 */6 * * *", () => {
   syncRSSFeeds().catch(err => {
     console.error("[CRON] RSS Sync Error:", err);
   });
+});
+
+// Database Maintenance: Daily cleanup of logs and sessions at 3:00 AM
+cron.schedule("0 3 * * *", async () => {
+  console.log("[CRON] Starting daily database maintenance...");
+  try {
+    const { getDb, auditLogs, pageViews, visitorSessions } = await import("../db");
+    const { lt } = await import("drizzle-orm");
+    const db = await getDb();
+    if (!db) return;
+
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    // Prune audit logs older than 30 days
+    await db.delete(auditLogs).where(lt(auditLogs.createdAt, thirtyDaysAgo));
+    
+    // Prune page views older than 30 days
+    await db.delete(pageViews).where(lt(pageViews.createdAt, thirtyDaysAgo));
+
+    // Prune visitor sessions inactive for more than 30 days
+    await db.delete(visitorSessions).where(lt(visitorSessions.lastActiveAt, thirtyDaysAgo));
+
+    console.log("[CRON] Database maintenance completed successfully.");
+  } catch (err) {
+    console.error("[CRON] Database maintenance error:", err);
+  }
 });
 
 // Production Startup Check: If we deploy/restart between 6 AM and 8:30 AM 

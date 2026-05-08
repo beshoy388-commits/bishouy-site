@@ -5,9 +5,9 @@ import { Mail, BarChart3, Users, Globe } from "lucide-react";
 
 export default function Advertise() {
   const stats = [
-    { icon: <Users className="text-[#E8A020]" />, label: "Monthly Unique Visitors", value: "2.4M+" },
-    { icon: <BarChart3 className="text-[#E8A020]" />, label: "Page Views", value: "8.5M+" },
-    { icon: <Globe className="text-[#E8A020]" />, label: "Global Reach", value: "180+ Countries" },
+    { icon: <Users className="text-[#E8A020]" />, label: "Monthly Active Readers", value: "245K+" },
+    { icon: <BarChart3 className="text-[#E8A020]" />, label: "Engagement Rate", value: "4.2%" },
+    { icon: <Globe className="text-[#E8A020]" />, label: "Global Footprint", value: "45+ Regions" },
   ];
 
   return (

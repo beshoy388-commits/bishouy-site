@@ -567,14 +567,24 @@ export async function getRelatedArticles(
   const db = await getDb();
   if (!db) return [];
 
-  // Fetch recent published articles excluding the current one
+  // Get current article to find its category
+  const currentArticle = await getArticleById(articleId);
+  const category = currentArticle?.category;
+
+  // Fetch articles excluding the current one, prioritizing the same category
   return db
     .select()
     .from(articles)
     .where(
-      and(eq(articles.status, "published"), sql`${articles.id} != ${articleId}`)
+      and(
+        eq(articles.status, "published"), 
+        ne(articles.id, articleId)
+      )
     )
-    .orderBy(desc(articles.createdAt))
+    .orderBy(
+      sql`CASE WHEN ${articles.category} = ${category} THEN 0 ELSE 1 END`,
+      desc(articles.publishedAt)
+    )
     .limit(limitCount);
 }
 

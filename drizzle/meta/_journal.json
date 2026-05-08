@@ -50,6 +50,13 @@
       "when": 1775388545620,
       "tag": "0006_tiresome_kate_bishop",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1778257251497,
+      "tag": "0007_unique_yellow_claw",
+      "breakpoints": true
     }
   ]
 }

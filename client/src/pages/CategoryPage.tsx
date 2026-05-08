@@ -86,7 +86,7 @@ export default function CategoryPage() {
       />
       <Navbar />
 
-      {/* Category Header — Vanguard Selection */}
+      {/* Category Header */}
       <section className="pt-32 pb-16 md:pb-24 relative overflow-hidden bg-[#0A0A09]">
         <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="absolute top-0 left-0 w-full h-[50vh] bg-gradient-to-b from-[#E8A020]/40 to-transparent" style={{ backgroundColor: category.color + '33' }} />
@@ -114,7 +114,7 @@ export default function CategoryPage() {
               
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 pt-8 border-t border-[#1C1C1A]">
                 <p className="font-ui text-[10px] md:text-xs text-[#8A8880] uppercase tracking-[0.3em] flex items-center gap-4 font-900">
-                  SECTION INTEL: <span className="text-[#E8A020] bg-[#E8A020]/5 border border-[#E8A020]/20 px-3 py-1 rounded-full">{countQuery.data || 0} REPORTS</span>
+                  ARTICLES: <span className="text-[#E8A020] bg-[#E8A020]/5 border border-[#E8A020]/20 px-3 py-1 rounded-full">{countQuery.data || 0} PUBLISHED</span>
                 </p>
                 <div className="flex gap-4">
                    <div className="w-1.5 h-1.5 rounded-full bg-[#E8A020] animate-pulse" />
@@ -137,16 +137,16 @@ export default function CategoryPage() {
              </div>
              <div className="relative z-10 text-center md:text-left">
                 <div className="inline-flex items-center gap-2 mb-4">
-                   <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] font-ui">Neural Directives</span>
+                   <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-[0.4em] font-ui">About This Section</span>
                    <div className="h-px w-8 bg-[#E8A020]/40" />
                 </div>
                 <h3 className="font-display text-3xl md:text-4xl text-[#F2F0EB] mb-6 uppercase tracking-tighter">THE {category.name} CHRONICLE</h3>
                 <p className="text-lg md:text-xl text-[#F2F0EB]/90 leading-relaxed font-ui font-medium">
-                    “{category.description || `Our strategic focus for the ${category.name} intelligence node prioritizes emergent cross-border shifts and high-fidelity reporting on established power structures.`}”
+                    “{category.description || `Explore our latest coverage and in-depth analysis of ${category.name} topics from around the world.`}”
                 </p>
                 <div className="mt-8 flex items-center gap-4 text-[9px] font-900 text-[#8A8880] uppercase tracking-widest">
-                   <span className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-[#E8A020]" /> ALPHA FEED</span>
-                   <span className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-[#E8A020]" /> REAL-TIME ANALYSIS</span>
+                   <span className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-[#E8A020]" /> CURATED</span>
+                   <span className="flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-[#E8A020]" /> UP TO DATE</span>
                 </div>
              </div>
              <div className="absolute top-0 right-0 w-80 h-80 bg-[#E8A020]/5 blur-[100px] rounded-full animate-pulse pointer-events-none" />

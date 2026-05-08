@@ -177,10 +177,18 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          // Splitting large libraries into a separate vendor chunk
-          // to reduce main bundle size and improve caching
-          'vendor': ['react', 'react-dom', 'wouter', 'lucide-react', 'clsx', 'tailwind-merge'],
-          'ui': ['@radix-ui/react-tooltip', '@radix-ui/react-slot', 'sonner'],
+          'vendor-react': ['react', 'react-dom', 'wouter'],
+          'vendor-motion': ['framer-motion'],
+          'vendor-stripe': ['@stripe/stripe-js', '@stripe/react-stripe-js'],
+          'vendor-trpc': ['@trpc/client', '@trpc/react-query', '@tanstack/react-query'],
+          'vendor-utils': ['lucide-react', 'clsx', 'tailwind-merge', 'date-fns'],
+          'vendor-ui': [
+            '@radix-ui/react-tooltip', 
+            '@radix-ui/react-slot', 
+            '@radix-ui/react-dialog', 
+            '@radix-ui/react-dropdown-menu',
+            'sonner'
+          ],
         }
       }
     }

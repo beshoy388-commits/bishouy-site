@@ -77,14 +77,14 @@ export default function Contact() {
                                 </div>
 
                                 <div className="flex gap-4 items-start pb-8 border-b border-[#1C1C1A]">
-                                    <MapPin className="text-[#E8A020] w-6 h-6 mt-1" />
+                                    <Globe className="text-[#E8A020] w-6 h-6 mt-1" />
                                     <div>
-                                        <h4 className="font-display text-lg text-[#F2F0EB] mb-1">Headquarters</h4>
-                                        <address className="text-[#8A8880] font-ui text-sm not-italic leading-relaxed">
-                                            Bishouy Media Group<br />
-                                            100 Global Avenue, Suite 400<br />
-                                            Geneva, Switzerland 1204
-                                        </address>
+                                        <h4 className="font-display text-lg text-[#F2F0EB] mb-1">Digital Presence</h4>
+                                        <p className="text-[#8A8880] font-ui text-sm leading-relaxed">
+                                            Bishouy operates as a decentralized global editorial collective. <br />
+                                            Our contributors and intelligence analysts work across Europe, <br />
+                                            the Middle East, and the Americas.
+                                        </p>
                                     </div>
                                 </div>
                             </div>

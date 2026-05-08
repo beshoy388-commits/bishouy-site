@@ -29,6 +29,7 @@ import { logArticleAction } from "../audit";
 import { calculateReadTime } from "../utils";
 import { generateArticleFromTopic } from "../ai_service";
 import { dbCache } from "../cache";
+import { injectInternalLinks } from "../utils/auto_link";
 
 export const articlesRouter = router({
   // Public: Get all articles (now with filters)
@@ -172,6 +173,9 @@ export const articlesRouter = router({
            }
            article.summary = null; 
            article.factCheck = null;
+      } else if (article.content) {
+        // Inject internal links for full content
+        article.content = await injectInternalLinks(article.content, article.slug);
       }
       return article;
     }),
@@ -207,6 +211,9 @@ export const articlesRouter = router({
           }
           result.summary = null;
           result.factCheck = null;
+        } else if (result.content) {
+          // Inject internal links for full content
+          result.content = await injectInternalLinks(result.content, result.slug);
         }
 
         return result;
@@ -483,12 +490,10 @@ export const articlesRouter = router({
     .mutation(async ({ input, ctx }) => {
       const generated = await generateArticleFromTopic(input.topic);
 
-      const slug = input.topic
+      const slug = generated.title
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "") +
-        "-" +
-        Math.floor(Math.random() * 10000);
+        .replace(/^-+|-+$/g, "");
 
       const categoryColors: Record<string, string> = {
         World: "#E8A020",

@@ -182,6 +182,16 @@ export default function ArticleDetail() {
     { enabled: !!article?.id }
   );
 
+  const { data: trendingArticles } = trpc.articles.trending.useQuery(
+    { limit: 5 },
+    { staleTime: 300000 }
+  );
+
+  const { data: recentArticles } = trpc.articles.list.useQuery(
+    { limit: 5 },
+    { staleTime: 60000 }
+  );
+
   // Mutation to create a comment
   const createCommentMutation = trpc.comments.create.useMutation({
     onSuccess: () => {
@@ -835,10 +845,22 @@ export default function ArticleDetail() {
                   </div>
 
                   {/* Article Body */}
-                  <div className="prose prose-invert max-w-none mb-12 article-body-content">
                     <div className="font-body text-[#D4D0C8] leading-relaxed">
                       {renderArticleContent(article.content)}
                       <div className="clear-both" />
+                    </div>
+
+                    {/* Category Hub Link */}
+                    <div className="mt-12 p-8 bg-[#11110F] border border-[#1C1C1A] rounded-xl flex flex-col md:flex-row items-center justify-between gap-6 group hover:border-[#E8A020]/20 transition-all">
+                      <div className="text-center md:text-left">
+                        <h4 className="font-display text-xl text-[#F2F0EB] mb-2 uppercase tracking-tight">Dive deeper into <span className="text-[#E8A020]">{article.category}</span></h4>
+                        <p className="text-xs text-[#8A8880] font-ui uppercase tracking-widest">Explore our full intelligence archive for this sector.</p>
+                      </div>
+                      <Link href={`/category/${article.category.toLowerCase().replace(/\s+/g, '-')}`}>
+                        <button className="bg-[#E8A020] hover:bg-[#D4911C] text-[#0F0F0E] px-8 py-3 rounded-full font-ui text-[10px] font-900 uppercase tracking-[0.3em] transition-all group-hover:scale-105 active:scale-95 shadow-xl">
+                          Access Archives
+                        </button>
+                      </Link>
                     </div>
                   </div>
 
@@ -1193,7 +1215,7 @@ export default function ArticleDetail() {
                 <NeuralSidebarWidget category={article.category} locked={isPremiumLocked} />
               </div>
 
-              {/* Related Articles in Sidebar */}
+              {/* Recommended Articles in Sidebar */}
               {relatedArticles && relatedArticles.length > 0 && (
                 <div className="bg-[#1C1C1A] rounded-sm p-6 border border-[#2A2A28]">
                   <h3 className="font-ui text-[10px] font-600 text-[#8A8880] uppercase tracking-widest mb-6 block border-b border-[#2A2A28] pb-2">
@@ -1208,6 +1230,57 @@ export default function ArticleDetail() {
                           </h4>
                           <span className="text-[10px] font-ui text-[#555550] uppercase tracking-widest">
                             {article.category}
+                          </span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Trending Now */}
+              {trendingArticles && trendingArticles.length > 0 && (
+                <div className="bg-[#1C1C1A] rounded-sm p-6 border border-[#2A2A28]">
+                  <h3 className="font-ui text-[10px] font-600 text-[#8A8880] uppercase tracking-widest mb-6 block border-b border-[#2A2A28] pb-2">
+                    Trending Intelligence
+                  </h3>
+                  <div className="space-y-6">
+                    {trendingArticles.map((article, idx) => (
+                      <Link key={article.id} href={`/article/${article.slug}`}>
+                        <div className="group cursor-pointer flex gap-4">
+                          <span className="font-display text-2xl text-[#222220] group-hover:text-[#E8A020]/20 transition-colors font-900 leading-none">
+                            0{idx + 1}
+                          </span>
+                          <div>
+                            <h4 className="font-headline text-sm text-[#F2F0EB] group-hover:text-[#E8A020] transition-colors line-clamp-2 mb-1 leading-tight">
+                              {article.title}
+                            </h4>
+                            <span className="text-[9px] font-ui text-[#8A8880] uppercase tracking-widest">
+                              {article.viewCount || 0} Views
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Recent Briefings */}
+              {recentArticles && (
+                <div className="bg-[#11110F] rounded-sm p-6 border border-[#1C1C1A]">
+                  <h3 className="font-ui text-[10px] font-900 text-[#E8A020] uppercase tracking-widest mb-6 block border-b border-[#E8A020]/10 pb-2">
+                    Latest Updates
+                  </h3>
+                  <div className="space-y-6">
+                    {recentArticles.slice(0, 5).map(article => (
+                      <Link key={article.id} href={`/article/${article.slug}`}>
+                        <div className="group cursor-pointer">
+                          <h4 className="font-headline text-xs text-[#8A8880] group-hover:text-[#F2F0EB] transition-colors line-clamp-2 mb-1 uppercase tracking-tight">
+                            {article.title}
+                          </h4>
+                          <span className="text-[8px] font-ui text-[#444440] uppercase tracking-widest">
+                            {formatDateString(article.publishedAt || article.createdAt)}
                           </span>
                         </div>
                       </Link>

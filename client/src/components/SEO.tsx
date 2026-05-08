@@ -143,6 +143,13 @@ export default function SEO({
                 "sameAs": [
                     "https://twitter.com/bishouy",
                     "https://facebook.com/bishouy"
+                ],
+                "hasPart": [
+                    { "@type": "WebPage", "name": "World News", "url": "https://bishouy.com/category/world" },
+                    { "@type": "WebPage", "name": "Politics", "url": "https://bishouy.com/category/politics" },
+                    { "@type": "WebPage", "name": "Economy", "url": "https://bishouy.com/category/economy" },
+                    { "@type": "WebPage", "name": "Technology", "url": "https://bishouy.com/category/technology" },
+                    { "@type": "WebPage", "name": "Culture", "url": "https://bishouy.com/category/culture" }
                 ]
             });
         }

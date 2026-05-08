@@ -8,6 +8,7 @@ import { useEffect, lazy, Suspense } from "react";
 import { Link } from "wouter";
 import { Sparkles } from "lucide-react";
 import ArticleCard from "@/components/ArticleCard";
+import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import NeuralMouseBackground from "@/components/NeuralMouseBackground";
 import type { Article } from "@/lib/articles";
 import { trpc } from "@/lib/trpc";
@@ -96,6 +97,7 @@ export default function Home() {
   return (
     <div className="relative">
       <SEO />
+      <BreakingNewsTicker />
 
       {/* Hero Section — Modern Neural Elevation */}
       <section className="relative pt-0 pb-12 md:py-16 bg-[#0A0A09] overflow-hidden">
@@ -112,21 +114,54 @@ export default function Home() {
                </div>
                <ArticleCard article={mainFeatured} variant="featured" />
             </div>
-            <div className="space-y-8 mt-6 lg:mt-0">
-               <div className="flex items-center justify-between border-b border-[#1C1C1A] pb-4">
-                  <h3 className="font-display text-2xl md:text-3xl text-[#F2F0EB] uppercase tracking-tighter font-bold">Editor's Picks</h3>
-                  <Link href="/category/world" className="text-[11px] font-900 text-[#E8A020] hover:text-[#D4911C] uppercase tracking-[0.2em] transition-colors font-ui">See All</Link>
-               </div>
-               <div className="space-y-8 mt-4">
-                  {secondaryFeatured.map((article: any) => (
-                    <ArticleCard
-                      key={article.id}
-                      article={article}
-                      variant="horizontal"
-                    />
-                  ))}
-               </div>
-            </div>
+             <div className="space-y-8 mt-6 lg:mt-0">
+                <div className="flex items-center justify-between border-b border-[#1C1C1A] pb-4">
+                   <h3 className="font-display text-2xl md:text-3xl text-[#F2F0EB] uppercase tracking-tighter font-bold">Editor's Picks</h3>
+                </div>
+                <div className="space-y-8 mt-4">
+                   {secondaryFeatured.map((article: any) => (
+                     <ArticleCard
+                       key={article.id}
+                       article={article}
+                       variant="horizontal"
+                     />
+                   ))}
+                </div>
+
+                {/* Most Read Section */}
+                <div className="pt-12">
+                   <div className="flex items-center justify-between border-b border-[#1C1C1A] pb-4 mb-6">
+                      <h3 className="font-display text-xl text-[#F2F0EB] uppercase tracking-tighter font-bold">Most Read</h3>
+                      <div className="flex gap-1">
+                        <div className="w-1 h-1 rounded-full bg-[#E8A020]" />
+                        <div className="w-1 h-1 rounded-full bg-[#2A2A28]" />
+                        <div className="w-1 h-1 rounded-full bg-[#2A2A28]" />
+                      </div>
+                   </div>
+                   <div className="space-y-6">
+                      {articles
+                        .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
+                        .slice(0, 5)
+                        .map((article, idx) => (
+                          <Link key={article.id} href={`/article/${article.slug}`}>
+                            <div className="group cursor-pointer flex gap-4">
+                              <span className="font-display text-2xl text-[#1C1C1A] group-hover:text-[#E8A020]/20 transition-colors font-900 leading-none">
+                                {idx + 1}
+                              </span>
+                              <div className="space-y-1">
+                                <h4 className="font-headline text-sm text-[#8A8880] group-hover:text-[#F2F0EB] transition-colors line-clamp-2 leading-tight">
+                                  {article.title}
+                                </h4>
+                                <div className="flex items-center gap-2">
+                                   <span className="text-[8px] font-900 text-[#555550] uppercase tracking-widest">{article.category}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
+                   </div>
+                </div>
+             </div>
           </div>
         </div>
       </section>

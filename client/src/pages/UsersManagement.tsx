@@ -156,7 +156,7 @@ export default function UsersManagement() {
     return (
       <div className="flex flex-col items-center justify-center py-40 gap-4 opacity-30">
         <Fingerprint size={48} className="animate-pulse text-[#E8A020]" />
-        <p className="text-[10px] font-900 uppercase tracking-[0.4em] font-ui">Scanning Registry...</p>
+        <p className="text-[10px] font-900 uppercase tracking-[0.4em] font-ui">Loading users...</p>
       </div>
     );
   }
@@ -168,11 +168,11 @@ export default function UsersManagement() {
         <div className="space-y-2">
             <div className="flex items-center gap-3">
                  <div className="px-2 py-0.5 bg-[#E8A020]/10 border border-[#E8A020]/20 rounded-sm">
-                    <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-widest font-ui">Registry: Personnel</span>
+                    <span className="text-[10px] font-900 text-[#E8A020] uppercase tracking-widest font-ui">User Management</span>
                  </div>
             </div>
-            <h2 className="text-4xl font-display text-[#F2F0EB] tracking-tighter uppercase leading-[0.8] mt-4">Node <span className="text-[#E8A020]">Registry</span></h2>
-            <p className="text-[#555550] text-[10px] font-900 uppercase tracking-[0.3em] font-ui">Overseeing agent identities and access clearance across the global matrix</p>
+            <h2 className="text-4xl font-display text-[#F2F0EB] tracking-tighter uppercase leading-[0.8] mt-4">All <span className="text-[#E8A020]">Users</span></h2>
+            <p className="text-[#555550] text-[10px] font-900 uppercase tracking-[0.3em] font-ui">Manage user accounts, roles, and subscriptions</p>
         </div>
         
         <div className="p-6 bg-[#11110F] border border-[#1C1C1A] relative overflow-hidden flex flex-col items-end">
@@ -180,7 +180,7 @@ export default function UsersManagement() {
                  <Activity size={18} className="text-[#22c55e]" />
                  <span className="text-2xl font-display text-[#F2F0EB]">{users?.length || 0}</span>
             </div>
-            <p className="text-[9px] font-900 text-[#555550] uppercase tracking-widest font-ui">Active Node Identifiers</p>
+            <p className="text-[9px] font-900 text-[#555550] uppercase tracking-widest font-ui">Total Users</p>
         </div>
       </div>
 
@@ -190,11 +190,11 @@ export default function UsersManagement() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-[#1C1C1A] bg-[#141412]">
-                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Identifier</th>
-                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Email Hash</th>
-                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Clearance</th>
-                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui text-center">Membership</th>
-                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui text-center">Protocol</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Name</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Email</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Role</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui text-center">Plan</th>
+                <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui text-center">Status</th>
                 <th className="text-left py-4 px-6 font-900 text-[#555550] text-[10px] uppercase tracking-widest font-ui">Creation Date</th>
                 <th className="text-right py-4 px-6 font-900 text-[#E8A020] text-[10px] uppercase tracking-widest font-ui">Actions</th>
               </tr>
@@ -253,13 +253,13 @@ export default function UsersManagement() {
                           onClick={handleSave}
                           className="flex items-center gap-2 bg-green-500/10 text-green-500 border border-green-500/20 px-4 py-2 text-[9px] font-900 uppercase tracking-widest hover:bg-green-500 hover:text-[#0F0F0E] transition-all"
                         >
-                          <Save size={12} /> Sync
+                          <Save size={12} /> Save
                         </button>
                         <button
                           onClick={() => { setEditingId(null); setEditingData(null); }}
                           className="flex items-center gap-2 bg-[#1C1C1A] text-[#555550] border border-[#1C1C1A] px-4 py-2 text-[9px] font-900 uppercase tracking-widest hover:text-[#F2F0EB] transition-all"
                         >
-                          <X size={12} /> Abort
+                          <X size={12} /> Cancel
                         </button>
                       </td>
                     </>
@@ -270,7 +270,7 @@ export default function UsersManagement() {
                             <div className="w-8 h-8 bg-[#1C1C1A] text-[#8A8880] flex items-center justify-center text-[10px] font-900 border border-[#222220] uppercase font-display">
                                 {user.name?.[0] || 'X'}
                             </div>
-                            <span className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">{user.name || "SECURE_NODE"}</span>
+                            <span className="text-[11px] font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">{user.name || "Unknown"}</span>
                         </div>
                       </td>
                       <td className="py-4 px-6 text-[10px] font-900 text-[#555550] uppercase tracking-tighter font-ui">
@@ -333,7 +333,7 @@ export default function UsersManagement() {
                                 {user.name?.[0] || 'X'}
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-xs font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">{user.name || "SECURE_NODE"}</span>
+                                <span className="text-xs font-900 text-[#F2F0EB] uppercase tracking-widest font-ui">{user.name || "Unknown"}</span>
                                 <span className="text-[9px] uppercase font-900 text-[#555550] tracking-tighter">ID: {user.id.toString().padStart(4, '0')}</span>
                             </div>
                         </div>

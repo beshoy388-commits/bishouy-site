@@ -29,12 +29,42 @@ export interface Article {
 }
 
 export const CATEGORIES = [
-  { name: "World", slug: "world", color: "#E8A020", description: "Strategic analysis of global geopolitical shifts, international diplomacy, and cross-border conflicts in the emergent world order." },
-  { name: "Politics", slug: "politics", color: "#C0392B", description: "Granular reporting on legislative frameworks, institutional governance, and the evolving dynamics of state power." },
-  { name: "Economy", slug: "economy", color: "#27AE60", description: "Real-time market intelligence, fiscal policy analysis, and the macroeconomic trends reshaping global trade and finance." },
-  { name: "Technology", slug: "technology", color: "#2980B9", description: "In-depth exploration of emergent neural networks, quantum computing, and the ethical boundaries of the digital frontier." },
-  { name: "Culture", slug: "culture", color: "#8E44AD", description: "A synthesis of artistic movements, philosophical discourse, and the shifting societal archetypes in modern civilizations." },
-  { name: "Sports", slug: "sports", color: "#E67E22", description: "High-performance analysis of international athletic diplomacy, team strategies, and the business of global sports." },
+  { 
+    name: "World", 
+    slug: "world", 
+    color: "#E8A020", 
+    description: "Our World section offers an uncompromising and sophisticated analysis of the global geopolitical landscape. In an era defined by rapid shifts in international power dynamics, we provide the strategic intelligence necessary to navigate the complexities of modern diplomacy, cross-border conflicts, and emerging global alliances. From the resurgence of great power competition in Eurasia to the critical development of sustainable governance in the Global South, our reporting is designed for the informed citizen who demands depth over brevity. We delve into the historical roots of contemporary crises, examining how regional tensions influence global trade, energy security, and the humanitarian frontier. Our network of correspondents and neural synthesis models work in tandem to deliver a 360-degree view of the events that are not just making headlines, but are fundamentally rewriting the world's constitutional and physical geography. Expect detailed investigations into international law, the impact of climate-driven migration on state sovereignty, and the behind-the-scenes negotiations shaping the future of global institutions." 
+  },
+  { 
+    name: "Politics", 
+    slug: "politics", 
+    color: "#C0392B", 
+    description: "At the heart of the BISHOUY editorial mission is a rigorous examination of state power, legislative architecture, and institutional integrity. The Politics desk moves beyond the transient noise of partisan rhetoric to analyze the structural forces driving national and local governance. We focus on the evolution of democratic institutions, the rise of technocratic governance models, and the critical intersection of civil liberties with state-driven security frameworks. Our coverage tracks the granular details of policy formulation, the judicial precedents being set in high courts, and the electoral shifts that signal deeper societal transformations. We believe that true political reporting requires a commitment to transparency and an understanding of the incentive structures that dictate public administration. Whether we are covering the intricacies of constitutional reform or the populist movements reshaping traditional party systems, our goal is to provide a clear, evidence-based roadmap of the political landscape. By synthesizing expert commentary with raw legislative data, we offer our readers a unique perspective on how power is won, maintained, and challenged in the 21st century." 
+  },
+  { 
+    name: "Economy", 
+    slug: "economy", 
+    color: "#27AE60", 
+    description: "The BISHOUY Economy section is a premier destination for macroeconomic intelligence, fiscal policy analysis, and market-shaping trends. We recognize that the global economy is an interconnected, living system where a policy shift in one hemisphere can trigger profound consequences in another. Our reporting covers the entire spectrum of economic activity, from the centralized decisions of major central banks regarding interest rates and quantitative easing to the disruptive potential of decentralized finance and blockchain technology. We provide high-fidelity analysis of global supply chains, the future of labor in an automated world, and the transition toward a circular economy. Our readers benefit from deep dives into trade agreements, commodity market fluctuations, and the fiscal health of both emerging and developed nations. We prioritize clarity in our financial reporting, helping readers distinguish between market volatility and structural economic change. By integrating traditional financial metrics with ESG (Environmental, Social, and Governance) data, we offer a modern framework for understanding value creation and risk in a world where economic stability is increasingly tied to social and environmental sustainability." 
+  },
+  { 
+    name: "Technology", 
+    slug: "technology", 
+    color: "#2980B9", 
+    description: "Welcome to the frontline of the digital frontier. Our Technology section is dedicated to tracking the breakthroughs and ethical challenges that are redefining human capability. We focus on the transformative power of Artificial Intelligence, from large language models to neural architecture, and examine their impact on every aspect of society, from healthcare and education to military strategy and creative expression. Beyond AI, our reporting encompasses the quantum computing revolution, the expansion of 6G networks, and the critical field of cybersecurity in an age of hybrid warfare. We investigate the 'Big Tech' ecosystem, analyzing the antitrust movements and data privacy regulations that seek to curb digital monopolies. We also highlight the 'deep tech' startups working on fusion energy, biotechnology, and space exploration, providing a glimpse into the industries that will dominate the coming decades. Our technology coverage is rooted in a philosophy of 'Neural Insights'—where we use advanced data analysis to uncover patterns in innovation that traditional journalism might miss. We are not just reporting on gadgets; we are documenting the co-evolution of humanity and its most sophisticated tools." 
+  },
+  { 
+    name: "Culture", 
+    slug: "culture", 
+    color: "#8E44AD", 
+    description: "The BISHOUY Culture section is an intellectual sanctuary for the examination of artistic expression, philosophical discourse, and the evolving narratives of modern society. We explore the archetypes that define our collective identity and the cultural shifts that drive social progress. Our coverage ranges from the high-art movements appearing in global galleries to the underground digital subcultures reshaping the internet's social fabric. We provide nuanced critiques of contemporary cinema, literature, and architecture, always seeking to understand how these works reflect or challenge the spirit of the times (Zeitgeist). Our cultural reporting also addresses the profound impact of globalization on local traditions, the ethics of cultural appropriation, and the role of storytelling in a fragmented media landscape. We believe that culture is the primary engine of human meaning, and our goal is to document its most vibrant and challenging manifestations. Whether analyzing the philosophical implications of post-humanism or the resurgence of ancient craftsmanship in a mass-produced world, our Culture desk provides a sophisticated lens through which to view the shared experiences that bind us together as a species." 
+  },
+  { 
+    name: "Sports", 
+    slug: "sports", 
+    color: "#E67E22", 
+    description: "Our Sports coverage goes far beyond the scoreboard to investigate the business, science, and cultural impact of international athletic competition. We examine the massive economic engines driving global leagues, the intricacies of athlete representation and branding, and the rapidly evolving field of sports medicine and performance optimization. From the geopolitical implications of hosting major international tournaments like the Olympics or the World Cup to the grassroots movements seeking to make sport more accessible and equitable, we provide a holistic view of the sporting world. Our reporting also tracks the intersection of technology and performance, including the use of advanced analytics in coaching, the development of next-generation equipment, and the rise of e-sports as a legitimate competitive and commercial force. We profile the icons who inspire millions and the institutional structures that govern their careers. In the BISHOUY Sports section, we treat athletic achievement with the same analytical rigour as our geopolitical or economic reporting, recognizing that sport is a powerful mirror of societal values, national pride, and human potential." 
+  },
 ];
 
 export const ARTICLES: Article[] = [

@@ -1,4 +1,4 @@
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text, index, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 /**
  * Core user table backing auth flow.
@@ -91,7 +91,12 @@ export const articles = sqliteTable("articles", {
   summary: text("summary"), // AI generated bullet points (JSON string)
   factCheck: text("factCheck"), // Trust score or verification status
   premiumOnly: integer("premiumOnly", { mode: "number" }).default(0).notNull(),
-});
+}, (table) => ({
+  slugIdx: uniqueIndex("articles_slug_idx").on(table.slug),
+  categoryIdx: index("articles_category_idx").on(table.category),
+  publishedAtIdx: index("articles_published_at_idx").on(table.publishedAt),
+  premiumIdx: index("articles_premium_idx").on(table.premiumOnly),
+}));
 
 export type Article = typeof articles.$inferSelect;
 export type InsertArticle = typeof articles.$inferInsert;
@@ -161,7 +166,11 @@ export const auditLogs = sqliteTable("audit_logs", {
   createdAt: integer("createdAt", { mode: "timestamp" })
     .$defaultFn(() => new Date())
     .notNull(),
-});
+}, (table) => ({
+  userIdx: index("audit_logs_user_idx").on(table.userId),
+  actionIdx: index("audit_logs_action_idx").on(table.action),
+  createdAtIdx: index("audit_logs_created_at_idx").on(table.createdAt),
+}));
 
 export const ipBlacklist = sqliteTable("ip_blacklist", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
@@ -277,7 +286,10 @@ export const pageViews = sqliteTable("page_views", {
   createdAt: integer("createdAt", { mode: "timestamp" })
     .$defaultFn(() => new Date())
     .notNull(),
-});
+}, (table) => ({
+  articleIdx: index("page_views_article_idx").on(table.articleId),
+  createdAtIdx: index("page_views_created_at_idx").on(table.createdAt),
+}));
 
 export type PageView = typeof pageViews.$inferSelect;
 export type InsertPageView = typeof pageViews.$inferInsert;
@@ -343,7 +355,10 @@ export const visitorSessions = sqliteTable("visitor_sessions", {
   lastActiveAt: integer("lastActiveAt", { mode: "timestamp" })
     .$defaultFn(() => new Date())
     .notNull(),
-});
+}, (table) => ({
+  userIdx: index("visitor_user_idx").on(table.userId),
+  lastActiveIdx: index("visitor_last_active_idx").on(table.lastActiveAt),
+}));
 
 export type VisitorSession = typeof visitorSessions.$inferSelect;
 export type InsertVisitorSession = typeof visitorSessions.$inferInsert;
