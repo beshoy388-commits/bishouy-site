@@ -49,6 +49,7 @@ import SEO from "@/components/SEO";
 import AdPlacement from "@/components/AdPlacement";
 import AuthorBio from "@/components/AuthorBio";
 import PricingModal from "@/components/PricingModal";
+import ArticleJsonLd from "@/components/ArticleJsonLd";
 
 export default function ArticleDetail() {
   const [match, params] = useRoute("/article/:slug");
@@ -588,6 +589,15 @@ export default function ArticleDetail() {
         updatedDate={article.updatedAt}
         category={article.category}
       />
+      <ArticleJsonLd 
+        title={article.title}
+        description={article.excerpt}
+        image={article.image}
+        slug={article.slug}
+        authorName={article.author}
+        datePublished={article.publishedAt || article.createdAt}
+        dateModified={article.updatedAt}
+      />
 
       {/* Reading Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-[3px] z-[100] bg-transparent">
@@ -862,7 +872,6 @@ export default function ArticleDetail() {
                         </button>
                       </Link>
                     </div>
-                  </div>
 
                   {/* Tags */}
                   {tags.length > 0 && (
@@ -1273,7 +1282,7 @@ export default function ArticleDetail() {
                     Latest Updates
                   </h3>
                   <div className="space-y-6">
-                    {recentArticles.slice(0, 5).map(article => (
+                    {recentArticles.slice(0, 5).map((article: any) => (
                       <Link key={article.id} href={`/article/${article.slug}`}>
                         <div className="group cursor-pointer">
                           <h4 className="font-headline text-xs text-[#8A8880] group-hover:text-[#F2F0EB] transition-colors line-clamp-2 mb-1 uppercase tracking-tight">

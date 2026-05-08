@@ -382,7 +382,7 @@ export default function UserProfile() {
                                <div className="space-y-4">
                                   <label className="text-[9px] font-900 text-[#555550] uppercase tracking-widest">REGISTERED EMAIL</label>
                                   <input 
-                                    type="email" value={user.email} disabled
+                                    type="email" value={user.email || ""} disabled
                                     className="w-full bg-[#0A0A09] border border-[#1C1C1A] px-6 py-4 text-[#8A8880] text-sm cursor-not-allowed"
                                   />
                                </div>

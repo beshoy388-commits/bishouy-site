@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
-import { Mail, MapPin, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { Mail, MapPin, Loader2, CheckCircle2, AlertCircle, Globe } from "lucide-react";
 import { useState } from "react";
 
 export default function Contact() {

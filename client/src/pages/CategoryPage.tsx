@@ -12,6 +12,7 @@ import Navbar from "@/components/Navbar";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import ArticleCard from "@/components/ArticleCard";
 import Footer from "@/components/Footer";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import SEO from "@/components/SEO";
 import { Sparkles } from "lucide-react";
 
@@ -19,6 +20,11 @@ export default function CategoryPage() {
   const [match, params] = useRoute("/category/:slug");
   const slug = params?.slug as string;
   const category = CATEGORIES.find(c => c.slug === slug);
+
+  usePageMeta({
+    title: `${category?.name || "Category"} Archives — BISHOUY`,
+    description: `Explore our full archive of articles in the ${category?.name || "category"} category. Quality journalism and analysis from Bishouy.com.`,
+  });
 
   // Fetch articles from DB filtered by category
   const { 

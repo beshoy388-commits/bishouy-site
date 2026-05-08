@@ -3,7 +3,6 @@ import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { ShieldCheck, ArrowRight, Loader2 } from "lucide-react";
-import { ShieldCheck, ArrowRight, Loader2 } from "lucide-react";
 
 export default function VerifyEmail() {
   const [location, setLocation] = useLocation();

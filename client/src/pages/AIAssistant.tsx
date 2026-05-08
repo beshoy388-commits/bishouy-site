@@ -140,6 +140,7 @@ export default function AIAssistant() {
       <PricingModal 
          isOpen={isPricingOpen} 
          onClose={() => setIsPricingOpen(false)} 
+         user={user}
       />
 
       <Footer />

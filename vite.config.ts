@@ -5,6 +5,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
+import vitePrerenderPkg from "vite-plugin-prerender";
+
+const vitePrerender = (vitePrerenderPkg as any).default || vitePrerenderPkg;
 
 // =============================================================================
 // Manus Debug Collector - Vite Plugin
@@ -156,6 +159,21 @@ const plugins = [
   jsxLocPlugin(),
   vitePluginManusRuntime(),
   vitePluginManusDebugCollector(),
+  vitePrerender({
+    staticDir: path.join(import.meta.dirname, 'dist', 'public'),
+    routes: ['/', '/category/world', '/category/politics', '/category/economy', '/category/technology', '/category/culture'],
+    renderer: new vitePrerender.PuppeteerRenderer({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    }),
+    minify: {
+      collapseBooleanAttributes: true,
+      collapseWhitespace: true,
+      decodeEntities: true,
+      keepClosingSlash: true,
+      sortAttributes: true
+    }
+  })
 ];
 
 export default defineConfig({

@@ -12,12 +12,18 @@ import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import NeuralMouseBackground from "@/components/NeuralMouseBackground";
 import type { Article } from "@/lib/articles";
 import { trpc } from "@/lib/trpc";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import SEO from "@/components/SEO";
 import ArticleCardSkeleton from "@/components/ArticleCardSkeleton";
 import { useAuth } from "@/_core/hooks/useAuth";
 // Removed SocialPulse import to enhance home page performance
 
 export default function Home() {
+  usePageMeta({
+    title: "BISHOUY — News Intelligence",
+    description: "Global news, intelligence, and deep analysis across politics, economy, technology, and culture.",
+  });
+
   const { isAuthenticated, loading } = useAuth();
 
   useEffect(() => {

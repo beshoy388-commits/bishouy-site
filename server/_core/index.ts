@@ -734,15 +734,12 @@ cron.schedule("0 */6 * * *", () => {
 cron.schedule("0 3 * * *", async () => {
   console.log("[CRON] Starting daily database maintenance...");
   try {
-    const { getDb, auditLogs, pageViews, visitorSessions } = await import("../db");
+    const { getDb, pageViews, visitorSessions } = await import("../db");
     const { lt } = await import("drizzle-orm");
     const db = await getDb();
     if (!db) return;
 
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-
-    // Prune audit logs older than 30 days
-    await db.delete(auditLogs).where(lt(auditLogs.createdAt, thirtyDaysAgo));
     
     // Prune page views older than 30 days
     await db.delete(pageViews).where(lt(pageViews.createdAt, thirtyDaysAgo));
