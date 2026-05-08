@@ -14,8 +14,22 @@ export default function GoogleAnalytics() {
     const isInitialized = useRef(false);
 
     useEffect(() => {
-        // Reduced delay to ensure faster tracking detection and data capture
-        const timer = setTimeout(() => {
+        const checkConsent = () => {
+            const stored = localStorage.getItem("bishouy_cookie_consent");
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    return parsed.settings?.analytics === true;
+                } catch (e) {
+                    return false;
+                }
+            }
+            return false;
+        };
+
+        const initGA = () => {
+            if (isInitialized.current) return;
+            
             // 1. Inject Gtag JS
             const script1 = document.createElement("script");
             script1.async = true;
@@ -35,9 +49,23 @@ export default function GoogleAnalytics() {
             `;
             document.head.appendChild(script2);
             isInitialized.current = true;
-        }, 800);
+        };
 
-        return () => clearTimeout(timer);
+        // If already accepted, init immediately (with small delay)
+        if (checkConsent()) {
+            const timer = setTimeout(initGA, 1000);
+            return () => clearTimeout(timer);
+        }
+
+        // Otherwise listen for the consent event
+        const handleConsent = (e: any) => {
+            if (e.detail?.enabled) {
+                initGA();
+            }
+        };
+
+        window.addEventListener("bishouy_analytics_consent", handleConsent);
+        return () => window.removeEventListener("bishouy_analytics_consent", handleConsent);
     }, []);
 
     // Track route changes in SPA

@@ -55,36 +55,35 @@ export default function Contact() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
                         <div>
-                            <p className="text-[#D4D0C8] leading-relaxed mb-8">
-                                Whether you have a secure tip, a press inquiry, or feedback regarding our recent publications, our communications team is ready to direct your message to the appropriate department.
+                            <p className="text-[#D4D0C8] leading-relaxed mb-10 text-lg">
+                                BISHOUY maintains a high-fidelity communication infrastructure. Direct your inquiry to the appropriate nodal point for prioritized processing.
                             </p>
 
                             <div className="space-y-8">
-                                <div className="flex gap-4 items-start">
-                                    <Mail className="text-[#E8A020] w-6 h-6 mt-1" />
+                                <div className="flex gap-4 items-start bg-[#11110F] p-6 border border-[#1C1C1A] rounded-sm">
+                                    <Mail className="text-[#E8A020] w-5 h-5 mt-1" />
                                     <div>
-                                        <h4 className="font-display text-lg text-[#F2F0EB] mb-1">Editorial & Tips</h4>
-                                        <a href="mailto:editor@bishouy.com" className="text-[#8A8880] hover:text-[#E8A020] transition-colors font-ui text-sm">editor@bishouy.com</a>
+                                        <h4 className="font-display text-lg text-[#F2F0EB] mb-1 uppercase tracking-tighter">Editorial & Intelligence</h4>
+                                        <p className="text-[#555550] text-[10px] uppercase tracking-widest mb-2 font-ui">For tips, research, and analysis feedback</p>
+                                        <a href="mailto:intel@bishouy.com" className="text-[#E8A020] hover:underline font-ui text-xs">intel@bishouy.com</a>
                                     </div>
                                 </div>
 
-                                <div className="flex gap-4 items-start">
-                                    <Mail className="text-[#E8A020] w-6 h-6 mt-1" />
+                                <div className="flex gap-4 items-start bg-[#11110F] p-6 border border-[#1C1C1A] rounded-sm">
+                                    <Globe className="text-[#E8A020] w-5 h-5 mt-1" />
                                     <div>
-                                        <h4 className="font-display text-lg text-[#F2F0EB] mb-1">Press & Partnerships</h4>
-                                        <a href="mailto:press@bishouy.com" className="text-[#8A8880] hover:text-[#E8A020] transition-colors font-ui text-sm">press@bishouy.com</a>
+                                        <h4 className="font-display text-lg text-[#F2F0EB] mb-1 uppercase tracking-tighter">Corporate & Partnerships</h4>
+                                        <p className="text-[#555550] text-[10px] uppercase tracking-widest mb-2 font-ui">Advertising, strategic alliances, and media kits</p>
+                                        <a href="mailto:enterprise@bishouy.com" className="text-[#E8A020] hover:underline font-ui text-xs">enterprise@bishouy.com</a>
                                     </div>
                                 </div>
 
-                                <div className="flex gap-4 items-start pb-8 border-b border-[#1C1C1A]">
-                                    <Globe className="text-[#E8A020] w-6 h-6 mt-1" />
+                                <div className="flex gap-4 items-start bg-[#11110F] p-6 border border-[#1C1C1A] rounded-sm">
+                                    <MapPin className="text-[#E8A020] w-5 h-5 mt-1" />
                                     <div>
-                                        <h4 className="font-display text-lg text-[#F2F0EB] mb-1">Digital Presence</h4>
-                                        <p className="text-[#8A8880] font-ui text-sm leading-relaxed">
-                                            Bishouy operates as a decentralized global editorial collective. <br />
-                                            Our contributors and intelligence analysts work across Europe, <br />
-                                            the Middle East, and the Americas.
-                                        </p>
+                                        <h4 className="font-display text-lg text-[#F2F0EB] mb-1 uppercase tracking-tighter">Legal & Data Sovereignty</h4>
+                                        <p className="text-[#555550] text-[10px] uppercase tracking-widest mb-2 font-ui">GDPR, Privacy, and Regulatory compliance</p>
+                                        <a href="mailto:legal@bishouy.com" className="text-[#E8A020] hover:underline font-ui text-xs">legal@bishouy.com</a>
                                     </div>
                                 </div>
                             </div>

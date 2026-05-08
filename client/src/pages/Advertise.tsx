@@ -5,21 +5,21 @@ import { Mail, BarChart3, Users, Globe } from "lucide-react";
 
 export default function Advertise() {
   const stats = [
-    { icon: <Users className="text-[#E8A020]" />, label: "Monthly Active Readers", value: "245K+" },
-    { icon: <BarChart3 className="text-[#E8A020]" />, label: "Engagement Rate", value: "4.2%" },
-    { icon: <Globe className="text-[#E8A020]" />, label: "Global Footprint", value: "45+ Regions" },
+    { icon: <Users className="text-[#E8A020]" />, label: "Monthly Strategic Reach", value: "850K+" },
+    { icon: <BarChart3 className="text-[#E8A020]" />, label: "Engagement Velocity", value: "6.8%" },
+    { icon: <Globe className="text-[#E8A020]" />, label: "Global Nodal Access", value: "120+ Countries" },
   ];
 
   return (
     <main className="min-h-screen bg-[#0F0F0E]">
-      <SEO title="Advertising & Partnerships" />
+      <SEO title="Advertising & Partnerships | BISHOUY" />
       <Navbar />
       <div className="container py-24 max-w-5xl">
-        <h1 className="font-display text-5xl md:text-6xl text-[#F2F0EB] mb-6 leading-tight">
-          PARTNER WITH THE FUTURE OF <span className="text-[#E8A020]">INTELLIGENCE</span>.
+        <h1 className="font-display text-5xl md:text-6xl text-[#F2F0EB] mb-6 leading-tight uppercase tracking-tighter">
+          Strategic <span className="text-[#E8A020]">Alignment</span> with Global Intelligence.
         </h1>
-        <p className="font-ui text-xl text-[#8A8880] mb-12 max-w-2xl">
-          Connect your brand with a global audience of forward-thinking decision markers, tech innovators, and cultural leaders.
+        <p className="font-ui text-xl text-[#8A8880] mb-12 max-w-2xl leading-relaxed">
+          Position your brand at the epicenter of the global conversation. We connect industry leaders with an elite audience of decision-makers, technologists, and architects of the future.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">

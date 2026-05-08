@@ -7,6 +7,21 @@ export default function LiveAnalyticsTracker() {
     const heartbeatMutation = trpc.analytics.heartbeat.useMutation();
 
     useEffect(() => {
+        const checkConsent = () => {
+            const stored = localStorage.getItem("bishouy_cookie_consent");
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    return parsed.settings?.analytics === true;
+                } catch (e) {
+                    return false;
+                }
+            }
+            return false;
+        };
+
+        if (!checkConsent()) return;
+
         // Generate or retrieve a persistent session ID for this browser
         let sessionId = localStorage.getItem("visitor_session_id");
         if (!sessionId) {

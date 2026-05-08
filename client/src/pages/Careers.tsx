@@ -5,9 +5,9 @@ import { Briefcase } from "lucide-react";
 
 export default function Careers() {
     const jobs = [
-        { title: "Senior Geopolitical Analyst", location: "Global / Remote", type: "Full-Time" },
-        { title: "Investigative Data Journalist", location: "Geneva, CH", type: "Full-Time" },
-        { title: "AI Integration Engineer", location: "London, UK / Remote", type: "Full-Time" },
+        { title: "Senior Geopolitical Intelligence Analyst", location: "London / Global Remote", type: "Tier 1" },
+        { title: "Neural Synthesis & Data Journalist", location: "Milan / Remote", type: "Tier 1" },
+        { title: "Strategic Operations Engineer (AI)", location: "New York / Remote", type: "Tier 1" },
     ];
 
     return (
@@ -17,16 +17,16 @@ export default function Careers() {
             <main className="flex-1 container pb-24">
                 <div className="max-w-3xl mx-auto">
                     <div className="mb-16">
-                        <h1 className="font-display text-4xl md:text-5xl text-[#E8A020] mb-6">Careers</h1>
-                        <p className="font-ui text-sm text-[#8A8880] tracking-widest uppercase mb-8">Build the future of high-fidelity media</p>
+                        <h1 className="font-display text-4xl md:text-5xl text-[#E8A020] mb-6 uppercase tracking-tighter">Recruitment</h1>
+                        <p className="font-ui text-sm text-[#8A8880] tracking-[0.4em] uppercase mb-8">Join the Vanguard of Analytical Journalism</p>
                     </div>
 
                     <div className="prose prose-invert max-w-none text-[#D4D0C8] space-y-6 mb-16">
-                        <p className="text-xl leading-relaxed font-light text-[#F2F0EB]">
-                            We are an elite, agile team of reporters, analysts, and technologists. Our culture rewards intellectual rigorousness, relentless curiosity, and engineering excellence.
+                        <p className="text-xl leading-relaxed font-headline text-[#F2F0EB]">
+                            We are an elite collective of analysts, engineers, and investigative reporters. BISHOUY rewards intellectual rigor, technical mastery, and a relentless commitment to the signal.
                         </p>
-                        <p className="leading-relaxed text-[#8A8880]">
-                            Working here means putting the truth above the narrative. We offer competitive global compensation, comprehensive remote-first infrastructure, and the resources necessary to pursue groundbreaking investigations.
+                        <p className="leading-relaxed text-[#8A8880] font-ui text-sm uppercase tracking-widest">
+                            We operate a decentralized, high-performance network. Tier 1 compensation, absolute autonomy, and the resources to execute global-scale investigations.
                         </p>
                     </div>
 

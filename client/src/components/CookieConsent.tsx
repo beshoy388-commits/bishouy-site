@@ -34,28 +34,33 @@ export default function CookieConsent() {
       console.error("Cookie consent load error:", e);
       localStorage.removeItem("bishouy_cookie_consent");
     }
+
+    // Listener to re-open settings from footer/policy
+    const handleOpenSettings = () => {
+      setConsent(null);
+      setShowSettings(true);
+    };
+
+    window.addEventListener("bishouy_open_cookie_settings", handleOpenSettings);
+    return () => window.removeEventListener("bishouy_open_cookie_settings", handleOpenSettings);
   }, []);
 
   const applyConsent = (settings: typeof customSettings) => {
-    // Enable/disable analytics based on consent
-    if (settings.analytics) {
-      // Analytics script is already loaded in index.html with conditional data-website-id
-      // This just ensures it's active
-      const umami = (window as any).umami;
-      if (umami?.track) {
-        umami.track("page_view");
-      }
-    } else {
-      // Disable analytics tracking
-      const umami = (window as any).umami;
-      if (umami) {
-        (window as any).umami = undefined;
-      }
+    // 1. Umami Analytics
+    const umami = (window as any).umami;
+    if (settings.analytics && umami?.track) {
+      umami.track("page_view");
     }
 
-    // Marketing cookies would be handled similarly
+    // 2. Google Analytics (Trigger reload/activation)
+    if (settings.analytics) {
+      // We'll use a custom event that GoogleAnalytics.tsx can listen to
+      window.dispatchEvent(new CustomEvent("bishouy_analytics_consent", { detail: { enabled: true } }));
+    }
+
+    // 3. Marketing / AdSense
     if (settings.marketing) {
-      // Enable marketing pixels, retargeting, etc.
+       window.dispatchEvent(new CustomEvent("bishouy_marketing_consent", { detail: { enabled: true } }));
     }
   };
 

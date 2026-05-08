@@ -25,7 +25,7 @@ const PLANS = [
     id: "premium" as const,
     name: "Premium Membership",
     price: "€10",
-    period: "per month",
+    period: "per month (incl. VAT)",
     description: "Full access to elite market analytics and investigative reports.",
     trialText: "7-day free trial",
     features: [
@@ -44,7 +44,7 @@ const PLANS = [
     id: "founder" as const,
     name: "Founding Member",
     price: "€100",
-    period: "per month",
+    period: "per month (incl. VAT)",
     description: "Direct influence on the BISHOUY roadmap and exclusive governance.",
     trialText: null,
     features: [

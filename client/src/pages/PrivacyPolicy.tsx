@@ -130,16 +130,34 @@ export default function PrivacyPolicy() {
               </ul>
 
               <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
-                3.4 Newsletter Subscriptions
+                3.4 Newsletters and Communication
               </h3>
               <p>
-                If you subscribe to our newsletter: your email address and the
-                date of subscription are stored. You may unsubscribe at any
-                time.
+                When you subscribe to our briefings, we store your email address and interaction data (opens/clicks) via <strong>Brevo</strong> to optimize delivery.
               </p>
 
               <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
-                3.5 Automatically Collected Data
+                3.5 Subscriptions and Payments
+              </h3>
+              <p>
+                When you purchase a premium membership, payment is processed by <strong>Stripe</strong>. We do not store full credit card numbers on our servers. We receive and store:
+              </p>
+              <ul className="list-disc list-inside space-y-1 ml-4 mt-2">
+                <li>Stripe Customer ID</li>
+                <li>Subscription status and tier</li>
+                <li>Last 4 digits of the card and expiration date (for your reference)</li>
+                <li>Billing history</li>
+              </ul>
+
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
+                3.6 AI Personalization (Neural Nexus)
+              </h3>
+              <p>
+                Our AI systems analyze reading patterns to suggest relevant "Strategic Intelligence". This data is anonymized and used only to improve the algorithmic relevance of content suggested to you.
+              </p>
+
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
+                3.7 Automatically Collected Data
               </h3>
               <ul className="list-disc list-inside space-y-1 ml-4">
                 <li>
@@ -402,6 +420,9 @@ export default function PrivacyPolicy() {
                 </li>
                 <li>HTTPS is enforced in production</li>
               </ul>
+              <p className="mt-3 text-sm text-[#8A8880]">
+                <strong>Security Disclaimer:</strong> While we implement rigorous technical and organizational measures, no method of transmission over the internet or electronic storage is 100% secure. We cannot guarantee absolute security against targeted cyberattacks or system breaches beyond our reasonable control.
+              </p>
             </section>
 
             <section>
@@ -409,10 +430,13 @@ export default function PrivacyPolicy() {
                 12. International Data Transfers
               </h2>
               <p>
-                Our infrastructure may process data outside the EU/EEA. Where
-                this occurs, we ensure appropriate safeguards are in place (such
-                as Standard Contractual Clauses) as required by GDPR Chapter V.
+                Certain data may be processed outside the EU/EEA by our service providers (e.g., <strong>Stripe</strong> and <strong>Brevo</strong>, which are headquartered in the United States). Where this occurs, we ensure a high level of protection by utilizing:
               </p>
+              <ul className="list-disc list-inside space-y-1 ml-4 mt-2">
+                <li>Standard Contractual Clauses (SCCs) approved by the European Commission</li>
+                <li>Data Privacy Framework certifications where applicable</li>
+                <li>Encryption and pseudonymization of data during transit</li>
+              </ul>
             </section>
 
             <section>

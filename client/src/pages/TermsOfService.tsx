@@ -78,6 +78,7 @@ export default function TermsOfService() {
                 to:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-4 mt-2">
+                <li>Be at least 16 years of age (or the legal age of majority in your jurisdiction)</li>
                 <li>Provide accurate and truthful information</li>
                 <li>Verify your email address using the code we send</li>
                 <li>Maintain the security of your password</li>
@@ -209,10 +210,50 @@ export default function TermsOfService() {
                 <strong>Brevo</strong> as our email delivery provider.
               </p>
             </section>
+            
+            <section>
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
+                8. Premium Subscriptions
+              </h2>
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2">
+                8.1 Membership Tiers
+              </h3>
+              <p>
+                BISHOUY offers premium subscription tiers ("Premium" and "Founder") that provide access to restricted intelligence segments, deep-dive analyses, and advanced features.
+              </p>
+              
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
+                8.2 Payments and Billing
+              </h3>
+              <p>
+                Subscriptions are billed via <strong>Stripe</strong>. By subscribing, you authorize us to charge your provided payment method on a recurring basis. All fees are non-refundable unless required by EU consumer law.
+              </p>
+              
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
+                8.3 Free Trials and Promo Codes
+              </h3>
+              <p>
+                We may offer free trials or promotional discounts (e.g., "FREE100"). Free trials will automatically convert to a paid subscription at the end of the trial period unless cancelled at least 24 hours before expiration. Promo codes are valid for a limited time and subject to the specific terms of the promotion.
+              </p>
+              
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
+                8.4 Cancellation
+              </h3>
+              <p>
+                You may cancel your subscription at any time via the Customer Portal in your User Profile. Upon cancellation, you will retain access until the end of your current billing cycle.
+              </p>
+              
+              <h3 className="font-headline text-lg font-600 text-[#E8A020] mb-2 mt-4">
+                8.5 Right of Withdrawal
+              </h3>
+              <p>
+                As a provider of digital content, we inform you that by subscribing and accessing our premium content, you expressly consent to the immediate start of the performance and acknowledge that you lose your 14-day right of withdrawal provided under EU consumer law once the digital content has been accessed or the service has begun.
+              </p>
+            </section>
 
             <section>
               <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
-                8. Prohibited Conduct
+                9. Prohibited Conduct
               </h2>
               <p>You agree not to:</p>
               <ul className="list-disc list-inside space-y-1 ml-4 mt-2">
@@ -235,34 +276,47 @@ export default function TermsOfService() {
 
             <section>
               <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
-                9. Disclaimer of Warranties
+                10. Disclaimer of Warranties
               </h2>
               <p>
                 The Platform is provided on an "as is" and "as available" basis.
                 We make no warranties, express or implied, regarding the
-                accuracy, completeness, or reliability of any content. News
-                articles represent the editorial opinion of the authors and do
-                not constitute professional, legal, financial, or medical
-                advice.
+                accuracy, completeness, or reliability of any content. 
+              </p>
+              <p className="mt-2">
+                <strong>AI-Generated Content:</strong> Some analytical segments are generated or assisted by artificial intelligence ("Neural Nexus"). These insights are for informational purposes only and do not constitute professional, legal, financial, or medical advice. You use such information at your own risk.
+              </p>
+              <p className="mt-2">
+                News articles represent the editorial opinion of the authors and do
+                not constitute professional advice.
               </p>
             </section>
 
             <section>
               <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
-                10. Limitation of Liability
+                11. Limitation of Liability
               </h2>
               <p>
-                To the fullest extent permitted by EU law, Bishouy.com shall not
+                To the fullest extent permitted by EU law, Bishouy.com, its founder, and its affiliates shall not
                 be liable for any indirect, incidental, special, or
-                consequential damages arising from your use of the Platform. Our
-                total liability shall not exceed the amount paid by you (if any)
+                consequential damages, including but not limited to loss of profits, data, or goodwill, arising from your use of the Platform. Our
+                total liability for any claim shall not exceed the amount paid by you (if any)
                 to access the Platform in the 12 months preceding the claim.
               </p>
             </section>
 
             <section>
               <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
-                11. Links to External Sites
+                12. Indemnification
+              </h2>
+              <p>
+                You agree to indemnify, defend, and hold harmless Bishouy.com and its staff from and against any and all claims, liabilities, damages, losses, or expenses, including legal fees, arising out of or in any way connected with your access to or use of the Platform, your violation of these Terms, or your infringement of any intellectual property or other right of any person or entity.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
+                13. Links to External Sites
               </h2>
               <p>
                 Our Platform may contain links to third-party websites. We are
@@ -273,7 +327,7 @@ export default function TermsOfService() {
 
             <section>
               <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
-                12. Accessibility
+                14. Accessibility
               </h2>
               <p>
                 Bishouy.com is committed to ensuring digital accessibility in
@@ -291,7 +345,16 @@ export default function TermsOfService() {
 
             <section>
               <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
-                13. Modifications to the Terms
+                15. Termination
+              </h2>
+              <p>
+                We reserve the right, without notice and in our sole discretion, to terminate or suspend your account and your access to the Platform for any reason, including without limitation if we believe you have violated these Terms. We shall not be liable to you or any third party for any termination of your access to the Platform.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
+                16. Modifications to the Terms
               </h2>
               <p>
                 We reserve the right to modify these Terms at any time. We will
@@ -303,7 +366,7 @@ export default function TermsOfService() {
 
             <section>
               <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
-                14. Governing Law and Disputes
+                17. Governing Law and Disputes
               </h2>
               <p>
                 These Terms are governed by the laws of the European Union. Any
@@ -324,7 +387,16 @@ export default function TermsOfService() {
 
             <section>
               <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
-                15. Contact
+                18. Severability and Entire Agreement
+              </h2>
+              <p>
+                If any provision of these Terms is found to be unenforceable or invalid, that provision will be limited or eliminated to the minimum extent necessary so that these Terms will otherwise remain in full force and effect. These Terms constitute the entire agreement between you and Bishouy.com regarding the Platform.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="font-headline text-2xl font-bold text-[#F2F0EB] mb-3">
+                19. Contact
               </h2>
               <div className="bg-[#1C1C1A] rounded-sm p-4 mt-3">
                 <p className="font-ui text-sm">

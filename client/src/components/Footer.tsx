@@ -210,6 +210,14 @@ export default function Footer({ hideNewsletter = false }: { hideNewsletter?: bo
                     <Link href={item.href} className="text-xs text-[#8A8880] hover:text-[#F2F0EB] transition-colors font-ui uppercase tracking-widest">{item.label}</Link>
                   </li>
                 ))}
+                <li>
+                  <button 
+                    onClick={() => window.dispatchEvent(new CustomEvent("bishouy_open_cookie_settings"))}
+                    className="text-xs text-[#E8A020] hover:text-[#F2F0EB] transition-colors font-ui uppercase tracking-widest"
+                  >
+                    Manage Cookies
+                  </button>
+                </li>
               </ul>
             </div>
           </div>
